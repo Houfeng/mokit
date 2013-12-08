@@ -621,6 +621,7 @@
 	"file_history":
 	[
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/store.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/event.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/view.js",
@@ -746,8 +747,7 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/class.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/gray/css/style.css",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/blue/css/style.css",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/default/style.css",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/blue/style.css"
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/default/style.css"
 	],
 	"find":
 	{
