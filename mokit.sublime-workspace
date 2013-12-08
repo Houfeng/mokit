@@ -1,0 +1,1065 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"l",
+				"length"
+			],
+			[
+				"ch",
+				"childs"
+			],
+			[
+				"el",
+				"element"
+			],
+			[
+				"pr",
+				"property	@property"
+			],
+			[
+				"f",
+				"final	@final"
+			],
+			[
+				"m",
+				"module	@module"
+			],
+			[
+				"r",
+				"return	@return"
+			],
+			[
+				"pa",
+				"param	@param"
+			],
+			[
+				"for",
+				"format"
+			],
+			[
+				"to",
+				"toDate"
+			],
+			[
+				"scr",
+				"scripts"
+			],
+			[
+				"is",
+				"isDate"
+			],
+			[
+				"in",
+				"instanceof"
+			],
+			[
+				"nu",
+				"null"
+			],
+			[
+				"da",
+				"date"
+			],
+			[
+				"h",
+				"handleBind"
+			],
+			[
+				"ex",
+				"extend"
+			],
+			[
+				"co",
+				"copy"
+			],
+			[
+				"th",
+				"theClass"
+			],
+			[
+				"chi",
+				"childId"
+			],
+			[
+				"by",
+				"byteBase64"
+			],
+			[
+				"bt",
+				"byteBase64"
+			],
+			[
+				"str",
+				"stringBase64"
+			],
+			[
+				"v",
+				"vertical-align"
+			],
+			[
+				"fon",
+				"font-size"
+			],
+			[
+				"di",
+				"display"
+			],
+			[
+				"input",
+				"input	input - text"
+			],
+			[
+				"ui",
+				"uiRole"
+			],
+			[
+				"gr",
+				"grids"
+			],
+			[
+				"grid",
+				"grid"
+			],
+			[
+				"cl",
+				"clear"
+			],
+			[
+				"script",
+				"script	<script>"
+			],
+			[
+				"style",
+				"style	<style>"
+			],
+			[
+				"e",
+				"error"
+			],
+			[
+				"ma",
+				"mask"
+			],
+			[
+				"en",
+				"endMask"
+			],
+			[
+				"be",
+				"beginMask"
+			],
+			[
+				"a",
+				"abort"
+			],
+			[
+				"aj",
+				"ajaxCache"
+			],
+			[
+				"c",
+				"cacheKey"
+			],
+			[
+				"mo",
+				"mokit"
+			],
+			[
+				"vi",
+				"viewItem"
+			],
+			[
+				"i",
+				"item"
+			],
+			[
+				"u",
+				"utils"
+			],
+			[
+				"ro",
+				"root"
+			],
+			[
+				"set",
+				"setView"
+			],
+			[
+				"rou",
+				"routeData"
+			],
+			[
+				"con",
+				"context"
+			],
+			[
+				"cont",
+				"context"
+			],
+			[
+				"o",
+				"obj1"
+			],
+			[
+				"obj",
+				"obj1"
+			],
+			[
+				"oj",
+				"obj2  (argument)"
+			],
+			[
+				"def",
+				"defaultStatus  (variable)"
+			],
+			[
+				"if",
+				"ife	if … else"
+			],
+			[
+				"mod",
+				"model"
+			],
+			[
+				"typ",
+				"templateType"
+			],
+			[
+				"te",
+				"template"
+			],
+			[
+				"ti",
+				"title"
+			],
+			[
+				"lan",
+				"lang"
+			],
+			[
+				"us",
+				"user"
+			],
+			[
+				"b",
+				"back"
+			],
+			[
+				"n",
+				"name"
+			],
+			[
+				"fin",
+				"findBox"
+			],
+			[
+				"fi",
+				"findType"
+			],
+			[
+				"find",
+				"findData"
+			],
+			[
+				"li",
+				"linq"
+			],
+			[
+				"_",
+				"_tel"
+			],
+			[
+				"s",
+				"searchBox"
+			],
+			[
+				"tr",
+				"true"
+			],
+			[
+				"hid",
+				"hideMask  (function)"
+			],
+			[
+				"ms",
+				"mask"
+			],
+			[
+				"chid",
+				"childModel"
+			],
+			[
+				"St",
+				"SettingView"
+			],
+			[
+				"re",
+				"reverse"
+			],
+			[
+				"his",
+				"history"
+			],
+			[
+				"no",
+				"navigation"
+			],
+			[
+				"get",
+				"getUri"
+			],
+			[
+				"ev",
+				"eventMgr"
+			],
+			[
+				"nam",
+				"name  (variable)"
+			],
+			[
+				"clear",
+				"clearTimeout  (function)"
+			],
+			[
+				"cu",
+				"currentControllerInstance"
+			],
+			[
+				"cn",
+				"config"
+			],
+			[
+				"com",
+				"complieTemplate"
+			],
+			[
+				"tem",
+				"templateType"
+			],
+			[
+				"tpl",
+				"tplType"
+			],
+			[
+				"an",
+				"animation"
+			],
+			[
+				"j",
+				"jquery"
+			],
+			[
+				"ho",
+				"homeView"
+			],
+			[
+				"ne",
+				"nextControllerInstance"
+			],
+			[
+				"rev",
+				"remove"
+			],
+			[
+				"ha",
+				"hashOption"
+			],
+			[
+				"animat",
+				"animationEndEventName"
+			],
+			[
+				"cur",
+				"currentView"
+			],
+			[
+				"out",
+				"outClass"
+			],
+			[
+				"bo",
+				"border"
+			],
+			[
+				"se",
+				"self"
+			],
+			[
+				"box-s",
+				"box-sizing:   (property)"
+			],
+			[
+				"ba",
+				"background-size"
+			],
+			[
+				"opt",
+				"option	Tag"
+			],
+			[
+				"backgrou",
+				"background-color:   (property)"
+			],
+			[
+				"st",
+				"styleTable"
+			],
+			[
+				"sy",
+				"styleTable"
+			],
+			[
+				"_o",
+				"_onModelUpdate"
+			],
+			[
+				"H",
+				"HomeView"
+			],
+			[
+				"lo",
+				"login"
+			],
+			[
+				"log",
+				"loginView"
+			],
+			[
+				"use",
+				"username"
+			],
+			[
+				"att",
+				"attrArgs"
+			],
+			[
+				"mt",
+				"methodArgs"
+			],
+			[
+				"tp",
+				"tpl"
+			],
+			[
+				"han",
+				"handleChildView"
+			],
+			[
+				"t",
+				"template"
+			],
+			[
+				"hom",
+				"homeView"
+			],
+			[
+				"on",
+				"onStart"
+			],
+			[
+				"sta",
+				"startContext"
+			],
+			[
+				"eve",
+				"eventMgr"
+			],
+			[
+				"fu",
+				"function"
+			],
+			[
+				"arg",
+				"args"
+			],
+			[
+				"pro",
+				"prototype"
+			],
+			[
+				"new",
+				"newClass"
+			],
+			[
+				"json",
+				"json"
+			],
+			[
+				"js",
+				"json"
+			],
+			[
+				"ob",
+				"obj2str"
+			],
+			[
+				"J",
+				"JSON"
+			],
+			[
+				"ca",
+				"callback"
+			],
+			[
+				"req",
+				"req"
+			],
+			[
+				"Z",
+				"Zepto"
+			],
+			[
+				"g",
+				"getRoute"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/ajax.js",
+			"settings":
+			{
+				"buffer_size": 3214,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "README.md",
+			"settings":
+			{
+				"buffer_size": 430,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/app.js",
+			"settings":
+			{
+				"buffer_size": 4204,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/event.js",
+			"settings":
+			{
+				"buffer_size": 6826,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/WebBuilder ST/WebBuilder.sublime-build",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"pr",
+				"Package Control: Remove Package"
+			],
+			[
+				"pi",
+				"Package Control: Install Package"
+			],
+			[
+				"pcr",
+				"Package Control: Remove Package"
+			],
+			[
+				"pci",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"AMD Module Editor: Delete Modules"
+			],
+			[
+				"Snippet: crea",
+				"Snippet: $(document).ready"
+			],
+			[
+				"gits",
+				"Git: Status"
+			],
+			[
+				"git",
+				"Git: Gui"
+			],
+			[
+				"pic",
+				"Package Control: Install Package"
+			],
+			[
+				"form",
+				"Format: Javascript"
+			],
+			[
+				"pci	",
+				"Package Control: Install Package"
+			],
+			[
+				"b",
+				"Bookmarks: Clear All"
+			],
+			[
+				"bra",
+				"Bookmarks: Clear All"
+			],
+			[
+				"zc",
+				"Set Syntax: ZenCoding"
+			],
+			[
+				"zce",
+				"Zen Coding: Evaluate math expression"
+			],
+			[
+				"z",
+				"Zen Coding: Evaluate math expression"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"f",
+				"Format: Javascript"
+			],
+			[
+				"page",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 476.0
+	},
+	"console":
+	{
+		"height": 187.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/worker.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/view.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
+		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/worker",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
+		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/JsFormat/Default (OSX).sublime-keymap",
+		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/yuidoc.json",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/base64.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/class.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/controller.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/console.js",
+		"/Users/houfeng/Desktop/会议纪要.md",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/event.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/grid.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/yuidoc.json",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/package.json",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/login.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/home.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems.js",
+		"/Software/WebStorm-6.0.2a.dmg.sn.txt",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/doc/index.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/jsdoc.txt",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/index.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/simulator/index.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/simulator/scripts/main.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/controllers/about.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/controllers/home.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/controllers/login.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/index.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/main.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/models/contact.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/models/user.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/views/about.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/views/error.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/views/home.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/views/login.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/views/menu.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/utils.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/ajax.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/app.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/view.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/menu.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/tp.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit_build/tp.js",
+		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/WebBuilder ST/WebBuilder.sublime-build",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit_build/ems.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit_build_build/view.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit_build/move.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/move.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/grid.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/class.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/event.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/file.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/mask.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/navigation.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/sortable.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit_build/language.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/base64.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/console.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/controller.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/json.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/language.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/model.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/modernizr.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/route.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/store.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/style.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/transitions.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit_build/mask.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit_build/grid.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/common/utils.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/config.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/ems.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/style.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit.sublime-project",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/jquery.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/jquery.touch.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/about.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/mokit.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/transitions.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/socket.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/styles/transitions.css",
+		"/Users/houfeng/Desktop/a",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/tp.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/jtp.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/ems.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/styles/base64.js",
+		"/Users/houfeng/Desktop/审批应用：任务列表",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/event.js",
+		"/Users/houfeng/Desktop/会议纪要",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/class.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/move.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/menu.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/default/css/style.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/utils.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/common/a.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/languages/zh-cn.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/languages/en-us.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/models/Contact.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/models/Contects.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/views/setting.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/models/search.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo_phonegap/www/mokit/navigation.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo_phonegap/www/demo/templates/home.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo_phonegap/www/demo/templates/login.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/setting.html",
+		"/Users/houfeng/Desktop/交付物清单",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/controllers/setting.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/collection.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/history.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/jtools/src/effect.js",
+		"/Users/houfeng/Downloads/Untitled.txt",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/index.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/js/pagetransitions.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/styles/animations.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/fonts/menuicons/icomoon.svg",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/simulator/styles/phone.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/simulator.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/phone.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/jquery.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/class.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/gray/css/style.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/blue/css/style.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/default/style.css",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/blue/style.css"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"$",
+			"toDate",
+			"mokit_build",
+			"isRender",
+			"{#",
+			"#}",
+			"{#",
+			".",
+			"define",
+			"endChange",
+			"jtp",
+			"14px",
+			"getModel",
+			"];\n",
+			"appOption",
+			"pt-page",
+			"setHash",
+			"tigger",
+			"super",
+			"language",
+			"tpExecs",
+			"getTemplateContent",
+			"newClass",
+			"clone",
+			"getName",
+			"验证类B的getName方法",
+			"创建类型",
+			"owner",
+			"_option",
+			"owner.$helper",
+			"tp",
+			"dlkafjlaskjf"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"src",
+			"<%",
+			"%>",
+			"<",
+			"%>",
+			"<%",
+			"16px",
+			"ui-view",
+			"trigger",
+			"base",
+			"style",
+			"tplCache",
+			"loadTemplateContent",
+			"theClass",
+			"copyApply",
+			"say",
+			"exports",
+			"option",
+			"owner.utils"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/ajax.js",
+					"settings":
+					{
+						"buffer_size": 3214,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								190,
+								191
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "README.md",
+					"settings":
+					{
+						"buffer_size": 430,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								118,
+								118
+							]
+						],
+						"settings":
+						{
+							"is_xml": false,
+							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/app.js",
+					"settings":
+					{
+						"buffer_size": 4204,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								350,
+								350
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/event.js",
+					"settings":
+					{
+						"buffer_size": 6826,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5836,
+								5837
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2981.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 268.0
+	},
+	"output.jsconsole_view":
+	{
+		"height": 118.0
+	},
+	"output.jshint_view":
+	{
+		"height": 0.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"untitled"
+			],
+			[
+				"un",
+				"untitled"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/Users/houfeng/Desktop/Dev/My Projects/joop/joop.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 220.0,
+	"status_bar_visible": true
+}

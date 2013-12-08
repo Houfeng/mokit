@@ -1,0 +1,1 @@
+/*csd*/define(function(c,a,b){return(function(){var f,h,e,d,g;f=/^[^{]+\{([\s\S]*)\}$/;h=window.URL||window.webkitURL;e={type:"text/javascript; charset=utf-8"};return function(i){d=i.toString().match(f)[1];g=window.opera?"data:application/javascript,"+encodeURIComponent(d):h.createObjectURL(new Blob([d],e));return new Worker(g);};})();});

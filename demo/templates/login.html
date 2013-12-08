@@ -1,0 +1,22 @@
+<div data-role='page' data-title='<%$($.lang.login)%>'>
+	<div data-role="head" class="bar header">
+		<% $($.lang.login) %>
+	</div>
+	<form class='content'>
+		<br/>
+		<input type="button" name="" value="中文" data-event="click>!setLanguage:zh-cn">
+		<input type="button" name="" value="English" data-event="click>!setLanguage:en-us"><br/><br/>
+		<!--
+		<input type="button" name="" value="<%$($.lang.default)%>" data-event="click>!setStyle:default">
+		<input type="button" name="" value="<%$($.lang.black)%>" data-event="click>!setStyle:black">
+		-->
+		<br/>
+		<%$($.lang.username)%>: <br/><br/>
+		<input type="text" name="" style='width:100%;' data-bind="val<username" placeholder="<%$($.lang.username)%>"><br/><br/>
+		<%$($.lang.password)%>: <br/><br/>
+		<input type="password" name="" style='width:100%;' data-bind="val<password"  placeholder="<%$($.lang.password)%>">
+		<br/><br/><br/>
+		<input type="button" name="" style='width:100%;' value="<%$($.lang.login)%>" data-event="click>login"/>
+		<!--link data-role='view' data-view="../views/setting" data-model="info"/-->
+	</form>
+</div>
