@@ -519,38 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "src/ajax.js",
-			"settings":
-			{
-				"buffer_size": 3214,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "README.md",
-			"settings":
-			{
-				"buffer_size": 430,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/app.js",
-			"settings":
-			{
-				"buffer_size": 4204,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/event.js",
-			"settings":
-			{
-				"buffer_size": 6826,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Packages/WebBuilder ST/WebBuilder.sublime-build",
 	"command_palette":
@@ -652,23 +620,23 @@
 	},
 	"file_history":
 	[
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/worker.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/event.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/view.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/worker.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/worker",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
 		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/JsFormat/Default (OSX).sublime-keymap",
 		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/yuidoc.json",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/base64.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/class.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/controller.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/console.js",
 		"/Users/houfeng/Desktop/会议纪要.md",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/event.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/grid.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/yuidoc.json",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/package.json",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/login.html",
@@ -868,115 +836,6 @@
 		{
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "src/ajax.js",
-					"settings":
-					{
-						"buffer_size": 3214,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								190,
-								191
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "README.md",
-					"settings":
-					{
-						"buffer_size": 430,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								118,
-								118
-							]
-						],
-						"settings":
-						{
-							"is_xml": false,
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/app.js",
-					"settings":
-					{
-						"buffer_size": 4204,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								350,
-								350
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/event.js",
-					"settings":
-					{
-						"buffer_size": 6826,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5836,
-								5837
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2981.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
