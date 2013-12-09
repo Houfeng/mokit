@@ -53,7 +53,14 @@
 	 * @static
 	 */
 	owner.contains = function(str1, str2) {
-		return str1 && str2 && str1.indexOf(str2) > -1;
+		var self=this;
+		if(self.isArray(str1)){
+			return self.each(function(x){
+				if(x==str2) return true;
+			});
+		}else{
+			return str1 && str2 && str1.indexOf(str2) > -1;
+		}
 	};
 
 	/**
