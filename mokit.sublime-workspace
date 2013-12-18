@@ -4,16 +4,20 @@
 		"selected_items":
 		[
 			[
+				"el",
+				"else"
+			],
+			[
+				"is",
+				"isArray"
+			],
+			[
 				"l",
 				"length"
 			],
 			[
 				"ch",
 				"childs"
-			],
-			[
-				"el",
-				"element"
 			],
 			[
 				"pr",
@@ -46,10 +50,6 @@
 			[
 				"scr",
 				"scripts"
-			],
-			[
-				"is",
-				"isDate"
 			],
 			[
 				"in",
@@ -620,6 +620,8 @@
 	},
 	"file_history":
 	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/navigation.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/store.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
@@ -628,7 +630,6 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/worker.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/worker",
 		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/JsFormat/Default (OSX).sublime-keymap",
 		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
@@ -746,8 +747,7 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/jquery.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/class.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/gray/css/style.css",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/blue/css/style.css",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/default/style.css"
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/blue/css/style.css"
 	],
 	"find":
 	{

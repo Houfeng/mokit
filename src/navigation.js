@@ -19,15 +19,18 @@ define(function (require, exports, module) {
         } else if (_history[lastIndex] != uri) { //如果不是自已跳向自已
             _history.push(uri);
         }
-        exports.change.trigger(uri, isBack, _history.length);
+        if (!ignoreHandle) {
+            exports.change.trigger(uri, isBack, _history.length);
+        }
+        ignoreHandle = false;
     };
 
     /**
-	 * Uri改变事件，在Uri发现变化时触发。
-	 * @event change
-	 * @param {String} uri 当前Uri
-	 * @static
-	 */
+     * Uri改变事件，在Uri发现变化时触发。
+     * @event change
+     * @param {String} uri 当前Uri
+     * @static
+     */
     exports.change = eventMgr.create(exports, 'change');
 
     var _history = [getUri()];
@@ -37,10 +40,10 @@ define(function (require, exports, module) {
     window.__history = _history;
 
     /**
-	 * 获取当前Uri
-	 * @method getUri
-	 * @static
-	 */
+     * 获取当前Uri
+     * @method getUri
+     * @static
+     */
 
     function getUri() {
         if (location.hash) {
@@ -51,11 +54,11 @@ define(function (require, exports, module) {
     exports.getUri = getUri;
 
     /**
-	 * 设置当前uri
-	 * @method setUri
-	 * @param {String} uri 需要将Uri在路由配置添加配置
-	 * @static
-	 */
+     * 设置当前uri
+     * @method setUri
+     * @param {String} uri 需要将Uri在路由配置添加配置
+     * @static
+     */
 
     function setUri(uri, _ignoreHandle) {
         ignoreHandle = _ignoreHandle;
@@ -69,9 +72,9 @@ define(function (require, exports, module) {
     exports.setUri = setUri;
 
     /**
-	 * 返回
-	 * @method back
-	 */
+     * 返回
+     * @method back
+     */
 
     function back() {
         var backIndex = _history.length - 2;
@@ -81,9 +84,9 @@ define(function (require, exports, module) {
     exports.back = back;
 
     /**
-	 * 重置当前页为首次进入页
-	 * @method reset
-	 */
+     * 重置当前页为首次进入页
+     * @method reset
+     */
     function reset() {
         _history = [getUri()];
     };
@@ -91,12 +94,9 @@ define(function (require, exports, module) {
 
     var ignoreHandle = false;
     /**
-	 * 处理hashchange事件
-	 */
+     * 处理hashchange事件
+     */
     eventMgr.create(window, 'hashchange').bind(function () {
-        if (!ignoreHandle) {
-            triggerChange(getUri());
-        }
-        ignoreHandle = false;
+        triggerChange(getUri());
     });
 });
