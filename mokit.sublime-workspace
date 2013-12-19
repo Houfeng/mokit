@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"ta",
+				"task"
+			],
+			[
+				"t",
+				"task"
+			],
+			[
+				"on",
+				"once"
+			],
+			[
+				"fn",
+				"fn2"
+			],
+			[
+				"fu",
+				"fun	Function"
+			],
+			[
 				"el",
 				"else"
 			],
@@ -448,16 +468,8 @@
 				"handleChildView"
 			],
 			[
-				"t",
-				"template"
-			],
-			[
 				"hom",
 				"homeView"
-			],
-			[
-				"on",
-				"onStart"
 			],
 			[
 				"sta",
@@ -466,10 +478,6 @@
 			[
 				"eve",
 				"eventMgr"
-			],
-			[
-				"fu",
-				"function"
 			],
 			[
 				"arg",
@@ -506,14 +514,6 @@
 			[
 				"req",
 				"req"
-			],
-			[
-				"Z",
-				"Zepto"
-			],
-			[
-				"g",
-				"getRoute"
 			]
 		]
 	},
@@ -620,6 +620,11 @@
 	},
 	"file_history":
 	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/transitions.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/task.js",
+		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/task.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/index.html",
+		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/navigation.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems.js",
@@ -742,12 +747,7 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/styles/animations.css",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/fonts/menuicons/icomoon.svg",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/simulator/styles/phone.css",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/simulator.html",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/phone.html",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/libs/jquery.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/class.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/gray/css/style.css",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/styles/blue/css/style.css"
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/simulator.html"
 	],
 	"find":
 	{
