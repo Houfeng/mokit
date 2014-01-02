@@ -11,16 +11,36 @@ define(function (require, exports, module) {
     var Task = $class.create({
         "taskList": [],
         "taskCount": 0,
-        "add": function (name, fn) {
+        "$init":function (fns) {
+            var self=this;
+            self.addMultiple(fns);
+        },
+        "addMult":function (fns) {
+            var self=this;
+            utils.each(fns,function (key,fn) {
+                self.add(key,fn);
+            });
+            return self;
+        },
+        "addOne": function (name, fn) {
             var self = this;
             if (!name && !fn) return this;
             if (name && !fn) {
                 fn = name;
-                name = utils.newGuid();
+                name = self.taskList.length;
             }
             self.taskList.push({ "name": name, "func": fn });
             self.taskCount = self.taskList.length;
-            return this;
+            self.result.length=self.taskCount;
+            return self;
+        },
+        "add":function (a,b) {
+            var self=this;
+            if(utils.isString(a)||utils.isFunction(a)){
+               return self.addOne(a,b);
+            }else{
+               return self.addMult(a);
+            }
         },
         "result": {},
         "execute": function (done, isSeq) {
@@ -33,6 +53,7 @@ define(function (require, exports, module) {
                 };
                 task.func(function (rs) {
                     self.result[task.name] = rs;
+                    task.done=true;
                     self.taskCount--;
                     if (self.once) self.once(task.name, rs);
                     if (self.taskCount < 1 && done) {
@@ -42,7 +63,7 @@ define(function (require, exports, module) {
                 });
                 if (!isSeq) self.execute(done, isSeq);
             }
-            return;
+            return self;
         },
         "one": function (done) {
             this.once = done;
@@ -51,8 +72,8 @@ define(function (require, exports, module) {
         "seq": function (done) {
             return this.execute(done, true);
         },
-        "end": function (done) {
-            return this.execute(done, false);
+        "end": function (done,isSeq) {
+            return this.execute(done, isSeq);
         }
     });
 
