@@ -5,7 +5,23 @@
 		[
 			[
 				"ta",
-				"task"
+				"taskList"
+			],
+			[
+				"tas",
+				"taskCount"
+			],
+			[
+				"a",
+				"a"
+			],
+			[
+				"ad",
+				"addOne"
+			],
+			[
+				"fn",
+				"fns"
 			],
 			[
 				"t",
@@ -14,10 +30,6 @@
 			[
 				"on",
 				"once"
-			],
-			[
-				"fn",
-				"fn2"
 			],
 			[
 				"fu",
@@ -170,10 +182,6 @@
 			[
 				"be",
 				"beginMask"
-			],
-			[
-				"a",
-				"abort"
 			],
 			[
 				"aj",
@@ -506,14 +514,6 @@
 			[
 				"J",
 				"JSON"
-			],
-			[
-				"ca",
-				"callback"
-			],
-			[
-				"req",
-				"req"
 			]
 		]
 	},
@@ -620,10 +620,11 @@
 	},
 	"file_history":
 	[
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/transitions.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/task.js",
-		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/index.html",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/task.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/transitions.js",
+		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/navigation.js",
@@ -746,8 +747,7 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/js/pagetransitions.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/styles/animations.css",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/fonts/menuicons/icomoon.svg",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/simulator/styles/phone.css",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/simulator.html"
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/simulator/styles/phone.css"
 	],
 	"find":
 	{
