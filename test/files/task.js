@@ -1,5 +1,6 @@
 define(function (require) {
 	var Task=require("../../src/task");
+	//
 	var task=Task.create();
 	task.add("fn1",function (done) {
 		setTimeout(function () {
@@ -11,7 +12,9 @@ define(function (require) {
 		},100);
 	}).one(function(name,value) {
 		alert(name);
-	}).seq(function (rs) {
+	}).end(function (rs) {
 		alert(rs.fn1);
 	});
+	//
+	
 });

@@ -45,6 +45,9 @@ define(function (require, exports, module) {
         "result": {},
         "execute": function (done, isSeq) {
             var self = this;
+            if (self.taskCount < 1 && done) {
+               return done(self.result);
+            }
             if (self.taskList && self.taskList.length > 0) {
                 var task = self.taskList.shift();
                 if (!task || !task.name || !task.func) {
@@ -53,7 +56,6 @@ define(function (require, exports, module) {
                 };
                 task.func(function (rs) {
                     self.result[task.name] = rs;
-                    task.done=true;
                     self.taskCount--;
                     if (self.once) self.once(task.name, rs);
                     if (self.taskCount < 1 && done) {
@@ -77,8 +79,8 @@ define(function (require, exports, module) {
         }
     });
 
-    exports.create = function () {
-        return new Task();
+    exports.create = function (tasks) {
+        return new Task(tasks);
     };
 
 });
