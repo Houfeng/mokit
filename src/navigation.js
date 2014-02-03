@@ -10,7 +10,20 @@ define(function (require, exports, module) {
     var eventMgr = require('./event');
     var utils = require("./utils");
 
-    var triggerChange = function (uri) {
+    /**
+     * Uri改变事件，在Uri发现变化时触发。
+     * @event change
+     * @param {String} uri 当前Uri
+     * @static
+     */
+    exports.change = eventMgr.create(exports, 'change');
+    /**
+     * 处理hashchange事件
+     */
+    window.hashChange = eventMgr.create(window, 'hashchange');
+
+    var onHashChange = function () {
+        var uri = getUri();
         var backIndex = _history.length - 2;
         var lastIndex = _history.length - 1;
         var isBack = (_history[backIndex] == uri);
@@ -19,19 +32,8 @@ define(function (require, exports, module) {
         } else if (_history[lastIndex] != uri) { //如果不是自已跳向自已
             _history.push(uri);
         }
-        if (!ignoreHandle) {
-            exports.change.trigger(uri, isBack, _history.length);
-        }
-        ignoreHandle = false;
+        exports.change.trigger(uri, isBack, _history.length);
     };
-
-    /**
-     * Uri改变事件，在Uri发现变化时触发。
-     * @event change
-     * @param {String} uri 当前Uri
-     * @static
-     */
-    exports.change = eventMgr.create(exports, 'change');
 
     var _history = [getUri()];
     exports.history = function () {
@@ -61,7 +63,6 @@ define(function (require, exports, module) {
      */
 
     function setUri(uri, _ignoreHandle) {
-        ignoreHandle = _ignoreHandle;
         if (uri == getUri()) return;
         if (uri && uri != '') {
             location.hash = '#' + uri;
@@ -92,11 +93,6 @@ define(function (require, exports, module) {
     };
     exports.reset = reset;
 
-    var ignoreHandle = false;
-    /**
-     * 处理hashchange事件
-     */
-    eventMgr.create(window, 'hashchange').bind(function () {
-        triggerChange(getUri());
-    });
+    window.hashChange.bind(onHashChange);
+
 });

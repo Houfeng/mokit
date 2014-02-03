@@ -18,7 +18,7 @@ define(function (require, exports, module) {
         "addMult":function (fns) {
             var self=this;
             utils.each(fns,function (key,fn) {
-                self.add(key,fn);
+                self.addOne(key,fn);
             });
             return self;
         },
@@ -38,7 +38,7 @@ define(function (require, exports, module) {
             var self=this;
             if(utils.isString(a)||utils.isFunction(a)){
                return self.addOne(a,b);
-            }else{
+            }else {
                return self.addMult(a);
             }
         },
@@ -50,7 +50,7 @@ define(function (require, exports, module) {
             }
             if (self.taskList && self.taskList.length > 0) {
                 var task = self.taskList.shift();
-                if (!task || !task.name || !task.func) {
+                if (utils.isNull(task) || utils.isNull(task.name) || utils.isNull(task.func)) {
                     self.taskCount--;
                     return;
                 };

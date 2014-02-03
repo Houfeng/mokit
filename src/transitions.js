@@ -330,6 +330,10 @@ define(function(require, exports, module) {
 				outClass = 'ui-view-rotateSlideOut';
 				inClass = 'ui-view-rotateSlideIn';
 				break;
+			case 68:
+				outClass = 'ui-view-fade ui-view-ontop';
+				inClass = 'ui-view-fade ui-view-delay200';
+				break;
 		}
 		//
 		return {

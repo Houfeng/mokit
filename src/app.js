@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 	 * @final
 	 */
 	exports.mokit = {
-		version: '2.0 Beta 14',
+		version: '2.0 Beta 15',
 		author: 'Houfeng'
 	};
 
