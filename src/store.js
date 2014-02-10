@@ -9,10 +9,12 @@ define(function (require, exports, module) {
 
     var json = require('./json');
 
+    //window.top.__mokit_data_cache__ = window.top.__mokit_data_cache__ || {};
+
     /**
 	 * 数据全局缓存对象
 	 */
-    exports.dataCache = {};
+    exports.dataCache = {};//window.top.__mokit_data_cache__;
 
     /**
 	 * 添加临时数据

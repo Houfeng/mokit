@@ -2,7 +2,7 @@ module('JSON模块');
 
 define(function(require, exports, module) {
 
-	var json = require('../../mokit/json');
+	var json = require('../../src/json');
 
 	test("JSON模块", function() {
 

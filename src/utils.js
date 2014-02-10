@@ -8,52 +8,70 @@
     "use strict";
 
     /**
-	 * 除去字符串两端的空格
-	 * @method trim
-	 * @param  {String} str 源字符串
-	 * @return {String}     结果字符串
-	 * @static
-	 */
-    owner.trim = function (str) {
-        if (str && str.trim) return str.trim();
-        else return str.replace(/(^[\\s]*)|([\\s]*$)/g, "");
+     * 验证一个对象是否为NULL
+     * @method isNull
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
+    owner.isNull = function (obj) {
+        return obj === null || typeof obj === "undefined";
     };
 
     /**
-	 * 替换所有
-	 * @method replace
-	 * @param {String} str 源字符串
-	 * @param {String} str1 要替换的字符串
-	 * @param {String} str2 替换为的字符串
-	 * @static
-	 */
+     * 除去字符串两端的空格
+     * @method trim
+     * @param  {String} str 源字符串
+     * @return {String}     结果字符串
+     * @static
+     */
+    owner.trim = function (str) {
+        if (this.isNull(str)) return str;
+        if (str.trim) {
+            return str.trim();
+        }
+        else {
+            return str.replace(/(^[\\s]*)|([\\s]*$)/g, "");
+        }
+    };
+
+    /**
+     * 替换所有
+     * @method replace
+     * @param {String} str 源字符串
+     * @param {String} str1 要替换的字符串
+     * @param {String} str2 替换为的字符串
+     * @static
+     */
     owner.replace = function (str, str1, str2) {
-        if (str === null) return str;
+        if (this.isNull(str)) return str;
         return str.replace(new RegExp(str1, 'g'), str2);
     };
 
     /**
-	 * 从字符串开头匹配
-	 * @method startWith
-	 * @param {String} str1 源字符串
-	 * @param {String} str2 要匹配的字符串
-	 * @return {Boolean} 匹配结果
-	 * @static
-	 */
+     * 从字符串开头匹配
+     * @method startWith
+     * @param {String} str1 源字符串
+     * @param {String} str2 要匹配的字符串
+     * @return {Boolean} 匹配结果
+     * @static
+     */
     owner.startWith = function (str1, str2) {
-        return str1 && str2 && str1.indexOf(str2) === 0;
+        if (this.isNull(str1) || this.isNull(str2)) return false;
+        return str1.indexOf(str2) === 0;
     };
 
     /**
-	 * 是否包含
-	 * @method contains
-	 * @param {String} str1 源字符串
-	 * @param {String} str2 检查包括字符串
-	 * @return {Boolean} 结果
-	 * @static
-	 */
+     * 是否包含
+     * @method contains
+     * @param {String} str1 源字符串
+     * @param {String} str2 检查包括字符串
+     * @return {Boolean} 结果
+     * @static
+     */
     owner.contains = function (str1, str2) {
         var self = this;
+        if (this.isNull(str1) || this.isNull(str2)) return false;
         if (self.isArray(str1)) {
             return self.each(str1, function (i, str) {
                 if (str == str2) return true;
@@ -64,140 +82,138 @@
     };
 
     /**
-	 * 从字符串结束匹配
-	 * @method endWidth
-	 * @param {String} str1 源字符串
-	 * @param {String} str2 匹配字符串
-	 * @return {Boolean} 匹配结果
-	 * @static
-	 */
+     * 从字符串结束匹配
+     * @method endWidth
+     * @param {String} str1 源字符串
+     * @param {String} str2 匹配字符串
+     * @return {Boolean} 匹配结果
+     * @static
+     */
     owner.endWith = function (str1, str2) {
-        return str1 && str2 && str1.indexOf(str2) === (str1.length - str2.length);
+        if (this.isNull(str1) || this.isNull(str2)) return false;
+        return str1.indexOf(str2) === (str1.length - str2.length);
     };
 
     /**
-	 * 是否包含属性
-	 * @method hasProperty
-	 * @param  {Object}  obj  对象
-	 * @param  {String}  name 属性名
-	 * @return {Boolean}      结果
-	 * @static
-	 */
+     * 是否包含属性
+     * @method hasProperty
+     * @param  {Object}  obj  对象
+     * @param  {String}  name 属性名
+     * @return {Boolean}      结果
+     * @static
+     */
     owner.has = owner.hasProperty = function (obj, name) {
         if (this.isNull(obj) || this.isNull(name)) return false;
         return (name in obj) || (obj.hasOwnProperty(name));
     };
 
     /**
-	 * 验证一个对象是否为NULL
-	 * @method isNull
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
-    owner.isNull = function (obj) {
-        return obj === null || typeof obj === "undefined";
-    };
-
-    /**
-	 * 验证一个对象是否为Function
-	 * @method isFunction
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
+     * 验证一个对象是否为Function
+     * @method isFunction
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
     owner.isFunction = function (obj) {
+        if (this.isNull(obj)) return false;
         return typeof obj === "function";
     };
 
     /**
-	 * 验证一个对象是否为String
-	 * @method isString
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
+     * 验证一个对象是否为String
+     * @method isString
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
     owner.isString = function (obj) {
+        if (this.isNull(obj)) return false;
         return typeof obj === 'string' || obj instanceof String;
     };
 
     /**
-	 * 验证一个对象是否为Number
-	 * @method isNumber
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
+     * 验证一个对象是否为Number
+     * @method isNumber
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
     owner.isNumber = function (obj) {
+        if (this.isNull(obj)) return false;
         return typeof obj === 'number' || obj instanceof Number;
     };
 
     /**
-	 * 验证一个对象是否为HTML Element
-	 * @method isElement
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
+     * 验证一个对象是否为HTML Element
+     * @method isElement
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
     owner.isElement = function (obj) {
+        if (this.isNull(obj)) return false;
         if (window.Element) return obj instanceof Element;
         else return (obj.tagName && obj.nodeType && obj.nodeName && obj.attributes && obj.ownerDocument);
     };
 
     /**
-	 * 验证一个对象是否为HTML Text Element
-	 * @method isText
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
+     * 验证一个对象是否为HTML Text Element
+     * @method isText
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
     owner.isText = function (obj) {
+        if (this.isNull(obj)) return false;
         return obj instanceof Text;
     };
 
     /**
-	 * 验证一个对象是否为Object
-	 * @method isObject
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
+     * 验证一个对象是否为Object
+     * @method isObject
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
     owner.isObject = function (obj) {
+        if (this.isNull(obj)) return false;
         return typeof obj === "object";
     };
 
     /**
-	 * 验证一个对象是否为Array或伪Array
-	 * @method isArray
-	 * @param  {Object}  obj 要验证的对象
-	 * @return {Boolean}     结果
-	 * @static
-	 */
+     * 验证一个对象是否为Array或伪Array
+     * @method isArray
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
     owner.isArray = function (obj) {
-        if (!obj) return false;
+        if (this.isNull(obj)) return false;
         var _isArray = ((obj instanceof Array) || (!this.isString(obj) && obj.length && this.isNumber(obj.length)));
         return _isArray;
     };
 
     /**
-	 * 验证是不是一个日期对象
-	 * @method isDate
-	 * @param {Object} val   要检查的对象
-	 * @return {Boolean}           结果
-	 * @static
-	 */
+     * 验证是不是一个日期对象
+     * @method isDate
+     * @param {Object} val   要检查的对象
+     * @return {Boolean}           结果
+     * @static
+     */
     owner.isDate = function (val) {
+        if (this.isNull(val)) return false;
         return val instanceof Date;
     };
 
     /**
-	 * 转换为数组
-	 * @method toArray
-	 * @param {Array|Object} _aar 伪数组
-	 * @return {Array} 转换结果数组
-	 * @static
-	 */
+     * 转换为数组
+     * @method toArray
+     * @param {Array|Object} _aar 伪数组
+     * @return {Array} 转换结果数组
+     * @static
+     */
     owner.toArray = function (_aar) {
+        if (this.isNull(_aar)) return [];
         try {
             return Array.prototype.slice.call(_aar);
         } catch (e) {
@@ -211,12 +227,12 @@
     };
 
     /**
-	 * 转为日期格式
-	 * @method toDate
-	 * @param {Number|String} val 日期字符串或整型数值
-	 * @return {Date} 日期对象
-	 * @static
-	 */
+     * 转为日期格式
+     * @method toDate
+     * @param {Number|String} val 日期字符串或整型数值
+     * @return {Date} 日期对象
+     * @static
+     */
     owner.toDate = function (val) {
         var self = this;
         if (self.isNumber(val))
@@ -230,15 +246,15 @@
     };
 
     /**
-	 * 遍历一个对像或数组
-	 * @method each
-	 * @param  {Object or Array}   obj  要遍历的数组或对象
-	 * @param  {Function} fn            处理函数
-	 * @return {void}                   无返回值
-	 * @static
-	 */
+     * 遍历一个对像或数组
+     * @method each
+     * @param  {Object or Array}   obj  要遍历的数组或对象
+     * @param  {Function} fn            处理函数
+     * @return {void}                   无返回值
+     * @static
+     */
     owner.each = function (list, handler) {
-        if (!list || !handler) return;
+        if (this.isNull(list) || this.isNull(handler)) return;
         if (this.isArray(list)) {
             var listLength = list.length;
             for (var i = 0; i < listLength; i++) {
@@ -256,15 +272,15 @@
     };
 
     /**
-	 * 格式化日期
-	 * @method formatDate
-	 * @param {Date|String|Number} date 日期
-	 * @param {String} format 格式化字符串
-	 * @return {String} 格式化结果
-	 * @static
-	 */
+     * 格式化日期
+     * @method formatDate
+     * @param {Date|String|Number} date 日期
+     * @param {String} format 格式化字符串
+     * @return {String} 格式化结果
+     * @static
+     */
     owner.formatDate = function (date, format) {
-        if (!format || !date) return date;
+        if (this.isNull(format) || this.isNull(date)) return date;
         date = this.toDate(date);
         var placeholder = {
             "M+": date.getMonth() + 1, //month
@@ -279,19 +295,20 @@
         for (var key in placeholder)
             if (new RegExp("(" + key + ")").test(format))
                 format = format.replace(RegExp.$1,
-					RegExp.$1.length == 1 ? placeholder[key] :
-					("00" + placeholder[key]).substr(("" + placeholder[key]).length));
+                    RegExp.$1.length == 1 ? placeholder[key] :
+                    ("00" + placeholder[key]).substr(("" + placeholder[key]).length));
         return format;
     };
 
     /**
-	 * 深度克隆对象
-	 * @method clone
-	 * @param {Object} obj 源对象
-	 * @return {Object} 新对象
-	 * @static
-	 */
+     * 深度克隆对象
+     * @method clone
+     * @param {Object} obj 源对象
+     * @return {Object} 新对象
+     * @static
+     */
     owner.clone = function (obj) {
+        if (this.isNull(obj)) return null;
         var objClone = new obj.constructor();
         for (var key in obj) {
             if (objClone[key] != obj[key]) {
@@ -308,12 +325,12 @@
     };
 
     /**
-	 * 拷贝对象
-	 * @method copy
-	 * @param {Object} obj1 源对象
-	 * @param {Object} obj2 目标对象
-	 * @static
-	 */
+     * 拷贝对象
+     * @method copy
+     * @param {Object} obj1 源对象
+     * @param {Object} obj2 目标对象
+     * @static
+     */
     owner.copy = function (obj1, obj2) {
         obj2 = obj2 || {};
         this.each(obj1, function (name) {
@@ -323,11 +340,11 @@
     };
 
     /**
-	 * 生成一个Guid
-	 * @method newGuid
-	 * @return {String} GUID字符串
-	 * @static
-	 */
+     * 生成一个Guid
+     * @method newGuid
+     * @return {String} GUID字符串
+     * @static
+     */
     owner.newGuid = function () {
         var S4 = function () {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -336,14 +353,14 @@
     };
 
     /**
-	 * 定义属性
-	 * @method defineProperty
-	 * @param {Object} obj 对象
-	 * @param {String} name 属性名
-	 * @param {Object} context 属性定义
-	 * @param {Boolean} compatible 是否使用兼容方式
-	 * @static
-	 */
+     * 定义属性
+     * @method defineProperty
+     * @param {Object} obj 对象
+     * @param {String} name 属性名
+     * @param {Object} context 属性定义
+     * @param {Boolean} compatible 是否使用兼容方式
+     * @static
+     */
     owner.defineProperty = function (obj, name, context, compatible) {
         if (!obj || !name || !context) return;
         var self = this;
@@ -375,13 +392,14 @@
     };
 
     /**
-	 * 处理URL
-	 * @method wrapUrl
-	 * @param  {String} _url 原始URL
-	 * @return {String}      处理过的URL
-	 * @static
-	 */
+     * 处理URL
+     * @method wrapUrl
+     * @param  {String} _url 原始URL
+     * @return {String}      处理过的URL
+     * @static
+     */
     owner.wrapUrl = function (url) {
+        if (this.isNull(url)) return url;
         if (url.indexOf('?') > -1) {
             url += "&__t=" + this.newGuid();
         } else {
@@ -391,11 +409,11 @@
     };
 
     /**
-	 * 休眼
-	 * @method sleep
-	 * @param {Number} s 休眠时间（毫秒）
-	 * @static
-	 */
+     * 休眼
+     * @method sleep
+     * @param {Number} s 休眠时间（毫秒）
+     * @static
+     */
     owner.sleep = function (s) {
         var time = (new Date()).getTime() + s;
         while ((new Date()).getTime() + 1 < time);
@@ -403,12 +421,12 @@
     };
 
     /**
-	 * 异步执行一个函数（模拟多线程）
-	 * @method async
-	 * @param {Function} fn 执行的函数
-	 * @param {Number} dely 延迟时间（毫秒）
-	 * @static
-	 */
+     * 异步执行一个函数（模拟多线程）
+     * @method async
+     * @param {Function} fn 执行的函数
+     * @param {Number} dely 延迟时间（毫秒）
+     * @static
+     */
     owner.async = function (fn, delay) {
         if (!this.isFunction(fn)) return;
         delay = delay || 0;
@@ -418,11 +436,11 @@
     };
 
     /**
-	 * 弹出一个select列表
-	 * @method openSelect
-	 * @param  {Element} element select元素
-	 * @return {void}         无返回值
-	 */
+     * 弹出一个select列表
+     * @method openSelect
+     * @param  {Element} element select元素
+     * @return {void}         无返回值
+     */
     owner.openSelect = function (element) {
         if (!this.isElement(element)) return;
         var worked = false;

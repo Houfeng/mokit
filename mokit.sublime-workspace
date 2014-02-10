@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"str",
+				"str2"
+			],
+			[
+				"is",
+				"isNull"
+			],
+			[
+				"isN",
+				"isNull"
+			],
+			[
+				"l",
+				"list"
+			],
+			[
+				"obj",
+				"obj"
+			],
+			[
 				"na",
 				"nav"
 			],
@@ -46,14 +66,6 @@
 			[
 				"el",
 				"else"
-			],
-			[
-				"is",
-				"isArray"
-			],
-			[
-				"l",
-				"length"
 			],
 			[
 				"ch",
@@ -130,10 +142,6 @@
 			[
 				"bt",
 				"byteBase64"
-			],
-			[
-				"str",
-				"stringBase64"
 			],
 			[
 				"v",
@@ -237,10 +245,6 @@
 			],
 			[
 				"o",
-				"obj1"
-			],
-			[
-				"obj",
 				"obj1"
 			],
 			[
@@ -510,47 +514,11 @@
 			[
 				"js",
 				"json"
-			],
-			[
-				"ob",
-				"obj2str"
 			]
 		]
 	},
 	"buffers":
 	[
-		{
-			"file": "src/navigation.js",
-			"settings":
-			{
-				"buffer_size": 2093,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "README.md",
-			"settings":
-			{
-				"buffer_size": 430,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/app.js",
-			"settings":
-			{
-				"buffer_size": 4253,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/transitions.js",
-			"settings":
-			{
-				"buffer_size": 10901,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Packages/WebBuilder ST/WebBuilder.sublime-build",
 	"command_palette":
@@ -652,26 +620,27 @@
 	},
 	"file_history":
 	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/store.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/_build/utils.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/navigation.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/transitions.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/nav.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/a",
 		"/Users/houfeng/Desktop/a",
 		"/Users/houfeng/Downloads/注册邓白式和InHouse开发者计划.txt",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/navigation.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/task.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/index.html",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/task.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/transitions.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/task.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/store.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/event.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/view.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/worker.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/worker",
 		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/JsFormat/Default (OSX).sublime-keymap",
 		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
@@ -778,8 +747,7 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/history.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/jtools/src/effect.js",
 		"/Users/houfeng/Downloads/Untitled.txt",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/index.html",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/js/pagetransitions.js"
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/index.html"
 	],
 	"find":
 	{
@@ -866,118 +834,8 @@
 	"groups":
 	[
 		{
-			"selected": 3,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "src/navigation.js",
-					"settings":
-					{
-						"buffer_size": 2093,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								193,
-								193
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "README.md",
-					"settings":
-					{
-						"buffer_size": 430,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								118,
-								118
-							]
-						],
-						"settings":
-						{
-							"is_xml": false,
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/app.js",
-					"settings":
-					{
-						"buffer_size": 4253,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								442,
-								442
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 198.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/transitions.js",
-					"settings":
-					{
-						"buffer_size": 10901,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9436,
-								9436
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 6248.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],

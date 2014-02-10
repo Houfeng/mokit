@@ -2,7 +2,7 @@ module('Class模块');
 
 define(function(require, exports, module) {
 
-	var $class = require('../../mokit/libs/class');
+	var $class = require('../../src/class');
 
 	test("JSON模块", function() {
 
