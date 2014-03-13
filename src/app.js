@@ -1,6 +1,6 @@
 /**
  * Mokit是一个符合MVC的WebApp基础开发框架
- * 当前版本: v2.0 beta 18
+ * 当前版本: v2.0 beta 22
  * @author Houfeng
  * @module mokit
  * @main mokit
@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 	 * @final
 	 */
 	exports.mokit = {
-		version: '2.0 Beta 16',
+		version: '2.0 Beta 20',
 		author: 'Houfeng'
 	};
 
@@ -165,8 +165,8 @@ define(function(require, exports, module) {
 	 */
 	exports.init = function(option) {
 		option = option || {};
-		option.style = style.currentName() || option.style || 'default';
-		option.language = language.currentName() || option.language || 'zh-cn';
+		option.style = option.style || style.currentName() || 'default';
+		option.language = option.language || language.currentName() || 'zh-cn';
 		style.setStyle(option.style);
 		language.setLanguage(option.language, function() {
 			exports.start(navigation.getUri() || option.index);

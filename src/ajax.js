@@ -71,9 +71,9 @@ define(function (require, exports, module) {
 	 * @static
 	 */
     exports.request = function (option) {
-        mask.begin(exports.loadingOption);
-        if (exports.onBegin) exports.onBegin();
         option = option || {};
+        if (!option.noMask) mask.begin(exports.loadingOption);
+        if (exports.onBegin) exports.onBegin();
         option.url = option.url || "";
         var cacheKey = "ajax:" + option.url;
         ajaxCache[cacheKey] = ajaxCache[cacheKey] || {};
@@ -99,13 +99,13 @@ define(function (require, exports, module) {
             }
             if (success) success(rs);
             if (exports.onEnd) exports.onEnd();
-            mask.end(exports.loadingOption);
+            if (!option.noMask) mask.end(exports.loadingOption);
         };
 
         //包装error
         var error = option.error;
         option.error = function () {
-            mask.end(exports.loadingOption);
+            if (!option.noMask) mask.end(exports.loadingOption);
             if (error) error(arguments);
         };
 

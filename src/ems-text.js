@@ -1,7 +1,8 @@
 (function() {
 	var globalRequire = typeof require != "undefined" && require;
 	define(function (require, exports, module) {
-	    "use strict";
+		"require:nomunge,exports:nomunge,module:nomunge";
+    	"use strict";
 	    
 	    var ajax = require("ajax");
 

@@ -4,6 +4,46 @@
 		"selected_items":
 		[
 			[
+				"d",
+				"data-bind"
+			],
+			[
+				"e",
+				"elements"
+			],
+			[
+				"mo",
+				"model"
+			],
+			[
+				"ch",
+				"childOption"
+			],
+			[
+				"childO",
+				"childHolder"
+			],
+			[
+				"de",
+				"childModelDefine"
+			],
+			[
+				"m",
+				"model"
+			],
+			[
+				"chi",
+				"childModel"
+			],
+			[
+				"j",
+				"jd"
+			],
+			[
+				"req",
+				"req"
+			],
+			[
 				"str",
 				"str2"
 			],
@@ -68,20 +108,12 @@
 				"else"
 			],
 			[
-				"ch",
-				"childs"
-			],
-			[
 				"pr",
 				"property	@property"
 			],
 			[
 				"f",
 				"final	@final"
-			],
-			[
-				"m",
-				"module	@module"
 			],
 			[
 				"r",
@@ -132,10 +164,6 @@
 				"theClass"
 			],
 			[
-				"chi",
-				"childId"
-			],
-			[
 				"by",
 				"byteBase64"
 			],
@@ -184,10 +212,6 @@
 				"style	<style>"
 			],
 			[
-				"e",
-				"error"
-			],
-			[
 				"ma",
 				"mask"
 			],
@@ -206,10 +230,6 @@
 			[
 				"c",
 				"cacheKey"
-			],
-			[
-				"mo",
-				"mokit"
 			],
 			[
 				"vi",
@@ -384,10 +404,6 @@
 				"animation"
 			],
 			[
-				"j",
-				"jquery"
-			],
-			[
 				"ho",
 				"homeView"
 			],
@@ -498,27 +514,19 @@
 			[
 				"arg",
 				"args"
-			],
-			[
-				"pro",
-				"prototype"
-			],
-			[
-				"new",
-				"newClass"
-			],
-			[
-				"json",
-				"json"
-			],
-			[
-				"js",
-				"json"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "src/app.js",
+			"settings":
+			{
+				"buffer_size": 4253,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "Packages/WebBuilder ST/WebBuilder.sublime-build",
 	"command_palette":
@@ -620,14 +628,27 @@
 	},
 	"file_history":
 	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/view.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/style.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/console.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems-json.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems-text.js",
+		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/1.json",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/ems-ex.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/json.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/class.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/nav.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/task.js",
+		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/ems-json.js",
+		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/ems-text.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/store.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/_build/utils.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/navigation.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/transitions.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/nav.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/a",
@@ -635,11 +656,9 @@
 		"/Users/houfeng/Downloads/注册邓白式和InHouse开发者计划.txt",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/index.html",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/event.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/view.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/worker.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/worker",
 		"/Users/houfeng/Library/Application Support/Sublime Text 2/Packages/JsFormat/Default (OSX).sublime-keymap",
@@ -648,7 +667,6 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/base64.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/class.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/controller.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/console.js",
 		"/Users/houfeng/Desktop/会议纪要.md",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/grid.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/yuidoc.json",
@@ -737,17 +755,7 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/models/Contects.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/views/setting.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/models/search.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo_phonegap/www/mokit/navigation.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo_phonegap/www/demo/templates/home.html",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo_phonegap/www/demo/templates/login.html",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/setting.html",
-		"/Users/houfeng/Desktop/交付物清单",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/controllers/setting.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/collection.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/mokit/history.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/jtools/src/effect.js",
-		"/Users/houfeng/Downloads/Untitled.txt",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/effect/index.html"
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo_phonegap/www/mokit/navigation.js"
 	],
 	"find":
 	{
@@ -834,8 +842,36 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "src/app.js",
+					"settings":
+					{
+						"buffer_size": 4253,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								91,
+								91
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

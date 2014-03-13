@@ -1,4 +1,7 @@
 define(function (require,exports,module) {
+	"require:nomunge,exports:nomunge,module:nomunge";
+    "use strict";
+    
 	var json = require('json');
 
 	exports.load = function (name, req, onLoad, config) {

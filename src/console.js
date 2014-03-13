@@ -9,6 +9,8 @@ define(function(require, exports, module) {
 
 	var utils = require('./utils');
 
+	var target='[mokit] ';
+
 	/**
 	 * 是否开启
 	 * @property {Boolean} enabled
@@ -75,7 +77,7 @@ define(function(require, exports, module) {
 	 * @static
 	 */
 	exports.log = function(msg) {
-		if (exports.enabled) getConsole().log(msg);
+		if (exports.enabled) getConsole().log(target+msg);
 	};
 
 	/**
@@ -85,7 +87,7 @@ define(function(require, exports, module) {
 	 * @static
 	 */
 	exports.error = function(msg) {
-		if (exports.enabled) getConsole().error(msg);
+		if (exports.enabled) getConsole().error(target+msg);
 	};
 
 	/**
@@ -95,7 +97,7 @@ define(function(require, exports, module) {
 	 * @static
 	 */
 	exports.info = function(msg) {
-		if (exports.enabled) getConsole().info(msg);
+		if (exports.enabled) getConsole().info(target+msg);
 	};
 
 	/**
@@ -105,6 +107,6 @@ define(function(require, exports, module) {
 	 * @static
 	 */
 	exports.warn = function(msg) {
-		if (exports.enabled) getConsole().warn(msg);
+		if (exports.enabled) getConsole().warn(target+msg);
 	};
 });

@@ -140,6 +140,9 @@ define(function(require, exports, module) {
     var handleEvent = function(view) {
         //查找所有事件绑定元素
         var elements = view.ui.find("[data-event]");
+        if(elements.attr('[data-event]')){
+            elements.splice(0, 0, elements[0]);//将UI最顶层容器也加入元素组中
+        }
         elements.each(function() {
             var element = $(this);
             var eventItems = element.attr('data-event');
@@ -160,8 +163,9 @@ define(function(require, exports, module) {
                         expr.methodArgs.reverse();
                         expr.methodArgs.push(context);
                         expr.methodArgs.reverse();
-                        eventHandler.apply(eventTarget, expr.methodArgs);
+                        var rs = eventHandler.apply(eventTarget, expr.methodArgs);
                         expr = null;
+                        return rs;
                     });
                 } else {
                     console.error((expr.isViewMethod ? 'method' : 'action') + ' "' + expr.methodName + '" not found');
@@ -189,6 +193,9 @@ define(function(require, exports, module) {
      */
     var handleBind = function(view) {
         var elements = view.ui.find("[data-bind]");
+        if(elements.attr('[data-bind]')){
+            elements.splice(0, 0, elements[0]);//将UI最顶层容器也加入元素组中
+        }
         elements.each(function() {
             var element = $(this);
             var bindItems = element.attr('data-bind');
@@ -211,6 +218,9 @@ define(function(require, exports, module) {
     var updateModel = function(view) {
         if (!view || !view.ui) return;
         var elements = view.ui.find("[data-bind]");
+        if(elements.attr('[data-bind]')){//将UI最顶层容器也加入元素组中
+            elements.splice(0, 0, elements[0]);
+        }
         elements.each(function() {
             var element = $(this);
             var bindItems = element.attr('data-bind');
@@ -236,14 +246,22 @@ define(function(require, exports, module) {
     var handleChildView = function(view) {
         view.children = view.children || {};
         var childs = view.ui.find('[data-view]');
+        if(childs.length<1){
+            if(view.onChildRender)view.onChildRender();
+            return;
+        }
         var completed=0;
         childs.each(function() {
             var childHolder = $(this);
             var childUri = childHolder.attr('data-view');
             if (!childUri) return;
             //取子视图Id及子模型
-            var childId = childHolder.attr('id'),
-                childModel = getModel(view.model, (childHolder.attr('data-model') || '')) || view.model;
+            var childId = childHolder.attr('id');
+            var childModelPath = childHolder.attr('data-model') || '';
+            var childModel = getModel(view.model, childModelPath) || view.model;
+            //取子视图选项
+            var childOptionJson = childHolder.attr('data-option')||'{}';
+            var childOption = json.parse(childOptionJson);
             //如果已存在
             if (view.children[childId]) {
                 //view.children[childId].model = childModel;
@@ -256,7 +274,8 @@ define(function(require, exports, module) {
             require(module.resovleUri(childUri, view.template), function(ChildView) {
                 view[childId] = view.children[childId] = new ChildView({
                     model: childModel,
-                    controller: view.controller
+                    controller: view.controller,
+                    option: childOption
                 });
                 view.children[childId].parent = view;
                 view.children[childId].root = view.root || view;
@@ -316,6 +335,7 @@ define(function(require, exports, module) {
             self.model = option.model || self.model || {};
             self.controller = option.controller || self.controller || {};
             self.template = option.template || self.template || '';
+            self.option = option.option || self.option || {}; //option是用json控制视图行为或外观的
             self.elMap = self.el;
             if (self.model.registerView) {
                 self.model.registerView(self);
@@ -350,11 +370,14 @@ define(function(require, exports, module) {
          */
         this.render = function(container, callback) {
             var self = this;
+            if (self.onPreInit) self.onPreInit({view:self});
             complieTemplate(self.templateType, self.template, function(tpl) {
                 var old_ui = self.ui;
                 self.ui = $($.trim(tpl(self.model, {
                     lang: language.current(),
-                    self: self
+                    self: self,
+                    model: self.model, //tp 模板引擎其实也会自动将执行时的第一个参数放入 $.model;
+                    option: self.option
                 })));
                 if (!self.ui || self.ui.length < 1) {
                     return console.error(self.ui);
@@ -364,7 +387,7 @@ define(function(require, exports, module) {
                 handleEvent(self);
                 handleChildView(self);
                 setPageTitle(self);
-                if (self.onInit) self.onInit();
+                if (self.onInit) self.onInit({view:self});
                 if (old_ui) old_ui.remove();
                 self.container = container || self.container || rootContainer;
                 self.container = utils.isString(container) ? $(self.container) : self.container;
@@ -373,7 +396,7 @@ define(function(require, exports, module) {
                 } else {
                     self.container.after(self.ui);
                 }
-                if (self.onRender) self.onRender();
+                if (self.onRender) self.onRender({view:self});
                 if (callback) callback(self.ui);
             });
         };
@@ -386,7 +409,7 @@ define(function(require, exports, module) {
         this.remove = function() {
             var self = this;
             if (self.ui) self.ui.remove();
-            if (self.onRemove) self.onRemove();
+            if (self.onRemove) self.onRemove({view:self});
             if (self.model.removeView) {
                 self.model.removeView(self);
             }
@@ -400,12 +423,14 @@ define(function(require, exports, module) {
 
         this.hide = function() {
             var self = this;
-            if (self.ui) return self.ui.hide();
+            if (self.ui) self.ui.hide();
+            if(self.onHide)self.onHide({view:self});
         };
 
         this.show = function() {
             var self = this;
-            if (self.ui) return self.ui.show();
+            if (self.ui) self.ui.show();
+            if(self.onShow)self.onShow({view:self});
         };
 
     });

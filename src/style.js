@@ -16,12 +16,14 @@ define(function(require, exports, module) {
 
 	exports.styleChange = eventMgr.create(exports, 'styleChange');
 
+	exports.storeKey="current-name";
+
 	utils.defineProperty(exports, 'currentName', {
 		get: function() {
-			return store.local.get('style:current-name');
+			return store.local.get('style:'+ exports.storeKey);
 		},
 		set: function(name) {
-			return store.local.set('style:current-name', name);
+			return store.local.set('style:'+ exports.storeKey, name);
 		}
 	}, true);
 
@@ -45,17 +47,13 @@ define(function(require, exports, module) {
 	 * @static
 	 */
 	exports.setStyle = function(name, callback) {
-		if (!utils.isString(name)) return;
+		if (!utils.isString(name)) return callback();
 		if (styleTable[name]) {
-			var newStyleUri = utils.wrapUrl(styleTable[name].split('?')[0].split('#')[0]);
-			require(newStyleUri, function(rs) {
-				utils.async(function() {
-					module.unrequire(styleTable[exports.currentName()]);
-					exports.currentName(name);
-					styleTable[name] = newStyleUri;
-					exports.styleChange.trigger(name, rs);
-					if (callback) callback(name, rs);
-				});
+			module.unrequire(styleTable[exports.currentName()]);
+			require(styleTable[name], function(rs) {
+				exports.currentName(name);
+				exports.styleChange.trigger(name, rs);
+				if (callback) callback(name, rs);
 			});
 		} else {
 			console.error('style "' + name + '" not found.');
