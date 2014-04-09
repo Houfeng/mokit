@@ -15,6 +15,7 @@ define(function(require, exports, module) {
         json = require('./json'),
         $model = require('./model'),
         store = require('./store'),
+        Task = require('./task'),
         console = require('./console'),
         language = require('./language'),
         eventMgr = require('./event');
@@ -81,7 +82,7 @@ define(function(require, exports, module) {
      * 获取一个子模型对象
      * @param  {Object} root 源模型对象
      * @param  {Object} path 子模型对象路径
-     * @return {NULL}      	 取到的子模型对象
+     * @return {NULL}        取到的子模型对象
      */
     var getModel = function(root, path) {
         if (!root || !path) return null;
@@ -97,7 +98,7 @@ define(function(require, exports, module) {
      * @param  {Object} root  源模型对象
      * @param  {Object} path  子模型对象路径
      * @param  {Object} value 子对象
-     * @return {NULL}      	  无返回值
+     * @return {NULL}         无返回值
      */
     var setModel = function(root, path, value) {
         if (root === null || path === null || value === null) return;
@@ -246,45 +247,51 @@ define(function(require, exports, module) {
     var handleChildView = function(view) {
         view.children = view.children || {};
         var childs = view.ui.find('[data-view]');
+        var _context={'view':view};
         if(childs.length<1){
-            if(view.onChildRender)view.onChildRender();
+            if(view.onChildRender)view.onChildRender(_context);
             return;
         }
-        var completed=0;
+        var task = Task.create();
         childs.each(function() {
-            var childHolder = $(this);
-            var childUri = childHolder.attr('data-view');
-            if (!childUri) return;
-            //取子视图Id及子模型
-            var childId = childHolder.attr('id');
-            var childModelPath = childHolder.attr('data-model') || '';
-            var childModel = getModel(view.model, childModelPath) || view.model;
-            //取子视图选项
-            var childOptionJson = childHolder.attr('data-option')||'{}';
-            var childOption = json.parse(childOptionJson);
-            //如果已存在
-            if (view.children[childId]) {
-                //view.children[childId].model = childModel;
-                view.children[childId].render(childHolder,function(){
-                    if(view.onChildRender)view.onChildRender();
-                });
-                return;
-            };
-            //如果不存在
-            require(module.resovleUri(childUri, view.template), function(ChildView) {
-                view[childId] = view.children[childId] = new ChildView({
-                    model: childModel,
-                    controller: view.controller,
-                    option: childOption
-                });
-                view.children[childId].parent = view;
-                view.children[childId].root = view.root || view;
-                view.children[childId].render(childHolder,function(){
-                    completed++;
-                    if(view.onChildRender&&completed>=childs.length)
-                        view.onChildRender();
-                });
+             var childHolder = $(this);
+            task.add(function (done) {
+                var childUri = childHolder.attr('data-view');
+                if (!childUri) {
+                    return done();
+                }
+                //取子视图Id及子模型
+                var childId = childHolder.attr('id');
+                if(utils.isNull(childId)){
+                   childId= utils.newGuid();
+                   childHolder.attr('id',childId);
+                }
+                var childModelPath = childHolder.attr('data-model') || '';
+                var childModel = getModel(view.model, childModelPath) || view.model;
+                //取子视图选项
+                var childOptionJson = childHolder.attr('data-option')||'{}';
+                var childOption = json.parse(childOptionJson);
+                //如果已存在
+                if (view.children[childId]) {
+                    //view.children[childId].model = childModel;
+                    view.children[childId].render(childHolder,done);
+                    return;
+                };
+                //如果不存在
+                require(module.resovleUri(childUri, view.template), function(ChildView) {
+                    view[childId] = view.children[childId] = new ChildView({
+                        model: childModel,
+                        controller: view.controller,
+                        option: childOption
+                    });
+                    view.children[childId].parent = view;
+                    view.children[childId].root = view.root || view;
+                    view.children[childId].render(childHolder,done);
+                }); 
             });
+        });
+        task.end(function () {
+            if(view.onChildRender)view.onChildRender(_context);
         });
     };
 
@@ -382,12 +389,14 @@ define(function(require, exports, module) {
                 if (!self.ui || self.ui.length < 1) {
                     return console.error(self.ui);
                 }
+                self.root = self.root || self;
+                var _context = {'view':self};
                 mapElements(self);
                 handleBind(self);
                 handleEvent(self);
                 handleChildView(self);
                 setPageTitle(self);
-                if (self.onInit) self.onInit({view:self});
+                if (self.onInit) self.onInit(_context);
                 if (old_ui) old_ui.remove();
                 self.container = container || self.container || rootContainer;
                 self.container = utils.isString(container) ? $(self.container) : self.container;
@@ -396,7 +405,7 @@ define(function(require, exports, module) {
                 } else {
                     self.container.after(self.ui);
                 }
-                if (self.onRender) self.onRender({view:self});
+                if (self.onRender) self.onRender(_context);
                 if (callback) callback(self.ui);
             });
         };

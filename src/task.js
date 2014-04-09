@@ -42,11 +42,20 @@ define(function (require, exports, module) {
                return self.addMult(a);
             }
         },
+        "reset":function(){
+            var self = this;
+            self.taskCount = self.taskList.length;
+            self.result.length=self.taskCount;
+            self.executed=false;
+        },
         "result": {},
+        "executed":false,
         "execute": function (done, isSeq) {
             var self = this;
-            if (self.taskCount < 1 && done) {
-               return done(self.result);
+            if (self.taskCount < 1 && done && !self.executed) {
+                done(self.result);
+                self.executed=true;
+                return;
             }
             if (self.taskList && self.taskList.length > 0) {
                 var task = self.taskList.shift();
@@ -60,10 +69,16 @@ define(function (require, exports, module) {
                     if (self.once) self.once(task.name, rs);
                     if (self.taskCount < 1 && done) {
                         done(self.result);
+                        self.executed=true;
+                        return;
                     }
-                    if (isSeq) self.execute(done, isSeq);
+                    if (!self.executed && isSeq){
+                        self.execute(done, isSeq);
+                    } 
                 });
-                if (!isSeq) self.execute(done, isSeq);
+                if (!self.executed && !isSeq){
+                    self.execute(done, isSeq);
+                } 
             }
             return self;
         },
