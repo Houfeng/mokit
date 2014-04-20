@@ -519,14 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "src/app.js",
-			"settings":
-			{
-				"buffer_size": 4253,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Packages/WebBuilder ST/WebBuilder.sublime-build",
 	"command_palette":
@@ -628,10 +620,11 @@
 	},
 	"file_history":
 	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/grid.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/view.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ajax.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/style.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/console.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/ems-json.js",
@@ -668,7 +661,6 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/class.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/controller.js",
 		"/Users/houfeng/Desktop/会议纪要.md",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/grid.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/yuidoc.json",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/package.json",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/demo/templates/login.html",
@@ -842,36 +834,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "src/app.js",
-					"settings":
-					{
-						"buffer_size": 4253,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								91,
-								91
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
