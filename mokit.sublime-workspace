@@ -519,6 +519,14 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "test/files/task.js",
+			"settings":
+			{
+				"buffer_size": 368,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "Packages/WebBuilder ST/WebBuilder.sublime-build",
 	"command_palette":
@@ -620,6 +628,8 @@
 	},
 	"file_history":
 	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/nav.js",
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/grid.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/README.md",
@@ -633,7 +643,6 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/ems-ex.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/json.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/class.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/nav.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/ems-json.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/ems-text.js",
@@ -647,7 +656,6 @@
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/a",
 		"/Users/houfeng/Desktop/a",
 		"/Users/houfeng/Downloads/注册邓白式和InHouse开发者计划.txt",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/index.html",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/task.js",
@@ -834,8 +842,36 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "test/files/task.js",
+					"settings":
+					{
+						"buffer_size": 368,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								320,
+								320
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

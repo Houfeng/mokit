@@ -5,15 +5,15 @@ define(function (require) {
 	task.add("fn1",function (done) {
 		setTimeout(function () {
 			done("fn1");
-		},3000);
+		},1000);
 	}).add("fn2",function (done) {
 		setTimeout(function () {
 			done("fn2");
-		},100);
+		},500);
 	}).one(function(name,value) {
 		alert(name);
-	}).end(function (rs) {
-		alert(rs.fn1);
+	}).seq(function (rs) {
+		alert("队列完成");
 	});
 	//
 	
