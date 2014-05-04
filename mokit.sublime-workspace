@@ -519,14 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "test/files/task.js",
-			"settings":
-			{
-				"buffer_size": 368,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "Packages/WebBuilder ST/WebBuilder.sublime-build",
 	"command_palette":
@@ -534,6 +526,10 @@
 		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"pci",
+				"Package Control: Install Package"
+			],
 			[
 				"pr",
 				"Package Control: Remove Package"
@@ -545,10 +541,6 @@
 			[
 				"pcr",
 				"Package Control: Remove Package"
-			],
-			[
-				"pci",
-				"Package Control: Install Package"
 			],
 			[
 				"",
@@ -611,7 +603,7 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 476.0
+		"width": 474.0
 	},
 	"console":
 	{
@@ -628,6 +620,7 @@
 	},
 	"file_history":
 	[
+		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/nav.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/task.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/app.js",
@@ -643,7 +636,6 @@
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/ems-ex.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/json.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/class.js",
-		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/test/files/task.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/ems-json.js",
 		"/Users/houfeng/Desktop/dev/MyProjects/mokit/src/ems-text.js",
 		"/Users/houfeng/Desktop/Dev/MyProjects/mokit/src/utils.js",
@@ -842,36 +834,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "test/files/task.js",
-					"settings":
-					{
-						"buffer_size": 368,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								320,
-								320
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],

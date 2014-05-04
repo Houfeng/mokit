@@ -3,19 +3,18 @@
  * @class Store
  * @module mokit
  */
-define(function (require, exports, module) {
+define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
     var json = require('./json');
+    var console = require('./console');
 
     //window.top.__mokit_data_cache__ = window.top.__mokit_data_cache__ || {};
-
     /**
 	 * 数据全局缓存对象
 	 */
-    exports.dataCache = {};//window.top.__mokit_data_cache__;
-
+    exports.dataCache = {}; //window.top.__mokit_data_cache__;
     /**
 	 * 添加临时数据
 	 * @method temp.set
@@ -37,16 +36,16 @@ define(function (require, exports, module) {
 	 * @method temp.clear
 	 */
     exports.temp = {
-        set: function (key, value) {
+        set: function(key, value) {
             exports.dataCache[key] = value;
         },
-        get: function (key) {
+        get: function(key) {
             return exports.dataCache[key];
         },
-        remove: function (key) {
+        remove: function(key) {
             exports.dataCache[key] = null;
         },
-        clear: function () {
+        clear: function() {
             exports.dataCache = {};
         }
     };
@@ -72,26 +71,38 @@ define(function (require, exports, module) {
 	 * @method session.clear
 	 */
     exports.session = {
-        set: function (key, value) {
+        set: function(key, value) {
             if (typeof sessionStorage !== 'undefined') {
-                sessionStorage.setItem(key, json.stringify(value));
+                try {
+                    sessionStorage.setItem(key, json.stringify(value));
+                } catch(ex) {
+                    console.error(ex.message);
+                }
             }
             exports.temp.set('sessionData:' + key, value);
         },
-        get: function (key) {
+        get: function(key) {
             var value = exports.temp.get(key);
             if (value == null) {
-                value = json.parse(sessionStorage.getItem(key));
+                try {
+                    value = json.parse(sessionStorage.getItem(key));
+                } catch(ex) {
+                    console.error(ex.message);
+                }
             }
             return value;
         },
-        remove: function (key) {
+        remove: function(key) {
             if (typeof sessionStorage !== 'undefined') {
-                sessionStorage.removeItem(key);
+                try {
+                    sessionStorage.removeItem(key);
+                } catch(ex) {
+                    console.error(ex.message);
+                }
             }
             exports.temp.remove('sessionData:' + key);
         },
-        clear: function () {
+        clear: function() {
             if (typeof sessionStorage !== 'undefined') {
                 sessionStorage.clear();
             }
@@ -120,26 +131,38 @@ define(function (require, exports, module) {
 	 * @method local.clear
 	 */
     exports.local = {
-        set: function (key, value) {
+        set: function(key, value) {
             if (typeof localStorage !== 'undefined') {
-                localStorage.setItem(key, json.stringify(value));
+                try {
+                    localStorage.setItem(key, json.stringify(value));
+                } catch(ex) {
+                    console.error(ex.message);
+                }
             }
             exports.temp.set('localData:' + key, value);
         },
-        get: function (key) {
+        get: function(key) {
             var value = exports.temp.get(key);
             if (value == null) {
-                value = json.parse(localStorage.getItem(key));
+                try {
+                    value = json.parse(localStorage.getItem(key));
+                } catch(ex) {
+                    console.error(ex.message);
+                }
             }
             return value;
         },
-        remove: function (key) {
+        remove: function(key) {
             if (typeof localStorage !== 'undefined') {
-                localStorage.removeItem(key);
+                try {
+                    localStorage.removeItem(key);
+                } catch(ex) {
+                    console.error(ex.message);
+                }
             }
             exports.temp.remove('localData:' + key);
         },
-        clear: function () {
+        clear: function() {
             if (typeof localStorage !== 'undefined') {
                 localStorage.clear();
             }
