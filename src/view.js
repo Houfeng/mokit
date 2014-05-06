@@ -141,8 +141,8 @@ define(function(require, exports, module) {
     var handleEvent = function(view) {
         //查找所有事件绑定元素
         var elements = view.ui.find("[data-event]");
-        if(elements.attr('[data-event]')){
-            elements.splice(0, 0, elements[0]);//将UI最顶层容器也加入元素组中
+        if(view.ui.attr('[data-event]')){
+            elements.splice(0, 0, view.ui[0]);//将UI最顶层容器也加入元素组中
         }
         elements.each(function() {
             var element = $(this);
@@ -194,8 +194,8 @@ define(function(require, exports, module) {
      */
     var handleBind = function(view) {
         var elements = view.ui.find("[data-bind]");
-        if(elements.attr('[data-bind]')){
-            elements.splice(0, 0, elements[0]);//将UI最顶层容器也加入元素组中
+        if(view.ui.attr('[data-bind]')){
+            elements.splice(0, 0, view.ui[0]);//将UI最顶层容器也加入元素组中
         }
         elements.each(function() {
             var element = $(this);
@@ -219,8 +219,8 @@ define(function(require, exports, module) {
     var updateModel = function(view) {
         if (!view || !view.ui) return;
         var elements = view.ui.find("[data-bind]");
-        if(elements.attr('[data-bind]')){//将UI最顶层容器也加入元素组中
-            elements.splice(0, 0, elements[0]);
+        if(view.ui.attr('[data-bind]')){//将UI最顶层容器也加入元素组中
+            elements.splice(0, 0, view.ui[0]);
         }
         elements.each(function() {
             var element = $(this);

@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 		eventMgr = require('./event');
 
 	//语言表
-	var langeuageTable = store.dataCache["$language"] = {};
+	var langeuageTable = store.dataCache["$language"] = exports.languages = {};
 
 	exports.languageChange = eventMgr.create(exports, 'languagechange');
 
