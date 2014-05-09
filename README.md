@@ -13,6 +13,10 @@ Mokit是一个符合MVC的WebApp基础开发框架。 请查看 [Mokit API](http
 + 高效，针对移设备专门优化，有硬件及技术平台有限资源内，达到最优的效率。
 ```
 
+### 许可协议
+>[请您遵守LGPL协议，（点击可查看LGPL协议）](http://www.gnu.org/licenses/lgpl.html)
+
+
 ### 适用场景
 ```
 + 不考虑SEO、合并请求的传统的Web应用或混合应用。
