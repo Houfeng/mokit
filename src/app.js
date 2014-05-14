@@ -186,8 +186,11 @@ define(function(require, exports, module) {
             }
         };
         //如果指定了 splash 并且没有导航到具体界面，并且延迟500ms
-        if (option.splash && (!navUri || navUri == option.splash)) {
+        if (option.splash) {
             exports.start(option.splash);
+            if (navUri == null || navUri == option.splash) {
+                navUri = option.index; //指定 index 
+            }
             utils.async(startInit, 500);
         } else {
             startInit();
