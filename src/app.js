@@ -1,6 +1,6 @@
 /**
  * Mokit是一个符合MVC的WebApp基础开发框架
- * 当前版本: v2.0 beta 25
+ * 当前版本: v2.0 beta 26
  * @author Houfeng
  * @module mokit
  * @main mokit
@@ -22,7 +22,7 @@ define(function(require, exports, module) {
      * @final
      */
     exports.mokit = {
-        version: '2.0 Beta 25',
+        version: '2.0 Beta 26',
         author: 'Houfeng'
     };
 
@@ -186,7 +186,7 @@ define(function(require, exports, module) {
             }
         };
         //如果指定了 splash 并且没有导航到具体界面，并且延迟500ms
-        if (!navUri && option.splash) {
+        if (option.splash && (!navUri || navUri == option.splash)) {
             exports.start(option.splash);
             utils.async(startInit, 500);
         } else {
