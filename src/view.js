@@ -282,7 +282,8 @@ define(function(require, exports, module) {
                     return;
                 };
                 //如果不存在
-                require(module.resovleUri(childUri, view.template), function(ChildView) {
+                childUri = module.resovleUri(childUri, view.templateType == templateType.uri ? view.template : location.href);
+                require(childUri, function(ChildView) {
                     view[childId] = view.children[childId] = new ChildView({
                         model: childModel,
                         controller: view.controller,
@@ -347,6 +348,7 @@ define(function(require, exports, module) {
             self.model = option.model || self.model || {};
             self.controller = option.controller || self.controller || {};
             self.template = option.template || self.template || '';
+            self.templateType = option.templateType || self.templateType || templateType.uri;
             self.option = option.option || self.option || {}; //option是用json控制视图行为或外观的
             self.elMap = self.el;
             if (self.model.registerView) {
