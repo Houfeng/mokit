@@ -12,29 +12,29 @@ define(function(require, exports, module) {
 
     //window.top.__mokit_data_cache__ = window.top.__mokit_data_cache__ || {};
     /**
-	 * 数据全局缓存对象
-	 */
+     * 数据全局缓存对象
+     */
     exports.dataCache = {}; //window.top.__mokit_data_cache__;
     /**
-	 * 添加临时数据
-	 * @method temp.set
-	 * @param {String} key 键
-	 * @param {Object} value 值
-	 */
+     * 添加临时数据
+     * @method temp.set
+     * @param {String} key 键
+     * @param {Object} value 值
+     */
     /**
-	 * 获取临时数据
-	 * @method temp.get
-	 * @param {String} key 键
-	 */
+     * 获取临时数据
+     * @method temp.get
+     * @param {String} key 键
+     */
     /**
-	 * 移除临时数据
-	 * @method temp.remove
-	 * @param {String} key 键
-	 */
+     * 移除临时数据
+     * @method temp.remove
+     * @param {String} key 键
+     */
     /**
-	 * 清空临时数据
-	 * @method temp.clear
-	 */
+     * 清空临时数据
+     * @method temp.clear
+     */
     exports.temp = {
         set: function(key, value) {
             exports.dataCache[key] = value;
@@ -51,31 +51,31 @@ define(function(require, exports, module) {
     };
 
     /**
-	 * 添加会话数据
-	 * @method session.set
-	 * @param {String} key 键
-	 * @param {Object} value 值
-	 */
+     * 添加会话数据
+     * @method session.set
+     * @param {String} key 键
+     * @param {Object} value 值
+     */
     /**
-	 * 获取会话数据
-	 * @method session.get
-	 * @param {String} key 键
-	 */
+     * 获取会话数据
+     * @method session.get
+     * @param {String} key 键
+     */
     /**
-	 * 移除会话数据
-	 * @method session.remove
-	 * @param {String} key 键
-	 */
+     * 移除会话数据
+     * @method session.remove
+     * @param {String} key 键
+     */
     /**
-	 * 清空会话数据
-	 * @method session.clear
-	 */
+     * 清空会话数据
+     * @method session.clear
+     */
     exports.session = {
         set: function(key, value) {
             if (typeof sessionStorage !== 'undefined') {
                 try {
                     sessionStorage.setItem(key, json.stringify(value));
-                } catch(ex) {
+                } catch (ex) {
                     console.error(ex.message);
                 }
             }
@@ -86,7 +86,7 @@ define(function(require, exports, module) {
             if (value == null) {
                 try {
                     value = json.parse(sessionStorage.getItem(key));
-                } catch(ex) {
+                } catch (ex) {
                     console.error(ex.message);
                 }
             }
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
             if (typeof sessionStorage !== 'undefined') {
                 try {
                     sessionStorage.removeItem(key);
-                } catch(ex) {
+                } catch (ex) {
                     console.error(ex.message);
                 }
             }
@@ -111,31 +111,31 @@ define(function(require, exports, module) {
     };
 
     /**
-	 * 添加本地数据
-	 * @method local.set
-	 * @param {String} key 键
-	 * @param {Object} value 值
-	 */
+     * 添加本地数据
+     * @method local.set
+     * @param {String} key 键
+     * @param {Object} value 值
+     */
     /**
-	 * 获取本地数据
-	 * @method local.get
-	 * @param {String} key 键
-	 */
+     * 获取本地数据
+     * @method local.get
+     * @param {String} key 键
+     */
     /**
-	 * 移除本地数据
-	 * @method local.remove
-	 * @param {String} key 键
-	 */
+     * 移除本地数据
+     * @method local.remove
+     * @param {String} key 键
+     */
     /**
-	 * 清空本地数据
-	 * @method local.clear
-	 */
+     * 清空本地数据
+     * @method local.clear
+     */
     exports.local = {
         set: function(key, value) {
             if (typeof localStorage !== 'undefined') {
                 try {
                     localStorage.setItem(key, json.stringify(value));
-                } catch(ex) {
+                } catch (ex) {
                     console.error(ex.message);
                 }
             }
@@ -146,7 +146,7 @@ define(function(require, exports, module) {
             if (value == null) {
                 try {
                     value = json.parse(localStorage.getItem(key));
-                } catch(ex) {
+                } catch (ex) {
                     console.error(ex.message);
                 }
             }
@@ -156,7 +156,7 @@ define(function(require, exports, module) {
             if (typeof localStorage !== 'undefined') {
                 try {
                     localStorage.removeItem(key);
-                } catch(ex) {
+                } catch (ex) {
                     console.error(ex.message);
                 }
             }

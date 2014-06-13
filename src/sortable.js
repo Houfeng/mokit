@@ -68,7 +68,7 @@ define(function(require, exports, module) {
     });
 
     /**
-     * 为元素集合启用拖动排序      
+     * 为元素集合启用拖动排序
      * @param  {Array} items  元素集合
      * @param  {Object} option 选项
      * @method use

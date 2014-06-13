@@ -1,4 +1,5 @@
-﻿/**
+﻿
+/**
  * 视图
  * @module mokit
  * @class View
@@ -141,8 +142,8 @@ define(function(require, exports, module) {
     var handleEvent = function(view) {
         //查找所有事件绑定元素
         var elements = view.ui.find("[data-event]");
-        if(view.ui.attr('[data-event]')){
-            elements.splice(0, 0, view.ui[0]);//将UI最顶层容器也加入元素组中
+        if (view.ui.attr('[data-event]')) {
+            elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
         }
         elements.each(function() {
             var element = $(this);
@@ -194,8 +195,8 @@ define(function(require, exports, module) {
      */
     var handleBind = function(view) {
         var elements = view.ui.find("[data-bind]");
-        if(view.ui.attr('[data-bind]')){
-            elements.splice(0, 0, view.ui[0]);//将UI最顶层容器也加入元素组中
+        if (view.ui.attr('[data-bind]')) {
+            elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
         }
         elements.each(function() {
             var element = $(this);
@@ -219,7 +220,7 @@ define(function(require, exports, module) {
     var updateModel = function(view) {
         if (!view || !view.ui) return;
         var elements = view.ui.find("[data-bind]");
-        if(view.ui.attr('[data-bind]')){//将UI最顶层容器也加入元素组中
+        if (view.ui.attr('[data-bind]')) { //将UI最顶层容器也加入元素组中
             elements.splice(0, 0, view.ui[0]);
         }
         elements.each(function() {
@@ -247,34 +248,37 @@ define(function(require, exports, module) {
     var handleChildView = function(view) {
         view.children = view.children || {};
         var childs = view.ui.find('[data-view]');
-        var _context={'view':view};
-        if(childs.length<1){
-            if(view.onChildRender)view.onChildRender(_context);
+        var _context = {
+            'view': view
+        };
+        if (childs.length < 1) {
+            if (view.onChildRender) view.onChildRender(_context);
             return;
         }
         var task = Task.create();
         childs.each(function() {
-             var childHolder = $(this);
-            task.add(function (done) {
+            var childHolder = $(this);
+            task.add(function(done) {
                 var childUri = childHolder.attr('data-view');
                 if (!childUri) {
                     return done();
                 }
                 //取子视图Id及子模型
                 var childId = childHolder.attr('id');
-                if(utils.isNull(childId)){
-                   childId= utils.newGuid();
-                   childHolder.attr('id',childId);
+                if (utils.isNull(childId)) {
+                    childId = utils.newGuid();
+                    childHolder.attr('id', childId);
                 }
                 var childModelPath = childHolder.attr('data-model') || '';
                 var childModel = getModel(view.model, childModelPath) || view.model;
                 //取子视图选项
-                var childOptionJson = childHolder.attr('data-option')||'{}';
+                var childOptionJson = childHolder.attr('data-option') || '{}';
                 var childOption = json.parse(childOptionJson);
                 //如果已存在
                 if (view.children[childId]) {
                     //view.children[childId].model = childModel;
-                    view.children[childId].render(childHolder,done);
+                    view.children[childId].container = childHolder;
+                    view.children[childId].render(childHolder, done);
                     return;
                 };
                 //如果不存在
@@ -286,12 +290,13 @@ define(function(require, exports, module) {
                     });
                     view.children[childId].parent = view;
                     view.children[childId].root = view.root || view;
-                    view.children[childId].render(childHolder,done);
-                }); 
+                    view.children[childId].container = childHolder;
+                    view.children[childId].render(childHolder, done);
+                });
             });
         });
-        task.end(function () {
-            if(view.onChildRender)view.onChildRender(_context);
+        task.end(function() {
+            if (view.onChildRender) view.onChildRender(_context);
         });
     };
 
@@ -377,7 +382,9 @@ define(function(require, exports, module) {
          */
         this.render = function(container, callback) {
             var self = this;
-            if (self.onPreInit) self.onPreInit({view:self});
+            if (self.onPreInit) self.onPreInit({
+                view: self
+            });
             complieTemplate(self.templateType, self.template, function(tpl) {
                 var old_ui = self.ui;
                 self.ui = $($.trim(tpl(self.model, {
@@ -390,7 +397,9 @@ define(function(require, exports, module) {
                     return console.error(self.ui);
                 }
                 self.root = self.root || self;
-                var _context = {'view':self};
+                var _context = {
+                    'view': self
+                };
                 mapElements(self);
                 handleBind(self);
                 handleEvent(self);
@@ -418,7 +427,9 @@ define(function(require, exports, module) {
         this.remove = function() {
             var self = this;
             if (self.ui) self.ui.remove();
-            if (self.onRemove) self.onRemove({view:self});
+            if (self.onRemove) self.onRemove({
+                view: self
+            });
             if (self.model.removeView) {
                 self.model.removeView(self);
             }
@@ -433,13 +444,17 @@ define(function(require, exports, module) {
         this.hide = function() {
             var self = this;
             if (self.ui) self.ui.hide();
-            if(self.onHide)self.onHide({view:self});
+            if (self.onHide) self.onHide({
+                view: self
+            });
         };
 
         this.show = function() {
             var self = this;
             if (self.ui) self.ui.show();
-            if(self.onShow)self.onShow({view:self});
+            if (self.onShow) self.onShow({
+                view: self
+            });
         };
 
     });

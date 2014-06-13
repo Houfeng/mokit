@@ -45,20 +45,20 @@ define(function(require, exports, module) {
         var rectifyY = parseInt(grid.attr("data-grid-rectify-y") || '0');
         //取不包括“边框、填充、外边距”的大小
         var size = {
-            width:grid.width(),
-            height:grid.height()
+            width: grid.width(),
+            height: grid.height()
         };
         //处理容器滚动
-        if(scrollX && grid[0].scrollWidth > size.width){
-            size.width=grid[0].scrollWidth;
+        if (scrollX && grid[0].scrollWidth > size.width) {
+            size.width = grid[0].scrollWidth;
         }
-        if(scrollX && grid[0].scrollHeight > size.height){
-            size.height=grid[0].scrollHeight;
+        if (scrollX && grid[0].scrollHeight > size.height) {
+            size.height = grid[0].scrollHeight;
         }
         //alert("grid:"+size.width+','+size.height);
         //处理容器纠偏
-        size.width+=rectifyX;
-        size.height+=rectifyY;
+        size.width += rectifyX;
+        size.height += rectifyY;
         //
         var cols = grid.attr("data-grid-cols");
         var rows = grid.attr("data-grid-rows");
@@ -79,13 +79,13 @@ define(function(require, exports, module) {
                 var cell = $(cells[cols.length * r + c]);
                 //处理单元格外边距
                 var width = cols[c];
-                width-=(parseInt(cell.css('marginLeft'))+parseInt(cell.css('marginRight')));
-                width-=(parseInt(cell.css('paddingLeft'))+parseInt(cell.css('paddingRight')));
-                width-=(parseInt(cell.css('borderLeftWidth'))+parseInt(cell.css('borderRightWidth')));
+                width -= (parseInt(cell.css('marginLeft')) + parseInt(cell.css('marginRight')));
+                width -= (parseInt(cell.css('paddingLeft')) + parseInt(cell.css('paddingRight')));
+                width -= (parseInt(cell.css('borderLeftWidth')) + parseInt(cell.css('borderRightWidth')));
                 var height = rows[r];
-                height-=(parseInt(cell.css('marginTop'))+parseInt(cell.css('marginBottom')));
-                height-=(parseInt(cell.css('paddingTop'))+parseInt(cell.css('paddingBottom')));
-                height-=(parseInt(cell.css('borderTopWidth'))+parseInt(cell.css('borderBottomWidth')));
+                height -= (parseInt(cell.css('marginTop')) + parseInt(cell.css('marginBottom')));
+                height -= (parseInt(cell.css('paddingTop')) + parseInt(cell.css('paddingBottom')));
+                height -= (parseInt(cell.css('borderTopWidth')) + parseInt(cell.css('borderBottomWidth')));
                 //alert("cell width:"+width+","+cols[c]);
                 //处理单元格百分百问题
                 if (width == size.width) width = '100%';

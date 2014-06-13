@@ -1,1 +1,0 @@
-/*csd*/define(function(require,exports,module){"use strict";var a=require("./class"),b=require("./console");var c=exports.Controller=a.create({});exports.create=function(d,e){if(!e){e=d;d=c;}return a.create(d,e);};});

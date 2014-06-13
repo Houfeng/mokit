@@ -4,7 +4,7 @@
  * @static
  * @module mokit
  */
-define(function (require, exports, module) {
+define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
@@ -15,7 +15,7 @@ define(function (require, exports, module) {
     var maskElement = null;
 
     //动画开始结束处理
-    var showMask = function (option) {
+    var showMask = function(option) {
         option = option || exports.option || {};
         if (maskCount < 1) {
             var buffer = [];
@@ -33,7 +33,7 @@ define(function (require, exports, module) {
         maskCount++;
     };
 
-    var hideMask = function (option) {
+    var hideMask = function(option) {
         option = option || {};
         maskCount--;
         if (maskCount < 1 && maskElement) {
@@ -42,26 +42,26 @@ define(function (require, exports, module) {
     };
 
     /**
-	 * 显示一个蒙板
-	 * @method show
-	 * @param {Object} option 选项，格式：{opacity:透明度,color:颜色,pic:进度图片}
-	 * @static
-	 */
+     * 显示一个蒙板
+     * @method show
+     * @param {Object} option 选项，格式：{opacity:透明度,color:颜色,pic:进度图片}
+     * @static
+     */
     exports.show = exports.begin = showMask;
 
     /**
-	 * 隐藏一个蒙板
-	 * @method hide
-	 * @param {Object} option 选项
-	 * @static
-	 */
+     * 隐藏一个蒙板
+     * @method hide
+     * @param {Object} option 选项
+     * @static
+     */
     exports.hide = exports.end = hideMask;
 
     /**
-	 * 默认选项
-	 * @property {Object} option 
-	 * @static
-	 */
+     * 默认选项
+     * @property {Object} option
+     * @static
+     */
     exports.option = {};
 
 });

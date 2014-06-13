@@ -3,7 +3,7 @@
  * @class Navigation
  * @module mokit
  */
-define(function (require, exports, module) {
+define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
@@ -22,7 +22,7 @@ define(function (require, exports, module) {
      */
     window.hashChange = eventMgr.create(window, 'hashchange');
 
-    var onHashChange = function () {
+    var onHashChange = function() {
         var uri = getUri();
         var backIndex = _history.length - 2;
         var lastIndex = _history.length - 1;
@@ -36,7 +36,7 @@ define(function (require, exports, module) {
     };
 
     var _history = [getUri()];
-    exports.history = function () {
+    exports.history = function() {
         return _history;
     };
     window.__history = _history;

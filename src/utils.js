@@ -3,7 +3,7 @@
  * @class Utils
  * @module mokit
  */
-(function (owner) {
+(function(owner) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
@@ -14,7 +14,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isNull = function (obj) {
+    owner.isNull = function(obj) {
         return obj === null || typeof obj === "undefined";
     };
 
@@ -25,12 +25,11 @@
      * @return {String}     结果字符串
      * @static
      */
-    owner.trim = function (str) {
+    owner.trim = function(str) {
         if (this.isNull(str)) return str;
         if (str.trim) {
             return str.trim();
-        }
-        else {
+        } else {
             return str.replace(/(^[\\s]*)|([\\s]*$)/g, "");
         }
     };
@@ -43,7 +42,7 @@
      * @param {String} str2 替换为的字符串
      * @static
      */
-    owner.replace = function (str, str1, str2) {
+    owner.replace = function(str, str1, str2) {
         if (this.isNull(str)) return str;
         return str.replace(new RegExp(str1, 'g'), str2);
     };
@@ -56,7 +55,7 @@
      * @return {Boolean} 匹配结果
      * @static
      */
-    owner.startWith = function (str1, str2) {
+    owner.startWith = function(str1, str2) {
         if (this.isNull(str1) || this.isNull(str2)) return false;
         return str1.indexOf(str2) === 0;
     };
@@ -69,11 +68,11 @@
      * @return {Boolean} 结果
      * @static
      */
-    owner.contains = function (str1, str2) {
+    owner.contains = function(str1, str2) {
         var self = this;
         if (this.isNull(str1) || this.isNull(str2)) return false;
         if (self.isArray(str1)) {
-            return self.each(str1, function (i, str) {
+            return self.each(str1, function(i, str) {
                 if (str == str2) return true;
             });
         } else {
@@ -89,7 +88,7 @@
      * @return {Boolean} 匹配结果
      * @static
      */
-    owner.endWith = function (str1, str2) {
+    owner.endWith = function(str1, str2) {
         if (this.isNull(str1) || this.isNull(str2)) return false;
         return str1.indexOf(str2) === (str1.length - str2.length);
     };
@@ -102,7 +101,7 @@
      * @return {Boolean}      结果
      * @static
      */
-    owner.has = owner.hasProperty = function (obj, name) {
+    owner.has = owner.hasProperty = function(obj, name) {
         if (this.isNull(obj) || this.isNull(name)) return false;
         return (name in obj) || (obj.hasOwnProperty(name));
     };
@@ -114,7 +113,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isFunction = function (obj) {
+    owner.isFunction = function(obj) {
         if (this.isNull(obj)) return false;
         return typeof obj === "function";
     };
@@ -126,7 +125,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isString = function (obj) {
+    owner.isString = function(obj) {
         if (this.isNull(obj)) return false;
         return typeof obj === 'string' || obj instanceof String;
     };
@@ -138,7 +137,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isNumber = function (obj) {
+    owner.isNumber = function(obj) {
         if (this.isNull(obj)) return false;
         return typeof obj === 'number' || obj instanceof Number;
     };
@@ -150,7 +149,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isElement = function (obj) {
+    owner.isElement = function(obj) {
         if (this.isNull(obj)) return false;
         if (window.Element) return obj instanceof Element;
         else return (obj.tagName && obj.nodeType && obj.nodeName && obj.attributes && obj.ownerDocument);
@@ -163,7 +162,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isText = function (obj) {
+    owner.isText = function(obj) {
         if (this.isNull(obj)) return false;
         return obj instanceof Text;
     };
@@ -175,7 +174,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isObject = function (obj) {
+    owner.isObject = function(obj) {
         if (this.isNull(obj)) return false;
         return typeof obj === "object";
     };
@@ -187,7 +186,7 @@
      * @return {Boolean}     结果
      * @static
      */
-    owner.isArray = function (obj) {
+    owner.isArray = function(obj) {
         if (this.isNull(obj)) return false;
         var _isArray = ((obj instanceof Array) || (!this.isString(obj) && obj.length && this.isNumber(obj.length)));
         return _isArray;
@@ -200,7 +199,7 @@
      * @return {Boolean}           结果
      * @static
      */
-    owner.isDate = function (val) {
+    owner.isDate = function(val) {
         if (this.isNull(val)) return false;
         return val instanceof Date;
     };
@@ -212,7 +211,7 @@
      * @return {Array} 转换结果数组
      * @static
      */
-    owner.toArray = function (_aar) {
+    owner.toArray = function(_aar) {
         if (this.isNull(_aar)) return [];
         try {
             return Array.prototype.slice.call(_aar);
@@ -233,7 +232,7 @@
      * @return {Date} 日期对象
      * @static
      */
-    owner.toDate = function (val) {
+    owner.toDate = function(val) {
         var self = this;
         if (self.isNumber(val))
             return new Date(val);
@@ -253,7 +252,7 @@
      * @return {void}                   无返回值
      * @static
      */
-    owner.each = function (list, handler) {
+    owner.each = function(list, handler) {
         if (this.isNull(list) || this.isNull(handler)) return;
         if (this.isArray(list)) {
             var listLength = list.length;
@@ -279,7 +278,7 @@
      * @return {String} 格式化结果
      * @static
      */
-    owner.formatDate = function (date, format) {
+    owner.formatDate = function(date, format) {
         if (this.isNull(format) || this.isNull(date)) return date;
         date = this.toDate(date);
         var placeholder = {
@@ -307,12 +306,12 @@
      * @return {Object} 新对象
      * @static
      */
-    owner.clone = function (obj) {
+    owner.clone = function(obj) {
         if (this.isNull(obj)) return null;
         var objClone = new obj.constructor();
         for (var key in obj) {
             if (objClone[key] != obj[key]) {
-                if (typeof (obj[key]) === 'object') {
+                if (typeof(obj[key]) === 'object') {
                     objClone[key] = this.clone(obj[key]);
                 } else {
                     objClone[key] = obj[key];
@@ -331,9 +330,9 @@
      * @param {Object} obj2 目标对象
      * @static
      */
-    owner.copy = function (obj1, obj2) {
+    owner.copy = function(obj1, obj2) {
         obj2 = obj2 || {};
-        this.each(obj1, function (name) {
+        this.each(obj1, function(name) {
             obj2[name] = obj1[name];
         })
         return obj2;
@@ -345,8 +344,8 @@
      * @return {String} GUID字符串
      * @static
      */
-    owner.newGuid = function () {
-        var S4 = function () {
+    owner.newGuid = function() {
+        var S4 = function() {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
         return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
@@ -361,13 +360,13 @@
      * @param {Boolean} compatible 是否使用兼容方式
      * @static
      */
-    owner.defineProperty = function (obj, name, context, compatible) {
+    owner.defineProperty = function(obj, name, context, compatible) {
         if (!obj || !name || !context) return;
         var self = this;
-        context.set = context.set || function () {
+        context.set = context.set || function() {
             throw 'do not implement ' + name + ' setter.';
         };
-        context.get = context.get || function () {
+        context.get = context.get || function() {
             throw 'do not implement ' + name + ' getter.';
         };
         //--
@@ -378,12 +377,12 @@
             } else if (Object.defineProperty) {
                 try {
                     Object.defineProperty(obj, name, context);
-                } catch (ex) { }
+                } catch (ex) {}
             }
         }
         //--
         if (!self.has(obj, name)) {
-            obj[name] = function (value) {
+            obj[name] = function(value) {
                 var method = self.isNull(value) ? 'get' : 'set';
                 return context[method].apply(obj, arguments || []);
             };
@@ -398,7 +397,7 @@
      * @return {String}      处理过的URL
      * @static
      */
-    owner.wrapUrl = function (url) {
+    owner.wrapUrl = function(url) {
         if (this.isNull(url)) return url;
         if (url.indexOf('?') > -1) {
             url += "&__t=" + this.newGuid();
@@ -414,7 +413,7 @@
      * @param {Number} s 休眠时间（毫秒）
      * @static
      */
-    owner.sleep = function (s) {
+    owner.sleep = function(s) {
         var time = (new Date()).getTime() + s;
         while ((new Date()).getTime() + 1 < time);
         return;
@@ -427,7 +426,7 @@
      * @param {Number} dely 延迟时间（毫秒）
      * @static
      */
-    owner.async = function (fn, delay) {
+    owner.async = function(fn, delay) {
         if (!this.isFunction(fn)) return;
         delay = delay || 0;
         if (fn.asyncTimer) clearTimeout(fn.asyncTimer);
@@ -441,7 +440,7 @@
      * @param  {Element} element select元素
      * @return {void}         无返回值
      */
-    owner.openSelect = function (element) {
+    owner.openSelect = function(element) {
         if (!this.isElement(element)) return;
         var worked = false;
         if (document.createEvent) { // all browsers
@@ -460,7 +459,7 @@
 
     //兼容AMD模块
     if (typeof define === 'function' && define.amd) {
-        define('$utils', [], function () {
+        define('$utils', [], function() {
             return owner;
         });
     }
