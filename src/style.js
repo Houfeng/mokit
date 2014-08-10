@@ -49,7 +49,7 @@ define(function(require, exports, module) {
     exports.setStyle = function(name, callback) {
         if (!utils.isString(name)) return callback();
         if (styleTable[name]) {
-            module.unrequire(styleTable[exports.currentName()]);
+            module.unload(styleTable[exports.currentName()]);
             require(styleTable[name], function(rs) {
                 exports.currentName(name);
                 exports.styleChange.trigger(name, rs);
