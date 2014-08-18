@@ -17,13 +17,22 @@ define(function(require, exports, module) {
     exports.styleChange = eventMgr.create(exports, 'styleChange');
 
     exports.storeKey = "current-name";
-
+    var currentName = null;
     utils.defineProperty(exports, 'currentName', {
         get: function() {
-            return store.local.get('style:' + exports.storeKey);
+            currentName = currentName || store.local.get('style:' + exports.storeKey);
+            return currentName;
         },
         set: function(name) {
-            return store.local.set('style:' + exports.storeKey, name);
+            currentName = name;
+            return currentName;
+            //return store.local.set('style:' + exports.storeKey, name);
+        }
+    }, true);
+
+    utils.defineProperty(exports, 'defaultName', {
+        get: function() {
+            return Object.getOwnPropertyNames(styleTable)[0];
         }
     }, true);
 
@@ -58,5 +67,13 @@ define(function(require, exports, module) {
         } else {
             console.error('style "' + name + '" not found.');
         }
+    };
+    
+    exports.save = function() {
+        return store.local.set('style:' + exports.storeKey, currentName);
+    };
+    
+    exports.clear = function() {
+        return store.local.set('style:' + exports.storeKey, "");
     };
 });

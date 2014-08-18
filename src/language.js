@@ -16,15 +16,20 @@ define(function(require, exports, module) {
 
     exports.languageChange = eventMgr.create(exports, 'languagechange');
 
+    var currentName = null;
+
     /**
      * currentName属性
      */
     utils.defineProperty(exports, 'currentName', {
         get: function() {
-            return store.local.get('language:current-name');
+            currentName = currentName || store.local.get('language:current-name');
+            return currentName;
         },
         set: function(name) {
-            return store.local.set('language:current-name', name);
+            currentName = name;
+            return currentName;
+            //return store.local.set('language:current-name', name);
         }
     }, true);
 
@@ -35,6 +40,17 @@ define(function(require, exports, module) {
         },
         set: function(value) {
             return _current = value;
+        }
+    }, true);
+
+    utils.defineProperty(exports, 'defaultName', {
+        get: function() {
+            var browserLanguage = (navigator.language || '').toLowerCase();
+            if (langeuageTable[browserLanguage]) {
+                return browserLanguage;
+            } else {
+                return Object.getOwnPropertyNames(langeuageTable)[0];
+            }
         }
     }, true);
 
@@ -71,5 +87,13 @@ define(function(require, exports, module) {
         } else {
             console.error('language "' + name + '" not found.');
         }
+    };
+
+    exports.save = function() {
+        return store.local.set('language:current-name', currentName);
+    };
+
+    exports.clear = function() {
+        return store.local.set('language:current-name', "");
     };
 });

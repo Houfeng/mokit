@@ -12,10 +12,12 @@ define(function(require, exports, module) {
 			var self = this;
 			app.language.setLanguage(name, function() {
 				self.render();
+				app.language.save();
 			});
 		},
 		setStyle: function(event, name) {
 			app.style.setStyle(name);
+			app.style.save();
 		},
 		alert: function(msg) {
 			alert(msg);
