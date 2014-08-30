@@ -7,7 +7,7 @@ define(function(require, exports, module) {
     "use strict";
 
     var $ = require('./jquery'),
-        style = require('./style.css'),
+        //style = require('./style.css'),
         modernizr = require('./modernizr'),
         utils = require('./utils'),
         mask = require('./mask');

@@ -19,11 +19,12 @@ define(function(require, exports, module) {
 		index: function(context) {
 			navigation.reset();
 			var self = this;
-			setTimeout(function() {
+			//setTimeout(function() {
 				self.setView(new HomeView({
 					model: Contact
 				}));
-			}, 10);
+			//}, 100000);
+			
 		},
 
 		/**

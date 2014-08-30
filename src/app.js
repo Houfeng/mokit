@@ -1,6 +1,6 @@
 /**
  * Mokit是一个符合MVC的WebApp基础开发框架
- * 当前版本: v2.0 beta 33
+ * 当前版本: v2.0 beta 34
  * @author Houfeng
  * @module mokit
  * @main mokit
@@ -22,14 +22,15 @@ define(function(require, exports, module) {
      * @final
      */
     exports.mokit = {
-        version: '2.0 Beta 33',
+        version: '2.0 Beta 34',
         author: 'Houfeng'
     };
 
     /**
      * 导入依赖
      */
-    var console = require('./console'),
+    var style = require('./style.css'),
+        console = require('./console'),
         routeMgr = require('./route'),
         eventMgr = require("./event"),
         utils = require("./utils"),
@@ -41,6 +42,7 @@ define(function(require, exports, module) {
         ajax = require('./ajax'),
         transitions = require('./transitions'),
         $ = require('./jquery'),
+        Task = require('./task'),
         navigation = require('./navigation');
 
 
@@ -167,16 +169,19 @@ define(function(require, exports, module) {
     exports.init = function(option) {
         option = option || {};
         option.style = (option.style || style.currentName() || style.defaultName() || 'default').toLowerCase();
-        style.setStyle(option.style);
         option.language = (option.language || language.currentName() || language.defaultName() || 'en-us').toLowerCase();
         var navUri = navigation.getUri();
+        window.navigation = navigation;
+        if (navUri == null || navUri == option.splash) {
+            navUri = option.index; //指定 index 
+        }
         //完成初始化
         var doneInit = function() {
             language.setLanguage(option.language, function() {
                 exports.start(navUri || option.index);
             });
         };
-        //开始初始化
+        //开始进行初始化
         var startInit = function() {
             //是否定义预初始化
             if (option.preInit) {
@@ -185,16 +190,17 @@ define(function(require, exports, module) {
                 doneInit();
             }
         };
-        //如果指定了 splash 并且没有导航到具体界面，并且延迟500ms
-        if (option.splash) {
-            exports.start(option.splash);
-            if (navUri == null || navUri == option.splash) {
-                navUri = option.index; //指定 index 
+        //首选加载样式
+        style.setStyle(option.style, function() {
+            //如果指定了 splash
+            if (option.splash) {
+                exports.start(option.splash);
+                //如果没有preInit的话一闪而过不太好
+                utils.async(startInit, 500);
+            } else {
+                startInit();
             }
-            utils.async(startInit, 500);
-        } else {
-            startInit();
-        }
+        });
     };
 
 });

@@ -44,6 +44,10 @@ define(function(require, exports, module) {
         pattern: '/about',
         target: './controllers/about',
         effect: [27, 27]
+    },{
+        pattern: '/grid',
+        target: './controllers/grid',
+        effect: [27, 27]
     }], module);
 
     //设置全局的Ajax Loading
@@ -51,13 +55,14 @@ define(function(require, exports, module) {
         pic: module.resovleUri('./images/loading.gif'),
         color: 'rgba(0,0,0,0.1)'
     };
-
+    
     /**
      * 初始化应用程序
      */
     app.init({
         //language: navigator.language,
         //style: config.style,
+        //splash: '/grid',
         index: config.home
     });
 

@@ -62,17 +62,19 @@ define(function(require, exports, module) {
             require(styleTable[name], function(rs) {
                 exports.currentName(name);
                 exports.styleChange.trigger(name, rs);
-                if (callback) callback(name, rs);
+                utils.async(function() {
+                    if (callback) callback(name, rs);
+                }, 45);
             });
         } else {
             console.error('style "' + name + '" not found.');
         }
     };
-    
+
     exports.save = function() {
         return store.local.set('style:' + exports.storeKey, currentName);
     };
-    
+
     exports.clear = function() {
         return store.local.set('style:' + exports.storeKey, "");
     };
