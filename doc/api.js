@@ -6,6 +6,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Base64",
         "Class",
         "Console",
+        "Context",
         "Controller",
         "Event",
         "Grid",
@@ -19,6 +20,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Sortable",
         "Store",
         "Style",
+        "Task",
         "Utils",
         "View"
     ],
@@ -29,7 +31,7 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "mokit",
             "name": "mokit",
-            "description": "Mokit是一个符合MVC的WebApp基础开发框架\n当前版本: v2.0 beta 11"
+            "description": "Mokit是一个符合MVC的WebApp基础开发框架\n当前版本: v2.0 beta 34"
         }
     ]
 } };

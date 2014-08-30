@@ -13,6 +13,12 @@ define(function(require, exports, module) {
         store = require('./store'),
         mask = require('./mask');
 
+    /**
+     * Ajax全局加载选项
+     * {pic: '图片 URL',color: '背景颜色 rgba'}
+     * @property loadingOption
+     * @static
+     */
     exports.loadingOption = null;
 
     window.top.__mokit_ajax_filters__ = window.top.__mokit_ajax_filters__ || [];
@@ -41,7 +47,7 @@ define(function(require, exports, module) {
     };
 
     /**
-     * 添加数据过虑器，一个过虑器包含两个方法receive:过虑收到的数据，send:过虑发送的数据。
+     * 添加数据过虑器，一个过虑器包含需要两个方法，receive:过虑收到的数据，send:过虑发送的数据。
      * @method addDataFilter
      * @param {Object} filter 过滤器对像
      * @return {void} 无返回值

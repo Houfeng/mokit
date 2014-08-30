@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/transitions.js - Mokit API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../logo.png" title="Mokit API"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: v2.0 Beta 34</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Ajax.html">Ajax</a></li>
+            
+                <li><a href="../classes/App.html">App</a></li>
+            
+                <li><a href="../classes/Base64.html">Base64</a></li>
+            
+                <li><a href="../classes/Class.html">Class</a></li>
+            
+                <li><a href="../classes/Console.html">Console</a></li>
+            
+                <li><a href="../classes/Context.html">Context</a></li>
+            
+                <li><a href="../classes/Controller.html">Controller</a></li>
+            
+                <li><a href="../classes/Event.html">Event</a></li>
+            
+                <li><a href="../classes/Grid.html">Grid</a></li>
+            
+                <li><a href="../classes/Json.html">Json</a></li>
+            
+                <li><a href="../classes/Language.html">Language</a></li>
+            
+                <li><a href="../classes/Mask.html">Mask</a></li>
+            
+                <li><a href="../classes/Model.html">Model</a></li>
+            
+                <li><a href="../classes/Move.html">Move</a></li>
+            
+                <li><a href="../classes/Navigation.html">Navigation</a></li>
+            
+                <li><a href="../classes/Route.html">Route</a></li>
+            
+                <li><a href="../classes/Sortable.html">Sortable</a></li>
+            
+                <li><a href="../classes/Store.html">Store</a></li>
+            
+                <li><a href="../classes/Style.html">Style</a></li>
+            
+                <li><a href="../classes/Task.html">Task</a></li>
+            
+                <li><a href="../classes/Utils.html">Utils</a></li>
+            
+                <li><a href="../classes/View.html">View</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/mokit.html">mokit</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/transitions.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * 视图
+ * @module mokit
+ */
+define(function(require, exports, module) {
+    &quot;require:nomunge,exports:nomunge,module:nomunge&quot;;
+    &quot;use strict&quot;;
+
+    var $ = require(&#x27;./jquery&#x27;),
+        //style = require(&#x27;./style.css&#x27;),
+        modernizr = require(&#x27;./modernizr&#x27;),
+        utils = require(&#x27;./utils&#x27;),
+        mask = require(&#x27;./mask&#x27;);
+
+    var supportCSSAnimation = modernizr.cssanimations,
+        endCurrentView = false,
+        endNextView = false;
+
+    var animationEndEventNames = {
+        &#x27;WebkitAnimation&#x27;: &#x27;webkitAnimationEnd&#x27;,
+        &#x27;OAnimation&#x27;: &#x27;oAnimationEnd&#x27;,
+        &#x27;msAnimation&#x27;: &#x27;MSAnimationEnd&#x27;,
+        &#x27;animation&#x27;: &#x27;animationend&#x27;
+    };
+    // animation end event name
+    var animationEndEventName = animationEndEventNames[modernizr.prefixed(&#x27;animation&#x27;)];
+
+    var _isAnimating = false;
+    exports.isAnimating = function() {
+        return _isAnimating;
+    };
+
+    /**
+     * 恢复原有样式
+     */
+    var resetViewClass = function(currentView, nextView) {
+        if (currentView) currentView.attr(&#x27;class&#x27;, currentView.data(&#x27;originalClassList&#x27;));
+        if (nextView) nextView.attr(&#x27;class&#x27;, nextView.data(&#x27;originalClassList&#x27;) + &#x27; ui-view-current&#x27;);
+    };
+
+    /**
+     * 保存原有样式
+     */
+    var saveViewClass = function(currentView, nextView) {
+        if (currentView) currentView.data(&#x27;originalClassList&#x27;, currentView.attr(&#x27;class&#x27;) || &#x27;&#x27;);
+        if (nextView) nextView.data(&#x27;originalClassList&#x27;, nextView.attr(&#x27;class&#x27;) || &#x27;&#x27;);
+    };
+
+    /**
+     * 在动画结束时
+     */
+    var onEndAnimation = function(currentView, nextView, callback) {
+        endCurrentView = false;
+        endNextView = false;
+        resetViewClass(currentView, nextView);
+        if (callback) callback();
+    };
+
+    /**
+     * 取动画样式类名
+     */
+    var getAnimationClass = function(animation) {
+        var outClass, inClass;
+        switch (animation) {
+            case 1:
+                outClass = &#x27;ui-view-moveToLeft&#x27;;
+                inClass = &#x27;ui-view-moveFromRight&#x27;;
+                break;
+            case 2:
+                outClass = &#x27;ui-view-moveToRight&#x27;;
+                inClass = &#x27;ui-view-moveFromLeft&#x27;;
+                break;
+            case 3:
+                outClass = &#x27;ui-view-moveToTop&#x27;;
+                inClass = &#x27;ui-view-moveFromBottom&#x27;;
+                break;
+            case 4:
+                outClass = &#x27;ui-view-moveToBottom&#x27;;
+                inClass = &#x27;ui-view-moveFromTop&#x27;;
+                break;
+            case 5:
+                outClass = &#x27;ui-view-fade&#x27;;
+                inClass = &#x27;ui-view-moveFromRight ui-view-ontop&#x27;;
+                break;
+            case 6:
+                outClass = &#x27;ui-view-fade&#x27;;
+                inClass = &#x27;ui-view-moveFromLeft ui-view-ontop&#x27;;
+                break;
+            case 7:
+                outClass = &#x27;ui-view-fade&#x27;;
+                inClass = &#x27;ui-view-moveFromBottom ui-view-ontop&#x27;;
+                break;
+            case 8:
+                outClass = &#x27;ui-view-fade&#x27;;
+                inClass = &#x27;ui-view-moveFromTop ui-view-ontop&#x27;;
+                break;
+            case 9:
+                outClass = &#x27;ui-view-moveToLeftFade&#x27;;
+                inClass = &#x27;ui-view-moveFromRightFade&#x27;;
+                break;
+            case 10:
+                outClass = &#x27;ui-view-moveToRightFade&#x27;;
+                inClass = &#x27;ui-view-moveFromLeftFade&#x27;;
+                break;
+            case 11:
+                outClass = &#x27;ui-view-moveToTopFade&#x27;;
+                inClass = &#x27;ui-view-moveFromBottomFade&#x27;;
+                break;
+            case 12:
+                outClass = &#x27;ui-view-moveToBottomFade&#x27;;
+                inClass = &#x27;ui-view-moveFromTopFade&#x27;;
+                break;
+            case 13:
+                outClass = &#x27;ui-view-moveToLeftEasing ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-moveFromRight&#x27;;
+                break;
+            case 14:
+                outClass = &#x27;ui-view-moveToRightEasing ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-moveFromLeft&#x27;;
+                break;
+            case 15:
+                outClass = &#x27;ui-view-moveToTopEasing ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-moveFromBottom&#x27;;
+                break;
+            case 16:
+                outClass = &#x27;ui-view-moveToBottomEasing ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-moveFromTop&#x27;;
+                break;
+            case 17:
+                outClass = &#x27;ui-view-scaleDown&#x27;;
+                inClass = &#x27;ui-view-moveFromRight ui-view-ontop&#x27;;
+                break;
+            case 18:
+                outClass = &#x27;ui-view-scaleDown&#x27;;
+                inClass = &#x27;ui-view-moveFromLeft ui-view-ontop&#x27;;
+                break;
+            case 19:
+                outClass = &#x27;ui-view-scaleDown&#x27;;
+                inClass = &#x27;ui-view-moveFromBottom ui-view-ontop&#x27;;
+                break;
+            case 20:
+                outClass = &#x27;ui-view-scaleDown&#x27;;
+                inClass = &#x27;ui-view-moveFromTop ui-view-ontop&#x27;;
+                break;
+            case 21:
+                outClass = &#x27;ui-view-scaleDown&#x27;;
+                inClass = &#x27;ui-view-scaleUpDown ui-view-delay300&#x27;;
+                break;
+            case 22:
+                outClass = &#x27;ui-view-scaleDownUp&#x27;;
+                inClass = &#x27;ui-view-scaleUp ui-view-delay300&#x27;;
+                break;
+            case 23:
+                outClass = &#x27;ui-view-moveToLeft ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-scaleUp&#x27;;
+                break;
+            case 24:
+                outClass = &#x27;ui-view-moveToRight ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-scaleUp&#x27;;
+                break;
+            case 25:
+                outClass = &#x27;ui-view-moveToTop ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-scaleUp&#x27;;
+                break;
+            case 26:
+                outClass = &#x27;ui-view-moveToBottom ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-scaleUp&#x27;;
+                break;
+            case 27:
+                outClass = &#x27;ui-view-scaleDownCenter&#x27;;
+                inClass = &#x27;ui-view-scaleUpCenter ui-view-delay400&#x27;;
+                break;
+            case 28:
+                outClass = &#x27;ui-view-rotateRightSideFirst&#x27;;
+                inClass = &#x27;ui-view-moveFromRight ui-view-delay200 ui-view-ontop&#x27;;
+                break;
+            case 29:
+                outClass = &#x27;ui-view-rotateLeftSideFirst&#x27;;
+                inClass = &#x27;ui-view-moveFromLeft ui-view-delay200 ui-view-ontop&#x27;;
+                break;
+            case 30:
+                outClass = &#x27;ui-view-rotateTopSideFirst&#x27;;
+                inClass = &#x27;ui-view-moveFromTop ui-view-delay200 ui-view-ontop&#x27;;
+                break;
+            case 31:
+                outClass = &#x27;ui-view-rotateBottomSideFirst&#x27;;
+                inClass = &#x27;ui-view-moveFromBottom ui-view-delay200 ui-view-ontop&#x27;;
+                break;
+            case 32:
+                outClass = &#x27;ui-view-flipOutRight&#x27;;
+                inClass = &#x27;ui-view-flipInLeft ui-view-delay500&#x27;;
+                break;
+            case 33:
+                outClass = &#x27;ui-view-flipOutLeft&#x27;;
+                inClass = &#x27;ui-view-flipInRight ui-view-delay500&#x27;;
+                break;
+            case 34:
+                outClass = &#x27;ui-view-flipOutTop&#x27;;
+                inClass = &#x27;ui-view-flipInBottom ui-view-delay500&#x27;;
+                break;
+            case 35:
+                outClass = &#x27;ui-view-flipOutBottom&#x27;;
+                inClass = &#x27;ui-view-flipInTop ui-view-delay500&#x27;;
+                break;
+            case 36:
+                outClass = &#x27;ui-view-rotateFall ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-scaleUp&#x27;;
+                break;
+            case 37:
+                outClass = &#x27;ui-view-rotateOutNewspaper&#x27;;
+                inClass = &#x27;ui-view-rotateInNewspaper ui-view-delay500&#x27;;
+                break;
+            case 38:
+                outClass = &#x27;ui-view-rotatePushLeft&#x27;;
+                inClass = &#x27;ui-view-moveFromRight&#x27;;
+                break;
+            case 39:
+                outClass = &#x27;ui-view-rotatePushRight&#x27;;
+                inClass = &#x27;ui-view-moveFromLeft&#x27;;
+                break;
+            case 40:
+                outClass = &#x27;ui-view-rotatePushTop&#x27;;
+                inClass = &#x27;ui-view-moveFromBottom&#x27;;
+                break;
+            case 41:
+                outClass = &#x27;ui-view-rotatePushBottom&#x27;;
+                inClass = &#x27;ui-view-moveFromTop&#x27;;
+                break;
+            case 42:
+                outClass = &#x27;ui-view-rotatePushLeft&#x27;;
+                inClass = &#x27;ui-view-rotatePullRight ui-view-delay180&#x27;;
+                break;
+            case 43:
+                outClass = &#x27;ui-view-rotatePushRight&#x27;;
+                inClass = &#x27;ui-view-rotatePullLeft ui-view-delay180&#x27;;
+                break;
+            case 44:
+                outClass = &#x27;ui-view-rotatePushTop&#x27;;
+                inClass = &#x27;ui-view-rotatePullBottom ui-view-delay180&#x27;;
+                break;
+            case 45:
+                outClass = &#x27;ui-view-rotatePushBottom&#x27;;
+                inClass = &#x27;ui-view-rotatePullTop ui-view-delay180&#x27;;
+                break;
+            case 46:
+                outClass = &#x27;ui-view-rotateFoldLeft&#x27;;
+                inClass = &#x27;ui-view-moveFromRightFade&#x27;;
+                break;
+            case 47:
+                outClass = &#x27;ui-view-rotateFoldRight&#x27;;
+                inClass = &#x27;ui-view-moveFromLeftFade&#x27;;
+                break;
+            case 48:
+                outClass = &#x27;ui-view-rotateFoldTop&#x27;;
+                inClass = &#x27;ui-view-moveFromBottomFade&#x27;;
+                break;
+            case 49:
+                outClass = &#x27;ui-view-rotateFoldBottom&#x27;;
+                inClass = &#x27;ui-view-moveFromTopFade&#x27;;
+                break;
+            case 50:
+                outClass = &#x27;ui-view-moveToRightFade&#x27;;
+                inClass = &#x27;ui-view-rotateUnfoldLeft&#x27;;
+                break;
+            case 51:
+                outClass = &#x27;ui-view-moveToLeftFade&#x27;;
+                inClass = &#x27;ui-view-rotateUnfoldRight&#x27;;
+                break;
+            case 52:
+                outClass = &#x27;ui-view-moveToBottomFade&#x27;;
+                inClass = &#x27;ui-view-rotateUnfoldTop&#x27;;
+                break;
+            case 53:
+                outClass = &#x27;ui-view-moveToTopFade&#x27;;
+                inClass = &#x27;ui-view-rotateUnfoldBottom&#x27;;
+                break;
+            case 54:
+                outClass = &#x27;ui-view-rotateRoomLeftOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateRoomLeftIn&#x27;;
+                break;
+            case 55:
+                outClass = &#x27;ui-view-rotateRoomRightOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateRoomRightIn&#x27;;
+                break;
+            case 56:
+                outClass = &#x27;ui-view-rotateRoomTopOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateRoomTopIn&#x27;;
+                break;
+            case 57:
+                outClass = &#x27;ui-view-rotateRoomBottomOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateRoomBottomIn&#x27;;
+                break;
+            case 58:
+                outClass = &#x27;ui-view-rotateCubeLeftOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCubeLeftIn&#x27;;
+                break;
+            case 59:
+                outClass = &#x27;ui-view-rotateCubeRightOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCubeRightIn&#x27;;
+                break;
+            case 60:
+                outClass = &#x27;ui-view-rotateCubeTopOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCubeTopIn&#x27;;
+                break;
+            case 61:
+                outClass = &#x27;ui-view-rotateCubeBottomOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCubeBottomIn&#x27;;
+                break;
+            case 62:
+                outClass = &#x27;ui-view-rotateCarouselLeftOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCarouselLeftIn&#x27;;
+                break;
+            case 63:
+                outClass = &#x27;ui-view-rotateCarouselRightOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCarouselRightIn&#x27;;
+                break;
+            case 64:
+                outClass = &#x27;ui-view-rotateCarouselTopOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCarouselTopIn&#x27;;
+                break;
+            case 65:
+                outClass = &#x27;ui-view-rotateCarouselBottomOut ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-rotateCarouselBottomIn&#x27;;
+                break;
+            case 66:
+                outClass = &#x27;ui-view-rotateSidesOut&#x27;;
+                inClass = &#x27;ui-view-rotateSidesIn ui-view-delay200&#x27;;
+                break;
+            case 67:
+                outClass = &#x27;ui-view-rotateSlideOut&#x27;;
+                inClass = &#x27;ui-view-rotateSlideIn&#x27;;
+                break;
+            case 68:
+                outClass = &#x27;ui-view-fade ui-view-ontop&#x27;;
+                inClass = &#x27;ui-view-fade ui-view-delay200&#x27;;
+                break;
+        }
+        //
+        return {
+            &#x27;inClass&#x27;: inClass,
+            &#x27;outClass&#x27;: outClass
+        };
+    };
+
+    /**
+     * 切换
+     */
+    var _change = function(currentView, nextView, animation, callback) {
+        if (!currentView || !nextView || !animation || animation == 0) {
+            setTimeout(function() {
+                onEndAnimation(null, null, callback);
+            }, 13);
+            return;
+        }
+        //
+        saveViewClass(currentView, nextView);
+        //设置样式
+        nextView.addClass(&#x27;ui-view-current&#x27;);
+        var animationClass = getAnimationClass(animation);
+        //
+        currentView.addClass(animationClass.outClass).on(animationEndEventName, function() {
+            currentView.off(animationEndEventName);
+            endCurrentView = true;
+            if (endNextView) {
+                onEndAnimation(currentView, nextView, callback);
+            }
+        });
+        //
+        nextView.addClass(animationClass.inClass).on(animationEndEventName, function() {
+            nextView.off(animationEndEventName);
+            endNextView = true;
+            if (endCurrentView) {
+                onEndAnimation(currentView, nextView, callback);
+            }
+        });
+        //
+        if (!supportCSSAnimation) {
+            onEndAnimation(currentView, nextView, callback);
+        }
+    };
+
+    exports.change = function(currentView, nextView, animation, callback, option) {
+        //确保同时只有一个动画在进行
+        if (_isAnimating) return;
+        _isAnimating = true;
+        //
+        mask.begin(option);
+        currentView = currentView.ui || currentView;
+        nextView = nextView.ui || nextView;
+        _change(currentView, nextView, animation, function() {
+            mask.end(option);
+            if (callback) callback();
+            _isAnimating = false;
+        });
+    };
+
+});
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

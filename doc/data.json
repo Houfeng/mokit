@@ -2,9 +2,9 @@
     "project": {
         "name": "Mokit API",
         "description": "一个符合MVC的WebApp基础开发框架",
-        "version": "v2.0 Beta 11",
+        "version": "v2.0 Beta 34",
         "url": "http://houfeng.net",
-        "logo": "logo.png"
+        "logo": "./logo.png"
     },
     "files": {
         "src/ajax.js": {
@@ -60,13 +60,6 @@
             "classes": {
                 "Controller": 1
             },
-            "fors": {},
-            "namespaces": {}
-        },
-        "src/ems.js": {
-            "name": "src/ems.js",
-            "modules": {},
-            "classes": {},
             "fors": {},
             "namespaces": {}
         },
@@ -185,6 +178,15 @@
             "fors": {},
             "namespaces": {}
         },
+        "src/task.js": {
+            "name": "src/task.js",
+            "modules": {},
+            "classes": {
+                "Task": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "src/transitions.js": {
             "name": "src/transitions.js",
             "modules": {},
@@ -205,8 +207,16 @@
             "name": "src/view.js",
             "modules": {},
             "classes": {
-                "View": 1
+                "View": 1,
+                "Context": 1
             },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/worker.js": {
+            "name": "src/worker.js",
+            "modules": {},
+            "classes": {},
             "fors": {},
             "namespaces": {}
         }
@@ -234,15 +244,17 @@
                 "Sortable": 1,
                 "Store": 1,
                 "Style": 1,
+                "Task": 1,
                 "Utils": 1,
-                "View": 1
+                "View": 1,
+                "Context": 1
             },
             "fors": {},
             "namespaces": {},
             "tag": "main",
             "file": "src/view.js",
-            "line": 1,
-            "description": "Mokit是一个符合MVC的WebApp基础开发框架\n当前版本: v2.0 beta 11",
+            "line": 552,
+            "description": "Mokit是一个符合MVC的WebApp基础开发框架\n当前版本: v2.0 beta 34",
             "author": "Houfeng",
             "itemtype": "main"
         }
@@ -504,6 +516,21 @@
             "line": 1,
             "description": "风格主题管理模块"
         },
+        "Task": {
+            "name": "Task",
+            "shortname": "Task",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "mokit",
+            "namespace": "",
+            "file": "src/task.js",
+            "line": 1,
+            "description": "Task 模块，提供基础的任务功能;",
+            "static": 1
+        },
         "Utils": {
             "name": "Utils",
             "shortname": "Utils",
@@ -529,36 +556,60 @@
             "module": "mokit",
             "namespace": "",
             "file": "src/view.js",
-            "line": 1,
+            "line": 2,
             "description": "视图"
+        },
+        "Context": {
+            "name": "Context",
+            "shortname": "Context",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "mokit",
+            "namespace": "",
+            "file": "src/view.js",
+            "line": 552,
+            "description": "View 或 Controller 的参数对象\nView 的所有 “事件方法” 的第一个参数\nController 所有 “Action 方法” 的第一个参数"
         }
     },
     "classitems": [
         {
             "file": "src/ajax.js",
-            "line": 18,
+            "line": 16,
+            "description": "Ajax全局加载选项\n{pic: '图片 URL',color: '背景颜色 rgba'}",
+            "itemtype": "property",
+            "name": "loadingOption",
+            "static": 1,
+            "class": "Ajax",
+            "module": "mokit"
+        },
+        {
+            "file": "src/ajax.js",
+            "line": 27,
             "description": "数据缓存",
             "class": "Ajax",
             "module": "mokit"
         },
         {
             "file": "src/ajax.js",
-            "line": 23,
+            "line": 32,
             "description": "数据过滤器",
             "class": "Ajax",
             "module": "mokit"
         },
         {
             "file": "src/ajax.js",
-            "line": 28,
+            "line": 37,
             "description": "过虑数据",
             "class": "Ajax",
             "module": "mokit"
         },
         {
             "file": "src/ajax.js",
-            "line": 40,
-            "description": "添加数据过虑器，一个过虑器包含两个方法receive:过虑收到的数据，send:过虑发送的数据。",
+            "line": 49,
+            "description": "添加数据过虑器，一个过虑器包含需要两个方法，receive:过虑收到的数据，send:过虑发送的数据。",
             "itemtype": "method",
             "name": "addDataFilter",
             "params": [
@@ -578,7 +629,7 @@
         },
         {
             "file": "src/ajax.js",
-            "line": 51,
+            "line": 60,
             "description": "Ajax全局设置",
             "itemtype": "method",
             "name": "setup",
@@ -599,7 +650,7 @@
         },
         {
             "file": "src/ajax.js",
-            "line": 62,
+            "line": 72,
             "description": "ajax请求",
             "itemtype": "method",
             "name": "request",
@@ -620,7 +671,7 @@
         },
         {
             "file": "src/ajax.js",
-            "line": 111,
+            "line": 122,
             "description": "向指定的URL发起一个GET请求",
             "itemtype": "method",
             "name": "get",
@@ -637,7 +688,7 @@
         },
         {
             "file": "src/ajax.js",
-            "line": 122,
+            "line": 133,
             "description": "向指定的URL发起一个POST请求",
             "itemtype": "method",
             "name": "post",
@@ -654,7 +705,7 @@
         },
         {
             "file": "src/ajax.js",
-            "line": 133,
+            "line": 144,
             "description": "释放请请求",
             "itemtype": "method",
             "name": "abort",
@@ -687,28 +738,28 @@
         },
         {
             "file": "src/app.js",
-            "line": 71,
+            "line": 74,
             "description": "传送到下一个RootView",
             "class": "App",
             "module": "mokit"
         },
         {
             "file": "src/app.js",
-            "line": 99,
+            "line": 102,
             "description": "启动一个视图",
             "class": "App",
             "module": "mokit"
         },
         {
             "file": "src/app.js",
-            "line": 130,
+            "line": 134,
             "description": "在URI发生改变时",
             "class": "App",
             "module": "mokit"
         },
         {
             "file": "src/app.js",
-            "line": 138,
+            "line": 142,
             "description": "启动一个路由uri",
             "itemtype": "method",
             "name": "start",
@@ -725,7 +776,7 @@
         },
         {
             "file": "src/app.js",
-            "line": 152,
+            "line": 156,
             "description": "返回到上一个路由uri",
             "itemtype": "method",
             "name": "back",
@@ -735,7 +786,7 @@
         },
         {
             "file": "src/app.js",
-            "line": 159,
+            "line": 163,
             "description": "初始化应用",
             "itemtype": "method",
             "name": "init",
@@ -860,7 +911,7 @@
         },
         {
             "file": "src/console.js",
-            "line": 12,
+            "line": 14,
             "description": "是否开启",
             "itemtype": "property",
             "name": "enabled",
@@ -871,7 +922,7 @@
         },
         {
             "file": "src/console.js",
-            "line": 19,
+            "line": 21,
             "description": "是否启用浏览器调试工具",
             "itemtype": "property",
             "name": "userDebugger",
@@ -882,21 +933,21 @@
         },
         {
             "file": "src/console.js",
-            "line": 27,
+            "line": 29,
             "description": "在不支持console的平台上模拟console",
             "class": "Console",
             "module": "mokit"
         },
         {
             "file": "src/console.js",
-            "line": 60,
+            "line": 62,
             "description": "获取console",
             "class": "Console",
             "module": "mokit"
         },
         {
             "file": "src/console.js",
-            "line": 71,
+            "line": 73,
             "description": "打印日志信息",
             "itemtype": "method",
             "name": "log",
@@ -913,7 +964,7 @@
         },
         {
             "file": "src/console.js",
-            "line": 81,
+            "line": 83,
             "description": "打印错误信息",
             "itemtype": "method",
             "name": "error",
@@ -930,7 +981,7 @@
         },
         {
             "file": "src/console.js",
-            "line": 91,
+            "line": 93,
             "description": "打印信息",
             "itemtype": "method",
             "name": "info",
@@ -947,7 +998,7 @@
         },
         {
             "file": "src/console.js",
-            "line": 101,
+            "line": 103,
             "description": "打印警告信息",
             "itemtype": "method",
             "name": "warn",
@@ -972,7 +1023,7 @@
         {
             "file": "src/controller.js",
             "line": 17,
-            "description": "控制器默认action (通常在些初始化view)",
+            "description": "控制器默认action (需要在这里初始化view)",
             "itemtype": "method",
             "name": "index",
             "class": "Controller",
@@ -981,7 +1032,7 @@
         {
             "file": "src/controller.js",
             "line": 23,
-            "description": "创建一个控制器，继承自控制器基类",
+            "description": "设置当前 Controller 的 rootView",
             "itemtype": "method",
             "name": "create",
             "params": [
@@ -1001,10 +1052,34 @@
             "module": "mokit"
         },
         {
-            "file": "src/ems.js",
-            "line": 1,
-            "description": "EMS(IMP) v0.7.0\nEasy Module System: 简洁、易用的模块系统\n作者：侯锋\n邮箱：admin@xhou.net\n网站：http://houfeng.net , http://houfeng.net/ems\n\n***********************< EMS >************************\n\nems 全称为 \"Easy Module System\" 他还有一个别名叫: \"imp\";\nems 作为 \"EMD\" 的实现标准范本; 完全符合 \"EMD规范\";\n\n*********************< EMD 规范 >**********************\n\nEMD 全称为 \"Easy Module Definition\"\n\n规范定义:\ndefine([deps...<require>,<exports>,<module>],function(... <require>,<exports>,<module>){\n\n\t    //动态导入依赖 (AMD)\n\t\trequire([deps...],function(...){\n\n\t\t});\n\n\t\t//标准导出 (AMD)\n\t\treturn {\n\t\t\tsay:function(){}\n\t\t};\n\n     //类CommonJS导入 (CommonJS)\n     var a=require('a');\n\n     //类CommonJS导出 (CommonJS)\n     exports.say=function(){};\n});\n\n******************************************************",
-            "class": "Event",
+            "file": "src/controller.js",
+            "line": 32,
+            "description": "根视图",
+            "itemtype": "property",
+            "name": "rootView",
+            "class": "Controller",
+            "module": "mokit"
+        },
+        {
+            "file": "src/controller.js",
+            "line": 39,
+            "description": "创建一个控制器，继承自控制器基类",
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "base",
+                    "description": "控制器基类",
+                    "type": "Class"
+                },
+                {
+                    "name": "context",
+                    "description": "控制器的声明",
+                    "type": "Object"
+                }
+            ],
+            "static": 1,
+            "class": "Controller",
             "module": "mokit"
         },
         {
@@ -1143,7 +1218,7 @@
         },
         {
             "file": "src/grid.js",
-            "line": 74,
+            "line": 99,
             "description": "对一个UI元素启用网格布局",
             "itemtype": "method",
             "name": "use",
@@ -1164,14 +1239,14 @@
         },
         {
             "file": "src/iscroll.js",
-            "line": 714,
+            "line": 746,
             "description": "Utilities",
             "class": "Json",
             "module": "mokit"
         },
         {
             "file": "src/iscroll.js",
-            "line": 870,
+            "line": 914,
             "description": "Public methods",
             "class": "Json",
             "module": "mokit"
@@ -1226,14 +1301,14 @@
         },
         {
             "file": "src/language.js",
-            "line": 19,
+            "line": 21,
             "description": "currentName属性",
             "class": "Language",
             "module": "mokit"
         },
         {
             "file": "src/language.js",
-            "line": 41,
+            "line": 57,
             "description": "添加系统可用本地化语言配置表",
             "itemtype": "method",
             "name": "addLanguage",
@@ -1255,7 +1330,7 @@
         },
         {
             "file": "src/language.js",
-            "line": 54,
+            "line": 70,
             "description": "设置语言",
             "itemtype": "method",
             "name": "setLanguage",
@@ -1277,7 +1352,7 @@
         },
         {
             "file": "src/mask.js",
-            "line": 37,
+            "line": 44,
             "description": "显示一个蒙板",
             "itemtype": "method",
             "name": "show",
@@ -1294,7 +1369,7 @@
         },
         {
             "file": "src/mask.js",
-            "line": 45,
+            "line": 52,
             "description": "隐藏一个蒙板",
             "itemtype": "method",
             "name": "hide",
@@ -1311,7 +1386,7 @@
         },
         {
             "file": "src/mask.js",
-            "line": 53,
+            "line": 60,
             "description": "默认选项",
             "itemtype": "property",
             "name": "option",
@@ -2152,7 +2227,7 @@
         },
         {
             "file": "src/navigation.js",
-            "line": 24,
+            "line": 13,
             "description": "Uri改变事件，在Uri发现变化时触发。",
             "itemtype": "event",
             "name": "change",
@@ -2169,7 +2244,14 @@
         },
         {
             "file": "src/navigation.js",
-            "line": 38,
+            "line": 20,
+            "description": "处理hashchange事件",
+            "class": "Navigation",
+            "module": "mokit"
+        },
+        {
+            "file": "src/navigation.js",
+            "line": 44,
             "description": "获取当前Uri",
             "itemtype": "method",
             "name": "getUri",
@@ -2179,7 +2261,7 @@
         },
         {
             "file": "src/navigation.js",
-            "line": 52,
+            "line": 58,
             "description": "设置当前uri",
             "itemtype": "method",
             "name": "setUri",
@@ -2196,7 +2278,7 @@
         },
         {
             "file": "src/navigation.js",
-            "line": 69,
+            "line": 75,
             "description": "返回",
             "itemtype": "method",
             "name": "back",
@@ -2205,17 +2287,10 @@
         },
         {
             "file": "src/navigation.js",
-            "line": 81,
+            "line": 87,
             "description": "重置当前页为首次进入页",
             "itemtype": "method",
             "name": "reset",
-            "class": "Navigation",
-            "module": "mokit"
-        },
-        {
-            "file": "src/navigation.js",
-            "line": 90,
-            "description": "处理hashchange事件",
             "class": "Navigation",
             "module": "mokit"
         },
@@ -2307,14 +2382,14 @@
         },
         {
             "file": "src/store.js",
-            "line": 12,
+            "line": 14,
             "description": "数据全局缓存对象",
             "class": "Store",
             "module": "mokit"
         },
         {
             "file": "src/store.js",
-            "line": 17,
+            "line": 18,
             "description": "添加临时数据",
             "itemtype": "method",
             "name": "temp.set",
@@ -2335,7 +2410,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 23,
+            "line": 24,
             "description": "获取临时数据",
             "itemtype": "method",
             "name": "temp.get",
@@ -2351,7 +2426,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 28,
+            "line": 29,
             "description": "移除临时数据",
             "itemtype": "method",
             "name": "temp.remove",
@@ -2367,7 +2442,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 33,
+            "line": 34,
             "description": "清空临时数据",
             "itemtype": "method",
             "name": "temp.clear",
@@ -2376,7 +2451,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 52,
+            "line": 53,
             "description": "添加会话数据",
             "itemtype": "method",
             "name": "session.set",
@@ -2397,7 +2472,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 58,
+            "line": 59,
             "description": "获取会话数据",
             "itemtype": "method",
             "name": "session.get",
@@ -2413,7 +2488,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 63,
+            "line": 64,
             "description": "移除会话数据",
             "itemtype": "method",
             "name": "session.remove",
@@ -2429,7 +2504,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 68,
+            "line": 69,
             "description": "清空会话数据",
             "itemtype": "method",
             "name": "session.clear",
@@ -2438,7 +2513,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 100,
+            "line": 113,
             "description": "添加本地数据",
             "itemtype": "method",
             "name": "local.set",
@@ -2459,7 +2534,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 106,
+            "line": 119,
             "description": "获取本地数据",
             "itemtype": "method",
             "name": "local.get",
@@ -2475,7 +2550,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 111,
+            "line": 124,
             "description": "移除本地数据",
             "itemtype": "method",
             "name": "local.remove",
@@ -2491,7 +2566,7 @@
         },
         {
             "file": "src/store.js",
-            "line": 116,
+            "line": 129,
             "description": "清空本地数据",
             "itemtype": "method",
             "name": "local.clear",
@@ -2500,7 +2575,7 @@
         },
         {
             "file": "src/style.js",
-            "line": 28,
+            "line": 39,
             "description": "添加风格",
             "itemtype": "method",
             "name": "addStyle",
@@ -2522,7 +2597,7 @@
         },
         {
             "file": "src/style.js",
-            "line": 41,
+            "line": 52,
             "description": "设置风格",
             "itemtype": "method",
             "name": "setStyle",
@@ -2535,6 +2610,86 @@
             ],
             "static": 1,
             "class": "Style",
+            "module": "mokit"
+        },
+        {
+            "file": "src/task.js",
+            "line": 43,
+            "description": "向当前对象添加任务 function",
+            "itemtype": "method",
+            "name": "add",
+            "params": [
+                {
+                    "name": "function",
+                    "description": "或 function 数组，function 可以接收一个 done 参数，用以通知当前任务完成"
+                }
+            ],
+            "return": {
+                "description": "当前队列实例",
+                "type": "Task"
+            },
+            "static": 1,
+            "class": "Task",
+            "module": "mokit"
+        },
+        {
+            "file": "src/task.js",
+            "line": 102,
+            "description": "顺序执行当前对列",
+            "itemtype": "method",
+            "name": "seq",
+            "params": [
+                {
+                    "name": "完成时的回调",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "当前队列实例",
+                "type": "Task"
+            },
+            "static": 1,
+            "class": "Task",
+            "module": "mokit"
+        },
+        {
+            "file": "src/task.js",
+            "line": 112,
+            "description": "并行执行当前对列",
+            "itemtype": "method",
+            "name": "end",
+            "params": [
+                {
+                    "name": "完成时的回调",
+                    "description": ""
+                }
+            ],
+            "return": {
+                "description": "当前队列实例",
+                "type": "Task"
+            },
+            "static": 1,
+            "class": "Task",
+            "module": "mokit"
+        },
+        {
+            "file": "src/task.js",
+            "line": 124,
+            "description": "创建一个任务队列",
+            "itemtype": "method",
+            "name": "create",
+            "params": [
+                {
+                    "name": "任务",
+                    "description": "function 或 function 数组，可以省略参数创建一个空队列，function 可以接收一个 done 参数，用以通知当前任务完成。"
+                }
+            ],
+            "return": {
+                "description": "新队列实例",
+                "type": "Task"
+            },
+            "static": 1,
+            "class": "Task",
             "module": "mokit"
         },
         {
@@ -2567,7 +2722,7 @@
         },
         {
             "file": "src/transitions.js",
-            "line": 341,
+            "line": 345,
             "description": "切换",
             "class": "Utils",
             "module": "mokit"
@@ -2575,6 +2730,27 @@
         {
             "file": "src/utils.js",
             "line": 10,
+            "description": "验证一个对象是否为NULL",
+            "itemtype": "method",
+            "name": "isNull",
+            "params": [
+                {
+                    "name": "obj",
+                    "description": "要验证的对象",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "结果",
+                "type": "Boolean"
+            },
+            "static": 1,
+            "class": "Utils",
+            "module": "mokit"
+        },
+        {
+            "file": "src/utils.js",
+            "line": 21,
             "description": "除去字符串两端的空格",
             "itemtype": "method",
             "name": "trim",
@@ -2595,7 +2771,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 22,
+            "line": 37,
             "description": "替换所有",
             "itemtype": "method",
             "name": "replace",
@@ -2622,7 +2798,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 35,
+            "line": 50,
             "description": "从字符串开头匹配",
             "itemtype": "method",
             "name": "startWith",
@@ -2648,7 +2824,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 47,
+            "line": 63,
             "description": "是否包含",
             "itemtype": "method",
             "name": "contains",
@@ -2674,7 +2850,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 59,
+            "line": 83,
             "description": "从字符串结束匹配",
             "itemtype": "method",
             "name": "endWidth",
@@ -2700,8 +2876,10 @@
         },
         {
             "file": "src/utils.js",
-            "line": 71,
+            "line": 96,
             "description": "是否包含属性",
+            "itemtype": "method",
+            "name": "hasProperty",
             "params": [
                 {
                     "name": "obj",
@@ -2724,28 +2902,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 83,
-            "description": "验证一个对象是否为NULL",
-            "itemtype": "method",
-            "name": "isNull",
-            "params": [
-                {
-                    "name": "obj",
-                    "description": "要验证的对象",
-                    "type": "Object"
-                }
-            ],
-            "return": {
-                "description": "结果",
-                "type": "Boolean"
-            },
-            "static": 1,
-            "class": "Utils",
-            "module": "mokit"
-        },
-        {
-            "file": "src/utils.js",
-            "line": 94,
+            "line": 109,
             "description": "验证一个对象是否为Function",
             "itemtype": "method",
             "name": "isFunction",
@@ -2766,7 +2923,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 105,
+            "line": 121,
             "description": "验证一个对象是否为String",
             "itemtype": "method",
             "name": "isString",
@@ -2787,7 +2944,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 116,
+            "line": 133,
             "description": "验证一个对象是否为Number",
             "itemtype": "method",
             "name": "isNumber",
@@ -2808,7 +2965,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 127,
+            "line": 145,
             "description": "验证一个对象是否为HTML Element",
             "itemtype": "method",
             "name": "isElement",
@@ -2829,7 +2986,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 139,
+            "line": 158,
             "description": "验证一个对象是否为HTML Text Element",
             "itemtype": "method",
             "name": "isText",
@@ -2850,7 +3007,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 150,
+            "line": 170,
             "description": "验证一个对象是否为Object",
             "itemtype": "method",
             "name": "isObject",
@@ -2871,7 +3028,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 161,
+            "line": 182,
             "description": "验证一个对象是否为Array或伪Array",
             "itemtype": "method",
             "name": "isArray",
@@ -2892,7 +3049,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 174,
+            "line": 195,
             "description": "验证是不是一个日期对象",
             "itemtype": "method",
             "name": "isDate",
@@ -2913,7 +3070,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 185,
+            "line": 207,
             "description": "转换为数组",
             "itemtype": "method",
             "name": "toArray",
@@ -2934,7 +3091,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 205,
+            "line": 228,
             "description": "转为日期格式",
             "itemtype": "method",
             "name": "toDate",
@@ -2955,7 +3112,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 224,
+            "line": 247,
             "description": "遍历一个对像或数组",
             "itemtype": "method",
             "name": "each",
@@ -2981,7 +3138,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 250,
+            "line": 273,
             "description": "格式化日期",
             "itemtype": "method",
             "name": "formatDate",
@@ -3007,7 +3164,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 279,
+            "line": 302,
             "description": "深度克隆对象",
             "itemtype": "method",
             "name": "clone",
@@ -3028,7 +3185,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 302,
+            "line": 326,
             "description": "拷贝对象",
             "itemtype": "method",
             "name": "copy",
@@ -3050,7 +3207,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 317,
+            "line": 341,
             "description": "生成一个Guid",
             "itemtype": "method",
             "name": "newGuid",
@@ -3064,7 +3221,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 330,
+            "line": 354,
             "description": "定义属性",
             "itemtype": "method",
             "name": "defineProperty",
@@ -3096,7 +3253,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 369,
+            "line": 393,
             "description": "处理URL",
             "itemtype": "method",
             "name": "wrapUrl",
@@ -3117,7 +3274,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 385,
+            "line": 410,
             "description": "休眼",
             "itemtype": "method",
             "name": "sleep",
@@ -3134,7 +3291,7 @@
         },
         {
             "file": "src/utils.js",
-            "line": 397,
+            "line": 422,
             "description": "异步执行一个函数（模拟多线程）",
             "itemtype": "method",
             "name": "async",
@@ -3155,78 +3312,179 @@
             "module": "mokit"
         },
         {
+            "file": "src/utils.js",
+            "line": 437,
+            "description": "弹出一个select列表",
+            "itemtype": "method",
+            "name": "openSelect",
+            "params": [
+                {
+                    "name": "element",
+                    "description": "select元素",
+                    "type": "Element"
+                }
+            ],
+            "return": {
+                "description": "无返回值",
+                "type": "Void"
+            },
+            "class": "Utils",
+            "module": "mokit"
+        },
+        {
             "file": "src/view.js",
-            "line": 24,
+            "line": 26,
             "description": "模板类型",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 33,
+            "line": 35,
             "description": "模板编译缓存",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 61,
+            "line": 63,
             "description": "编译模板",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 119,
+            "line": 121,
             "description": "解析事件表达式",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 137,
+            "line": 139,
             "description": "处理事件绑定",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 174,
+            "line": 180,
             "description": "解析绑定表达式",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 187,
+            "line": 193,
             "description": "处理数据绑定",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 233,
+            "line": 245,
             "description": "处理子视图",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 272,
+            "line": 300,
+            "description": "在所有子视图呈现完成时",
+            "itemtype": "event",
+            "name": "onChildRender",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 315,
             "description": "按照字典映射元素",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 287,
+            "line": 330,
             "description": "视图基类",
             "class": "View",
             "module": "mokit"
         },
         {
             "file": "src/view.js",
-            "line": 299,
+            "line": 335,
+            "description": "视图模板型型",
+            "itemtype": "property",
+            "name": "template",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 341,
+            "description": "视图所使用的模板（URL或模板内容）",
+            "itemtype": "property",
+            "name": "template",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 347,
+            "description": "视图绑定的 ‘对象模型’",
+            "itemtype": "property",
+            "name": "model",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 353,
+            "description": "管理视图的 Controller",
+            "itemtype": "property",
+            "name": "controller",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 359,
+            "description": "视图UI对角",
+            "itemtype": "property",
+            "name": "ui",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 365,
+            "description": "视图的元素映射对象\n格式 {'name':'CSS3 选择器',...}",
+            "itemtype": "property",
+            "name": "el",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 372,
+            "description": "视图的名称（暂无用途）",
+            "itemtype": "property",
+            "name": "name",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 378,
+            "description": "在视图的容器",
+            "itemtype": "property",
+            "name": "container",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 384,
             "description": "视图构造函数",
             "itemtype": "method",
             "name": "initialize",
@@ -3246,7 +3504,7 @@
         },
         {
             "file": "src/view.js",
-            "line": 318,
+            "line": 405,
             "description": "设置视图当前模型",
             "itemtype": "method",
             "name": "setModel",
@@ -3262,7 +3520,7 @@
         },
         {
             "file": "src/view.js",
-            "line": 328,
+            "line": 415,
             "description": "更新模型数据",
             "itemtype": "method",
             "name": "updateModel",
@@ -3271,14 +3529,14 @@
         },
         {
             "file": "src/view.js",
-            "line": 337,
+            "line": 424,
             "description": "呈现一个视图",
             "itemtype": "method",
             "name": "render",
             "params": [
                 {
                     "name": "container",
-                    "description": "容器(可以省略)",
+                    "description": "容器(省略时自动在原有位置重绘)",
                     "type": "Object"
                 },
                 {
@@ -3296,7 +3554,34 @@
         },
         {
             "file": "src/view.js",
-            "line": 374,
+            "line": 433,
+            "description": "在视图初始化前",
+            "itemtype": "event",
+            "name": "onPreInit",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 460,
+            "description": "在视图初始化完成时",
+            "itemtype": "event",
+            "name": "onInit",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 474,
+            "description": "在视图呈现完成时",
+            "itemtype": "event",
+            "name": "onRender",
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 483,
             "description": "移动除一个视图",
             "itemtype": "method",
             "name": "remove",
@@ -3309,7 +3594,33 @@
         },
         {
             "file": "src/view.js",
-            "line": 407,
+            "line": 505,
+            "description": "隐藏视图",
+            "itemtype": "method",
+            "name": "hide",
+            "return": {
+                "description": "无返回值",
+                "type": "NULL"
+            },
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 518,
+            "description": "显示视图",
+            "itemtype": "method",
+            "name": "show",
+            "return": {
+                "description": "无返回值",
+                "type": "NULL"
+            },
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 534,
             "description": "创建一个视图",
             "itemtype": "method",
             "name": "create",
@@ -3322,6 +3633,73 @@
             ],
             "static": 1,
             "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 550,
+            "class": "View",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 560,
+            "description": "当前视图",
+            "itemtype": "property",
+            "name": "view",
+            "class": "Context",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 565,
+            "description": "根视图",
+            "itemtype": "property",
+            "name": "rootView",
+            "class": "Context",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 570,
+            "description": "URL 路由数据 (仅在 Controller 中可以访问)",
+            "itemtype": "property",
+            "name": "routeData",
+            "class": "Context",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 575,
+            "description": "事件对象",
+            "itemtype": "property",
+            "name": "event",
+            "class": "Context",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 580,
+            "description": "事件源 jQuery 对象",
+            "itemtype": "property",
+            "name": "$element",
+            "class": "Context",
+            "module": "mokit"
+        },
+        {
+            "file": "src/view.js",
+            "line": 585,
+            "description": "事件源原生对对象",
+            "itemtype": "property",
+            "name": "element",
+            "class": "Context",
+            "module": "mokit"
+        },
+        {
+            "file": "src/worker.js",
+            "line": 1,
+            "description": "工作线程",
+            "class": "",
             "module": "mokit"
         }
     ],
@@ -3448,15 +3826,15 @@
         },
         {
             "message": "Missing item type\n数据缓存",
-            "line": " src/ajax.js:18"
+            "line": " src/ajax.js:27"
         },
         {
             "message": "Missing item type\n数据过滤器",
-            "line": " src/ajax.js:23"
+            "line": " src/ajax.js:32"
         },
         {
             "message": "Missing item type\n过虑数据",
-            "line": " src/ajax.js:28"
+            "line": " src/ajax.js:37"
         },
         {
             "message": "Missing item type\nmokit版本信息",
@@ -3468,15 +3846,15 @@
         },
         {
             "message": "Missing item type\n传送到下一个RootView",
-            "line": " src/app.js:71"
+            "line": " src/app.js:74"
         },
         {
             "message": "Missing item type\n启动一个视图",
-            "line": " src/app.js:99"
+            "line": " src/app.js:102"
         },
         {
             "message": "Missing item type\n在URI发生改变时",
-            "line": " src/app.js:130"
+            "line": " src/app.js:134"
         },
         {
             "message": "Missing item type\n复制对象",
@@ -3484,19 +3862,15 @@
         },
         {
             "message": "Missing item type\n在不支持console的平台上模拟console",
-            "line": " src/console.js:27"
+            "line": " src/console.js:29"
         },
         {
             "message": "Missing item type\n获取console",
-            "line": " src/console.js:60"
+            "line": " src/console.js:62"
         },
         {
             "message": "Missing item type\n控制器基类",
             "line": " src/controller.js:13"
-        },
-        {
-            "message": "Missing item type\nEMS(IMP) v0.7.0\nEasy Module System: 简洁、易用的模块系统\n作者：侯锋\n邮箱：admin@xhou.net\n网站：http://houfeng.net , http://houfeng.net/ems\n\n***********************< EMS >************************\n\nems 全称为 \"Easy Module System\" 他还有一个别名叫: \"imp\";\nems 作为 \"EMD\" 的实现标准范本; 完全符合 \"EMD规范\";\n\n*********************< EMD 规范 >**********************\n\nEMD 全称为 \"Easy Module Definition\"\n\n规范定义:\ndefine([deps...<require>,<exports>,<module>],function(... <require>,<exports>,<module>){\n\n\t    //动态导入依赖 (AMD)\n\t\trequire([deps...],function(...){\n\n\t\t});\n\n\t\t//标准导出 (AMD)\n\t\treturn {\n\t\t\tsay:function(){}\n\t\t};\n\n     //类CommonJS导入 (CommonJS)\n     var a=require('a');\n\n     //类CommonJS导出 (CommonJS)\n     exports.say=function(){};\n});\n\n******************************************************",
-            "line": " src/ems.js:1"
         },
         {
             "message": "Missing item type\n添加一个事件处理或触事件",
@@ -3520,11 +3894,11 @@
         },
         {
             "message": "Missing item type\nUtilities",
-            "line": " src/iscroll.js:714"
+            "line": " src/iscroll.js:746"
         },
         {
             "message": "Missing item type\nPublic methods",
-            "line": " src/iscroll.js:870"
+            "line": " src/iscroll.js:914"
         },
         {
             "message": "Missing item type\n自定义的json转字符串",
@@ -3536,7 +3910,7 @@
         },
         {
             "message": "Missing item type\ncurrentName属性",
-            "line": " src/language.js:19"
+            "line": " src/language.js:21"
         },
         {
             "message": "Missing item type\n模型基类",
@@ -3572,7 +3946,7 @@
         },
         {
             "message": "Missing item type\n处理hashchange事件",
-            "line": " src/navigation.js:90"
+            "line": " src/navigation.js:20"
         },
         {
             "message": "Missing item type\n路由表",
@@ -3588,7 +3962,7 @@
         },
         {
             "message": "Missing item type\n数据全局缓存对象",
-            "line": " src/store.js:12"
+            "line": " src/store.js:14"
         },
         {
             "message": "Missing item type\n恢复原有样式",
@@ -3608,51 +3982,55 @@
         },
         {
             "message": "Missing item type\n切换",
-            "line": " src/transitions.js:341"
-        },
-        {
-            "message": "Missing item type\n是否包含属性",
-            "line": " src/utils.js:71"
+            "line": " src/transitions.js:345"
         },
         {
             "message": "Missing item type\n模板类型",
-            "line": " src/view.js:24"
+            "line": " src/view.js:26"
         },
         {
             "message": "Missing item type\n模板编译缓存",
-            "line": " src/view.js:33"
+            "line": " src/view.js:35"
         },
         {
             "message": "Missing item type\n编译模板",
-            "line": " src/view.js:61"
+            "line": " src/view.js:63"
         },
         {
             "message": "Missing item type\n解析事件表达式",
-            "line": " src/view.js:119"
+            "line": " src/view.js:121"
         },
         {
             "message": "Missing item type\n处理事件绑定",
-            "line": " src/view.js:137"
+            "line": " src/view.js:139"
         },
         {
             "message": "Missing item type\n解析绑定表达式",
-            "line": " src/view.js:174"
+            "line": " src/view.js:180"
         },
         {
             "message": "Missing item type\n处理数据绑定",
-            "line": " src/view.js:187"
+            "line": " src/view.js:193"
         },
         {
             "message": "Missing item type\n处理子视图",
-            "line": " src/view.js:233"
+            "line": " src/view.js:245"
         },
         {
             "message": "Missing item type\n按照字典映射元素",
-            "line": " src/view.js:272"
+            "line": " src/view.js:315"
         },
         {
             "message": "Missing item type\n视图基类",
-            "line": " src/view.js:287"
+            "line": " src/view.js:330"
+        },
+        {
+            "message": "Missing item type",
+            "line": " src/view.js:550"
+        },
+        {
+            "message": "Missing item type\n工作线程",
+            "line": " src/worker.js:1"
         }
     ]
 }

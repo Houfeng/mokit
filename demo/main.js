@@ -44,7 +44,7 @@ define(function(require, exports, module) {
         pattern: '/about',
         target: './controllers/about',
         effect: [27, 27]
-    },{
+    }, {
         pattern: '/grid',
         target: './controllers/grid',
         effect: [27, 27]
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
         pic: module.resovleUri('./images/loading.gif'),
         color: 'rgba(0,0,0,0.1)'
     };
-    
+
     /**
      * 初始化应用程序
      */

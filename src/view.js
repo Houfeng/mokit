@@ -297,6 +297,10 @@ define(function(require, exports, module) {
             });
         });
         task.end(function() {
+            /**
+             * 在所有子视图呈现完成时
+             * @event onChildRender
+             */
             if (view.onChildRender) view.onChildRender(_context);
         });
     };
@@ -327,12 +331,54 @@ define(function(require, exports, module) {
      * 视图基类
      */
     var View = exports.View = $class.create(function() {
+
+        /**
+         * 视图模板型型
+         * @property template
+         */
+        this.templateType = '';
+
+        /**
+         * 视图所使用的模板（URL或模板内容）
+         * @property template
+         */
         this.template = '';
+
+        /**
+         * 视图绑定的 ‘对象模型’
+         * @property model
+         */
         this.model = null;
+
+        /**
+         * 管理视图的 Controller
+         * @property controller
+         */
         this.controller = null;
+
+        /**
+         * 视图UI对角
+         * @property ui
+         */
         this.ui = null;
+
+        /**
+         * 视图的元素映射对象
+         * 格式 {'name':'CSS3 选择器',...}
+         * @property el
+         */
         this.el = null;
+
+        /**
+         * 视图的名称（暂无用途）
+         * @property name
+         */
         this.name = '';
+
+        /**
+         * 在视图的容器
+         * @property container
+         */
         this.container = null;
 
         /**
@@ -378,12 +424,16 @@ define(function(require, exports, module) {
         /**
          * 呈现一个视图
          * @method render
-         * @param  {Object}   container 容器(可以省略)
+         * @param  {Object}   container 容器(省略时自动在原有位置重绘)
          * @param  {Function} callback  完成呈现回调
          * @return {NULL}               无返回值
          */
         this.render = function(container, callback) {
             var self = this;
+            /**
+             * 在视图初始化前
+             * @event onPreInit
+             */
             if (self.onPreInit) self.onPreInit({
                 view: self
             });
@@ -407,6 +457,10 @@ define(function(require, exports, module) {
                 handleEvent(self);
                 handleChildView(self);
                 setPageTitle(self);
+                /**
+                 * 在视图初始化完成时
+                 * @event onInit
+                 */
                 if (self.onInit) self.onInit(_context);
                 if (old_ui) old_ui.remove();
                 self.container = container || self.container || rootContainer;
@@ -416,6 +470,11 @@ define(function(require, exports, module) {
                 } else {
                     self.container.after(self.ui);
                 }
+
+                /**
+                 * 在视图呈现完成时
+                 * @event onRender
+                 */
                 if (self.onRender) self.onRender(_context);
                 if (callback) callback(self.ui);
             });
@@ -443,6 +502,11 @@ define(function(require, exports, module) {
             self.container = null;
         };
 
+        /**
+         * 隐藏视图
+         * @method hide
+         * @return {NULL} 无返回值
+         */
         this.hide = function() {
             var self = this;
             if (self.ui) self.ui.hide();
@@ -451,6 +515,11 @@ define(function(require, exports, module) {
             });
         };
 
+        /**
+         * 显示视图
+         * @method show
+         * @return {NULL} 无返回值
+         */
         this.show = function() {
             var self = this;
             if (self.ui) self.ui.show();
@@ -477,3 +546,43 @@ define(function(require, exports, module) {
     };
 
 });
+
+/**** 参数对象 Context 的说明 ****/
+
+/**
+ * View 或 Controller 的参数对象
+ * View 的所有 “事件方法” 的第一个参数
+ * Controller 所有 “Action 方法” 的第一个参数
+ * @class Context
+ * @module mokit
+ */
+
+/**
+ * 当前视图
+ * @property view
+ */
+
+/**
+ * 根视图
+ * @property rootView
+ */
+
+/**
+ * URL 路由数据 (仅在 Controller 中可以访问)
+ * @property routeData
+ */
+
+/**
+ * 事件对象
+ * @property event
+ */
+
+/**
+ * 事件源 jQuery 对象
+ * @property $element
+ */
+
+/**
+ * 事件源原生对对象
+ * @property element
+ */

@@ -1,5 +1,8 @@
 /**
- * 任务模块
+ * Task 模块，提供基础的任务功能;
+ * @class Task
+ * @static
+ * @module mokit
  */
 define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
@@ -37,6 +40,13 @@ define(function(require, exports, module) {
             self.result.length = self.taskCount;
             return self;
         },
+        /**
+         * 向当前对象添加任务 function
+         * @method add
+         * @param function 或 function 数组，function 可以接收一个 done 参数，用以通知当前任务完成
+         * @return {Task} 当前队列实例
+         * @static
+         */
         "add": function(a, b) {
             var self = this;
             if (utils.isString(a) || utils.isFunction(a)) {
@@ -89,14 +99,35 @@ define(function(require, exports, module) {
             this.once = done;
             return this;
         },
+        /**
+         * 顺序执行当前对列
+         * @method seq
+         * @param 完成时的回调
+         * @return {Task} 当前队列实例
+         * @static
+         */
         "seq": function(done) {
             return this.execute(done, true);
         },
+        /**
+         * 并行执行当前对列
+         * @method end
+         * @param 完成时的回调
+         * @return {Task} 当前队列实例
+         * @static
+         */
         "end": function(done, isSeq) {
             return this.execute(done, isSeq);
         }
     });
 
+    /**
+     * 创建一个任务队列
+     * @method create
+     * @param 任务 function 或 function 数组，可以省略参数创建一个空队列，function 可以接收一个 done 参数，用以通知当前任务完成。
+     * @return {Task} 新队列实例
+     * @static
+     */
     exports.create = function(tasks) {
         return new Task(tasks);
     };

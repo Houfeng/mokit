@@ -15,9 +15,25 @@ define(function(require, exports, module) {
      */
     var Controller = exports.Controller = $class.create({
         /**
-         * 控制器默认action (通常在些初始化view)
+         * 控制器默认action (需要在这里初始化view)
          * @method index
          */
+        //index: function() {},
+
+        /**
+         * 设置当前 Controller 的 rootView
+         * @method create
+         * @param {Class} base 控制器基类
+         * @param {Object} context 控制器的声明
+         * @static
+         */
+        //setView: function() {},
+
+        /**
+         * 根视图
+         * @property rootView
+         */
+        //rootView:null
     });
 
     /**
@@ -34,5 +50,4 @@ define(function(require, exports, module) {
         }
         return $class.create(base, context);
     };
-
 });

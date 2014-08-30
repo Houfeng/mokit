@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/ajax.js - Mokit API</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../logo.png" title="Mokit API"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: v2.0 Beta 34</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Ajax.html">Ajax</a></li>
+            
+                <li><a href="../classes/App.html">App</a></li>
+            
+                <li><a href="../classes/Base64.html">Base64</a></li>
+            
+                <li><a href="../classes/Class.html">Class</a></li>
+            
+                <li><a href="../classes/Console.html">Console</a></li>
+            
+                <li><a href="../classes/Context.html">Context</a></li>
+            
+                <li><a href="../classes/Controller.html">Controller</a></li>
+            
+                <li><a href="../classes/Event.html">Event</a></li>
+            
+                <li><a href="../classes/Grid.html">Grid</a></li>
+            
+                <li><a href="../classes/Json.html">Json</a></li>
+            
+                <li><a href="../classes/Language.html">Language</a></li>
+            
+                <li><a href="../classes/Mask.html">Mask</a></li>
+            
+                <li><a href="../classes/Model.html">Model</a></li>
+            
+                <li><a href="../classes/Move.html">Move</a></li>
+            
+                <li><a href="../classes/Navigation.html">Navigation</a></li>
+            
+                <li><a href="../classes/Route.html">Route</a></li>
+            
+                <li><a href="../classes/Sortable.html">Sortable</a></li>
+            
+                <li><a href="../classes/Store.html">Store</a></li>
+            
+                <li><a href="../classes/Style.html">Style</a></li>
+            
+                <li><a href="../classes/Task.html">Task</a></li>
+            
+                <li><a href="../classes/Utils.html">Utils</a></li>
+            
+                <li><a href="../classes/View.html">View</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/mokit.html">mokit</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/ajax.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * ajax模块，提供基础的Ajax功能;
+ * @class Ajax
+ * @static
+ * @module mokit
+ */
+define(function(require, exports, module) {
+    &quot;require:nomunge,exports:nomunge,module:nomunge&quot;;
+    &quot;use strict&quot;;
+
+    var $ = require(&#x27;./jquery&#x27;),
+        utils = require(&#x27;./utils&#x27;),
+        store = require(&#x27;./store&#x27;),
+        mask = require(&#x27;./mask&#x27;);
+
+    /**
+     * Ajax全局加载选项
+     * {pic: &#x27;图片 URL&#x27;,color: &#x27;背景颜色 rgba&#x27;}
+     * @property loadingOption
+     * @static
+     */
+    exports.loadingOption = null;
+
+    window.top.__mokit_ajax_filters__ = window.top.__mokit_ajax_filters__ || [];
+    window.top.__mokit_ajax_setup__ = window.top.__mokit_ajax_setup__ || {};
+
+    /**
+     * 数据缓存
+     */
+    var ajaxCache = store.dataCache;
+
+    /**
+     * 数据过滤器
+     */
+    var dataFilters = window.top.__mokit_ajax_filters__;
+
+    /**
+     * 过虑数据
+     */
+    var filterData = function(name, data) {
+        utils.each(dataFilters, function() {
+            if (this != null &amp;&amp; this[name]) {
+                data = this[name](data);
+            }
+        });
+        return data;
+    };
+
+    /**
+     * 添加数据过虑器，一个过虑器包含需要两个方法，receive:过虑收到的数据，send:过虑发送的数据。
+     * @method addDataFilter
+     * @param {Object} filter 过滤器对像
+     * @return {void} 无返回值
+     * @static
+     */
+    exports.addDataFilter = function(filter) {
+        dataFilters.push(filter);
+    };
+
+    /**
+     * Ajax全局设置
+     * @method setup
+     * @param {Object} option 全局Ajax选项,同jQuery的setup保持一致
+     * @return {void} 无返回值
+     * @static
+     */
+    exports.setup = function(option) {
+        //utils.copy(option,window.top.__mokit_ajax_setup__);
+        $.ajaxSetup(option);
+    };
+
+    /**
+     * ajax请求
+     * @method request
+     * @param {Object} option ajax选项，同jQuery的Ajax方式一致
+     * @return {void} 无返回值
+     * @static
+     */
+    exports.request = function(option) {
+        option = option || {};
+        if (!option.noMask) mask.begin(exports.loadingOption);
+        if (exports.onBegin) exports.onBegin();
+        option.url = option.url || &quot;&quot;;
+        var cacheKey = &quot;ajax:&quot; + option.url;
+        ajaxCache[cacheKey] = ajaxCache[cacheKey] || {};
+        option.url = utils.wrapUrl(option.url);
+        option.type = option.type || &quot;GET&quot;;
+        option.dataType = option.dataType || &quot;json&quot;;
+        option.success = option.success || option.callback;
+        //过滤发送数据
+        option.data = filterData(&#x27;send&#x27;, option.data);
+        //处理缓存
+        if (option.success &amp;&amp; option.cacheEnabled &amp;&amp; ajaxCache[cacheKey].result != null) {
+            mask.end(exports.loadingOption);
+            option.success(ajaxCache[cacheKey].result);
+            return;
+        }
+        //包装回调
+        var success = option.success;
+        option.success = ajaxCache[cacheKey].success = function(rs) {
+            //过滤接收数据
+            rs = filterData(&#x27;receive&#x27;, rs);
+            if (option.cacheEnabled) {
+                ajaxCache[cacheKey].result = rs;
+            }
+            if (success) success(rs);
+            if (exports.onEnd) exports.onEnd();
+            if (!option.noMask) mask.end(exports.loadingOption);
+        };
+
+        //包装error
+        var error = option.error;
+        option.error = function() {
+            if (!option.noMask) mask.end(exports.loadingOption);
+            if (error) error(arguments);
+        };
+
+        ajaxCache[cacheKey].xhr = $.ajax(option);
+        return ajaxCache[cacheKey].xhr;
+    };
+
+    /**
+     * 向指定的URL发起一个GET请求
+     * @method get
+     * @param {Object} option 请求参数
+     * @static
+     */
+    exports.get = function(option) {
+        option.type = &quot;GET&quot;;
+        return exports.request(option);
+    };
+
+    /**
+     * 向指定的URL发起一个POST请求
+     * @method post
+     * @param {Object} option 请求参数
+     * @static
+     */
+    exports.post = function(option) {
+        option.type = &quot;POST&quot;;
+        return exports.request(option);
+    };
+
+    /**
+     * 释放请请求
+     * @method abort
+     * @param {String} url 要释放的请求url
+     * @static
+     */
+    exports.abort = function(url) {
+        if (url) {
+            var cacheKey = &quot;ajax:&quot; + url;
+            ajaxCache[cacheKey].success = null;
+            ajaxCache[cacheKey].abort();
+        } else {
+            utils.each(ajaxCache, function(key, item) {
+                item.success = null;
+                item.abort();
+            });
+        }
+        mask.end(exports.loadingOption);
+    };
+
+});
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
