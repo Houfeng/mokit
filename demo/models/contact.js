@@ -4,9 +4,9 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	var app = require("../../src/app"),
-		linq = require('../../src/linq'),
-		utils = require('../../src/utils'),
+	var app = require("mokit/app"),
+		linq = require('mokit/linq'),
+		utils = require('mokit/utils'),
 		User = require('../models/user');
 
 	var Contact = app.model.create({

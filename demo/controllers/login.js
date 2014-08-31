@@ -1,11 +1,11 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	var app = require('../../src/app'),
+	var app = require('mokit/app'),
 		User = require('../models/user'),
 		LoginView = require('../views/login'),
-		lang = require('../../src/language'),
-		navigation = require('../../src/navigation');
+		lang = require('mokit/language'),
+		navigation = require('mokit/navigation');
 
 	/**
 	 * 登陆页控制器

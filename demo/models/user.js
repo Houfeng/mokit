@@ -4,7 +4,7 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	var app = require("../../src/app");
+	var app = require("mokit/app");
 
 	var User = app.model.create({
 		username: '',

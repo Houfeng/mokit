@@ -1,11 +1,11 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	var view = require('../../src/view'),
-		grid = require('../../src/grid');
+	var view = require('mokit/view'),
+		grid = require('mokit/grid');
 	//var docViewer = require('../doc_viewer');
-	var Hammer = require('../../src/hammer');
-	var move = require('../../src/move');
+	var Hammer = require('mokit/hammer');
+	var move = require('mokit/move');
 
 	/**
 	 * 测试页视图

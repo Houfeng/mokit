@@ -1,12 +1,19 @@
+ems.config({
+    packages: [{ 
+        name: 'mokit',
+        location: ems.resovleUri('../build/'),
+        main: 'app'
+    }]
+});
 /**
  * 应用启动模块
  */
 define(function(require, exports, module) {
     "use strict";
 
-    var app = require('../src/app'),
-        ajax = require('../src/ajax'),
-        $ = require('../src/jquery');
+    var app = require('mokit/app'),
+        ajax = require('mokit/ajax'),
+        $ = require('mokit/jquery');
 
     /**
      * 加载配置文件

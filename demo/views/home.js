@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	var view = require('../../src/view');
+	var view = require('mokit/view');
 
 	/**
 	 * 测试页视图

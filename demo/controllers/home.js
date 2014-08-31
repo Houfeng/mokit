@@ -1,15 +1,15 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	var app = require('../../src/app'),
-		json = require('../../src/json'),
+	var app = require('mokit/app'),
+		json = require('mokit/json'),
 		HomeView = require('../views/home'),
 		Contact = require('../models/contact'),
-		console = require('../../src/console'),
+		console = require('mokit/console'),
 		User = require('../models/user'),
-		lang = require('../../src/language'),
+		lang = require('mokit/language'),
 		Error = require('../views/error'),
-		navigation = require('../../src/navigation');
+		navigation = require('mokit/navigation');
 
 	return app.controller.create({
 

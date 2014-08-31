@@ -10,7 +10,7 @@
         var files=(location.href.split('?')[1].split('/')[0].replace('%2F','&').replace('=true','').split('&')[0])||'';
         files=files.split(',');
         load=function (i) {
-            ems.load('files/'+files[i],function(){
+            ems.require('files/'+files[i],function(){
                 i++;
                 if(i<files.length)load(i);
             });

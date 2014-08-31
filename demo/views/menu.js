@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	var app = require('../../src/app'),
-		move = require('../../src/move');
+	var app = require('mokit/app'),
+		move = require('mokit/move');
 
 	/**
 	 * 登陆页

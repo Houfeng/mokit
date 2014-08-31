@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     "use strict";
 
-    var view = require('../../src/view');
-    var grid = require('../../src/grid');
+    var view = require('mokit/view');
+    var grid = require('mokit/grid');
 
     /**
      * 测试页视图
