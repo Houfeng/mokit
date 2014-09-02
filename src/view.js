@@ -465,6 +465,9 @@ define(function(require, exports, module) {
                 if (old_ui) old_ui.remove();
                 self.container = container || self.container || rootContainer;
                 self.container = utils.isString(container) ? $(self.container) : self.container;
+                if (!self.container) {
+                    console.error("container error.");
+                }
                 if (self.container[0].tagName !== 'LINK') {
                     self.container.append(self.ui);
                 } else {
