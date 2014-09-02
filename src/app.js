@@ -105,7 +105,7 @@ define(function(require, exports, module) {
     var _start = function(uri, isBack) {
         if (transitions.isAnimating()) return;
         var route = routeMgr.getRoute(uri);
-        if (!route) return console.error(uri + ' not found');
+        if (!route) return console.error('route "' + uri + '" not found');
         if (!preSatrt(route)) return;
         require(route.target, function(Controller) {
             var nextControllerInstance = new Controller();
