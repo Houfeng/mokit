@@ -188,8 +188,11 @@
      */
     owner.isArray = function(obj) {
         if (this.isNull(obj)) return false;
-        var _isArray = ((obj instanceof Array) || (!this.isString(obj) && obj.length && this.isNumber(obj.length)));
-        return _isArray;
+        var v1 = Object.prototype.toString.call(obj) === '[object Array]';
+        var v2 = obj instanceof Array;
+        var v3 = !this.isString(obj) && this.isNumber(obj.length) && this.isFunction(obj.splice);
+        var v4 = !this.isString(obj) && this.isNumber(obj.length) && obj[0];
+        return v1 || v2 || v3 || v4;
     };
 
     /**
