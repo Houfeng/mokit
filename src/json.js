@@ -7,6 +7,8 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
+    var utils = require("./utils");
+
     //如果原生支持
     if (typeof JSON !== 'undefined') {
         exports.stringify = JSON.stringify;
@@ -24,7 +26,7 @@ define(function(require, exports, module) {
             case 'array':
                 return '[' + obj.map(obj2str).join(',') + ']';
             case 'object':
-                if (obj instanceof Array) {
+                if (utils.isArray(obj)) {
                     var strArr = [];
                     var len = obj.length;
                     for (var i = 0; i < len; i++) {
