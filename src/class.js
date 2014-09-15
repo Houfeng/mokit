@@ -74,7 +74,7 @@
 
     //兼容AMD模块
     if (typeof define === 'function' && define.amd) {
-        define('$class', 'utils', function($utils) {
+        define('$class', ['utils'], function($utils) {
             utils = $utils;
             return owner;
         });

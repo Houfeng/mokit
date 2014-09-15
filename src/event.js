@@ -185,7 +185,7 @@
 
     //兼容AMD模块
     if (typeof define === 'function' && define.amd) {
-        define('$event', 'utils', function(utils) {
+        define('$event', ['utils'], function(utils) {
             owner.utils = utils;
             return owner;
         });
