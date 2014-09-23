@@ -142,7 +142,7 @@ define(function(require, exports, module) {
     var handleEvent = function(view) {
         //查找所有事件绑定元素
         var elements = view.ui.find("[data-event]");
-        if (view.ui.attr('[data-event]')) {
+        if (view.ui.attr('data-event')) {
             elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
         }
         elements.each(function() {
@@ -195,7 +195,7 @@ define(function(require, exports, module) {
      */
     var handleBind = function(view) {
         var elements = view.ui.find("[data-bind]");
-        if (view.ui.attr('[data-bind]')) {
+        if (view.ui.attr('data-bind')) {
             elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
         }
         elements.each(function() {
@@ -272,8 +272,8 @@ define(function(require, exports, module) {
                 var childModelPath = childHolder.attr('data-model') || '';
                 var childModel = getModel(view.model, childModelPath) || view.model;
                 //取子视图选项
-                var childOptionJson = childHolder.attr('data-option') || '{}';
-                var childOption = json.parse(childOptionJson);
+                var childOptionsJson = childHolder.attr('data-options') || '{}';
+                var childOptions = json.parse(childOptionsJson);
                 //如果已存在
                 if (view.children[childId]) {
                     //view.children[childId].model = childModel;
@@ -285,9 +285,10 @@ define(function(require, exports, module) {
                 childUri = module.resovleUri(childUri, view.templateType == templateType.uri ? view.template : location.href);
                 require(childUri, function(ChildView) {
                     view[childId] = view.children[childId] = new ChildView({
+                        id: childId,
                         model: childModel,
                         controller: view.controller,
-                        option: childOption
+                        options: childOptions
                     });
                     view.children[childId].parent = view;
                     view.children[childId].root = view.root || view;
@@ -390,12 +391,12 @@ define(function(require, exports, module) {
         this.initialize = function(option) {
             var self = this;
             option = option || {};
-            self.name = utils.newGuid();
+            self.id = option.id || utils.newGuid();
             self.model = option.model || self.model || {};
             self.controller = option.controller || self.controller || {};
             self.template = option.template || self.template || '';
             self.templateType = option.templateType || self.templateType || templateType.uri;
-            self.option = option.option || self.option || {}; //option是用json控制视图行为或外观的
+            self.options = option.options || self.options || {}; //options 是用json控制视图行为或外观的
             self.elMap = self.el;
             if (self.model.registerView) {
                 self.model.registerView(self);
@@ -443,7 +444,7 @@ define(function(require, exports, module) {
                     lang: language.current(),
                     self: self,
                     model: self.model, //tp 模板引擎其实也会自动将执行时的第一个参数放入 $.model;
-                    option: self.option
+                    options: self.options
                 })));
                 if (!self.ui || self.ui.length < 1) {
                     return console.error(self.ui);

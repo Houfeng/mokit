@@ -1,7 +1,7 @@
 {
 	"name": "Mokit API",
 	"description": "一个符合MVC的WebApp基础开发框架",
-	"version": "v2.0 Beta 35",
+	"version": "v2.0 Beta 40",
 	"url": "http://houfeng.net",
 	"logo": "./logo.png",
 	"options": {

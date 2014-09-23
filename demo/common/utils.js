@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
 	"use strict";
 
-	exports.test = function() {
+    var service = require('./service');
 
-	};
+    
 
 });

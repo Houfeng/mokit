@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 
     exports.styleChange = eventMgr.create(exports, 'styleChange');
 
-    exports.storeKey = "current-name";
+    exports.storeKey = "mokit://style/current-name";
     var currentName = null;
     utils.defineProperty(exports, 'currentName', {
         get: function() {
@@ -72,10 +72,10 @@ define(function(require, exports, module) {
     };
 
     exports.save = function() {
-        return store.local.set('style:' + exports.storeKey, currentName);
+        return store.local.set(exports.storeKey, currentName);
     };
 
     exports.clear = function() {
-        return store.local.set('style:' + exports.storeKey, "");
+        return store.local.set(exports.storeKey, "");
     };
 });

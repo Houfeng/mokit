@@ -81,7 +81,7 @@ define(function(require, exports, module) {
         if (!option.noMask) mask.begin(exports.loadingOption);
         if (exports.onBegin) exports.onBegin();
         option.url = option.url || "";
-        var cacheKey = "ajax:" + option.url;
+        var cacheKey = "mokit://ajax/" + option.url;
         ajaxCache[cacheKey] = ajaxCache[cacheKey] || {};
         option.url = utils.wrapUrl(option.url);
         option.type = option.type || "GET";
@@ -149,7 +149,7 @@ define(function(require, exports, module) {
      */
     exports.abort = function(url) {
         if (url) {
-            var cacheKey = "ajax:" + url;
+            var cacheKey = "mokit://ajax/" + url;
             ajaxCache[cacheKey].success = null;
             ajaxCache[cacheKey].abort();
         } else {

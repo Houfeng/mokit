@@ -23,7 +23,7 @@ define(function(require, exports, module) {
      */
     utils.defineProperty(exports, 'currentName', {
         get: function() {
-            currentName = currentName || store.local.get('language:current-name');
+            currentName = currentName || store.local.get('mokit://language/current-name');
             return currentName;
         },
         set: function(name) {
@@ -90,10 +90,10 @@ define(function(require, exports, module) {
     };
 
     exports.save = function() {
-        return store.local.set('language:current-name', currentName);
+        return store.local.set('mokit://language/current-name', currentName);
     };
 
     exports.clear = function() {
-        return store.local.set('language:current-name', "");
+        return store.local.set('mokit://language/current-name', "");
     };
 });
