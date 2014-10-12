@@ -21,6 +21,8 @@ define(function(require, exports, module) {
         language = require('./language'),
         eventMgr = require('./event');
 
+    var rootContainer = exports.rootContainer = $(document.body);
+
     //----------------------有关模板处理开始----------------------
     tp.extend(utils);
     /**
@@ -45,8 +47,9 @@ define(function(require, exports, module) {
      * @return {NULL}              无返值
      */
     var loadTemplate = function(tplType, tpl, callback) {
+        if (!utils.isFunction(callback)) return;
+        if (utils.isNull(tpl)) console.error('编译模板错误');
         tplType = tplType || templateType.uri;
-        if (!tpl || !callback) return;
         if (tplType == templateType.element) {
             callback($(tpl).html());
         } else if (tplType == templateType.uri) {
@@ -64,6 +67,8 @@ define(function(require, exports, module) {
      * 编译模板
      */
     var complieTemplate = function(tplType, tpl, callback) {
+        if (!utils.isFunction(callback)) return;
+        if (utils.isNull(tpl)) console.error('编译模板错误');
         var cacheKey = tpl.split('?')[0].split('#')[0];
         if (templateCache[cacheKey]) {
             if (callback) callback(templateCache[cacheKey]);
@@ -137,47 +142,6 @@ define(function(require, exports, module) {
     };
 
     /**
-     * 处理事件绑定
-     */
-    var handleEvent = function(view) {
-        //查找所有事件绑定元素
-        var elements = view.ui.find("[data-event]");
-        if (view.ui.attr('data-event')) {
-            elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
-        }
-        elements.each(function() {
-            var element = $(this);
-            var eventItems = element.attr('data-event');
-            if (!eventItems) return;
-            eventItems = eventItems.split(';');
-            //遍历某一元素的事件列表
-            utils.each(eventItems, function(i, exprStr) {
-                var expr = parseEventExpr(exprStr);
-                var eventTarget = expr.isViewMethod ? view : view.controller;
-                var eventHandler = eventTarget[expr.methodName];
-                if (eventHandler) {
-                    element.on(expr.eventName, function(context) {
-                        var expr = parseEventExpr(exprStr);
-                        context.$element = element;
-                        context.element = element[0];
-                        context.view = view;
-                        context.routeData = view.controller.route.routeData;
-                        expr.methodArgs.reverse();
-                        expr.methodArgs.push(context);
-                        expr.methodArgs.reverse();
-                        var rs = eventHandler.apply(eventTarget, expr.methodArgs);
-                        expr = null;
-                        return rs;
-                    });
-                } else {
-                    console.error((expr.isViewMethod ? 'method' : 'action') + ' "' + expr.methodName + '" not found');
-                }
-                expr = null;
-            });
-        });
-    };
-
-    /**
      * 解析绑定表达式
      */
     var parseBindExpr = function(expr) {
@@ -190,144 +154,8 @@ define(function(require, exports, module) {
         return rs;
     };
 
-    /**
-     * 处理数据绑定
-     */
-    var handleBind = function(view) {
-        var elements = view.ui.find("[data-bind]");
-        if (view.ui.attr('data-bind')) {
-            elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
-        }
-        elements.each(function() {
-            var element = $(this);
-            var bindItems = element.attr('data-bind');
-            if (!bindItems) return;
-            bindItems = bindItems.split(';');
-            utils.each(bindItems, function(i, expr) {
-                expr = parseBindExpr(expr);
-                if (element[expr.attrName]) {
-                    var filed = getModel(view.model, expr.filedName);
-                    if (expr.attrName && expr.attrArg) {
-                        element[expr.attrName](expr.attrArg, filed);
-                    } else {
-                        element[expr.attrName](filed);
-                    }
-                }
-            });
-        });
-    };
-
-    var updateModel = function(view) {
-        if (!view || !view.ui) return;
-        var elements = view.ui.find("[data-bind]");
-        if (view.ui.attr('[data-bind]')) { //将UI最顶层容器也加入元素组中
-            elements.splice(0, 0, view.ui[0]);
-        }
-        elements.each(function() {
-            var element = $(this);
-            var bindItems = element.attr('data-bind');
-            if (!bindItems) return;
-            bindItems = bindItems.split(';');
-            utils.each(bindItems, function(i, expr) {
-                expr = parseBindExpr(expr);
-                if (element[expr.attrName]) {
-                    if (expr.attrName && expr.attrArg) {
-                        setModel(view.model, expr.filedName, element[expr.attrName](expr.attrArg));
-                    } else {
-                        setModel(view.model, expr.filedName, element[expr.attrName]());
-                    }
-                }
-            });
-        });
-        return view.model;
-    };
-
-    /**
-     * 处理子视图
-     */
-    var handleChildView = function(view) {
-        view.children = view.children || {};
-        var childs = view.ui.find('[data-view]');
-        var _context = {
-            'view': view
-        };
-        if (childs.length < 1) {
-            if (view.onChildRender) view.onChildRender(_context);
-            return;
-        }
-        var task = Task.create();
-        childs.each(function() {
-            var childHolder = $(this);
-            task.add(function(done) {
-                var childUri = childHolder.attr('data-view');
-                if (!childUri) {
-                    return done();
-                }
-                //取子视图Id及子模型
-                var childId = childHolder.attr('id');
-                if (utils.isNull(childId)) {
-                    childId = utils.newGuid();
-                    childHolder.attr('id', childId);
-                }
-                var childModelPath = childHolder.attr('data-model') || '';
-                var childModel = getModel(view.model, childModelPath) || view.model;
-                //取子视图选项
-                var childOptionsJson = childHolder.attr('data-options') || '{}';
-                var childOptions = json.parse(childOptionsJson);
-                //如果已存在
-                if (view.children[childId]) {
-                    //view.children[childId].model = childModel;
-                    view.children[childId].container = childHolder;
-                    view.children[childId].render(childHolder, done);
-                    return;
-                };
-                //如果不存在
-                childUri = module.resovleUri(childUri, view.templateType == templateType.uri ? view.template : location.href);
-                require(childUri, function(ChildView) {
-                    view[childId] = view.children[childId] = new ChildView({
-                        id: childId,
-                        model: childModel,
-                        controller: view.controller,
-                        options: childOptions
-                    });
-                    view.children[childId].parent = view;
-                    view.children[childId].root = view.root || view;
-                    view.children[childId].container = childHolder;
-                    view.children[childId].render(childHolder, done);
-                });
-            });
-        });
-        task.end(function() {
-            /**
-             * 在所有子视图呈现完成时
-             * @event onChildRender
-             */
-            if (view.onChildRender) view.onChildRender(_context);
-        });
-    };
-
-    var setPageTitle = function(view) {
-        if (!view || !view.ui) return;
-        if (view.ui.attr('data-role') != 'page') return;
-        var title = view.ui.attr('data-title');
-        if (title) document.title = title;
-    }
-
-    /**
-     * 按照字典映射元素
-     */
-    var mapElements = function(view) {
-        if (!view || !view.ui || !view.elMap) return;
-        view.el = {};
-        utils.each(view.elMap, function(key) {
-            view.el[key] = view.ui.find(view.elMap[key]);
-        });
-    };
-
-    var rootContainer = exports.rootContainer = $(document.body);
 
     //----------------------视图基类开始----------------------
-
     /**
      * 视图基类
      */
@@ -414,12 +242,190 @@ define(function(require, exports, module) {
         };
 
         /**
-         * 更新模型数据
-         * @method updateModel
+         * 处理事件绑定
+         */
+        this.handleEvent = function() {
+            var view = this;
+            //查找所有事件绑定元素
+            var elements = view.ui.find("[data-event]");
+            if (view.ui.attr('data-event')) {
+                elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
+            }
+            elements.each(function() {
+                var element = $(this);
+                var eventItems = element.attr('data-event');
+                if (!eventItems) return;
+                eventItems = eventItems.split(';');
+                //遍历某一元素的事件列表
+                utils.each(eventItems, function(i, exprStr) {
+                    var expr = parseEventExpr(exprStr);
+                    var eventTarget = expr.isViewMethod ? view : view.controller;
+                    var eventHandler = eventTarget[expr.methodName];
+                    if (eventHandler) {
+                        element.on(expr.eventName, function(context) {
+                            var expr = parseEventExpr(exprStr);
+                            context.$element = element;
+                            context.element = element[0];
+                            context.view = view;
+                            context.routeData = view.controller.route.routeData;
+                            expr.methodArgs.reverse();
+                            expr.methodArgs.push(context);
+                            expr.methodArgs.reverse();
+                            var rs = eventHandler.apply(eventTarget, expr.methodArgs);
+                            expr = null;
+                            return rs;
+                        });
+                    } else {
+                        console.error((expr.isViewMethod ? 'method' : 'action') + ' "' + expr.methodName + '" not found');
+                    }
+                    expr = null;
+                });
+            });
+        };
+
+        /**
+         * 处理数据绑定
+         */
+        this.handleBind = function() {
+            var view = this;
+            var elements = view.ui.find("[data-bind]");
+            if (view.ui.attr('data-bind')) {
+                elements.splice(0, 0, view.ui[0]); //将UI最顶层容器也加入元素组中
+            }
+            elements.each(function() {
+                var element = $(this);
+                var bindItems = element.attr('data-bind');
+                if (!bindItems) return;
+                bindItems = bindItems.split(';');
+                utils.each(bindItems, function(i, expr) {
+                    expr = parseBindExpr(expr);
+                    if (element[expr.attrName]) {
+                        var filed = getModel(view.model, expr.filedName);
+                        if (expr.attrName && expr.attrArg) {
+                            element[expr.attrName](expr.attrArg, filed);
+                        } else {
+                            element[expr.attrName](filed);
+                        }
+                    }
+                });
+            });
+        };
+
+        /**
+         * 更新模型
          */
         this.updateModel = function() {
-            var self = this;
-            return updateModel(self);
+            var view = this;
+            if (!view || !view.ui) return;
+            var elements = view.ui.find("[data-bind]");
+            if (view.ui.attr('[data-bind]')) { //将UI最顶层容器也加入元素组中
+                elements.splice(0, 0, view.ui[0]);
+            }
+            elements.each(function() {
+                var element = $(this);
+                var bindItems = element.attr('data-bind');
+                if (!bindItems) return;
+                bindItems = bindItems.split(';');
+                utils.each(bindItems, function(i, expr) {
+                    expr = parseBindExpr(expr);
+                    if (element[expr.attrName]) {
+                        if (expr.attrName && expr.attrArg) {
+                            setModel(view.model, expr.filedName, element[expr.attrName](expr.attrArg));
+                        } else {
+                            setModel(view.model, expr.filedName, element[expr.attrName]());
+                        }
+                    }
+                });
+            });
+            return view.model;
+        };
+
+        /**
+         * 处理子视图
+         */
+        this.handleChildView = function() {
+            var view = this;
+            view.children = view.children || {};
+            var childs = view.ui.find('[data-view]');
+            var _context = {
+                'view': view
+            };
+            if (childs.length < 1) {
+                if (view.onChildRender) view.onChildRender(_context);
+                return;
+            }
+            var task = Task.create();
+            childs.each(function() {
+                var childHolder = $(this);
+                task.add(function(done) {
+                    var childUri = childHolder.attr('data-view');
+                    if (!childUri) {
+                        return done();
+                    }
+                    //取子视图Id及子模型
+                    var childId = childHolder.attr('id');
+                    if (utils.isNull(childId)) {
+                        childId = utils.newGuid();
+                        childHolder.attr('id', childId);
+                    }
+                    var childModelPath = childHolder.attr('data-model') || '';
+                    var childModel = getModel(view.model, childModelPath) || view.model;
+                    //取子视图选项
+                    var childOptionsJson = childHolder.attr('data-options') || '{}';
+                    var childOptions = json.parse(childOptionsJson);
+                    //如果已存在
+                    if (view.children[childId]) {
+                        //view.children[childId].model = childModel;
+                        view.children[childId].container = childHolder;
+                        view.children[childId].render(childHolder, done);
+                        return;
+                    };
+                    //如果不存在
+                    childUri = module.resovleUri(childUri, view.templateType == templateType.uri ? view.template : location.href);
+                    require(childUri, function(ChildView) {
+                        view[childId] = view.children[childId] = new ChildView({
+                            id: childId,
+                            model: childModel,
+                            controller: view.controller,
+                            options: childOptions
+                        });
+                        view.children[childId].parent = view;
+                        view.children[childId].root = view.root || view;
+                        view.children[childId].container = childHolder;
+                        view.children[childId].render(childHolder, done);
+                    });
+                });
+            });
+            task.end(function() {
+                /**
+                 * 在所有子视图呈现完成时
+                 * @event onChildRender
+                 */
+                if (view.onChildRender) view.onChildRender(_context);
+            });
+        };
+
+        /**
+         * 设置页面标题
+         */
+        this.setPageTitle = function() {
+            var view = this;
+            if (!view || !view.ui) return;
+            if (view.ui.attr('data-role') != 'page') return;
+            var title = view.ui.attr('data-title');
+            if (title) document.title = title;
+        }
+
+        /**
+         * 按照字典映射元素
+         */
+        this.mapElements = function() {
+            var view = this;
+            if (!view || !view.ui || !view.elMap) return;
+            view.el = {};
+            utils.each(view.elMap, function(key) {
+                view.el[key] = view.ui.find(view.elMap[key]);
+            });
         };
 
         /**
@@ -447,17 +453,17 @@ define(function(require, exports, module) {
                     options: self.options
                 })));
                 if (!self.ui || self.ui.length < 1) {
-                    return console.error(self.ui);
+                    return console.error('"' + self.name + '" 发现异常');
                 }
                 self.root = self.root || self;
                 var _context = {
                     'view': self
                 };
-                mapElements(self);
-                handleBind(self);
-                handleEvent(self);
-                handleChildView(self);
-                setPageTitle(self);
+                self.mapElements(self);
+                self.handleBind(self);
+                self.handleEvent(self);
+                self.handleChildView(self);
+                self.setPageTitle(self);
                 /**
                  * 在视图初始化完成时
                  * @event onInit

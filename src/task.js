@@ -14,9 +14,9 @@ define(function(require, exports, module) {
     var Task = $class.create({
         "taskList": [],
         "taskCount": 0,
-        "$init": function(fns) {
+        "initialize": function(fns) {
             var self = this;
-            self.addMultiple(fns);
+            self.addMult(fns);
         },
         "addMult": function(fns) {
             var self = this;

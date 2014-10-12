@@ -143,6 +143,18 @@
     };
 
     /**
+     * 验证一个对象是否为Boolean
+     * @method isBoolean
+     * @param  {Object}  obj 要验证的对象
+     * @return {Boolean}     结果
+     * @static
+     */
+    owner.isBoolean = function(obj) {
+        if (this.isNull(obj)) return false;
+        return typeof obj === 'boolean' || obj instanceof Boolean;
+    };
+
+    /**
      * 验证一个对象是否为HTML Element
      * @method isElement
      * @param  {Object}  obj 要验证的对象
@@ -310,7 +322,9 @@
      * @static
      */
     owner.clone = function(obj) {
-        if (this.isNull(obj)) return null;
+        if (this.isNull(obj) || this.isString(obj) || this.isNumber(obj) || this.isBoolean(obj) || this.isDate(obj)) {
+            return obj;
+        }
         var objClone = new obj.constructor();
         for (var key in obj) {
             if (objClone[key] != obj[key]) {

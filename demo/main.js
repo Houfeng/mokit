@@ -1,7 +1,7 @@
 ems.config({
     packages: [{ 
         name: 'mokit',
-        location: ems.resovleUri('../build/'),
+        location: ems.resovleUri('../src/'),
         main: 'app'
     }]
 });

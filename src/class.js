@@ -14,13 +14,13 @@
      */
     var copyApply = function(src, tag, scope) {
         tag = tag || {};
-        utils.each(src, function(name) {
-            if (utils.isFunction(src[name])) {
+        utils.each(src, function(name, item) {
+            if (utils.isFunction(item)) {
                 tag[name] = function() {
-                    return src[name].apply(scope || this, arguments);
+                    return item.apply(scope || this, arguments);
                 };
             } else {
-                tag[name] = src[name];
+                tag[name] = utils.clone(item);
             }
         });
         return tag;
@@ -45,6 +45,9 @@
         var _classInstanse = utils.isFunction(_class) ? new _class() : _class;
         //创建类型
         var theClass = function() {
+            //重置实例，避免不应该出现的共享成员
+            copyApply(this, this);
+            //调用构造
             if (this.initialize) {
                 return this.initialize.apply(this, arguments);
             }
@@ -60,8 +63,9 @@
         theClass.copy = function(context) {
             return copyApply(context, this);
         };
-        //将类成员及静态添加添加到实例
+        //处理实例成员
         theClass.extend(_classInstanse);
+        //处理静态成员
         if (utils.isFunction(_base)) {
             theClass.copy(_base);
         };
