@@ -7,13 +7,14 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var $class = require("./class"),
-        console = require("./console");
+    var $class = require("./class");
+    var console = require("./console");
+    var self = exports;
 
     /**
      * 控制器基类
      */
-    var Controller = exports.Controller = $class.create({
+    var Controller = $class.create({
         /**
          * 控制器默认action (需要在这里初始化view)
          * @method index

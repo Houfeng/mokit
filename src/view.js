@@ -1,4 +1,3 @@
-﻿
 /**
  * 视图
  * @module mokit
@@ -8,21 +7,21 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var $ = require('./jquery'),
-        $class = require("./class"),
-        tp = require('./tp'),
-        utils = require('./utils'),
-        ajax = require('./ajax'),
-        json = require('./json'),
-        $model = require('./model'),
-        store = require('./store'),
-        Task = require('./task'),
-        console = require('./console'),
-        language = require('./language'),
-        eventMgr = require('./event');
-
+    var $ = require('./jquery');
+    var touch = require('./touch');
+    var $class = require("./class");
+    var tp = require('./tp');
+    var utils = require('./utils');
+    var ajax = require('./ajax');
+    var json = require('./json');
+    var $model = require('./model');
+    var store = require('./store');
+    var Task = require('./task');
+    var console = require('./console');
+    var language = require('./language');
+    var eventMgr = require('./event');
     var rootContainer = exports.rootContainer = $(document.body);
-
+    exports.showMask = false;
     //----------------------有关模板处理开始----------------------
     tp.extend(utils);
     /**
@@ -56,7 +55,8 @@ define(function(require, exports, module) {
             ajax.get({
                 url: tpl,
                 callback: callback,
-                dataType: 'text'
+                dataType: 'text',
+                noMask: !exports.showMask
             });
         } else {
             callback(tpl);
@@ -159,7 +159,7 @@ define(function(require, exports, module) {
     /**
      * 视图基类
      */
-    var View = exports.View = $class.create(function() {
+    var View = $class.create(function() {
 
         /**
          * 视图模板型型

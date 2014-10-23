@@ -8,10 +8,12 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var $ = require('./jquery'),
-        utils = require('./utils'),
-        store = require('./store'),
-        mask = require('./mask');
+    var $ = require('./jquery');
+    var utils = require('./utils');
+    var store = require('./store');
+    var mask = require('./mask');
+    var self = exports;
+    var top = window.top;
 
     /**
      * Ajax全局加载选项
@@ -19,10 +21,10 @@ define(function(require, exports, module) {
      * @property loadingOption
      * @static
      */
-    exports.loadingOption = null;
+    self.loadingOption = null;
 
-    window.top.__mokit_ajax_filters__ = window.top.__mokit_ajax_filters__ || [];
-    window.top.__mokit_ajax_setup__ = window.top.__mokit_ajax_setup__ || {};
+    top.__mokit_ajax_filters__ = top.__mokit_ajax_filters__ || [];
+    top.__mokit_ajax_setup__ = top.__mokit_ajax_setup__ || {};
 
     /**
      * 数据缓存
@@ -32,7 +34,7 @@ define(function(require, exports, module) {
     /**
      * 数据过滤器
      */
-    var dataFilters = window.top.__mokit_ajax_filters__;
+    var dataFilters = top.__mokit_ajax_filters__;
 
     /**
      * 过虑数据
@@ -53,7 +55,7 @@ define(function(require, exports, module) {
      * @return {void} 无返回值
      * @static
      */
-    exports.addDataFilter = function(filter) {
+    self.addDataFilter = function(filter) {
         dataFilters.push(filter);
     };
 
@@ -64,7 +66,7 @@ define(function(require, exports, module) {
      * @return {void} 无返回值
      * @static
      */
-    exports.setup = function(option) {
+    self.setup = function(option) {
         //utils.copy(option,window.top.__mokit_ajax_setup__);
         $.ajaxSetup(option);
     };
@@ -76,10 +78,10 @@ define(function(require, exports, module) {
      * @return {void} 无返回值
      * @static
      */
-    exports.request = function(option) {
+    self.request = function(option) {
         option = option || {};
-        if (!option.noMask) mask.begin(exports.loadingOption);
-        if (exports.onBegin) exports.onBegin();
+        if (!option.noMask) mask.begin(self.loadingOption);
+        if (self.onBegin) self.onBegin();
         option.url = option.url || "";
         var cacheKey = "mokit://ajax/" + option.url;
         ajaxCache[cacheKey] = ajaxCache[cacheKey] || {};
@@ -91,7 +93,7 @@ define(function(require, exports, module) {
         option.data = filterData('send', option.data);
         //处理缓存
         if (option.success && option.cacheEnabled && ajaxCache[cacheKey].result != null) {
-            mask.end(exports.loadingOption);
+            mask.end(self.loadingOption);
             option.success(ajaxCache[cacheKey].result);
             return;
         }
@@ -104,14 +106,14 @@ define(function(require, exports, module) {
                 ajaxCache[cacheKey].result = rs;
             }
             if (success) success(rs);
-            if (exports.onEnd) exports.onEnd();
-            if (!option.noMask) mask.end(exports.loadingOption);
+            if (self.onEnd) self.onEnd();
+            if (!option.noMask) mask.end(self.loadingOption);
         };
 
         //包装error
         var error = option.error;
         option.error = function() {
-            if (!option.noMask) mask.end(exports.loadingOption);
+            if (!option.noMask) mask.end(self.loadingOption);
             if (error) error(arguments);
         };
 
@@ -125,9 +127,9 @@ define(function(require, exports, module) {
      * @param {Object} option 请求参数
      * @static
      */
-    exports.get = function(option) {
+    self.get = function(option) {
         option.type = "GET";
-        return exports.request(option);
+        return self.request(option);
     };
 
     /**
@@ -136,9 +138,9 @@ define(function(require, exports, module) {
      * @param {Object} option 请求参数
      * @static
      */
-    exports.post = function(option) {
+    self.post = function(option) {
         option.type = "POST";
-        return exports.request(option);
+        return self.request(option);
     };
 
     /**
@@ -147,18 +149,18 @@ define(function(require, exports, module) {
      * @param {String} url 要释放的请求url
      * @static
      */
-    exports.abort = function(url) {
+    self.abort = function(url) {
         if (url) {
             var cacheKey = "mokit://ajax/" + url;
             ajaxCache[cacheKey].success = null;
-            ajaxCache[cacheKey].abort();
+            ajaxCache[cacheKey].xhr.abort();
         } else {
             utils.each(ajaxCache, function(key, item) {
                 item.success = null;
-                item.abort();
+                item.xhr.abort();
             });
         }
-        mask.end(exports.loadingOption);
+        mask.end(self.loadingOption);
     };
 
 });

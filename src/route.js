@@ -7,8 +7,9 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var console = require("./console"),
-        utils = require("./utils");
+    var console = require("./console");
+    var utils = require("./utils");
+    var self = exports;
 
     /**
      * 路由表
@@ -27,7 +28,7 @@ define(function(require, exports, module) {
      * @method getRoute
      * @static
      */
-    exports.getRoute = function(pathName) {
+    self.getRoute = function(pathName) {
         for (var i = 0; i < routeTable.length; i++) {
             var route = routeTable[i];
             route.matchExp.lastIndex = 0;
@@ -71,7 +72,7 @@ define(function(require, exports, module) {
      * @method addRoute
      * @static
      */
-    exports.addRoute = function(routes, srcModule) {
+    self.addRoute = function(routes, srcModule) {
         if (!utils.isArray(routes)) routes = [routes];
         utils.each(routes, function(i) {
             this.target = (srcModule && srcModule.resovleUri) ? srcModule.resovleUri(this.target) : this.target;

@@ -6,11 +6,10 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var $ = require('./jquery'),
-        //style = require('./style.css'),
-        modernizr = require('./modernizr'),
-        utils = require('./utils'),
-        mask = require('./mask');
+    var $ = require('./jquery');
+    var modernizr = require('./modernizr');
+    var utils = require('./utils');
+    var mask = require('./mask');
 
     var supportCSSAnimation = modernizr.cssanimations,
         endCurrentView = false,
@@ -22,6 +21,7 @@ define(function(require, exports, module) {
         'msAnimation': 'MSAnimationEnd',
         'animation': 'animationend'
     };
+    
     // animation end event name
     var animationEndEventName = animationEndEventNames[modernizr.prefixed('animation')];
 

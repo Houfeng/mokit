@@ -8,18 +8,16 @@ define(function(require, exports, module) {
     "use strict";
 
     var utils = require("./utils");
-
-    //如果原生支持
-    if (typeof JSON !== 'undefined') {
-        exports.stringify = JSON.stringify;
-        exports.parse = JSON.parse;
-        return exports;
-    }
+    var self = exports;
+    var support = (typeof JSON !== 'undefined');
 
     /**
-     * 自定义的json转字符串
+     * 将JavaScript对象转换为JSON字符串表示形式。
+     * @method stringify
+     * @param {Object} obj 对象
+     * @static
      */
-    var obj2str = function(obj) {
+    self.stringify = support ? JSON.stringify : function(obj) {
         switch (typeof(obj)) {
             case 'string':
                 return '"' + obj.replace(/(["\\])/g, '\\$1') + '"';
@@ -52,27 +50,16 @@ define(function(require, exports, module) {
     };
 
     /**
-     * 自定义的字符串转json
-     */
-    var str2obj = function(str) {
-        if (str == null) return null;
-        return (new Function("return " + str + ";"))();
-    };
-
-    /**
-     * 将JavaScript对象转换为JSON字符串表示形式。
-     * @method stringify
-     * @param {Object} obj 对象
-     * @static
-     */
-    exports.stringify = obj2str;
-    /**
      * 将JSON字符串转换为JavaScript对象
      * @method parse
      * @param {String} str JSON字符串
      * @static
      */
-    exports.parse = str2obj;
-    return exports;
+    self.parse = support ? JSON.parse : function(str) {
+        if (str == null) return null;
+        return (new Function("return " + str + ";"))();
+    };
+
+    return self;
 
 });

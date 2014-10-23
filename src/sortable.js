@@ -8,7 +8,9 @@ define(function(require, exports, module) {
     "use strict";
 
     var $ = require('./jquery');
-
+    var touch = require('./touch');
+    var self = exports;
+    
     var sortItems = null;
     var dragItem = null;
     var startPoint = null;
@@ -18,6 +20,7 @@ define(function(require, exports, module) {
         x: 30,
         y: 30
     };
+
     var sortOption = null;
     //
     $(document.body).bind('vmousedown', function(event) {
@@ -74,7 +77,7 @@ define(function(require, exports, module) {
      * @method use
      * @static
      */
-    exports.use = function(items, option) {
+    self.use = function(items, option) {
         items.attr('draggable', false);
         items.find('a,img').attr('draggable', false);
         option = option || {};

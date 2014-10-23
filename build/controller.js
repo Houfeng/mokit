@@ -1,1 +1,1 @@
-/*csd*/define(function(require,exports,module){"use strict";var a=require("./class"),b=require("./console");var c=exports.Controller=a.create({});exports.create=function(d,e){if(!e){e=d;d=c;}return a.create(d,e);};});
+/*csd*/define(function(require,exports,module){"use strict";var a=require("./class");var b=require("./console");var d=exports;var c=a.create({});exports.create=function(e,f){if(!f){f=e;e=c;}return a.create(e,f);};});

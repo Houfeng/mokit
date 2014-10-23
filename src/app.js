@@ -1,6 +1,6 @@
 /**
  * Mokit是一个符合MVC的WebApp基础开发框架
- * 当前版本: v2.0 beta 41
+ * 当前版本: v2.0 beta 42
  * @author Houfeng
  * @module mokit
  * @main mokit
@@ -22,28 +22,28 @@ define(function(require, exports, module) {
      * @final
      */
     exports.mokit = {
-        version: '2.0 Beta 41',
+        version: '2.0 Beta 43',
         author: 'Houfeng'
     };
 
     /**
      * 导入依赖
      */
-    var style = require('./style.css'),
-        console = require('./console'),
-        routeMgr = require('./route'),
-        eventMgr = require("./event"),
-        utils = require("./utils"),
-        model = require('./model'),
-        view = require('./view'),
-        controller = require('./controller'),
-        language = require('./language'),
-        style = require('./style'),
-        ajax = require('./ajax'),
-        transitions = require('./transitions'),
-        $ = require('./jquery'),
-        Task = require('./task'),
-        navigation = require('./navigation');
+    var style = require('./style.css');
+    var console = require('./console');
+    var routeMgr = require('./route');
+    var eventMgr = require("./event");
+    var utils = require("./utils");
+    var model = require('./model');
+    var view = require('./view');
+    var controller = require('./controller');
+    var language = require('./language');
+    var style = require('./style');
+    var ajax = require('./ajax');
+    var transitions = require('./transitions');
+    var $ = require('./jquery');
+    var Task = require('./task');
+    var navigation = require('./navigation');
 
 
     /*---------------------------将常用模块载入并挂在App上---------------------------*/

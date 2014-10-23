@@ -9,15 +9,27 @@ define(function(require, exports, module) {
     "use strict";
 
     var $ = require('./jquery');
+    var self = exports;
 
-    //计数
-    var maskCount = 0;
-    var maskElement = null;
-
-    //动画开始结束处理
-    var showMask = function(option) {
-        option = option || exports.option || {};
-        if (maskCount < 1) {
+    /**
+     * 默认选项
+     * @property {Object} option
+     * @static
+     */
+    self.option = {};
+    self.maskCount = 0;
+    self.maskElement = null;
+    self.container = $(document.body);
+    
+    /**
+     * 显示一个蒙板
+     * @method show
+     * @param {Object} option 选项，格式：{opacity:透明度,color:颜色,pic:进度图片}
+     * @static
+     */
+    self.show = self.begin = function(option) {
+        option = option || self.option || {};
+        if (self.maskCount < 1) {
             var buffer = [];
             buffer.push('<div style="width:100%;height:100%;z-index:999999999;position:fixed;left:0px;top:0px;');
             buffer.push('background-color:' + (option.color || '') + ';');
@@ -27,27 +39,11 @@ define(function(require, exports, module) {
                 buffer.push(');background-repeat:no-repeat;background-position:center center;');
             }
             buffer.push('"></div>');
-            maskElement = $(buffer.join(''));
-            $(document.body).append(maskElement);
+            self.maskElement = $(buffer.join(''));
+            self.container.append(self.maskElement);
         }
-        maskCount++;
+        self.maskCount++;
     };
-
-    var hideMask = function(option) {
-        option = option || {};
-        maskCount--;
-        if (maskCount < 1 && maskElement) {
-            maskElement.remove();
-        }
-    };
-
-    /**
-     * 显示一个蒙板
-     * @method show
-     * @param {Object} option 选项，格式：{opacity:透明度,color:颜色,pic:进度图片}
-     * @static
-     */
-    exports.show = exports.begin = showMask;
 
     /**
      * 隐藏一个蒙板
@@ -55,13 +51,11 @@ define(function(require, exports, module) {
      * @param {Object} option 选项
      * @static
      */
-    exports.hide = exports.end = hideMask;
-
-    /**
-     * 默认选项
-     * @property {Object} option
-     * @static
-     */
-    exports.option = {};
-
+    self.hide = self.end = function(option) {
+        option = option || {};
+        self.maskCount--;
+        if (self.maskCount < 1 && self.maskElement) {
+            self.maskElement.remove();
+        }
+    };
 });

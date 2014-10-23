@@ -8,8 +8,9 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var utils = require('./utils'),
-        $ = require('./jquery');
+    var utils = require('./utils');
+    var $ = require('./jquery');
+    var self = exports;
 
     function handleSize(list, max) {
         var autoCount = 0;
@@ -103,7 +104,7 @@ define(function(require, exports, module) {
      * @return {void}    无返回值
      * @static
      */
-    exports.use = function(ui) {
+    self.use = function(ui) {
         var grids = ui.find('[data-role~=grid]');
 
         //如果页面也是Grid
@@ -124,5 +125,4 @@ define(function(require, exports, module) {
             });
         });
     };
-
 });

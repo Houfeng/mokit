@@ -1,4 +1,6 @@
-﻿ //
+/**
+ * 文件模块
+ */
 define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";

@@ -7,21 +7,22 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var utils = require('./utils'),
-        store = require('./store'),
-        eventMgr = require('./event');
+    var utils = require('./utils');
+    var store = require('./store');
+    var eventMgr = require('./event');
+    var console = require('./console');
+    var self = exports;
 
     //语言表
-    var langeuageTable = store.dataCache["$language"] = exports.languages = {};
-
-    exports.languageChange = eventMgr.create(exports, 'languagechange');
-
+    var langeuageTable = store.dataCache["$language"] = self.languages = {};
     var currentName = null;
+
+    self.languageChange = eventMgr.create(self, 'languagechange');
 
     /**
      * currentName属性
      */
-    utils.defineProperty(exports, 'currentName', {
+    utils.defineProperty(self, 'currentName', {
         get: function() {
             currentName = currentName || store.local.get('mokit://language/current-name');
             return currentName;
@@ -43,7 +44,7 @@ define(function(require, exports, module) {
         }
     }, true);
 
-    utils.defineProperty(exports, 'defaultName', {
+    utils.defineProperty(self, 'defaultName', {
         get: function() {
             var browserLanguage = (navigator.language || '').toLowerCase();
             if (langeuageTable[browserLanguage]) {
@@ -61,7 +62,7 @@ define(function(require, exports, module) {
      * @param {Module} srcModule 当前模块
      * @static
      */
-    exports.addLanguage = function(languages, srcModule) {
+    self.addLanguage = function(languages, srcModule) {
         utils.each(languages, function(name) {
             langeuageTable[name] = (srcModule && srcModule.resovleUri) ? srcModule.resovleUri(this) : this;
         });
@@ -74,14 +75,14 @@ define(function(require, exports, module) {
      * @param {Function} callback 切换完成回调
      * @static
      */
-    exports.setLanguage = function(name, callback) {
+    self.setLanguage = function(name, callback) {
         if (!utils.isString(name)) return;
         var languageUri = langeuageTable[name];
         if (languageUri) {
             require(languageUri, function(rs) {
-                exports.current(rs);
-                exports.currentName(name);
-                exports.languageChange.trigger(name, rs);
+                self.current(rs);
+                self.currentName(name);
+                self.languageChange.trigger(name, rs);
                 if (callback) callback(name, rs);
             })
         } else {
@@ -89,11 +90,11 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.save = function() {
+    self.save = function() {
         return store.local.set('mokit://language/current-name', currentName);
     };
 
-    exports.clear = function() {
+    self.clear = function() {
         return store.local.set('mokit://language/current-name', "");
     };
 });
