@@ -7,14 +7,14 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var $ = require('./jquery'),
-        utils = require('./utils'),
-        store = require('./store'),
-        eventMgr = require('./event');
+    var $ = require('./jquery');
+    var utils = require('./utils');
+    var store = require('./store');
+    var $event = require('./event');
 
     var styleTable = store.dataCache["$style"] = {};
 
-    exports.styleChange = eventMgr.create(exports, 'styleChange');
+    exports.events = $event.use(exports);
 
     exports.storeKey = "mokit://style/current-name";
     var currentName = null;
@@ -61,7 +61,10 @@ define(function(require, exports, module) {
             module.unload(styleTable[exports.currentName()]);
             require(styleTable[name], function(rs) {
                 exports.currentName(name);
-                exports.styleChange.trigger(name, rs);
+                exports.events.call("change", {
+                    name: name,
+                    style: rs
+                });
                 utils.async(function() {
                     if (callback) callback(name, rs);
                 }, 45);

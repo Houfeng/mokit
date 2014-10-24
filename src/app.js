@@ -1,6 +1,6 @@
 /**
  * Mokit是一个符合MVC的WebApp基础开发框架
- * 当前版本: v2.0 beta 42
+ * 当前版本: v2.0 beta 45
  * @author Houfeng
  * @module mokit
  * @main mokit
@@ -22,7 +22,7 @@ define(function(require, exports, module) {
      * @final
      */
     exports.mokit = {
-        version: '2.0 Beta 43',
+        version: '2.0 Beta 45',
         author: 'Houfeng'
     };
 
@@ -32,7 +32,7 @@ define(function(require, exports, module) {
     var style = require('./style.css');
     var console = require('./console');
     var routeMgr = require('./route');
-    var eventMgr = require("./event");
+    var $event = require("./event");
     var utils = require("./utils");
     var model = require('./model');
     var view = require('./view');
@@ -59,13 +59,13 @@ define(function(require, exports, module) {
     /*---------------------------/将常用模块载入并挂在App上---------------------------*/
 
 
-    exports.onstart = eventMgr.create(exports, 'onStart');
+    exports.events = $event.use(exports);
 
     var preSatrt = function(route) {
         var startContext = {
             'route': route
         };
-        exports.onStart.trigger(startContext);
+        exports.events.call('onStart', startContext);
         return !startContext.cancel;
     };
 
@@ -134,9 +134,10 @@ define(function(require, exports, module) {
     /**
      * 在URI发生改变时
      */
-    navigation.change(function(uri, isBack) {
-        if (uri)
-            _start(uri, isBack);
+    navigation.events.on('change', function(event) {
+        if (event.uri) {
+            _start(event.uri, event.isBack);
+        }
     });
 
     /**

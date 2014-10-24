@@ -9,15 +9,15 @@ define(function(require, exports, module) {
 
     var utils = require('./utils');
     var store = require('./store');
-    var eventMgr = require('./event');
+    var $event = require('./event');
     var console = require('./console');
     var self = exports;
+
+    self.events = $event.use(self);
 
     //语言表
     var langeuageTable = store.dataCache["$language"] = self.languages = {};
     var currentName = null;
-
-    self.languageChange = eventMgr.create(self, 'languagechange');
 
     /**
      * currentName属性
@@ -82,7 +82,10 @@ define(function(require, exports, module) {
             require(languageUri, function(rs) {
                 self.current(rs);
                 self.currentName(name);
-                self.languageChange.trigger(name, rs);
+                self.events.call('change', {
+                    name: name,
+                    lang: rs
+                });
                 if (callback) callback(name, rs);
             })
         } else {

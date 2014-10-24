@@ -7,7 +7,7 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var eventMgr = require('./event');
+    var $event = require('./event');
     var utils = require("./utils");
 
     /**
@@ -16,11 +16,11 @@ define(function(require, exports, module) {
      * @param {String} uri 当前Uri
      * @static
      */
-    exports.change = eventMgr.create(exports, 'change');
+    exports.events = $event.use(exports);
     /**
      * 处理hashchange事件
      */
-    window.hashChange = eventMgr.create(window, 'hashchange');
+    window.events = $event.use(window);
 
     var onHashChange = function() {
         var uri = getUri();
@@ -32,7 +32,11 @@ define(function(require, exports, module) {
         } else if (_history[lastIndex] != uri) { //如果不是自已跳向自已
             _history.push(uri);
         }
-        exports.change.trigger(uri, isBack, _history.length);
+        exports.events.call("change", {
+            uri: uri,
+            isBack: isBack,
+            length: _history.length
+        });
     };
 
     var _history = [getUri()];
@@ -93,6 +97,6 @@ define(function(require, exports, module) {
     };
     exports.reset = reset;
 
-    window.hashChange.bind(onHashChange);
+    window.events.on('hashchange', onHashChange);
 
 });

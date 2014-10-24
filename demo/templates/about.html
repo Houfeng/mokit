@@ -1,3 +1,8 @@
-<div data-role='page'style='height:100%;'>
-	<div id='block' style="width:400px;height:400px;background:red;"></div>
+<div data-role='page grid' style='height:100%;' data-grid-rows="*,*" data-grid-cols="*">
+    <div id='cell1' data-role='cell' style='background-color:red;'>
+        代码方式
+    </div>
+    <div id='cell2' data-event="swipeleft>!swipeleft;swiperight>!swiperight" data-role='cell' style='background-color:blue;'>
+        声明方式
+    </div>
 </div>

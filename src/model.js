@@ -7,12 +7,12 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var utils = require("./utils"),
-        event = require("./event"),
-        store = require("./store"),
-        $class = require("./class"),
-        linq = require("./linq"),
-        langMgr = require('./language');
+    var utils = require("./utils");
+    var event = require("./event");
+    var store = require("./store");
+    var $class = require("./class");
+    var linq = require("./linq");
+    var langMgr = require('./language');
 
     var applyModel = function(model) {
         model.views = model.views || [];

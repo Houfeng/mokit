@@ -325,7 +325,10 @@
         if (this.isNull(obj) || this.isString(obj) || this.isNumber(obj) || this.isBoolean(obj) || this.isDate(obj)) {
             return obj;
         }
-        var objClone = new obj.constructor();
+        var objClone = obj;
+        try {
+            objClone = new obj.constructor();
+        } catch (ex) {}
         for (var key in obj) {
             if (objClone[key] != obj[key]) {
                 if (typeof(obj[key]) === 'object') {
@@ -350,7 +353,9 @@
     owner.copy = function(obj1, obj2) {
         obj2 = obj2 || {};
         this.each(obj1, function(name) {
-            obj2[name] = obj1[name];
+            try {
+                obj2[name] = obj1[name];
+            } catch (ex) {}
         })
         return obj2;
     };

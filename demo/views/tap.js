@@ -7,8 +7,7 @@ define(function(define, exports, module) {
         initialize: function(element) {
             var self = this;
             self.element = element;
-        },
-        
+        }
     });
 
     return tap;

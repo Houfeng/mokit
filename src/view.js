@@ -19,7 +19,7 @@ define(function(require, exports, module) {
     var Task = require('./task');
     var console = require('./console');
     var language = require('./language');
-    var eventMgr = require('./event');
+    var $event = require('./event');
     var rootContainer = exports.rootContainer = $(document.body);
     exports.showMask = false;
     //----------------------有关模板处理开始----------------------
@@ -242,6 +242,15 @@ define(function(require, exports, module) {
         };
 
         /**
+         * 绑定事件
+         */
+        this.bindEvent = function(elements, name, handler) {
+            elements.each(function(i, element) {
+                $event(element).on(name, handler);
+            });
+        };
+
+        /**
          * 处理事件绑定
          */
         this.handleEvent = function() {
@@ -253,6 +262,7 @@ define(function(require, exports, module) {
             }
             elements.each(function() {
                 var element = $(this);
+                element.view = view;
                 var eventItems = element.attr('data-event');
                 if (!eventItems) return;
                 eventItems = eventItems.split(';');
@@ -262,12 +272,12 @@ define(function(require, exports, module) {
                     var eventTarget = expr.isViewMethod ? view : view.controller;
                     var eventHandler = eventTarget[expr.methodName];
                     if (eventHandler) {
-                        element.on(expr.eventName, function(context) {
+                        view.bindEvent(element, expr.eventName, function(context) {
                             var expr = parseEventExpr(exprStr);
                             context.$element = element;
                             context.element = element[0];
-                            context.view = view;
-                            context.routeData = view.controller.route.routeData;
+                            context.view = element.view;
+                            context.routeData = element.view.controller.route.routeData;
                             expr.methodArgs.reverse();
                             expr.methodArgs.push(context);
                             expr.methodArgs.reverse();
