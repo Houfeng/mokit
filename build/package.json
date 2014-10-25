@@ -1,7 +1,7 @@
 {
     "name": "mokit",
     "description": "mokit mvc framework",
-    "version": "v 2.0 Beta 14",
+    "version": "v 2.0 Beta 45",
     "url": "http://houfeng.net/",
     "options": {
         "outdir": "../src_build/apidocs"

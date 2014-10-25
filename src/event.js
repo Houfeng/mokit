@@ -67,12 +67,16 @@
                 var event = document.createEvent('HTMLEvents');
                 event.initEvent(name, canBubble, cancelable);
                 utils.copy(data, event);
-                event.target = target;
+                if (!utils.isNull(event.target)) {
+                    event.target = target;
+                }
                 target.dispatchEvent(event);
             } else if (target.fireEvent) {
                 var event = document.createEventObject();
                 utils.copy(data, event);
-                event.target = target;
+                if (!utils.isNull(event.target)) {
+                    event.target = target;
+                }
                 target.fireEvent("on" + name, event);
             };
             return monitor;
@@ -93,7 +97,7 @@
             monitor._addEvent(name, handler, false);
             //如果存在自定义注册的触发器
             if (utils.isFunction($event.callers[name])) {
-                $event.callers[name](monitor, handler, false);
+                $event.callers[name](monitor, name, handler, false);
             }
             return monitor;
         };

@@ -26,6 +26,16 @@ define(function(require, exports, module) {
             $event.use(cell);
             cell.on('swipe', function(event) {
                 self.el.cell1.html(event.direction);
+                console.log(event.direction);
+            }).on('tap', function() {
+                self.el.cell1.html('tap');
+                console.log('tap');
+            }).on('taphold', function() {
+                self.el.cell1.html('taphold');
+                console.log('taphold');
+            }).on('dbltap', function() {
+                self.el.cell1.html('dbltap');
+                console.log('dbltap');
             });
         },
         swiperight: function(context) {
