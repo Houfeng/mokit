@@ -1,6 +1,6 @@
 /**
  * 事件模块
- * @class Event
+ * @class event
  * @module mokit
  */
 (function(owner) {
@@ -15,20 +15,31 @@
 
         //创建事件对象
         var monitor = _target.$monitor = {
-            $monitor: monitor,
             target: _target
         };
+        monitor.$monitor = monitor;
 
         //注册 native 事件
         monitor._addEvent = function(name, handler, useCapture) {
             if (!utils.isString(name) || !utils.isFunction(handler)) return;
             var target = monitor.target;
             //生成代理 hander
-            handler.delegate = function(event) {
+            handler.$delegate = handler.$delegate || function(event) {
+                //这个地方因为有些时候，我们需要向 event 上添加新的属性或
+                //方法，但是原生 event 对象，有些方法或属性是不能添加的
+                //比如 mokit 就需要添加一个 view 属性
                 var delegateEvent = {
                     originalEvent: event
                 };
-                delegateEvent = utils.copy(event, delegateEvent);
+                utils.each(event, function(name, item) {
+                    if (utils.isFunction(item)) {
+                        delegateEvent[name] = function() {
+                            item.apply(event, arguments);
+                        };
+                    } else {
+                        delegateEvent[name] = item;
+                    }
+                });
                 arguments[0] = delegateEvent;
                 var rs = handler.apply(target, arguments);
                 if (rs === false) {
@@ -39,9 +50,9 @@
                 }
             };
             if (target.addEventListener) {
-                target.addEventListener(name, handler.delegate, useCapture);
+                target.addEventListener(name, handler.$delegate, useCapture);
             } else if (target.attachEvent) {
-                target.attachEvent("on" + name, handler.delegate, useCapture);
+                target.attachEvent("on" + name, handler.$delegate, useCapture);
             };
             return monitor;
         };
@@ -50,7 +61,7 @@
         monitor._removeEvent = function(name, handler, useCapture) {
             if (!utils.isString(name)) return;
             var target = monitor.target;
-            var fn = handler && handler.delegate ? handler.delegate : handler;
+            var fn = handler && handler.$delegate ? handler.$delegate : handler;
             if (target.removeEventListener) {
                 target.removeEventListener(name, fn, useCapture);
             } else if (target.detachEvent) {
@@ -95,28 +106,43 @@
             monitor.lists[name] = monitor.lists[name] || [];
             monitor.lists[name].push(handler);
             monitor._addEvent(name, handler, false);
-            //如果存在自定义注册的触发器
-            if (utils.isFunction($event.callers[name])) {
-                $event.callers[name](monitor, name, handler, false);
+            //如果存在已注册的自定义 “组合事件”
+            var caller = $event.callers[name];
+            if (!utils.isNull(caller) && utils.isFunction(caller.on)) {
+                caller.on(monitor, name, handler, false);
             }
             return monitor;
         };
 
         //取消事件
         monitor.off = function(name, handler) {
-            if (!utils.isString(name)) return;
             monitor.lists = monitor.lists || {};
-            if (monitor.lists[name]) {
+            //如不指定名称，移除所有事件处理
+            if (utils.isNull(name)) {
+                utils.each(monitor.lists, function(name, item) {
+                    monitor.off(name, handler);
+                });
+                return monitor;
+            }
+            //移除指定名称的事件处理
+            if (!utils.isString(name)) return;
+            monitor._removeEvent(name, handler, false);
+            var list = monitor.lists[name];
+            if (!utils.isNull(list)) {
                 var newList = [];
-                var list = monitor.lists[name];
                 utils.each(list, function(i, item) {
                     if (!utils.isNull(handler) && item !== handler) {
                         newList.push(item);
                     } else {
-                        monitor._removeEvent(name, handler, false);
+                        monitor._removeEvent(name, item, false);
                     }
                 });
                 monitor.lists[name] = newList;
+            }
+            //如果存在已注册的自定义 “组合事件”
+            var caller = $event.callers[name];
+            if (!utils.isNull(caller) && utils.isFunction(caller.off)) {
+                caller.off(monitor, name, handler, false);
             }
             return monitor;
         };
@@ -131,10 +157,11 @@
             }
             monitor.lists = monitor.lists || {};
             if (monitor.lists[name]) {
+                data.target = target;
                 var list = monitor.lists[name];
                 utils.each(list, function(i, item) {
                     if (!utils.isFunction(item)) return;
-                    item.apply(monitor.target, [data]);
+                    item.apply(target, [data]);
                 });
             }
             return monitor;
@@ -184,6 +211,7 @@
         utils = owner.$utils;
         owner.$event = $event;
     }
+    //owner.$event = $event;
 
 })((typeof exports === 'undefined') ? this : exports);
 //

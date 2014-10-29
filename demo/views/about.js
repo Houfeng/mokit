@@ -24,17 +24,18 @@ define(function(require, exports, module) {
             grid.use(self.ui);
             var cell = self.el.cell1[0];
             $event.use(cell);
+            //return;
             cell.on('swipe', function(event) {
-                self.el.cell1.html(event.direction);
+                self.el.cell1.find('#alert').html(event.direction);
                 console.log(event.direction);
             }).on('tap', function() {
-                self.el.cell1.html('tap');
+                self.el.cell1.find('#alert').html('tap');
                 console.log('tap');
             }).on('taphold', function() {
-                self.el.cell1.html('taphold');
+                self.el.cell1.find('#alert').html('taphold');
                 console.log('taphold');
             }).on('dbltap', function() {
-                self.el.cell1.html('dbltap');
+                self.el.cell1.find('#alert').html('dbltap');
                 console.log('dbltap');
             });
         },

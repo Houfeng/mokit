@@ -23,8 +23,8 @@ define(function(require, exports, module) {
      */
     self.loadingOption = null;
 
-    top.__mokit_ajax_filters__ = top.__mokit_ajax_filters__ || [];
-    top.__mokit_ajax_setup__ = top.__mokit_ajax_setup__ || {};
+    top.mokit = top.mokit || {};
+    top.mokit.ajaxFilters = top.mokit.ajaxFilters || [];
 
     /**
      * 数据缓存
@@ -34,7 +34,7 @@ define(function(require, exports, module) {
     /**
      * 数据过滤器
      */
-    var dataFilters = top.__mokit_ajax_filters__;
+    var dataFilters = top.mokit.ajaxFilters;
 
     /**
      * 过虑数据
@@ -59,6 +59,7 @@ define(function(require, exports, module) {
         dataFilters.push(filter);
     };
 
+    self.option = {};
     /**
      * Ajax全局设置
      * @method setup
@@ -67,8 +68,8 @@ define(function(require, exports, module) {
      * @static
      */
     self.setup = function(option) {
-        //utils.copy(option,window.top.__mokit_ajax_setup__);
-        $.ajaxSetup(option);
+        self.option = option || {};
+        $.ajaxSetup(self.option);
     };
 
     /**
@@ -82,43 +83,76 @@ define(function(require, exports, module) {
         option = option || {};
         if (!option.noMask) mask.begin(self.loadingOption);
         if (self.onBegin) self.onBegin();
+        //处理选项参数
+        option.$timeout = option.$timeout || self.option.$timeout || null;
         option.url = option.url || "";
-        var cacheKey = "mokit://ajax/" + option.url;
-        ajaxCache[cacheKey] = ajaxCache[cacheKey] || {};
         option.url = utils.wrapUrl(option.url);
         option.type = option.type || "GET";
         option.dataType = option.dataType || "json";
         option.success = option.success || option.callback;
+        //默认错误对象
+        option.errorArgs = {
+            code: 500,
+            message: '请求发生错误'
+        };
         //过滤发送数据
         option.data = filterData('send', option.data);
-        //处理缓存
-        if (option.success && option.cacheEnabled && ajaxCache[cacheKey].result != null) {
-            mask.end(self.loadingOption);
-            option.success(ajaxCache[cacheKey].result);
-            return;
-        }
-        //包装回调
+        //包装 success 函数
         var success = option.success;
-        option.success = ajaxCache[cacheKey].success = function(rs) {
+        option.success = function(rs) {
+            if (option.aborted) return;
+            option._cleartTimer();
             //过滤接收数据
             rs = filterData('receive', rs);
-            if (option.cacheEnabled) {
-                ajaxCache[cacheKey].result = rs;
-            }
-            if (success) success(rs);
+            if (success) success(rs, null);
             if (self.onEnd) self.onEnd();
             if (!option.noMask) mask.end(self.loadingOption);
         };
-
-        //包装error
-        var error = option.error;
+        //包装 error 函数
+        var error = option.error || self.option.error;
         option.error = function() {
+            if (option.aborted) return;
+            option._cleartTimer();
+            if (error) {
+                error(arguments);
+            } else {
+                if (success) success(null, option.errorArgs);
+            }
             if (!option.noMask) mask.end(self.loadingOption);
-            if (error) error(arguments);
         };
-
-        ajaxCache[cacheKey].xhr = $.ajax(option);
-        return ajaxCache[cacheKey].xhr;
+        //取消请请函数
+        option.abort = function() {
+            option._cleartTimer();
+            option.errorArgs.message = "请求被取消";
+            option.aborted = true;
+            if (option.xhr) {
+                option.xhr.abort();
+            }
+            if (!option.noMask) mask.end(self.loadingOption);
+        };
+        option._createTimer = function() {
+            if (!option.$timeout) return;
+            option._timer = setTimeout(function() {
+                if (option._timerCanceled || option._timer == null) return;
+                option.abort();
+                option.errorArgs.message = "请求超时";
+                if (success) success(null, option.errorArgs);
+                if (error) error(option.errorArgs);
+                option._cleartTimer();
+            }, option.$timeout);
+        };
+        option._cleartTimer = function() {
+            if (option._timer) {
+                clearTimeout(option._timer);
+            }
+            option._timer = null;
+            option._timerCanceled = true;
+        };
+        //发起请求
+        option._createTimer();
+        option.xhr = $.ajax(option);
+        //返回当前请求
+        return option;
     };
 
     /**
@@ -141,26 +175,6 @@ define(function(require, exports, module) {
     self.post = function(option) {
         option.type = "POST";
         return self.request(option);
-    };
-
-    /**
-     * 释放请请求
-     * @method abort
-     * @param {String} url 要释放的请求url
-     * @static
-     */
-    self.abort = function(url) {
-        if (url) {
-            var cacheKey = "mokit://ajax/" + url;
-            ajaxCache[cacheKey].success = null;
-            ajaxCache[cacheKey].xhr.abort();
-        } else {
-            utils.each(ajaxCache, function(key, item) {
-                item.success = null;
-                item.xhr.abort();
-            });
-        }
-        mask.end(self.loadingOption);
     };
 
 });

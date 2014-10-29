@@ -8,151 +8,155 @@ define(function(require, exports, module) {
 
     //合局选项
     self.option = {
-        //通过 event.timeStamp 检查
-        swipe: {
-            durationThreshold: 1000,
-            horizontalDistanceThreshold: 25,
-            verticalDistanceThreshold: 45
-        },
-        tap: {
-            holdDurationThreshold: 1000,
-            durationThreshold: 450
-        }
+        swipeDurationThreshold: 1000,
+        swipeHorizontalDistanceThreshold: 25,
+        swipeVerticalDistanceThreshold: 45,
+        holdDurationThreshold: 1000,
+        dblDurationThreshold: 450,
+        scrollSupressionThreshold: 25
     };
 
     //扩展对 tap、swipe 事件的支持
     var eventNames = "tap,taphold,dbltap,swipe,swipeup,swiperight,swipedown,swipeleft";
-    $event.register(eventNames, function(monitor, name, handler, useCapture) {
-        //处理 touchstart 事件
-        monitor.on('touchstart', function(event) {
-            var point = event.changedTouches[0] || {};
-            monitor.startPoint = monitor.endPoint = {
-                x: point.pageX,
-                y: point.pageY,
-                timeStamp: event.timeStamp
-            };
-            if (name == 'taphold') {
-                monitor.createHoldHandler(event);
-            }
-            return false;
-        });
+    $event.register(eventNames, {
+        on: function(monitor, name, handler, useCapture) {
+            if (!utils.isFunction(handler)) return;
 
-        //创建 hold 处理器
-        monitor.createHoldHandler = function(event) {
-            // 处理 taphold 事件
-            if (!monitor.holdTimer && !monitor.holdHandler) {
-                var holdDurationThreshold = self.option.tap.holdDurationThreshold;
-                monitor.holdHandler = function() {
-                    event.taphold = true;
-                    monitor.call('taphold', event);
-                };
-                monitor.holdTimer = setTimeout(function() {
-                    if (monitor.holdHandler) monitor.holdHandler();
-                }, holdDurationThreshold);
-            }
-        };
-
-        //清除 hold 处理器
-        monitor.clearHoldHandler = function() {
-            if (monitor.holdTimer) {
-                clearTimeout(monitor.holdTimer);
-                monitor.holdTimer = null;
-                monitor.holdHandler = null;
-            }
-        };
-
-        //处理 touchmove 事件
-        monitor.on('touchmove', function() {
-            if (name == 'taphold') {
+            //处理 touchstart 事件
+            handler.touchstart = handler.touchstart || function(event) {
                 var point = event.changedTouches[0] || {};
-                monitor.endPoint = {
+                handler.startPoint = handler.endPoint = {
                     x: point.pageX,
                     y: point.pageY,
                     timeStamp: event.timeStamp
                 };
-                var horizontalDistanceThreshold = self.option.swipe.horizontalDistanceThreshold;
-                var verticalDistanceThreshold = self.option.swipe.horizontalDistanceThreshold;
-                var horizontalDistance = monitor.endPoint.x - monitor.startPoint.x;
-                var verticalDistance = monitor.endPoint.y - monitor.startPoint.y;
-                var horizontalDistanceValue = Math.abs(horizontalDistance);
-                var verticalDistanceVlaue = Math.abs(verticalDistance);
-                var isSwipeMove = horizontalDistanceValue >= horizontalDistanceThreshold || verticalDistanceVlaue >= verticalDistanceThreshold;
-                if (isSwipeMove) {
-                    monitor.clearHoldHandler();
+                if (name == 'taphold') {
+                    handler.createHoldHandler(event);
                 }
-            }
-            return false;
-        });
-
-        //处理 scroll 事件，阻止这个事件会更灵敏
-        monitor.on('scroll', function() {
-            return false;
-        });
-
-        //处理 contextmenu 事件，阻止这个事件会 taphold 会更好
-        monitor.on('contextmenu', function() {
-            return false;
-        });
-
-        //完成事件
-        var done = function(event) {
-            monitor.clearHoldHandler();
-            var point = event.changedTouches[0] || {};
-            monitor.endPoint = {
-                x: point.pageX,
-                y: point.pageY,
-                timeStamp: event.timeStamp
+                //event.preventDefault();
             };
-            // 一些计算结果
-            var horizontalDistanceThreshold = self.option.swipe.horizontalDistanceThreshold;
-            var verticalDistanceThreshold = self.option.swipe.horizontalDistanceThreshold;
-            var horizontalDistance = monitor.endPoint.x - monitor.startPoint.x;
-            var verticalDistance = monitor.endPoint.y - monitor.startPoint.y;
-            var horizontalDistanceValue = Math.abs(horizontalDistance);
-            var verticalDistanceVlaue = Math.abs(verticalDistance);
-            var isHorizontal = horizontalDistanceValue >= verticalDistanceVlaue;
-            var isVertical = !isHorizontal;
-            var isSwipeMove = horizontalDistanceValue >= horizontalDistanceThreshold || verticalDistanceVlaue >= verticalDistanceThreshold;
-            var isSwipeTime = monitor.endPoint.timeStamp - monitor.startPoint.timeStamp <= self.option.swipe.durationThreshold;
-            var isHoldTime = monitor.endPoint.timeStamp - monitor.startPoint.timeStamp >= self.option.tap.holdDurationThreshold;
-            // 根据计算结果判断
-            if (isSwipeTime && isSwipeMove) {
-                event.swipe = true;
-                if (isHorizontal && horizontalDistance > 0) {
-                    event.direction = 'right';
-                } else if (isHorizontal && horizontalDistance < 0) {
-                    event.direction = 'left';
-                } else if (isVertical && verticalDistance > 0) {
-                    event.direction = 'down';
-                } else if (isVertical && verticalDistance < 0) {
-                    event.direction = 'up';
+
+            //创建 hold 处理器
+            handler.createHoldHandler = handler.createHoldHandler || function(event) {
+                // 处理 taphold 事件
+                if (!handler.holdTimer && !handler.holdHandler) {
+                    var option = self.option;
+                    handler.holdHandler = function() {
+                        event.taphold = true;
+                        monitor.call('taphold', event);
+                    };
+                    handler.holdTimer = setTimeout(function() {
+                        if (handler.holdHandler) handler.holdHandler();
+                    }, option.holdDurationThreshold);
                 }
-                if (name == 'swipe') {
-                    monitor.call('swipe', event);
+            };
+
+            //清除 hold 处理器
+            handler.clearHoldHandler = handler.clearHoldHandler || function() {
+                if (handler.holdTimer) {
+                    clearTimeout(handler.holdTimer);
+                    handler.holdTimer = null;
+                    handler.holdHandler = null;
                 }
-                if (name == 'swipe' + event.direction) {
-                    monitor.call('swipe' + event.direction, event);
+            };
+
+            //获取划动信息
+            handler.getTouchInfo = function(event) {
+                var point = event.changedTouches[0] || {};
+                handler.endPoint = {
+                    x: point.pageX,
+                    y: point.pageY,
+                    timeStamp: event.timeStamp
+                };
+                //
+                var option = self.option;
+                // 一些计算结果
+                var info = {};
+                info.timeStamp = handler.endPoint ? handler.endPoint.timeStamp : null;
+                info.existStartAndStop = handler.endPoint && handler.startPoint;
+                info.horizontalDistance = info.existStartAndStop ? handler.endPoint.x - handler.startPoint.x : 0;
+                info.verticalDistance = info.existStartAndStop ? handler.endPoint.y - handler.startPoint.y : 0;
+                info.horizontalDistanceValue = Math.abs(info.horizontalDistance);
+                info.verticalDistanceVlaue = Math.abs(info.verticalDistance);
+                info.isHorizontal = info.horizontalDistanceValue >= info.verticalDistanceVlaue;
+                info.isVertical = !info.sHorizontal;
+                info.isSwipeMove = info.horizontalDistanceValue >= option.swipeHorizontalDistanceThreshold || info.verticalDistanceVlaue >= option.swipeVerticalDistanceThreshold;
+                info.isSwipeTime = info.existStartAndStop ? handler.endPoint.timeStamp - handler.startPoint.timeStamp <= option.swipeDurationThreshold : true;
+                info.isHoldTime = info.existStartAndStop ? handler.endPoint.timeStamp - handler.startPoint.timeStamp >= option.holdDurationThreshold : false;
+                //这里的 direction 仅是指划动方法，不代表 swipe 动作，swipe 动作还有时间或划动距离等因素
+                if (info.isHorizontal && info.horizontalDistance > 0) {
+                    info.direction = 'right';
+                } else if (info.isHorizontal && info.horizontalDistance < 0) {
+                    info.direction = 'left';
+                } else if (info.isVertical && info.verticalDistance > 0) {
+                    info.direction = 'down';
+                } else if (info.isVertical && info.verticalDistance < 0) {
+                    info.direction = 'up';
                 }
-            } else if (isSwipeTime && !isSwipeMove && !isHoldTime) {
-                if (name == 'tap') {
-                    monitor.call('tap', event);
+                return info;
+            };
+
+            //处理 touchmove 事件
+            handler.touchmove = handler.touchmove || function() {
+                var info = handler.getTouchInfo(event);
+                if (info.isSwipeMove) {
+                    handler.clearHoldHandler();
                 }
-                if (name == 'dbltap') {
-                    //处理 “双击”
-                    event.dbltap = monitor.PreTapTime && monitor.endPoint.timeStamp - monitor.PreTapTime <= self.option.tap.durationThreshold;
-                    if (event.dbltap) {
-                        monitor.call('dbltap', event);
-                        monitor.PreTapTime = null;
-                    } else {
-                        monitor.PreTapTime = monitor.endPoint.timeStamp;
+                //在绑定划动的方向上禁止滚动，因为 Android 4.x 不如此处理，touchend 事件将不触发
+                if ((name == 'swipe') || (name == 'swipe' + info.direction)) {
+                    return false;
+                }
+            };
+
+            //完成事件
+            handler.done = handler.done || function(event) {
+                handler.clearHoldHandler();
+                var info = handler.getTouchInfo(event);
+                // 根据计算结果判断
+                if (info.isSwipeTime && info.isSwipeMove) {
+                    event.swipe = true;
+                    event.direction = info.direction;
+                    if (name == 'swipe') {
+                        monitor.call('swipe', event);
+                    }
+                    if (name == 'swipe' + event.direction) {
+                        monitor.call('swipe' + event.direction, event);
+                    }
+                } else if (info.isSwipeTime && !info.isSwipeMove && !info.isHoldTime) {
+                    if (name == 'tap') {
+                        monitor.call('tap', event);
+                    }
+                    if (name == 'dbltap') {
+                        //处理 “双击”
+                        var option = self.option;
+                        event.dbltap = handler.PreTapTime && info.timeStamp - handler.PreTapTime <= option.dblDurationThreshold;
+                        if (event.dbltap) {
+                            monitor.call('dbltap', event);
+                            handler.PreTapTime = null;
+                        } else {
+                            handler.PreTapTime = handler.endPoint.timeStamp;
+                        }
                     }
                 }
+            };
+
+            //绑定组合事件
+            monitor.on('touchstart', handler.touchstart);
+            monitor.on('touchmove', handler.touchmove);
+            monitor.on('touchend', handler.done);
+
+        },
+        off: function(monitor, name, handler, useCapture) {
+            //只有指定了 handler 才能取消构成组合事件的 “原事件”
+            //否则会直接移除会将其他 touchstart 等事件也移除
+            if (utils.isFunction(handler)) {
+                if (utils.isFunction(handler.touchstart))
+                    monitor.on('touchstart', handler.touchstart);
+                if (utils.isFunction(handler.touchmove))
+                    monitor.on('touchmove', handler.touchmove);
+                if (utils.isFunction(handler.done))
+                    monitor.on('touchend', handler.done);
             }
-        };
-
-        //在 touchend 或 touchcanel 时执行 done 函数
-        monitor.on('touchend', done);
-        monitor.on('touchcancel', done);
-
+        }
     });
 });
