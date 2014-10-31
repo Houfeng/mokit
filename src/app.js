@@ -176,6 +176,7 @@ define(function(require, exports, module) {
      */
     exports.init = function(option) {
         option = option || {};
+        view.rootContainer = view.rootContainer || option.container;
         option.style = (option.style || style.currentName() || style.defaultName() || 'default').toLowerCase();
         option.language = (option.language || language.currentName() || language.defaultName() || 'en-us').toLowerCase();
         var navUri = navigation.getUri();

@@ -230,6 +230,10 @@ define(function(require, exports, module) {
             if (self.model.registerView) {
                 self.model.registerView(self);
             }
+            //记录元素映射，必须选暂存入 elmaps , 因为当每次 render 时 el 都会重置
+            //elmaps 在 remove 才会置为 null，elmaps 可以每次重新 render 时重新映射
+            self.elmaps = self.el;
+            self.el = {};
         };
 
         /**
@@ -246,6 +250,7 @@ define(function(require, exports, module) {
          * 移除一个元素事件绑定
          */
         this.removeElementEvent = function(elements, name, handler) {
+            if (!elements || !elements.each) return;
             elements.each(function(i, element) {
                 $event(element).off(name, handler);
             });
@@ -255,6 +260,7 @@ define(function(require, exports, module) {
          * 添加一个元素事件绑定
          */
         this.addElementEvent = function(elements, name, handler) {
+            if (!elements || !elements.each) return;
             elements.each(function(i, element) {
                 $event(element).on(name, handler);
             });
@@ -267,7 +273,22 @@ define(function(require, exports, module) {
             var view = this;
             if (!view.el) return;
             utils.each(view.el, function(name, elements) {
-                view.removeElementEvent(elements);
+                if (!utils.isString(elements) && !utils.isFunction(elements)) {
+                    view.removeElementEvent(elements);
+                }
+            });
+        };
+
+        /**
+         * 深度清理事件
+         */
+        this.deepClearEvent = function() {
+            var view = this;
+            //移除事件
+            view.unbindEvent();
+            if (!view.children) return;
+            utils.each(view.children, function(childId, child) {
+                if (child && child.unbindEvent) child.unbindEvent();
             });
         };
 
@@ -284,12 +305,9 @@ define(function(require, exports, module) {
             elements.each(function() {
                 var element = $(this);
                 //将 data-event 元素也放入 el 属性，以备清除事件
-                var elementId = element.attr("id");
-                if (elementId == null) {
-                    elementId = utils.newGuid();
-                    element.attr("id", "event:" + elementId);
-                }
-                view.el[elementId] = element;
+                var elId = utils.newGuid();
+                view.el = view.el || {};
+                view.el[elId] = element;
                 //获取将绑定的事件列表
                 var eventItems = element.attr('data-event');
                 if (!eventItems) return;
@@ -471,10 +489,9 @@ define(function(require, exports, module) {
          */
         this.mapElements = function() {
             var view = this;
-            if (!view || !view.ui) return;
-            var maps = view.el;
-            view.el = {};
-            utils.each(maps, function(name, expr) {
+            if (!view || !view.ui || !view.elmaps) return;
+            view.el = view.el || {};
+            utils.each(view.elmaps, function(name, expr) {
                 view.el[name] = view.ui.find(expr);
             });
         };
@@ -488,6 +505,10 @@ define(function(require, exports, module) {
          */
         this.render = function(container, callback) {
             var self = this;
+            //清理事件绑定
+            self.deepClearEvent();
+            //记录旧 UI
+            var oldUI = self.ui;
             /**
              * 在视图初始化前
              * @event onPreInit
@@ -496,7 +517,7 @@ define(function(require, exports, module) {
                 view: self
             });
             complieTemplate(self.templateType, self.template, function(tpl) {
-                var old_ui = self.ui;
+                //创建新 UI
                 self.ui = $($.trim(tpl(self.model, {
                     lang: language.current(),
                     self: self,
@@ -510,6 +531,7 @@ define(function(require, exports, module) {
                 var _context = {
                     'view': self
                 };
+                //一些处理顺序不能乱
                 self.mapElements(self);
                 self.bindData(self);
                 self.bindEvent(self);
@@ -520,7 +542,12 @@ define(function(require, exports, module) {
                  * @event onInit
                  */
                 if (self.onInit) self.onInit(_context);
-                if (old_ui) old_ui.remove();
+                //添理旧 UI
+                if (oldUI) {
+                    oldUI.remove();
+                    oldUI = null;
+                }
+                //渲染新 UI
                 self.container = container || self.container || rootContainer;
                 self.container = utils.isString(container) ? $(self.container) : self.container;
                 if (!self.container) {
@@ -556,7 +583,7 @@ define(function(require, exports, module) {
             if (self.model && self.model.removeView) {
                 self.model.removeView(self);
             }
-            //移除事件
+            //清理事件绑定
             self.unbindEvent();
             //移除所有子视图
             self.removeChildView();
@@ -565,16 +592,9 @@ define(function(require, exports, module) {
                 self.ui.empty().remove();
             }
             //置空
-            self.model = null;
-            self.controller = null;
-            self.ui = null;
-            self.el = null;
-            self.name = null;
-            self.container = null;
-            self.children = null;
-            self.templateType = null;
-            self.template = null;
-            self.options = null;
+            utils.each(self, function(name) {
+                self[name] = null;
+            });
         };
 
         /**
