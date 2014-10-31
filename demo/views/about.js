@@ -46,6 +46,7 @@ define(function(require, exports, module) {
         swipeleft: function(context) {
             var self = this;
             self.el.cell2.html('swipe left');
+            self.el.cell2.html("<canvas style='width:500px;height:500px;'></canvas>");
         }
     });
 });

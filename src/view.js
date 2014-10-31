@@ -21,9 +21,17 @@ define(function(require, exports, module) {
     var language = require('./language');
     var $event = require('./event');
     var rootContainer = exports.rootContainer = $(document.body);
+
+    /**
+     * 视图加载是否显示蒙板
+     */
     exports.showMask = false;
-    //----------------------有关模板处理开始----------------------
+
+    /**
+     * 扩展模板引擎
+     */
     tp.extend(utils);
+
     /**
      * 模板类型
      */
@@ -38,7 +46,7 @@ define(function(require, exports, module) {
      */
     var templateCache = store.dataCache;
 
-    /*
+    /**
      * 获取模板内容
      * @param  {String}   tplType  模板类型
      * @param  {String}   tpl      模板
@@ -47,7 +55,9 @@ define(function(require, exports, module) {
      */
     var loadTemplate = function(tplType, tpl, callback) {
         if (!utils.isFunction(callback)) return;
-        if (utils.isNull(tpl)) console.error('编译模板错误');
+        if (utils.isNull(tpl)) {
+            console.error('编译模板错误');
+        }
         tplType = tplType || templateType.uri;
         if (tplType == templateType.element) {
             callback($(tpl).html());
@@ -79,12 +89,8 @@ define(function(require, exports, module) {
             });
         }
     };
-    //----------------------有关模板处理结束----------------------
 
-
-    //----------------------有关模型处理开始----------------------
-
-    /*
+    /**
      * 获取一个子模型对象
      * @param  {Object} root 源模型对象
      * @param  {Object} path 子模型对象路径
@@ -99,7 +105,7 @@ define(function(require, exports, module) {
         return root;
     };
 
-    /*
+    /**
      * 设置一个子模型对象
      * @param  {Object} root  源模型对象
      * @param  {Object} path  子模型对象路径
@@ -120,8 +126,6 @@ define(function(require, exports, module) {
             }
         });
     };
-    //----------------------有关模板处理结束----------------------
-
 
     /**
      * 解析事件表达式
@@ -154,10 +158,8 @@ define(function(require, exports, module) {
         return rs;
     };
 
-
-    //----------------------视图基类开始----------------------
     /**
-     * 视图基类
+     * 视图基类，mokit 所有视图都需要继承这个此类
      */
     var View = $class.create(function() {
 
@@ -225,7 +227,6 @@ define(function(require, exports, module) {
             self.template = option.template || self.template || '';
             self.templateType = option.templateType || self.templateType || templateType.uri;
             self.options = option.options || self.options || {}; //options 是用json控制视图行为或外观的
-            self.elMap = self.el;
             if (self.model.registerView) {
                 self.model.registerView(self);
             }
@@ -242,18 +243,38 @@ define(function(require, exports, module) {
         };
 
         /**
-         * 绑定事件
+         * 移除一个元素事件绑定
          */
-        this.bindEvent = function(elements, name, handler) {
+        this.removeElementEvent = function(elements, name, handler) {
+            elements.each(function(i, element) {
+                $event(element).off(name, handler);
+            });
+        };
+
+        /**
+         * 添加一个元素事件绑定
+         */
+        this.addElementEvent = function(elements, name, handler) {
             elements.each(function(i, element) {
                 $event(element).on(name, handler);
             });
         };
 
         /**
-         * 处理事件绑定
+         * 解除事件绑定
          */
-        this.handleEvent = function() {
+        this.unbindEvent = function() {
+            var view = this;
+            if (!view.el) return;
+            utils.each(view.el, function(name, elements) {
+                view.removeElementEvent(elements);
+            });
+        };
+
+        /**
+         * 绑定所有 data-event 形式的元素事件
+         */
+        this.bindEvent = function() {
             var view = this;
             //查找所有事件绑定元素
             var elements = view.ui.find("[data-event]");
@@ -262,17 +283,26 @@ define(function(require, exports, module) {
             }
             elements.each(function() {
                 var element = $(this);
-                element.view = view;
+                //将 data-event 元素也放入 el 属性，以备清除事件
+                var elementId = element.attr("id");
+                if (elementId == null) {
+                    elementId = utils.newGuid();
+                    element.attr("id", "event:" + elementId);
+                }
+                view.el[elementId] = element;
+                //获取将绑定的事件列表
                 var eventItems = element.attr('data-event');
                 if (!eventItems) return;
                 eventItems = eventItems.split(';');
                 //遍历某一元素的事件列表
+                element.view = view;
                 utils.each(eventItems, function(i, exprStr) {
                     var expr = parseEventExpr(exprStr);
                     var eventTarget = expr.isViewMethod ? view : view.controller;
                     var eventHandler = eventTarget[expr.methodName];
                     if (eventHandler) {
-                        view.bindEvent(element, expr.eventName, function(context) {
+                        //添加元素事件
+                        view.addElementEvent(element, expr.eventName, function(context) {
                             var expr = parseEventExpr(exprStr);
                             context.$element = element;
                             context.element = element[0];
@@ -288,15 +318,14 @@ define(function(require, exports, module) {
                     } else {
                         console.error((expr.isViewMethod ? 'method' : 'action') + ' "' + expr.methodName + '" not found');
                     }
-                    expr = null;
                 });
             });
         };
 
         /**
-         * 处理数据绑定
+         * 绑定 data-data 形式的数据绑定
          */
-        this.handleBind = function() {
+        this.bindData = function() {
             var view = this;
             var elements = view.ui.find("[data-bind]");
             if (view.ui.attr('data-bind')) {
@@ -353,7 +382,7 @@ define(function(require, exports, module) {
         /**
          * 处理子视图
          */
-        this.handleChildView = function() {
+        this.renderChildView = function() {
             var view = this;
             view.children = view.children || {};
             var childs = view.ui.find('[data-view]');
@@ -416,6 +445,17 @@ define(function(require, exports, module) {
         };
 
         /**
+         * 移除所有子视图
+         */
+        this.removeChildView = function() {
+            var view = this;
+            if (!view.children) return;
+            utils.each(view.children, function(childId, child) {
+                if (child && child.remove) child.remove();
+            });
+        };
+
+        /**
          * 设置页面标题
          */
         this.setPageTitle = function() {
@@ -431,10 +471,11 @@ define(function(require, exports, module) {
          */
         this.mapElements = function() {
             var view = this;
-            if (!view || !view.ui || !view.elMap) return;
+            if (!view || !view.ui) return;
+            var maps = view.el;
             view.el = {};
-            utils.each(view.elMap, function(key) {
-                view.el[key] = view.ui.find(view.elMap[key]);
+            utils.each(maps, function(name, expr) {
+                view.el[name] = view.ui.find(expr);
             });
         };
 
@@ -470,9 +511,9 @@ define(function(require, exports, module) {
                     'view': self
                 };
                 self.mapElements(self);
-                self.handleBind(self);
-                self.handleEvent(self);
-                self.handleChildView(self);
+                self.bindData(self);
+                self.bindEvent(self);
+                self.renderChildView(self);
                 self.setPageTitle(self);
                 /**
                  * 在视图初始化完成时
@@ -507,19 +548,33 @@ define(function(require, exports, module) {
          */
         this.remove = function() {
             var self = this;
-            if (self.ui) self.ui.remove();
+            //检查 onRemove 事件
             if (self.onRemove) self.onRemove({
                 view: self
             });
-            if (self.model.removeView) {
+            //调用模型的视图移除方法
+            if (self.model && self.model.removeView) {
                 self.model.removeView(self);
             }
+            //移除事件
+            self.unbindEvent();
+            //移除所有子视图
+            self.removeChildView();
+            //清除自身 dom
+            if (self.ui) {
+                self.ui.empty().remove();
+            }
+            //置空
             self.model = null;
             self.controller = null;
             self.ui = null;
             self.el = null;
             self.name = null;
             self.container = null;
+            self.children = null;
+            self.templateType = null;
+            self.template = null;
+            self.options = null;
         };
 
         /**
