@@ -257,6 +257,16 @@ define(function(require, exports, module) {
         };
 
         /**
+         * 清理一个元素事件绑定
+         */
+        this.clearElementEvent = function(elements) {
+            if (!elements || !elements.each) return;
+            elements.each(function(i, element) {
+                $event.clear(element);
+            });
+        };
+
+        /**
          * 添加一个元素事件绑定
          */
         this.addElementEvent = function(elements, name, handler) {
@@ -274,7 +284,7 @@ define(function(require, exports, module) {
             if (!view.el) return;
             utils.each(view.el, function(name, elements) {
                 if (!utils.isString(elements) && !utils.isFunction(elements)) {
-                    view.removeElementEvent(elements);
+                    view.clearElementEvent(elements);
                 }
             });
         };
@@ -544,7 +554,7 @@ define(function(require, exports, module) {
                 if (self.onInit) self.onInit(_context);
                 //添理旧 UI
                 if (oldUI) {
-                    oldUI.remove();
+                    oldUI.empty().remove();
                     oldUI = null;
                 }
                 //渲染新 UI

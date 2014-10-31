@@ -170,23 +170,35 @@
         return monitor;
     };
 
-    //在一个对象上启动事件系统
+    //在一个对象上启用事件系统
     $event.use = function(_target) {
         _target = _target || {};
-        var monitor = $event(_target);
         _target.on = function() {
+            var monitor = $event(this);
             monitor.on.apply(monitor, arguments);
-            return _target;
+            return this;
         };
         _target.off = function() {
+            var monitor = $event(this);
             monitor.off.apply(monitor, arguments);
-            return _target;
+            return this;
         };
         _target.call = function() {
+            var monitor = $event(this);
             monitor.call.apply(monitor, arguments);
-            return _target;
+            return this;
         };
-        return monitor;
+        return _target;
+    };
+
+    //清理对象上的一切和 $event 有关的内容
+    $event.clear = function(_target) {
+        if (_target && _target.$monitor) {
+            _target.$monitor.off();
+            _target.$monitor.target = null;
+            _target.$monitor = null;
+        }
+        return _target;
     };
 
     //事件触发器表
@@ -199,6 +211,7 @@
         utils.each(names, function(i, name) {
             $event.callers[name] = caller;
         });
+        return $event;
     };
 
     //兼容AMD模块
