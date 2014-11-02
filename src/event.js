@@ -150,6 +150,7 @@
         //触发事件
         monitor.call = function(name, data) {
             if (!utils.isString(name)) return;
+            data = data || {};
             var target = monitor.target;
             if (monitor._isNativeSupport(target)) {
                 monitor._callEvent(name, data);
