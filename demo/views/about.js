@@ -24,7 +24,7 @@ define(function(require, exports, module) {
             grid.use(self.ui);
             var cell = self.el.cell1[0];
             $event.use(cell);
-            //return;
+            window.aaa=cell;
             cell.on('swipe', function(event) {
                 self.el.cell1.find('#alert').html(event.direction);
                 console.log(event.direction);

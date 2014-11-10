@@ -1,6 +1,6 @@
 /**
  * Mokit是一个符合MVC的WebApp基础开发框架
- * 当前版本: v2.0 beta 49
+ * 当前版本: v2.0 beta 50
  * @author Houfeng
  * @module mokit
  * @main mokit
@@ -22,7 +22,7 @@ define(function(require, exports, module) {
      * @final
      */
     window.mokit = exports.mokit = {
-        version: '2.0 Beta 49',
+        version: '2.0 Beta 50',
         author: 'Houfeng'
     };
 

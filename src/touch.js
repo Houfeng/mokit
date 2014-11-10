@@ -6,6 +6,11 @@ define(function(require, exports, module) {
     var utils = require('mokit/utils');
     var self = exports;
 
+    var support = ('ontouchstart' in document);
+    var startEventName = support ? 'touchstart' : 'mousedown';
+    var moveEventName = support ? 'touchmove' : 'mousemove';
+    var endEventName = support ? 'touchend' : 'mouseup';
+
     //合局选项
     self.option = {
         swipeDurationThreshold: 1000,
@@ -24,7 +29,7 @@ define(function(require, exports, module) {
 
             //处理 touchstart 事件
             handler.touchstart = handler.touchstart || function(event) {
-                var point = event.changedTouches[0] || {};
+                var point = event.changedTouches ? event.changedTouches[0] : event;
                 handler.startPoint = handler.endPoint = {
                     x: point.pageX,
                     y: point.pageY,
@@ -62,7 +67,7 @@ define(function(require, exports, module) {
 
             //获取划动信息
             handler.getTouchInfo = function(event) {
-                var point = event.changedTouches[0] || {};
+                var point = event.changedTouches ? event.changedTouches[0] : event;
                 handler.endPoint = {
                     x: point.pageX,
                     y: point.pageY,
@@ -141,9 +146,9 @@ define(function(require, exports, module) {
             };
 
             //绑定组合事件
-            monitor.on('touchstart', handler.touchstart);
-            monitor.on('touchmove', handler.touchmove);
-            monitor.on('touchend', handler.done);
+            monitor.on(startEventName, handler.touchstart);
+            monitor.on(moveEventName, handler.touchmove);
+            monitor.on(endEventName, handler.done);
 
         },
         off: function(monitor, name, handler, useCapture) {
@@ -151,11 +156,11 @@ define(function(require, exports, module) {
             //否则会直接移除会将其他 touchstart 等事件也移除
             if (utils.isFunction(handler)) {
                 if (utils.isFunction(handler.touchstart))
-                    monitor.on('touchstart', handler.touchstart);
+                    monitor.off(startEventName, handler.touchstart);
                 if (utils.isFunction(handler.touchmove))
-                    monitor.on('touchmove', handler.touchmove);
+                    monitor.off(moveEventName, handler.touchmove);
                 if (utils.isFunction(handler.done))
-                    monitor.on('touchend', handler.done);
+                    monitor.off(endEventName, handler.done);
             }
         }
     });
