@@ -3,7 +3,7 @@ Mokit 是一个符 合MVC 的 WebApp 基础开发框架。 请查看 [Mokit API]
 
 ### 最新版本
 ```
-+ v 2.0 Beta 50
++ v 2.0 Beta 51
 ```
 
 ### 简介

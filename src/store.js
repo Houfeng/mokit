@@ -10,6 +10,8 @@ define(function(require, exports, module) {
     var json = require('./json');
     var console = require('./console');
 
+    var socpe = (window.mokitAppName || "mokit") + "://";
+
     //window.top.__mokit_data_cache__ = window.top.__mokit_data_cache__ || {};
     /**
      * 数据全局缓存对象
@@ -37,12 +39,15 @@ define(function(require, exports, module) {
      */
     exports.temp = {
         set: function(key, value) {
+            key = socpe + key;
             exports.dataCache[key] = value;
         },
         get: function(key) {
+            key = socpe + key;
             return exports.dataCache[key];
         },
         remove: function(key) {
+            key = socpe + key;
             exports.dataCache[key] = null;
         },
         clear: function() {
@@ -72,6 +77,7 @@ define(function(require, exports, module) {
      */
     exports.session = {
         set: function(key, value) {
+            key = socpe + key;
             if (typeof sessionStorage !== 'undefined') {
                 try {
                     sessionStorage.setItem(key, json.stringify(value));
@@ -79,9 +85,10 @@ define(function(require, exports, module) {
                     console.error(ex.message);
                 }
             }
-            exports.temp.set('sessionData:' + key, value);
+            exports.temp.set('$sessionData/' + key, value);
         },
         get: function(key) {
+            key = socpe + key;
             var value = exports.temp.get(key);
             if (value == null) {
                 try {
@@ -93,6 +100,7 @@ define(function(require, exports, module) {
             return value;
         },
         remove: function(key) {
+            key = socpe + key;
             if (typeof sessionStorage !== 'undefined') {
                 try {
                     sessionStorage.removeItem(key);
@@ -100,7 +108,7 @@ define(function(require, exports, module) {
                     console.error(ex.message);
                 }
             }
-            exports.temp.remove('sessionData:' + key);
+            exports.temp.remove('$sessionData/' + key);
         },
         clear: function() {
             if (typeof sessionStorage !== 'undefined') {
@@ -132,6 +140,7 @@ define(function(require, exports, module) {
      */
     exports.local = {
         set: function(key, value) {
+            key = socpe + key;
             if (typeof localStorage !== 'undefined') {
                 try {
                     localStorage.setItem(key, json.stringify(value));
@@ -139,9 +148,10 @@ define(function(require, exports, module) {
                     console.error(ex.message);
                 }
             }
-            exports.temp.set('localData:' + key, value);
+            exports.temp.set('$localData/' + key, value);
         },
         get: function(key) {
+            key = socpe + key;
             var value = exports.temp.get(key);
             if (value == null) {
                 try {
@@ -153,6 +163,7 @@ define(function(require, exports, module) {
             return value;
         },
         remove: function(key) {
+            key = socpe + key;
             if (typeof localStorage !== 'undefined') {
                 try {
                     localStorage.removeItem(key);
@@ -160,7 +171,7 @@ define(function(require, exports, module) {
                     console.error(ex.message);
                 }
             }
-            exports.temp.remove('localData:' + key);
+            exports.temp.remove('$localData/' + key);
         },
         clear: function() {
             if (typeof localStorage !== 'undefined') {

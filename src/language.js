@@ -15,16 +15,20 @@ define(function(require, exports, module) {
 
     self.events = $event.use(self);
 
+    self.storeKey = "language/current-name";
+    self.canceKey = "language/table";
+
     //语言表
-    var langeuageTable = store.dataCache["$language"] = self.languages = {};
+    var langeuageTable = store.dataCache[self.canceKey] = self.languages = {};
     var currentName = null;
+
 
     /**
      * currentName属性
      */
     utils.defineProperty(self, 'currentName', {
         get: function() {
-            currentName = currentName || store.local.get('mokit://language/current-name');
+            currentName = currentName || store.local.get(self.storeKey);
             return currentName;
         },
         set: function(name) {
@@ -94,10 +98,10 @@ define(function(require, exports, module) {
     };
 
     self.save = function() {
-        return store.local.set('mokit://language/current-name', currentName);
+        return store.local.set(self.storeKey, currentName);
     };
 
     self.clear = function() {
-        return store.local.set('mokit://language/current-name', "");
+        return store.local.set(self.storeKey, "");
     };
 });

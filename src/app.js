@@ -1,11 +1,15 @@
 /**
- * Mokit是一个符合MVC的WebApp基础开发框架
- * 当前版本: v2.0 beta 50
- * @author Houfeng
- * @module mokit
- * @main mokit
+ * 创建全局信息
  */
-//-----------------------------------------------
+((function(owner) {
+    owner.mokit = owner.mokit || {
+        name: 'mokit',
+        version: '2.0 Beta 51',
+        author: 'Houfeng'
+    };
+    owner.mokitAppName = owner.mokitAppName || owner.mokit.name;
+})(this));
+
 /**
  * 应用程序模块，用来初始化并启动一个应用。
  * @class App
@@ -15,16 +19,6 @@
 define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
-
-    /**
-     * mokit版本信息
-     * @type {Object}
-     * @final
-     */
-    window.mokit = exports.mokit = {
-        version: '2.0 Beta 50',
-        author: 'Houfeng'
-    };
 
     /**
      * 导入依赖

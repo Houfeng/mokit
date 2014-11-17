@@ -15,12 +15,12 @@ define(function(require, exports, module) {
     var styleTable = store.dataCache["$style"] = {};
 
     exports.events = $event.use(exports);
-
-    exports.storeKey = "mokit://style/current-name";
+    exports.storeKey = "style/current-name";
+    
     var currentName = null;
     utils.defineProperty(exports, 'currentName', {
         get: function() {
-            currentName = currentName || store.local.get('style:' + exports.storeKey);
+            currentName = currentName || store.local.get(exports.storeKey);
             return currentName;
         },
         set: function(name) {
