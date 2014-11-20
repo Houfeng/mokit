@@ -79,4 +79,6 @@ define(function(require, exports, module) {
         return $class.create(base, context);
     };
 
+    exports.Model = Model;
+
 });

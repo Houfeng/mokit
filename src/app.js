@@ -4,7 +4,7 @@
 ((function(owner) {
     owner.mokit = owner.mokit || {
         name: 'mokit',
-        version: '2.0 Beta 51',
+        version: '2.0 Beta 52',
         author: 'Houfeng'
     };
     owner.mokitAppName = owner.mokitAppName || owner.mokit.name;

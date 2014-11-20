@@ -649,6 +649,8 @@ define(function(require, exports, module) {
         return $class.create(base, context);
     };
 
+    exports.View = View;
+
 });
 
 /**** 参数对象 Context 的说明 ****/

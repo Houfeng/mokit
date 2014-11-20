@@ -22,7 +22,7 @@ define(function(require, exports, module) {
     };
 
     //扩展对 tap、swipe 事件的支持
-    var eventNames = "tap,taphold,dbltap,swipe,swipeup,swiperight,swipedown,swipeleft";
+    var eventNames = "tap,taphold,dbltap,swipe,swipeup,swiperight,swipedown,swipeleft,pointdown,pointmove,pointup";
     $event.register(eventNames, {
         on: function(monitor, name, handler, useCapture) {
             if (!utils.isFunction(handler)) return;
@@ -31,14 +31,20 @@ define(function(require, exports, module) {
             handler.touchstart = handler.touchstart || function(event) {
                 var point = event.changedTouches ? event.changedTouches[0] : event;
                 handler.startPoint = handler.endPoint = {
-                    x: point.pageX,
-                    y: point.pageY,
-                    timeStamp: event.timeStamp
+                    "x": point.pageX,
+                    "y": point.pageY,
+                    "timeStamp": event.timeStamp,
+                    "point": point
                 };
                 if (name == 'taphold') {
                     handler.createHoldHandler(event);
                 }
-                //event.preventDefault();
+                //模拟鼠标事件
+                if (name == 'pointdown') {
+                    utils.copy(handler.startPoint, event);
+                    monitor.call('pointdown', event);
+                    monitor.isPointDown = true;
+                }
             };
 
             //创建 hold 处理器
@@ -69,9 +75,10 @@ define(function(require, exports, module) {
             handler.getTouchInfo = function(event) {
                 var point = event.changedTouches ? event.changedTouches[0] : event;
                 handler.endPoint = {
-                    x: point.pageX,
-                    y: point.pageY,
-                    timeStamp: event.timeStamp
+                    "x": point.pageX,
+                    "y": point.pageY,
+                    "timeStamp": event.timeStamp,
+                    "point": point
                 };
                 //
                 var option = self.option;
@@ -102,13 +109,24 @@ define(function(require, exports, module) {
             };
 
             //处理 touchmove 事件
-            handler.touchmove = handler.touchmove || function() {
+            handler.touchmove = handler.touchmove || function(event) {
                 var info = handler.getTouchInfo(event);
                 if (info.isSwipeMove) {
                     handler.clearHoldHandler();
                 }
+                var stopBubble = false;
+                //模拟鼠标事件
+                if (monitor.isPointDown && name == 'pointmove') {
+                    utils.copy(handler.endPoint, event);
+                    monitor.call('pointmove', event);
+                    stopBubble = true;
+                }
                 //在绑定划动的方向上禁止滚动，因为 Android 4.x 不如此处理，touchend 事件将不触发
                 if ((name == 'swipe') || (name == 'swipe' + info.direction)) {
+                    stopBubble = true;
+                }
+                //如果需要阻止冒泡
+                if (stopBubble) {
                     return false;
                 }
             };
@@ -117,6 +135,12 @@ define(function(require, exports, module) {
             handler.done = handler.done || function(event) {
                 handler.clearHoldHandler();
                 var info = handler.getTouchInfo(event);
+                //模拟鼠标事件
+                if (name == 'pointup') {
+                    utils.copy(handler.endPoint, event);
+                    monitor.call('pointup', event);
+                    monitor.isPointDown = false;
+                }
                 // 根据计算结果判断
                 if (info.isSwipeTime && info.isSwipeMove) {
                     event.swipe = true;
@@ -155,12 +179,15 @@ define(function(require, exports, module) {
             //只有指定了 handler 才能取消构成组合事件的 “原事件”
             //否则会直接移除会将其他 touchstart 等事件也移除
             if (utils.isFunction(handler)) {
-                if (utils.isFunction(handler.touchstart))
+                if (utils.isFunction(handler.touchstart)) {
                     monitor.off(startEventName, handler.touchstart);
-                if (utils.isFunction(handler.touchmove))
+                }
+                if (utils.isFunction(handler.touchmove)) {
                     monitor.off(moveEventName, handler.touchmove);
-                if (utils.isFunction(handler.done))
+                }
+                if (utils.isFunction(handler.done)) {
                     monitor.off(endEventName, handler.done);
+                }
             }
         }
     });
