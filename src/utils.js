@@ -321,7 +321,7 @@
      * @return {Object} 新对象
      * @static
      */
-    owner.clone = function(obj) {
+    owner.clone = function(obj, igonreArray) {
         if (this.isNull(obj) || this.isString(obj) || this.isNumber(obj) || this.isBoolean(obj) || this.isDate(obj)) {
             return obj;
         }
@@ -330,9 +330,9 @@
             objClone = new obj.constructor();
         } catch (ex) {}
         for (var key in obj) {
-            if (objClone[key] != obj[key]) {
+            if (objClone[key] != obj[key] && !this.contains(igonreArray, key)) {
                 if (typeof(obj[key]) === 'object') {
-                    objClone[key] = this.clone(obj[key]);
+                    objClone[key] = this.clone(obj[key], igonreArray);
                 } else {
                     objClone[key] = obj[key];
                 }

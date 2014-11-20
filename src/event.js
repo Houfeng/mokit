@@ -29,7 +29,8 @@
                 //方法，但是原生 event 对象，有些方法或属性是不能添加的
                 //比如 mokit 就需要添加一个 view 属性
                 var delegateEvent = {
-                    originalEvent: event
+                    originalEvent: event,
+                    original: event
                 };
                 utils.each(event, function(name, item) {
                     if (utils.isFunction(item)) {

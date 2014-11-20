@@ -78,10 +78,15 @@ define(function(require, exports, module) {
                 currentControllerInstance.rootView,
                 nextControllerInstance.rootView,
                 effect, function() {
+                    //清除旧 controller 及相关 view
+                    if (currentControllerInstance.onDispose) {
+                        currentControllerInstance.onDispose(currentControllerInstance.context);
+                    }
                     currentControllerInstance.rootView.remove();
                     currentControllerInstance.rootView = null;
                     delete currentControllerInstance.rootView;
                     currentControllerInstance = null;
+                    //清除结束
                     currentControllerInstance = nextControllerInstance;
                     if (callback) callback();
                 }, {
@@ -117,10 +122,14 @@ define(function(require, exports, module) {
                     changeController(self, callback, isBack);
                 });
             };
+            nextControllerInstance.context = {
+                'routeData': nextControllerInstance.routeData
+            };
+            if (nextControllerInstance.onCreate) {
+                nextControllerInstance.onCreate(nextControllerInstance.context);
+            }
             if (nextControllerInstance.index) {
-                nextControllerInstance.index({
-                    'routeData': nextControllerInstance.routeData
-                });
+                nextControllerInstance.index(nextControllerInstance.context);
             }
         });
     };

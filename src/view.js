@@ -224,6 +224,7 @@ define(function(require, exports, module) {
             self.id = option.id || utils.newGuid();
             self.model = option.model || self.model || {};
             self.controller = option.controller || self.controller || {};
+            self.container = option.container || self.container || rootContainer;
             self.template = option.template || self.template || '';
             self.templateType = option.templateType || self.templateType || templateType.uri;
             self.options = option.options || self.options || {}; //options 是用json控制视图行为或外观的
@@ -559,7 +560,7 @@ define(function(require, exports, module) {
                 }
                 //渲染新 UI
                 self.container = container || self.container || rootContainer;
-                self.container = utils.isString(container) ? $(self.container) : self.container;
+                //self.container = utils.isString(container) ? $(self.container) : self.container;
                 if (!self.container) {
                     console.error("container error.");
                 }
