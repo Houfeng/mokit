@@ -19,6 +19,7 @@ define(function(require, exports, module) {
     var Task = require('./task');
     var console = require('./console');
     var language = require('./language');
+    var controller = require('./controller');
     var $event = require('./event');
     var rootContainer = exports.rootContainer = $(document.body);
 
@@ -336,7 +337,9 @@ define(function(require, exports, module) {
                             context.$element = element;
                             context.element = element[0];
                             context.view = element.view;
-                            context.routeData = element.view.controller.route.routeData;
+                            if (element.view.controller && element.view.controller.route) {
+                                context.routeData = element.view.controller.route.routeData;
+                            }
                             expr.methodArgs.reverse();
                             expr.methodArgs.push(context);
                             expr.methodArgs.reverse();

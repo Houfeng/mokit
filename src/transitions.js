@@ -21,7 +21,7 @@ define(function(require, exports, module) {
         'msAnimation': 'MSAnimationEnd',
         'animation': 'animationend'
     };
-    
+
     // animation end event name
     var animationEndEventName = animationEndEventNames[modernizr.prefixed('animation')];
 
@@ -387,6 +387,14 @@ define(function(require, exports, module) {
         mask.begin(option);
         currentView = currentView.ui || currentView;
         nextView = nextView.ui || nextView;
+        //如果有一个隐藏则直接切换
+        if (currentView.is(":hidden") || nextView.is(":hidden")) {
+            mask.end(option);
+            if (callback) callback();
+            _isAnimating = false;
+            return;
+        }
+        //切换视图
         _change(currentView, nextView, animation, function() {
             mask.end(option);
             if (callback) callback();

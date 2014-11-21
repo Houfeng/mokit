@@ -50,6 +50,7 @@ define(function(require, exports, module) {
     exports.view = view;
     exports.controller = controller;
     exports.ajax = ajax;
+    view.app = exports;
     /*---------------------------/将常用模块载入并挂在App上---------------------------*/
 
 
@@ -78,10 +79,13 @@ define(function(require, exports, module) {
                 currentControllerInstance.rootView,
                 nextControllerInstance.rootView,
                 effect, function() {
-                    //清除旧 controller 及相关 view
-                    if (currentControllerInstance.onDispose) {
-                        currentControllerInstance.onDispose(currentControllerInstance.context);
+                    //触发旧 controller 的 onDispose
+                    if (currentControllerInstance) {
+                        if (currentControllerInstance.onDispose) {
+                            currentControllerInstance.onDispose(currentControllerInstance.context);
+                        }
                     }
+                    //清除旧 controller 及相关 view
                     currentControllerInstance.rootView.remove();
                     currentControllerInstance.rootView = null;
                     delete currentControllerInstance.rootView;
@@ -122,6 +126,7 @@ define(function(require, exports, module) {
                     changeController(self, callback, isBack);
                 });
             };
+            //触发新 controller 的 onCreate
             nextControllerInstance.context = {
                 'routeData': nextControllerInstance.routeData
             };
