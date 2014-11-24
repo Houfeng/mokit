@@ -10,9 +10,7 @@ define(function (require) {
 		setTimeout(function () {
 			done("fn2");
 		},500);
-	}).one(function(name,value) {
-		alert(name);
-	}).seq(function (rs) {
+	}).end(function (rs) {
 		alert("队列完成");
 	});
 	//

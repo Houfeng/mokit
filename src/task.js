@@ -12,12 +12,23 @@ define(function(require, exports, module) {
     var utils = require("utils");
 
     var Task = $class.create({
-        "taskList": [],
-        "taskCount": 0,
+
+        "await": 0,
+        "list": [],
+        "calls": [],
+        "state": 0,
+        "result": {},
+
         "initialize": function(fns) {
             var self = this;
+            self.list = [];
+            self.await = self.list.length;
+            self.calls = [];
+            self.state = 0;
+            self.result = {};
             self.addMult(fns);
         },
+
         "addMult": function(fns) {
             var self = this;
             utils.each(fns, function(key, fn) {
@@ -25,21 +36,23 @@ define(function(require, exports, module) {
             });
             return self;
         },
+
         "addOne": function(name, fn) {
             var self = this;
             if (!name && !fn) return this;
             if (name && !fn) {
                 fn = name;
-                name = self.taskList.length;
+                name = self.list.length;
             }
-            self.taskList.push({
+            self.list.push({
                 "name": name,
                 "func": fn
             });
-            self.taskCount = self.taskList.length;
-            self.result.length = self.taskCount;
+            self.await = self.list.length;
+            self.result.length = self.list.length;
             return self;
         },
+
         /**
          * 向当前对象添加任务 function
          * @method add
@@ -55,60 +68,56 @@ define(function(require, exports, module) {
                 return self.addMult(a);
             }
         },
-        "reset": function() {
+
+        /**
+         * 在完一个任务项时调用
+         */
+        "execute_done": function(isSeq) {
             var self = this;
-            self.taskCount = self.taskList.length;
-            self.result.length = self.taskCount;
-            self.executed = false;
-        },
-        "result": {},
-        "executed": false,
-        "execute": function(done, isSeq) {
-            var self = this;
-            if (self.taskCount < 1 && done && !self.executed) {
-                done(self.result);
-                self.executed = true;
-                return;
-            }
-            if (self.taskList && self.taskList.length > 0) {
-                var task = self.taskList.shift();
-                if (utils.isNull(task) || utils.isNull(task.name) || utils.isNull(task.func)) {
-                    self.taskCount--;
-                    return;
-                };
-                task.func(function(rs) {
-                    self.result[task.name] = rs;
-                    self.taskCount--;
-                    if (self.once) self.once(task.name, rs);
-                    if (self.taskCount < 1 && done) {
-                        done(self.result);
-                        self.executed = true;
-                        return;
-                    }
-                    if (!self.executed && isSeq) {
-                        self.execute(done, isSeq);
+            if (self.await < 1) {
+                self.state = 2;
+                //如果执行完成
+                utils.each(self.calls, function(i, callback) {
+                    if (utils.isFunction(callback)) {
+                        callback(self.result);
                     }
                 });
-                if (!self.executed && !isSeq) {
-                    self.execute(done, isSeq);
+            } else {
+                //如果是顺序执行
+                if (isSeq) {
+                    self.execute_start(isSeq);
                 }
+            }
+        },
+
+        /**
+         * 启用执行一个任务项
+         */
+        "execute_start": function(isSeq) {
+            var self = this;
+            self.state == 1;
+            //如果队列为空
+            if (self.list && self.list.length < 1) {
+                return;
+            }
+            var task = self.list.shift();
+            if (utils.isNull(task) || utils.isNull(task.name) || utils.isNull(task.func)) {
+                self.await--;
+                self.execute_done(isSeq);
+            } else {
+                task.func(function(rs) {
+                    self.await--;
+                    self.result[task.name] = rs;
+                    self.execute_done(isSeq);
+                });
+            }
+            //如果是并发执行
+            if (!isSeq) {
+                self.execute_start(isSeq);
             }
             return self;
         },
-        "one": function(done) {
-            this.once = done;
-            return this;
-        },
-        /**
-         * 顺序执行当前对列
-         * @method seq
-         * @param 完成时的回调
-         * @return {Task} 当前队列实例
-         * @static
-         */
-        "seq": function(done) {
-            return this.execute(done, true);
-        },
+
         /**
          * 并行执行当前对列
          * @method end
@@ -117,7 +126,32 @@ define(function(require, exports, module) {
          * @static
          */
         "end": function(done, isSeq) {
-            return this.execute(done, isSeq);
+            var self = this;
+            //如果队列为空
+            if (self.list && self.list.length < 1) {
+                if (done) done(self.result);
+                return;
+            }
+            if (self.state == 2) {
+                done(self.result);
+            } else if (self.state == 1) {
+                self.calls.push(done);
+            } else if (self.state == 0) {
+                self.calls.push(done);
+                self.execute_start(isSeq);
+            }
+            return self;
+        },
+
+        /**
+         * 顺序执行当前对列
+         * @method seq
+         * @param 完成时的回调
+         * @return {Task} 当前队列实例
+         * @static
+         */
+        "seq": function(done) {
+            return this.end(done, true);
         }
     });
 
