@@ -8,8 +8,8 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var $class = require("class");
-    var utils = require("utils");
+    var $class = require("./class");
+    var utils = require("./utils");
 
     var Task = $class.create({
 

@@ -2,13 +2,13 @@ define(function(require, exports, module) {
     "require:nomunge,exports:nomunge,module:nomunge";
     "use strict";
 
-    var $event = require('mokit/event');
-    var utils = require('mokit/utils');
+    var $event = require('./event');
+    var utils = require('./utils');
     var self = exports;
 
     var support = ('ontouchstart' in document);
     var startEventName = support ? 'touchstart' : 'mousedown';
-    var moveEventName = support ? 'touchmove' : 'mousemove';
+    var moveEventName = support ? 'touchmove' : 'mousemove'; 
     var endEventName = support ? 'touchend' : 'mouseup';
 
     //合局选项
