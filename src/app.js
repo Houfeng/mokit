@@ -145,8 +145,9 @@ define(function(require, exports, module) {
      */
     navigation.events.on('change', function(event) {
         if (event.uri) {
-            _start(event.uri, event.isBack, null);
+            _start(event.uri, event.isBack, navigation.effect);
         }
+        navigation.effect = null;
     });
 
     /**
@@ -157,6 +158,7 @@ define(function(require, exports, module) {
      */
     exports.start = function(uri, _effect) {
         if (uri != navigation.getUri()) {
+            navigation.effect = _effect;
             navigation.setUri(uri);
         } else {
             _start(uri, false, _effect);
