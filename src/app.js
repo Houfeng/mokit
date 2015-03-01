@@ -4,7 +4,7 @@
 ((function(owner) {
     owner.mokit = owner.mokit || {
         name: 'mokit',
-        version: '2.0 Beta 53',
+        version: '2.0 Beta 54',
         author: 'Houfeng'
     };
     owner.mokitAppName = owner.mokitAppName || owner.mokit.name;
@@ -69,12 +69,12 @@ define(function(require, exports, module) {
     /**
      * 传送到下一个RootView
      */
-    var changeController = function(nextControllerInstance, callback, isBack) {
+    var changeController = function(nextControllerInstance, callback, isBack, _effect) {
         if (currentControllerInstance) {
             nextControllerInstance.route.effect = nextControllerInstance.route.effect || [0, 0];
-            var effect = (isBack && currentControllerInstance) ?
+            var effect = _effect || ((isBack && currentControllerInstance) ?
                 currentControllerInstance.route.effect[1] :
-                nextControllerInstance.route.effect[0];
+                nextControllerInstance.route.effect[0]);
             transitions.change(
                 currentControllerInstance.rootView,
                 nextControllerInstance.rootView,
@@ -99,7 +99,7 @@ define(function(require, exports, module) {
     /**
      * 启动一个视图
      */
-    var _start = function(uri, isBack) {
+    var _start = function(uri, isBack, _effect) {
         if (transitions.isAnimating()) return;
         var route = routeMgr.getRoute(uri);
         if (!route) return console.error('route "' + uri + '" not found');
@@ -108,6 +108,7 @@ define(function(require, exports, module) {
             var nextControllerInstance = new Controller();
             nextControllerInstance.route = route;
             nextControllerInstance.routeData = route.routeData;
+            nextControllerInstance.isBack = isBack;
             nextControllerInstance.setView = function(view, callback) {
                 var self = this;
                 view.root = view;
@@ -117,7 +118,7 @@ define(function(require, exports, module) {
                 }
                 self.rootView.controller = self;
                 self.rootView.render(null, function() {
-                    changeController(self, callback, isBack);
+                    changeController(self, callback, isBack, _effect);
                 });
             };
             //触发旧 controller 的 onDispose
@@ -144,7 +145,7 @@ define(function(require, exports, module) {
      */
     navigation.events.on('change', function(event) {
         if (event.uri) {
-            _start(event.uri, event.isBack);
+            _start(event.uri, event.isBack, null);
         }
     });
 
@@ -154,11 +155,11 @@ define(function(require, exports, module) {
      * @param {String} uri 路由uri
      * @static
      */
-    exports.start = function(uri) {
+    exports.start = function(uri, _effect) {
         if (uri != navigation.getUri()) {
             navigation.setUri(uri);
         } else {
-            _start(uri);
+            _start(uri, false, _effect);
         }
     };
 
