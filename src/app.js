@@ -72,9 +72,12 @@ define(function(require, exports, module) {
     var changeController = function(nextControllerInstance, callback, isBack, _effect) {
         if (currentControllerInstance) {
             nextControllerInstance.route.effect = nextControllerInstance.route.effect || [0, 0];
-            var effect = _effect || ((isBack && currentControllerInstance) ?
-                currentControllerInstance.route.effect[1] :
-                nextControllerInstance.route.effect[0]);
+            var effect = _effect;
+            if (utils.isNull(effect)) {
+                effect = (isBack && currentControllerInstance) ?
+                    currentControllerInstance.route.effect[1] :
+                    nextControllerInstance.route.effect[0];
+            };
             transitions.change(
                 currentControllerInstance.rootView,
                 nextControllerInstance.rootView,
