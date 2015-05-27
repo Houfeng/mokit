@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 			var self = this;
 			context.view.updateModel();
 			if (User.current().login()) {
-				app.start('/about');
+				app.start('/home');
 			} else {
 				self.rootView.alert(lang.current().login_failed);
 			}

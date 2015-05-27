@@ -396,12 +396,12 @@ define(function(require, exports, module) {
         currentView = currentView.ui || currentView;
         nextView = nextView.ui || nextView;
         //如果有一个隐藏则直接切换
-        if (currentView.is(":hidden") || nextView.is(":hidden")) {
+        /*if (currentView.is(":hidden") || nextView.is(":hidden")) {
             mask.end(options);
-            if (callback) callback();
+            onEndAnimation(null, null, callback);
             _isAnimating = false;
             return;
-        }
+        }*/
         //初始化 class
         holder.addClass('ui-view-perspective');
         currentView.addClass('ui-view').addClass('ui-view-current');

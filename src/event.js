@@ -23,7 +23,9 @@
         monitor._addEvent = function(name, handler, useCapture) {
             if (!utils.isString(name) || !utils.isFunction(handler)) return;
             var target = monitor.target;
-            //生成代理 hander
+            //生成代理 hander 
+            //(2015.5.28 发现将 $delegate 放在 handler 身上在一个 handler 绑定到多个对象上时可能有问题)
+            //将 delegat 和 handler 放到一个对象中，再放到一个通过 name 识别的数组中，off 事件是从数组中查找再 off 应可行
             handler.$delegate = handler.$delegate || function(event) {
                 //这个地方因为有些时候，我们需要向 event 上添加新的属性或
                 //方法，但是原生 event 对象，有些方法或属性是不能添加的

@@ -1,4 +1,4 @@
-<div data-role='page grid' style='height:100%;background:#fafafa;' data-grid-rows="*,*" data-grid-cols="*">
+<div data-role='page grid' style='height:100%;background:#fafafa;' data-grid-rows="*,*,*" data-grid-cols="*">
     <div id='cell1' data-role='cell grid' data-grid-rows="30,*" data-grid-cols="*" style="margin:10px;padding:10px;border:solid 1px #ccc;">
         <div id='alert' data-role='cell'>代码方式</div>
         <div data-role='cell scroll'>
@@ -37,5 +37,9 @@
     </div>
     <div id='cell2' data-event="swipeleft>!swipeleft;swiperight>!swiperight" data-role='cell' style="margin:10px;padding:10px;border:solid 1px #ccc;">
         声明方式
+    </div>
+    <div data-role='cell' data-event='tap>!tap' style="margin:10px;padding:10px;border:solid 1px #ccc;">
+        parent
+        <div data-event='tap>!tap' style="margin:10px;padding:10px;border:solid 1px #ccc;">child</div>
     </div>
 </div>
