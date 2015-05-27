@@ -1,22 +1,28 @@
-<div data-role='page' data-title='<%$($.lang.login)%>'>
-	<div data-role="head" class="bar header">
-		<% $($.lang.login) %>
+<div data-role='page grid' data-grid-rows='50,*' data-grid-cols='*' data-title='<%$($.lang.login)%>'>
+	<div class="ui-header" data-role='cell'>
+		<h1 class='ui-title'><% $($.lang.login) %></h1>
 	</div>
-	<form class='content'>
-		<br/>
-		<input type="button" name="" value="中文" data-event="click>!setLanguage:zh-cn">
-		<input type="button" name="" value="English" data-event="click>!setLanguage:en-us"><br/><br/>
-		<!--
-		<input type="button" name="" value="<%$($.lang.default)%>" data-event="click>!setStyle:default">
-		<input type="button" name="" value="<%$($.lang.black)%>" data-event="click>!setStyle:black">
-		-->
-		<br/>
-		<%$($.lang.username)%>: <br/><br/>
-		<input type="text" name="" style='width:100%;' data-bind="val<username" placeholder="<%$($.lang.username)%>"><br/><br/>
-		<%$($.lang.password)%>: <br/><br/>
-		<input type="password" name="" style='width:100%;' data-bind="val<password"  placeholder="<%$($.lang.password)%>">
-		<br/><br/><br/>
-		<input type="button" name="" style='width:100%;' value="<%$($.lang.login)%>" data-event="click>login"/>
-		<!--link data-role='view' data-view="../views/setting" data-model="info"/-->
+	<form class='ui-content' data-role='cell scroll'>
+		<div class='ui-content-padding'>
+			<br/>
+			<input class="ui-button" type="button" name="" value="中文" data-event="click>!setLanguage:zh-cn">
+			<input class="ui-button" type="button" name="" value="English" data-event="click>!setLanguage:en-us"><br/><br/>
+			<!--
+			<input type="button" name="" value="<%$($.lang.default)%>" data-event="click>!setStyle:default">
+			<input type="button" name="" value="<%$($.lang.black)%>" data-event="click>!setStyle:black">
+			-->
+			<br/>
+			<%$($.lang.username)%>: <br/><br/>
+			<input type="text" class="ui-textbox-block" name="" style='width:100%;' data-bind="val<username" placeholder="<%$($.lang.username)%>"><br/><br/>
+			<%$($.lang.password)%>: <br/><br/>
+			<input type="password" class="ui-textbox-block" name="" style='width:100%;' data-bind="val<password"  placeholder="<%$($.lang.password)%>">
+			<br/><br/><br/>
+			<input type="button" class="ui-button-primary" value="<%$($.lang.login)%>" data-event="click>login"/>
+			<!--link data-role='view' data-view="../views/setting" data-model="info"/-->
+			<ul class='ui-list'>
+			    <li>你好</li>
+			    <li>你好</li>
+			</ul>
+		</div>
 	</form>
 </div>

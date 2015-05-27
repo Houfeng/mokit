@@ -1,11 +1,136 @@
+/*公共基础样式*/
+
+body {
+	background-color: #333;
+}
+[data-role~=page],
+.ui-page {
+	background-color: #f5f5f5 !important;
+}
 .ui-header {
-    height: 50px;
-    position:fixed;
+	height: 50px;
+	background: #fff;
+	border-bottom: solid 1px #ddd;
+	text-align: center;
+	position: relative;
+}
+.ui-title {
+	display: block;
+	width: 50%;
+	margin: 0px auto;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	font-size: 16px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	position: relative;
 }
 .ui-footer {
-    height: 50px;
-    position:fixed;
+	height: 50px;
+	text-align: center;
+	position: relative;
 }
-.ui-content{
-    
+.ui-content {
+	margin: 0px;
+	padding: 0px;
+	position: relative;
 }
+.ui-content-padding {
+	margin: 0px;
+	padding: 8px;
+	position: relative;
+}
+/*按钮*/
+
+[class*="ui-button"] {
+	border: solid 1px #ccc;
+	background-color: #fff;
+	font-size: 16px;
+	line-height: 16px;
+	padding: 15px;
+	outline: none;
+	display: inline-block;
+	color: #333;
+	border-radius: 0px;
+	-webkit-transition: all;
+	transition: all;
+	-webkit-transition-timing-function: linear;
+	transition-timing-function: linear;
+	-webkit-transition-duration: .09s;
+	transition-duration: .09s;
+}
+.ui-button-block,
+.ui-button-primary {
+	display: block;
+	width: 100%;
+}
+.ui-button-primary {
+	background-color: #007aff;
+	border: solid 1px #007aff;
+	color: #fff;
+}
+[class*="ui-button"]:active {
+	background-color: #ddd;
+	color#fff;
+}
+[class*="ui-button"]:disabled {
+	background-color: #ddd;
+	color: #ddd;
+}
+.ui-button-primary:active {
+	color: #fff;
+	background-color: #0062cc;
+}
+/*文本框*/
+[class*="ui-textbox"] {
+	border: solid 1px #ccc;
+	background-color: #fff;
+	font-size: 16px;
+	padding: 13px;
+	outline: none;
+	display: inline-block;
+	color: #333;
+	border-radius: 0px;
+}
+.ui-textbox-block {
+	display: block;
+	width: 100%;
+}
+/*列表*/
+
+.ui-list {
+	margin: 20px 0px;
+	border-top: solid 1px #dddddd;
+	border-bottom: solid 1px #dddddd;
+	padding: 0px;
+	position: relative;
+}
+.ui-content-padding .ui-list{
+	border: solid 1px #dddddd;
+}
+.ui-list li {
+	clear: both;
+	margin: 0px;
+	padding: 16px;
+	font-size: 16px;
+	line-height: 16px;
+	background-color: #fff;
+	border-top: solid 1px #dddddd;
+	overflow: hidden;
+	position: relative;
+	-webkit-transition: all;
+	transition: all;
+	-webkit-transition-timing-function: linear;
+	transition-timing-function: linear;
+	-webkit-transition-duration: .09s;
+	transition-duration: .09s;
+}
+.ui-list li:active {
+	background-color: #eee;
+}
+.ui-list li:first-child {
+	border-top: none;
+}
+/*end*/

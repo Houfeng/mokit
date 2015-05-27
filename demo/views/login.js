@@ -2,6 +2,7 @@ define(function(require, exports, module) {
 	"use strict";
 
 	var app = require('mokit/app');
+	var moui = require('mokit-ui');
 
 	/**
 	 * 登陆页
@@ -21,6 +22,10 @@ define(function(require, exports, module) {
 		},
 		alert: function(msg) {
 			alert(msg);
+		},
+		onRender:function(context){
+			var self = this;
+			moui.use(self.ui);
 		}
 	});
 

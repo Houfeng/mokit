@@ -30,8 +30,8 @@ define(function(require, exports, module) {
      * 样式配置
      */
     app.style.addStyle({
-        'default': './styles/default/css/style.css',
-        'black': './styles/black/style.css'
+        'light': './styles/light.css',
+        'dark': './styles/dark.css'
     }, module);
 
     /**
