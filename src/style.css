@@ -1,13 +1,13 @@
 /* 页面样式 */
-[data-role~=page] { position: absolute !important; left:0px;top:0px; z-index:99; min-width: 100%; min-height: 100%; }
-[data-role~=page]:first-child{ z-index: 100;}
+[data-role~=page], .ui-page { position: absolute !important; left:0px;top:0px; z-index:99; min-width: 100%; min-height: 100%; }
+[data-role~=page]:first-child, .ui-page:first-child{ z-index: 100;}
 
 /*网格布局*/
-[data-role~=grid] { position: relative; margin: 0px; padding: 0px; vertical-align: top; }
-[data-role~=cell] { position: relative; margin: 0px; padding: 0px; overflow: hidden; display: inline-block; float: left; list-style-type: none; }
+[data-role~=grid], .ui-grid { position: relative; margin: 0px; padding: 0px; vertical-align: top; }
+[data-role~=cell], .ui-cell { position: relative; margin: 0px; padding: 0px; overflow: hidden; display: inline-block; float: left; list-style-type: none; }
 
 /*局部滚动*/
-[data-role~=scroll] { overflow: auto; -webkit-overflow-scrolling: touch; }
+[data-role~=scroll], .ui-scroll { overflow: auto; -webkit-overflow-scrolling: touch; }
 
 /* animation sets */
 .ui-view-perspective {

@@ -3,6 +3,10 @@ ems.config({
         name: 'mokit',
         location: ems.resovleUri('../src/'),
         main: 'app'
+    },{ 
+        name: 'mokit-ui',
+        location: ems.resovleUri('../src/ui/'),
+        main: 'main'
     }]
 });
 /**
@@ -14,6 +18,8 @@ define(function(require, exports, module) {
     var app = require('mokit/app'),
         ajax = require('mokit/ajax'),
         $ = require('mokit/jquery');
+        
+    var moui= require('mokit-ui');
 
     /**
      * 加载配置文件

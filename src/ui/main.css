@@ -1,0 +1,11 @@
+.ui-header {
+    height: 50px;
+    position:fixed;
+}
+.ui-footer {
+    height: 50px;
+    position:fixed;
+}
+.ui-content{
+    
+}
