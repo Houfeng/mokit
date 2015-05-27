@@ -34,8 +34,13 @@ define(function(require, exports, module) {
      * 恢复原有样式
      */
     var resetViewClass = function(currentView, nextView) {
-        if (currentView) currentView.attr('class', currentView.data('originalClassList'));
-        if (nextView) nextView.attr('class', nextView.data('originalClassList') + ' ui-view-current');
+        if (currentView) {
+			currentView.attr('class', currentView.data('originalClassList'));
+			currentView.removeClass('ui-view-current');
+		}
+		if (nextView) {
+			nextView.attr('class', nextView.data('originalClassList') + ' ui-view-current');
+		}
     };
 
     /**
@@ -379,25 +384,35 @@ define(function(require, exports, module) {
         }
     };
 
-    exports.change = function(currentView, nextView, animation, callback, option) {
+    exports.change = function(currentView, nextView, animation, callback, options) {
         //确保同时只有一个动画在进行
         if (_isAnimating) return;
         _isAnimating = true;
         //
-        mask.begin(option);
+        options=options||{};
+        mask.begin(options);
+        var holder = options.container||$(document.body);
+        holder = holder.ui||holder;
         currentView = currentView.ui || currentView;
         nextView = nextView.ui || nextView;
         //如果有一个隐藏则直接切换
         if (currentView.is(":hidden") || nextView.is(":hidden")) {
-            mask.end(option);
+            mask.end(options);
             if (callback) callback();
             _isAnimating = false;
             return;
         }
+        //初始化 class
+        holder.addClass('ui-view-perspective');
+        currentView.addClass('ui-view').addClass('ui-view-current');
+        nextView.addClass('ui-view');
         //切换视图
         _change(currentView, nextView, animation, function() {
-            mask.end(option);
+            mask.end(options);
             if (callback) callback();
+            holder.removeClass('ui-view-perspective');
+            currentView.removeClass('ui-view').removeClass('ui-view-current');
+            nextView.removeClass('ui-view').removeClass('ui-view-current');
             _isAnimating = false;
         });
     };

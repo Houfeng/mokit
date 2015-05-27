@@ -42,19 +42,19 @@ define(function(require, exports, module) {
     app.route.addRoute([{
         pattern: '/home',
         target: './controllers/home',
-        effect: [46, 47]
+        effect: [33, 32]
     }, {
         pattern: '/login',
         target: './controllers/login',
-        effect: [27, 27]
+        effect: [33, 32]
     }, {
         pattern: '/about',
         target: './controllers/about',
-        effect: [27, 27]
+        effect: [33, 32]
     }, {
         pattern: '/grid',
         target: './controllers/grid',
-        effect: [27, 27]
+        effect: [33, 32]
     }], module);
 
     //设置全局的Ajax Loading

@@ -1,5 +1,5 @@
 /* 页面样式 */
-[data-role~=page] { position: absolute !important; z-index:99; min-width: 100%; min-height: 100%; }
+[data-role~=page] { position: absolute !important; left:0px;top:0px; z-index:99; min-width: 100%; min-height: 100%; }
 [data-role~=page]:first-child{ z-index: 100;}
 
 /*网格布局*/
@@ -10,6 +10,34 @@
 [data-role~=scroll] { overflow: auto; -webkit-overflow-scrolling: touch; }
 
 /* animation sets */
+.ui-view-perspective {
+	position: relative;
+	-webkit-perspective: 1200px;
+	-moz-perspective: 1200px;
+	perspective: 1200px;
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+}
+
+.ui-view {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	backface-visibility: hidden;
+	visibility: hidden;
+}
+
+.ui-view-current{
+	visibility: visible;
+}
 /* 移动 from / to  */
 
 .ui-view-moveToLeft { -webkit-animation: moveToLeft .6s ease both; -moz-animation: moveToLeft .6s ease both; animation: moveToLeft .6s ease both; }

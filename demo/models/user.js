@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 			this.password = _pwd || '';
 		},
 		login: function() {
-			if (this.username == 'houfeng' && this.password == '12345') {
+			if (true||this.username == 'houfeng' && this.password == '12345') {
 				this.isLogin = true;
 			}
 			return this.isLogin;
