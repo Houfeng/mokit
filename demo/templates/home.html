@@ -1,20 +1,28 @@
 <div data-role='page grid' data-grid-rows='50,*' data-grid-cols='*' data-title='<%$($.lang.home)%>'>
 	<div class="ui-header" data-role='cell'>
-		<div class="ui-title">
-		<%$($.lang.home)%>
+		<div class='ui-bar-left' data-event='click>openMenu'>
+			<i class="icon-reorder "></i>
 		</div>
-		<input style='position:absolute;left:6px;top:6px;padding:3px;' type="button" value=" 菜单 " data-event='click>openMenu' />
+		<div class="ui-title">
+			<%$($.lang.home)%>
+		</div>
+		<div class='ui-bar-right'>
+			<i class="icon-question-sign"></i>
+		</div>
 	</div>
 	<div class="ui-content" data-role='cell scroll'>
 		<div class="ui-content-padding">
-		<select id='findTypeBox' data-event='change>find'>
-		<% $.each($$.findTypeList, function(i,item){ %>
-			<option <%$(item==$$.findType?'selected':'')%> value='<%$(item)%>'><%$($.lang.find_type[item])%>
-			</option>
-		<% }); %>
-		</select>
+		<div class="ui-select">
+			<select id='findTypeBox' data-event='change>find'>
+			<% $.each($$.findTypeList, function(i,item){ %>
+				<option <%$(item==$$.findType?'selected':'')%> value='<%$(item)%>'><%$($.lang.find_type[item])%>
+				</option>
+			<% }); %>
+			</select>
+			<i class="icon-angle-down"></i>
+		</div>
 		<br/>
-		<div class="bar">
+		<div class="ui-bar1">
 			<input type="search" id='findBox' class="ui-textbox-block" data-event='change>find' value='<%$(this.findKeyWord)%>' placeholder="<%$($.lang.please_input)%>" /> 
 		</div>
 		<br />

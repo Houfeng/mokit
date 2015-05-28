@@ -26,6 +26,7 @@ body {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	position: relative;
+	font-weight: normal;
 }
 .ui-footer {
 	height: 50px;
@@ -128,6 +129,32 @@ body {
 	display: block;
 	width: 100%;
 }
+/*select*/
+.ui-select{
+	display: block;
+	width: 100%;
+	padding: 0px;
+	position: relative;
+}
+.ui-select select{
+	border: solid 1px #ddd;
+	background-color: #fff;
+	font-size: 16px;
+	padding: 12px;
+	outline: none;
+	display: block;
+	color: #333;
+	border-radius: 3px;
+	width: 100%;
+	-webkit-appearance: none;
+	appearance: none;
+}
+.ui-select [class^=icon-]{
+	position: absolute;
+	right: 12px;
+	top:50%;
+	margin-top: -10px;
+}
 /*列表*/
 
 .ui-list {
@@ -207,5 +234,40 @@ body {
 }
 .ui-form li label~[class*="ui-textbox"] {
 	width: 72%;
+}
+/*bar*/
+.ui-bar{
+	margin: 0px;
+	padding: 8px;
+	background-color: #ddd;
+	position: relative;
+}
+.ui-bar-left{
+	width: 25%;
+	height: 100%;
+	text-align: left;
+	vertical-align:text-bottom;
+	position: absolute;
+	left: 0px;
+	top:0px;
+	padding:15px 12px;
+}
+.ui-bar-right{
+	width: 25%;
+	height: 100%;
+	text-align: right;
+	vertical-align:text-bottom;
+	position: absolute;
+	right: 0px;
+	top:0px;
+	padding:15px 12px;
+}
+/*icon*/
+[class^=icon-]{
+	font-size: 20px;
+	color: #555;
+}
+[class^=icon-]:active{
+	color: #0062cc;
 }
 /*end*/
