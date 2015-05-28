@@ -1,9 +1,12 @@
-<div data-role='page' data-title='<%$($.lang.home)%>'>
-	<div data-role="head" class="bar header">
+<div data-role='page grid' data-grid-rows='50,*' data-grid-cols='*' data-title='<%$($.lang.home)%>'>
+	<div class="ui-header" data-role='cell'>
+		<div class="ui-title">
 		<%$($.lang.home)%>
+		</div>
 		<input style='position:absolute;left:6px;top:6px;padding:3px;' type="button" value=" 菜单 " data-event='click>openMenu' />
 	</div>
-	<div data-role="content" class="content">
+	<div class="ui-content" data-role='cell scroll'>
+		<div class="ui-content-padding">
 		<select id='findTypeBox' data-event='change>find'>
 		<% $.each($$.findTypeList, function(i,item){ %>
 			<option <%$(item==$$.findType?'selected':'')%> value='<%$(item)%>'><%$($.lang.find_type[item])%>
@@ -12,11 +15,11 @@
 		</select>
 		<br/>
 		<div class="bar">
-			<input type="search" id='findBox' style='width:100%;' data-event='change>find' value='<%$(this.findKeyWord)%>' placeholder="<%$($.lang.please_input)%>" /> 
+			<input type="search" id='findBox' class="ui-textbox-block" data-event='change>find' value='<%$(this.findKeyWord)%>' placeholder="<%$($.lang.please_input)%>" /> 
 		</div>
-		<br/>
+		<br />
 		<% if(this.findResult && this.findResult.length>0){ %>
-		<ul class="list">
+		<ul class="ui-list">
 		<% for(var i in this.findResult){ 
 			var item=this.findResult[i]; %>
 			<li><%=item.name%> , <%= item.tel %></li>
@@ -25,9 +28,7 @@
 		<% }else{ %>
 		<div style='padding:15px;text-align:center'><%$($.lang.not_found)%></div>
 		<% } %>
+		</div>
 	</div>	
-	<div data-role="head" class="bar footer">
-		 -
-	</div>
 	<link data-role='view' id='menu' data-view="../views/menu" />
 </div>

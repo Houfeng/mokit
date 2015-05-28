@@ -39,7 +39,7 @@ body {
 }
 .ui-content-padding {
 	margin: 0px;
-	padding: 10px;
+	padding: 15px;
 	position: relative;
 }
 /*按钮*/
@@ -100,6 +100,8 @@ body {
 	margin: 0px;
 	border-radius: 0px;
 	border-right: solid 1px #ddd;
+	min-width: 80px;
+	padding: 12px;
 }
 .ui-button-group [class*="ui-button"]:first-child {
 	border-top-left-radius: 3px;
@@ -129,7 +131,7 @@ body {
 /*列表*/
 
 .ui-list {
-	margin: 20px 0px;
+	margin: 15px 0px;
 	border-top: solid 1px #ddd;
 	border-bottom: solid 1px #ddd;
 	padding: 0px;
@@ -139,6 +141,7 @@ body {
 .ui-content-padding .ui-list {
 	border: solid 1px #ddd;
 	border-radius: 3px;
+	margin: 0px;
 }
 .ui-content-padding .ui-list li:first-child {
 	border-top-left-radius: 3px;
@@ -171,10 +174,15 @@ body {
 	border-top: none;
 }
 /*表单*/
-
+.ui-form{
+	padding: 0px;
+	margin: 0px;
+	font-size: 0px;
+}
 .ui-form li {
 	padding: 0px;
 	overflow: hidden;
+	font-size: 0px
 }
 .ui-form li:active {
 	background-color: transparent;
@@ -182,11 +190,13 @@ body {
 .ui-form li label {
 	display: inline-block;
 	height: 100%;
-	width: 25%;
+	width: 28%;
 	font-size: 16px;
-	padding: 13px;
+	padding: 13px 0px 13px 13px;
 	margin: 0px;
 	background-color: transparent;
+	text-overflow: ellipsis;
+	word-break: normal;
 }
 .ui-form li [class*="ui-textbox"] {
 	display: inline-block;

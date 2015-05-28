@@ -2,6 +2,7 @@ define(function(require, exports, module) {
 	"use strict";
 
 	var view = require('mokit/view');
+	var moui= require('mokit-ui');
 
 	/**
 	 * 测试页视图
@@ -15,18 +16,22 @@ define(function(require, exports, module) {
 			findTypeBox: '#findTypeBox',
 			findBox: '#findBox'
 		},
-		getFindData: function(event) {
+		getFindData: function(content) {
 			var self = this;
 			return {
 				findType: self.el.findTypeBox.find(':selected').val(),
 				findKeyWord: self.el.findBox.val()
 			};
 		},
-		setFocus: function(event) {
+		setFocus: function(content) {
 			var self = this;
 			self.el.findBox.focus();
 		},
-		onDisplay: function(event) {
+		onRender:function(content){
+			var self = this;
+			moui.use(self.ui);
+		},
+		onDisplay: function(content) {
 			var self = this;
 			self.setFocus();
 		}
