@@ -410,9 +410,9 @@ define(function(require, exports, module) {
         _change(currentView, nextView, animation, function() {
             mask.end(options);
             if (callback) callback();
-            //holder.removeClass('ui-view-perspective');
-            //currentView.removeClass('ui-view').removeClass('ui-view-current');
-            //nextView.removeClass('ui-view').removeClass('ui-view-current');
+            holder.removeClass('ui-view-perspective');
+            currentView.removeClass('ui-view').removeClass('ui-view-current');
+            nextView.removeClass('ui-view').removeClass('ui-view-current');
             _isAnimating = false;
         });
     };

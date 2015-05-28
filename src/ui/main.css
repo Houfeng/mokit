@@ -39,21 +39,22 @@ body {
 }
 .ui-content-padding {
 	margin: 0px;
-	padding: 8px;
+	padding: 10px;
 	position: relative;
 }
 /*按钮*/
 
 [class*="ui-button"] {
-	border: solid 1px #ccc;
+	border: solid 1px #ddd;
 	background-color: #fff;
 	font-size: 16px;
 	line-height: 16px;
 	padding: 15px;
 	outline: none;
 	display: inline-block;
+	overflow: hidden;
 	color: #333;
-	border-radius: 0px;
+	border-radius: 3px;
 	-webkit-transition: all;
 	transition: all;
 	-webkit-transition-timing-function: linear;
@@ -83,16 +84,43 @@ body {
 	color: #fff;
 	background-color: #0062cc;
 }
+.ui-button-group {
+	margin: 0px;
+	padding: 0px;
+	border: solid 1px #ddd;
+	border-radius: 3px;
+	background-color: transparent;
+	font-size: 0px;
+}
+.ui-button-group:active {
+	background-color: transparent;
+}
+.ui-button-group [class*="ui-button"] {
+	border: none;
+	margin: 0px;
+	border-radius: 0px;
+	border-right: solid 1px #ddd;
+}
+.ui-button-group [class*="ui-button"]:first-child {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+.ui-button-group [class*="ui-button"]:last-child {
+	border-right: 0px;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
 /*文本框*/
+
 [class*="ui-textbox"] {
-	border: solid 1px #ccc;
+	border: solid 1px #ddd;
 	background-color: #fff;
 	font-size: 16px;
 	padding: 13px;
 	outline: none;
 	display: inline-block;
 	color: #333;
-	border-radius: 0px;
+	border-radius: 3px;
 }
 .ui-textbox-block {
 	display: block;
@@ -102,22 +130,31 @@ body {
 
 .ui-list {
 	margin: 20px 0px;
-	border-top: solid 1px #dddddd;
-	border-bottom: solid 1px #dddddd;
+	border-top: solid 1px #ddd;
+	border-bottom: solid 1px #ddd;
 	padding: 0px;
 	position: relative;
+	background-color: #fff;
 }
-.ui-content-padding .ui-list{
-	border: solid 1px #dddddd;
+.ui-content-padding .ui-list {
+	border: solid 1px #ddd;
+	border-radius: 3px;
+}
+.ui-content-padding .ui-list li:first-child {
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+.ui-content-padding .ui-list li:last-child {
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 }
 .ui-list li {
 	clear: both;
 	margin: 0px;
-	padding: 16px;
+	padding: 17px;
 	font-size: 16px;
 	line-height: 16px;
-	background-color: #fff;
-	border-top: solid 1px #dddddd;
+	border-top: solid 1px #ddd;
 	overflow: hidden;
 	position: relative;
 	-webkit-transition: all;
@@ -132,5 +169,33 @@ body {
 }
 .ui-list li:first-child {
 	border-top: none;
+}
+/*表单*/
+
+.ui-form li {
+	padding: 0px;
+	overflow: hidden;
+}
+.ui-form li:active {
+	background-color: transparent;
+}
+.ui-form li label {
+	display: inline-block;
+	height: 100%;
+	width: 25%;
+	font-size: 16px;
+	padding: 13px;
+	margin: 0px;
+	background-color: transparent;
+}
+.ui-form li [class*="ui-textbox"] {
+	display: inline-block;
+	height: 100%;
+	width: 100%;
+	border: none;
+	background-color: transparent;
+}
+.ui-form li label~[class*="ui-textbox"] {
+	width: 72%;
 }
 /*end*/

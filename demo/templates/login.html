@@ -3,10 +3,22 @@
 		<h1 class='ui-title'><% $($.lang.login) %></h1>
 	</div>
 	<form class='ui-content' data-role='cell scroll'>
+		<ul class='ui-list ui-form'>
+			 <li>
+			 	<label>账号</label>
+			 	<input type="text" class="ui-textbox-block" placeholder="请输入账号" />
+			 </li>
+			 <li>
+			 	<label>密码</label>
+			 	<input type="password" class="ui-textbox-block" placeholder="请输入账号" />
+			 </li>
+		</ul>
 		<div class='ui-content-padding'>
 			<br/>
-			<input class="ui-button" type="button" name="" value="中文" data-event="click>!setLanguage:zh-cn">
-			<input class="ui-button" type="button" name="" value="English" data-event="click>!setLanguage:en-us"><br/><br/>
+			<div class="ui-button-group">
+				<input class="ui-button" type="button" name="" value="中文" data-event="click>!setLanguage:zh-cn" />
+				<input class="ui-button" type="button" name="" value="English" data-event="click>!setLanguage:en-us" />
+			</div>
 			<!--
 			<input type="button" name="" value="<%$($.lang.default)%>" data-event="click>!setStyle:default">
 			<input type="button" name="" value="<%$($.lang.black)%>" data-event="click>!setStyle:black">
