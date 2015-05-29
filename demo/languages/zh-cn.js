@@ -2,8 +2,8 @@
  * “中文-中国大陆” 语言包
  */
 define({
-	'username': '用户名称',
-	'password': '用户密码',
+	'username': '账号',
+	'password': '密码',
 	'back': '返回',
 	'login': '登录',
 	'logout': '退出',

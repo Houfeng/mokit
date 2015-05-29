@@ -19,7 +19,7 @@ define(function(require, exports, module) {
         ajax = require('mokit/ajax'),
         $ = require('mokit/jquery');
         
-    var moui= require('mokit-ui');
+    //var moui= require('mokit-ui');
 
     /**
      * 加载配置文件
