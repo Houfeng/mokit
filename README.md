@@ -1,5 +1,5 @@
 ###Mokit是什么?
-Mokit 是一个符 合MVC 的 WebApp 基础开发框架。 请查看 [Mokit API](http://houfeng.net/mokit-doc) 。
+Mokit 是一个符合MVC 的 WebApp 基础开发框架。 请查看 [Mokit API](http://houfeng.net/mokit-doc) 。
 
 ### 最新版本
 ```

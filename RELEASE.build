@@ -1,4 +1,4 @@
 {
-    "inDir":"./src",
+    "inDir":"./lib",
     "outDir":"./build"
 }

@@ -1,0 +1,32 @@
+{
+    "name": "mokit",
+    "version": "2.0.54",
+    "description": "一个符合MVC 的 WebApp 基础开发框架!",
+    "main": "./src/app.js",
+    "scripts": {
+        "test": "echo \"There is no test\" && exit 1"
+    },
+    "keywords": [
+        "mokit",
+        "webapp",
+        "mvc",
+        "web",
+        "mobile"
+    ],
+    "author": {
+        "name": "Houfeng",
+        "email": "admin@xhou.net"
+    },
+    "homepage": "http://mokit.cc",
+    "bugs": {
+        "url": "https://github.com/Houfeng/mokit/issues",
+        "email": "admin@xhou.net"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Houfeng/mokit.git"
+    },
+    "dependencies": {
+    }
+}
