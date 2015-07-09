@@ -1,11 +1,11 @@
 ems.config({
     packages: [{ 
         name: 'mokit',
-        location: ems.resovleUri('../src/'),
+        location: ems.resovleUri('../lib/'),
         main: 'app'
     },{ 
         name: 'mokit-ui',
-        location: ems.resovleUri('../src/ui/'),
+        location: ems.resovleUri('../lib/ui/'),
         main: 'main'
     }]
 });
