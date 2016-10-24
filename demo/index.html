@@ -36,7 +36,9 @@
 
   <script src="../dist/bundle.js"></script>
   <script>
-    var tmpl = new mov.Template(document.body);
+    var app = new mov.App({
+      element:document.body
+    });
     var scope = {
       sexs:['男','女'],
       user:{
@@ -44,7 +46,7 @@
         sex: ['女']
       }
     };
-    tmpl.bind(scope);
+    app.start(scope);
   </script>
 </body>
 
