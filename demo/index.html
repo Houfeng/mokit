@@ -1,22 +1,51 @@
-<!doctype html>
-<html>
-  
-<head>    
-    <title>mokit</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, width=device-width, user-scalable=no" />
-    <meta name="author" content="mokit" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="format-detection" content="email=no" />
-    <link rel="apple-touch-icon" href="touch-icon-icon.png" />
-    <link rel="apple-touch-icon" sizes="72x72" href="touch-icon-ipad.png" />
-    <link rel="apple-touch-icon" sizes="114x114" href="touch-icon-iphone4.png" />
-    <script src="../lib/ems.js" data-main="main"></script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>test</title>
+  <style>
+    td {
+      padding: 10px;
+    }
+    
+    [cloak] {
+      visibility: hidden;
+    }
+  </style>
 </head>
-         
+
 <body>
+
+  <input type="text" m:model="user.name"><button m:on:click="alert(user.name)">{{user.name}}</button><br/>
+  <textarea m:model="user.name"></textarea><br/>
+  <select m:model="user.sex">
+    <option value="{{item}}" m:each="item of sexs" m:text="item"></option>
+  </select>
+  <div>
+    <input type="radio" name="sex" id="" m:model="user.sex" value="男">
+    <input type="radio" name="sex" id="" m:model="user.sex" value="女">
+    <input type="checkbox" name="sex" id="" m:model="sexs" value="男">
+    <input type="checkbox" name="sex" id="" m:model="sexs" value="女">
+  </div>
+  <div contenteditable="true" m:model="user.name"></div>
+  <div cloak>{{user.name}}/{{user.sex}}</div>
+  <div m:text="user.name"></div>
+
+  <script src="../dist/bundle.js"></script>
+  <script>
+    var tmpl = new mov.Template(document.body);
+    var scope = {
+      sexs:['男','女'],
+      user:{
+        name: 'test',
+        sex: ['女']
+      }
+    };
+    tmpl.bind(scope);
+  </script>
 </body>
 
 </html>

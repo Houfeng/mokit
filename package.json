@@ -1,38 +1,25 @@
 {
-  "name": "mokit",
-  "version": "2.0.55",
-  "description": "一个符合MVC 的 WebApp 基础开发框架!",
-  "main": "./src/app.js",
-  "url": "http://houfeng.net/",
-  "options": {
-    "outdir": "../doc"
-  },
+  "name": "mov",
+  "version": "0.0.2",
+  "description": "",
+  "main": "./lib/index.js",
   "scripts": {
-    "test": "echo \"There is no test\" && exit 1"
+    "start": "nokit stop && nokit start --public ./ --port 8002",
+    "clear": "rm -rf ./dist/**",
+    "build": "node ./bin/info.js && browserify ./lib/index.js | uglifyjs -m  > ./dist/bundle.js",
+    "watch": "node ./bin/info.js && watchify ./lib/index.js -o 'exorcist ./dist/bundle.js.map > ./dist/bundle.js' -d"
   },
-  "keywords": [
-    "mokit",
-    "webapp",
-    "mvc",
-    "web",
-    "mobile"
-  ],
-  "author": {
-    "name": "Houfeng",
-    "email": "admin@xhou.net"
-  },
-  "homepage": "http://mokit.cc",
-  "bugs": {
-    "url": "https://github.com/Houfeng/mokit/issues",
-    "email": "admin@xhou.net"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Houfeng/mokit.git"
-  },
-  "dependencies": {},
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "nokit-handler-less": "^1.0.1"
+    "browserify": "^13.1.0",
+    "exorcist": "^0.4.0",
+    "nokitjs": "^1.25.9",
+    "uglifyify": "^3.0.3",
+    "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "cify": "^1.0.2",
+    "ntils": "^1.1.3"
   }
 }
