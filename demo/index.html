@@ -36,17 +36,15 @@
 
   <script src="../dist/bundle.js"></script>
   <script>
-    var app = new mov.App({
+    var app = new mov({
       element:document.body
     });
-    var scope = {
-      sexs:['男','女'],
-      user:{
+    app.sexs=['男','女'];
+    app.user={
         name: 'test',
         sex: ['女']
-      }
     };
-    app.start(scope);
+    app.start();
   </script>
 </body>
 

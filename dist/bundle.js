@@ -13,10 +13,10 @@ const App = new Class({
     this.components = [];
     this.element = options.element;
     this.prefix = options.prefix;
-    this.compiler = new Compiler({
+    utils.defineFreezeProp(this, 'compiler', new Compiler({
       prefix: this.prefix,
       directives: this.directives
-    });
+    }));
   },
 
   directive: function (name, Directive) {
@@ -33,16 +33,14 @@ const App = new Class({
 
   },
 
-  start: function (scope) {
-    this.template = new Template(this.element, {
+  start: function () {
+    utils.defineFreezeProp(this, 'template', new Template(this.element, {
       compiler: this.compiler
-    });
-    this.template.bind(scope);
+    }));
+    this.template.bind(this);
   }
 
 });
-
-utils.copy(Template, App);
 
 module.exports = App;
 },{"./template":22,"cify":26}],3:[function(require,module,exports){
@@ -366,11 +364,13 @@ const Compiler = new Class({
     //定义 children & directives 
     handler.directives = [];
     handler.children = [];
-    //编辑相关指令
-    this._compileElement(handler, node);
-    this._compileAttributes(handler, node);
-    this._bindHandler(handler);
-    this._compileChildren(handler, node);
+    if (node) {
+      //编辑相关指令
+      this._compileElement(handler, node);
+      this._compileAttributes(handler, node);
+      this._bindHandler(handler);
+      this._compileChildren(handler, node);
+    }
     //返回编译后函数
     return handler.bind(null);
   }
@@ -1107,6 +1107,7 @@ const EventEmitter = require('events');
 
 const OBSERVER_PROP_NAME = '__observer__';
 const CHANGE_EVENT_NAME = 'change';
+const EVENT_MAX_DISPATCH_LAYER = 20;
 
 /**
  * 对象观察类，可以监控对象变化
@@ -1114,7 +1115,7 @@ const CHANGE_EVENT_NAME = 'change';
  *   对于父子关系和事件冒泡，目前方案如果用 delete 删除一个属性，无关真实删除关系，
  *   即便调用 clearReference 也无法再清除关系，子对象的 parents 中会一直有一个引用，当前方案最高效
  * 其它方法一:
- *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件中 filter 出来，
+ *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件��� filter 出来，
  *   基本和目前方法类似，但是关系在外部存领教，所以 clearReference 可清除。
  * 其它方案二: 
  *   构造时添加到全局数组，每一个 observer change 时都让放到全局的 observer 遍历自身的，
@@ -1135,6 +1136,11 @@ const Observer = new Class({
   constructor: function (target) {
     if (utils.isNull(target)) {
       throw new Error('Invalid target');
+    }
+    var observer = target[OBSERVER_PROP_NAME];
+    if (observer) {
+      observer.apply();
+      return observer;
     }
     utils.defineFreezeProp(this, 'shadow', Object.create(null));
     utils.defineFreezeProp(this, 'target', target);
@@ -1209,6 +1215,9 @@ const Observer = new Class({
    * @returns {void} 无返回
    */
   dispatch: function (eventName, event) {
+    event.__layer__ = event.__layer__ || 0;
+    event.__layer__++;
+    if (event.__layer__ >= EVENT_MAX_DISPATCH_LAYER) return;
     this.emit(eventName, event);
     if (!this.parents || this.parents.length < 1) return;
     this.parents.forEach(function (item) {
