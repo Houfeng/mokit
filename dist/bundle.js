@@ -66,10 +66,8 @@ const RESERVED_WORDS = [
  */
 const Component = function (options) {
 
-  //参数检查
-  if (!options || !options.template) {
-    throw new Error('Invalid component options');
-  }
+  //处理组件选项
+  options = options || Object.create(null);
 
   //处理「继承」
   if (utils.isFunction(options.extends)) {
@@ -91,9 +89,9 @@ const Component = function (options) {
      */
     constructor: function () {
       this._onTemplateUpdate = this._onTemplateUpdate.bind(this);
-      this._createData(options.data);
-      this._createProperties(options.properties);
-      this._createWatches(options.watches);
+      this._createData(this.data);
+      this._createProperties(this.properties);
+      this._createWatches(this.watches);
       this._callHook('onInit');
       this._observer = Observer.observe(this);
     },
@@ -105,8 +103,8 @@ const Component = function (options) {
      * @returns {void} 无反回
      */
     _callHook: function (name, args) {
-      if (!utils.isFunction(options[name])) return;
-      options[name].apply(this, args);
+      if (!utils.isFunction(this[name])) return;
+      this[name].apply(this, args);
     },
 
     /**
@@ -234,10 +232,11 @@ const Component = function (options) {
      * @returns {void} 无返回
      */
     $compile: function () {
+      if (!this.template) throw new Error('Invalid template');
       if (this._compiled) return;
       this._compiled = true;
       this._callHook('onCreate');
-      utils.defineFreezeProp(this, '$element', utils.parseDom(options.template)[0]);
+      utils.defineFreezeProp(this, '$element', utils.parseDom(this.template)[0]);
       if (!this.$element || this.$element.nodeName === '#text') {
         throw new Error('Invalid component template');
       }
@@ -305,13 +304,21 @@ const Component = function (options) {
 
   //使 ComponentClass instanceof Component === true
   ComponentClass.__proto__ = Component.prototype;
+
+  //定义扩展方法
+  ComponentClass.extend = function (options) {
+    options = options || Object.create(null);
+    options.extends = this;
+    return new Component(options);
+  };
+
   return ComponentClass;
 
 };
 
 //组件扩展方法，简单封装 extends
 Component.extend = function (options) {
-  options.extends = this;
+  options = options || Object.create(null);
   return new Component(options);
 };
 
@@ -322,36 +329,10 @@ const utils = require('ntils');
 
 const Dynamic = new Component({
 
-  template: '<div>fullName: {{fullName}}, firstName: {{firstName}}, lastName: {{lastName}}</div>',
-
-  data: function () {
-    return {
-      firstName: 'Hou',
-      lastName: 'Feng'
-    };
-  },
+  template: '<iframe src="{{src}}"></iframe>',
 
   properties: {
-    fullName: {
-      get: function () {
-        return this.firstName + ' ' + this.lastName;
-      }
-    }
-  },
-
-  watches: {
-    lastName() {
-      this.firstName = '#' + this.lastName;
-      console.log('aaa');
-    }
-  },
-
-  alert: function (name) {
-    alert(name);
-  },
-
-  say: function (name) {
-    this.user.name = name;
+    src: null
   }
 
 });
@@ -1667,7 +1648,7 @@ const Watcher = new Class({
    * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
    * @param {function} calcor 计算函数
    * @param {function} handler 处理函数
-   * @param {boolean} first 是否自动执行第一次
+   * @param {boolean} first 是���自动执行第一次
    * @param {void} 无返回
    */
   constructor: function (calcor, handler, first) {
