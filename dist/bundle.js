@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports={"name":"mov","version":"0.0.2"}
+module.exports={"name":"mokit","version":"0.0.1"}
 },{}],2:[function(require,module,exports){
 const Class = require('cify');
 const Template = require('./template');
@@ -9,8 +9,8 @@ const utils = Template.utils;
 const App = new Class({
 
   constructor: function (options) {
-    options = options || {};
-    this.components = [];
+    options = options || Object.create(null);
+    this.components = Object.create(null);
     this.element = options.element;
     this.prefix = options.prefix;
     utils.defineFreezeProp(this, 'compiler', new Compiler({
@@ -30,7 +30,7 @@ const App = new Class({
   },
 
   component: function (name, Component) {
-
+    this.components[name] = Component;
   },
 
   start: function () {
@@ -43,95 +43,177 @@ const App = new Class({
 });
 
 module.exports = App;
-},{"./template":22,"cify":26}],3:[function(require,module,exports){
+
+
+},{"./template":23,"cify":27}],3:[function(require,module,exports){
 const Class = require('cify');
 const Template = require('../template');
 const Watcher = require('../watcher');
 const utils = Template.utils;
+const EventEmitter = require('events');
+const Observer = Template.Observer;
 
+/**
+ * 组件类
+ * 用于定义一个新的组件
+ */
 const Component = function (options) {
 
+  //参数检查
   if (!options || !options.template) {
     throw new Error('Invalid component options');
   }
 
-  var componentProp = Object.create(Component.prototype);
-  componentProp.$props = options.props;
-  utils.copy(options.methods, componentProp);
+  //处理继承
+  options.extends = options.extends || Component;
+  if (utils.isFunction(options.extends)) {
+    options.extends = options.extends.prototype;
+  }
+  options.__proto__ = options.extends;
 
+  /**
+   * 定义组件类
+   * 可以通过 new ComponentClass() 创建组件实例
+   */
   var ComponentClass = new Class({
-    _extends: componentProp,
+
+    //通过 cify 定义为一个「类」，将 _extends 指向 componentProto
+    _extends: Object.create(options.extends),
+
+    /**
+     * 组件类构造函数
+     * @returns {void} 无返回
+     */
     constructor: function () {
-      this._createProps(options.props);
+      this._onTemplateUpdate = this._onTemplateUpdate.bind(this);
+      this._onScopeUpdate = this._onScopeUpdate.bind(this);
       this._createData(options.data);
-      this._createWatchers(options.watch);
-      this._callHook('init');
+      this._createProperties(options.properties);
+      this._createWatches(options.watches);
+      this._callHook('onInit');
+      this._observer = Observer.observe(this);
+      this._observer.on('change', this._onScopeUpdate);
     },
 
+    /**
+     * 调用生命周期 hook
+     * @param {string} name 调用的 hook 名称
+     * @param {Array} args 调用 hook 的参数列表
+     * @returns {void} 无反回
+     */
     _callHook: function (name, args) {
       if (!utils.isFunction(options[name])) return;
       options[name].apply(this, args);
     },
 
-    _createProps: function (props) {
-      utils.each(props, function (name, define) {
-        this[name] = utils.isObject(define) ?
-          define.default : define;
-      }, this);
-    },
-
+    /**
+     * 创建数据对象
+     * @param {Object} data 组件数据对象
+     * @returns {void} 无返回
+     */
     _createData: function (data) {
-      if (utils.isFunction(options.data)) {
-        this.$data = options.data.call(this);
+      if (utils.isFunction(data)) {
+        this.$data = data.call(this);
       } else {
-        this.$data = data;
+        this.$data = data || {};
       }
       utils.each(this.$data, function (name) {
         Object.defineProperty(this, name, {
+          configurable: true,
+          enumerable: true,
           get: function () {
+            if (!this.$data) return;
             return this.$data[name];
           },
           set: function (value) {
+            if (!this.$data) return;
             this.$data[name] = value;
           }
         });
       }, this);
     },
 
-    _createWatchers: function (watchers) {
-      utils.each(watchers, function (name, handler) {
+    /**
+     * 创建组件属性
+     * @param {Object} properties 属性定义对象
+     * @returns {void} 无返回
+     */
+    _createProperties: function (properties) {
+      var isArray = utils.isArray(properties);
+      this.$properties = [];
+      utils.each(properties, function (name, descriptor) {
+        if (!utils.isObject(descriptor) && isArray) {
+          descriptor = { name: descriptor, value: null };
+        } else if (!utils.isObject(descriptor) && !isArray) {
+          descriptor = { value: descriptor };
+        }
+        descriptor.name = isArray ? descriptor.name : name;
+        descriptor.configurable = true;
+        descriptor.enumerable = true;
+        if ('value' in descriptor) {
+          descriptor.writable = utils.isNull(descriptor.writable) ?
+            true : descriptor.writable;
+        } else if (descriptor.set) {
+          var set = descriptor.set;
+          descriptor.set = function (value) {
+            if (this._disposed) return;
+            this._onScopeUpdate({ path: name, value: value });
+            set.call(this, value);
+          };
+        }
+        Object.defineProperty(this, descriptor.name, descriptor);
+        this.$properties.push(descriptor);
+      }, this);
+    },
+
+    /**
+     * 创建监控
+     * 为什么用 watches 而不是 watchers 或其它？
+     * 因为，这里仅是「监控配置」并且是「复数」
+     * @param {Object} watches 监控定义对象
+     * @returns {void} 无返回
+     */
+    _createWatches: function (watches) {
+      this._watchers = this._watchers || [];
+      utils.each(watches, function (name, handler) {
         this.$watch(name, handler);
       }, this);
     },
 
-    $compile: function () {
-      if (this._compiled) return;
-      this._compiled = true;
-      var element = utils.parseDom(options.template)[0];
-      if (!element || element.nodeName === '#text') {
-        throw new Error('Invalid component template');
-      }
-      this._callHook('create');
-      var template = new Template(element);
-      template.bind(this);
-      this.$element = element;
-      this._callHook('ready');
+    /**
+     * 在模板发生更新时
+     * @returns {void} 无返回
+     */
+    _onTemplateUpdate: function () {
+      this._watchers.forEach(function (watcher) {
+        watcher.calc();
+      }, this);
     },
 
-    $mount: function (mount) {
-      this.$compile();
-      this._callHook('mount');
-      mount.parentNode.insertBefore(this.$element, mount);
+    /**
+     * 在 scope 发生更新时
+     * @param {Object} event 事件对象
+     * @returns {void} 无返回
+     */
+    _onScopeUpdate: function (event) {
+      if (!this.$properties) return;
+      this.$properties.forEach(function (descriptor) {
+        if (event.path !== descriptor.name) return;
+        if (descriptor.test && descriptor.test(event.value) === false) {
+          var err = new Error('Invalid value `' + event.value + '` for property `' + descriptor.name + '`');
+          this.$dispose();
+          throw err;
+        }
+      }, this);
     },
 
-    $remove: function (disHook) {
-      if (!disHook && this.onRemove) this.onRemove();
-      this.$template.unbind();
-      this.$element.parentNode.removeChild(this.$element);
-    },
-
+    /**
+     * 添加一个监控
+     * @param {string|function} calcer 计算函数或路径
+     * @param {function} handler 处理函数
+     * @returns {void} 无返回
+     */
     $watch: function (calcer, handler) {
-      this._watchers = this._watchers || [];
       if (!utils.isFunction(handler)) return;
       if (!utils.isFunction(calcer)) {
         var path = calcer;
@@ -140,17 +222,132 @@ const Component = function (options) {
         };
       }
       this._watchers.push(new Watcher(calcer.bind(this), handler.bind(this)));
+    },
+
+    /**
+     * 编译自身模板并完成绑定
+     * @returns {void} 无返回
+     */
+    $compile: function () {
+      if (this._compiled) return;
+      this._compiled = true;
+      this._callHook('onCreate');
+      utils.defineFreezeProp(this, '$element', utils.parseDom(options.template)[0]);
+      if (!this.$element || this.$element.nodeName === '#text') {
+        throw new Error('Invalid component template');
+      }
+      this._callHook('onCreated');
+      utils.defineFreezeProp(this, '_template', new Template(this.$element));
+      this._template.bind(this);
+      this._template.on('update', this._onTemplateUpdate);
+      this._callHook('onReady');
+    },
+
+    /**
+     * 向 DOM tree 中挂截组件
+     * @param {HTMLNode} mountNode 挂载点元素
+     * @returns 无返回 
+     */
+    $mount: function (mountNode) {
+      this.$compile();
+      if (this._mounted) return;
+      this._callHook('onMount');
+      mountNode.parentNode.insertBefore(this.$element, mountNode);
+      this._mounted = true;
+      this._removed = false;
+      this._callHook('onMounted');
+    },
+
+    /**
+     * 移除组件
+     * @returns {void} 无返回
+     */
+    $remove: function () {
+      if (this._removed || !this._mounted) return;
+      this._callHook('onRemove');
+      this.$element.parentNode.removeChild(this.$element);
+      this._removed = true;
+      this._callHook('onRemoved');
+    },
+
+    /**
+     * 释放组件
+     * @returns {void} 无返回
+     */
+    $dispose: function () {
+      this.$remove();
+      this._callHook('onDispose');
+      this._observer.removeListener('change', this._onScopeUpdate);
+      if (this._compiled) {
+        this._template.unbind();
+      }
+      this._callHook('onDisposed');
+      for (name in this) {
+        this[name] = null;
+        delete this[name];
+      }
+      this._disposed = true;
     }
 
   });
 
+  //使 ComponentClass instanceof Component === true
   ComponentClass.__proto__ = Component.prototype;
   return ComponentClass;
 
 };
 
+//组件扩展方法，简单封装 extends
+Component.extend = function (options) {
+  options.extends = this;
+  return new Component(options);
+};
+
 module.exports = Component;
-},{"../template":22,"../watcher":25,"cify":26}],4:[function(require,module,exports){
+},{"../template":23,"../watcher":26,"cify":27,"events":28}],4:[function(require,module,exports){
+const Component = require('./component');
+
+const Dynamic = new Component({
+
+  template: '<div m:on:click="alert(name)">Hello {{user.name}}</div>',
+
+  data: function () {
+    return {
+      user: {
+        name: 'houfeng'
+      }
+    };
+  },
+
+  properties: {
+    src: {
+      test: function (value) {
+        return value < 100;
+      },
+      set: function (value) {
+        console.log(value);
+      }
+    }
+  },
+
+  watches: {
+
+  },
+
+  alert: function (name) {
+    alert(name);
+  },
+
+  say: function (name) {
+    this.user.name = name;
+  }
+
+});
+
+
+module.exports = Dynamic;
+window.Dynamic = Dynamic;
+},{"./component":3}],5:[function(require,module,exports){
 const info = require('../.tmp/info.json');
 const utils = require('ntils');
 const Template = require('./template');
@@ -175,9 +372,11 @@ if (typeof define !== 'undefined' && define.amd) {
   });
 }
 
+App.Dynamic = require('./dynamic');
+
 App.App = App;
 module.exports = App;
-},{"../.tmp/info.json":1,"./app":2,"./component":3,"./template":22,"./watcher":25,"ntils":28}],5:[function(require,module,exports){
+},{"../.tmp/info.json":1,"./app":2,"./component":3,"./dynamic":4,"./template":23,"./watcher":26,"ntils":29}],6:[function(require,module,exports){
 const Class = require('cify');
 const Directive = require('./directive');
 const utils = require('ntils');
@@ -378,7 +577,7 @@ const Compiler = new Class({
 });
 
 module.exports = Compiler;
-},{"./directive":6,"./directives":10,"./expression":21,"cify":26,"ntils":28}],6:[function(require,module,exports){
+},{"./directive":7,"./directives":11,"./expression":22,"cify":27,"ntils":29}],7:[function(require,module,exports){
 const Class = require('cify');
 const utils = require('ntils');
 const Expression = require('./expression');
@@ -497,7 +696,7 @@ Directive.LEVEL_GENERAL = 0;
 Directive.LEVEL_STATEMENT = 1000;
 
 module.exports = Directive;
-},{"./expression":21,"cify":26,"ntils":28}],7:[function(require,module,exports){
+},{"./expression":22,"cify":27,"ntils":29}],8:[function(require,module,exports){
 const Directive = require('../directive');
 
 /**
@@ -547,7 +746,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],8:[function(require,module,exports){
+},{"../directive":7}],9:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -619,7 +818,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],9:[function(require,module,exports){
+},{"../directive":7}],10:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -656,7 +855,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],10:[function(require,module,exports){
+},{"../directive":7}],11:[function(require,module,exports){
 module.exports = [
   require('./text'),
   require('./attr'),
@@ -672,7 +871,7 @@ module.exports = [
   require('./model-checkbox'),
   require('./model-editable')
 ];
-},{"./attr":7,"./each":8,"./if":9,"./inner-html":11,"./inner-text":12,"./model-checkbox":13,"./model-editable":14,"./model-input":15,"./model-radio":16,"./model-select":17,"./on":18,"./prop":19,"./text":20}],11:[function(require,module,exports){
+},{"./attr":8,"./each":9,"./if":10,"./inner-html":12,"./inner-text":13,"./model-checkbox":14,"./model-editable":15,"./model-input":16,"./model-radio":17,"./model-select":18,"./on":19,"./prop":20,"./text":21}],12:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -684,7 +883,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],12:[function(require,module,exports){
+},{"../directive":7}],13:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -696,7 +895,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],13:[function(require,module,exports){
+},{"../directive":7}],14:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -741,7 +940,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],14:[function(require,module,exports){
+},{"../directive":7}],15:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -772,7 +971,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],15:[function(require,module,exports){
+},{"../directive":7}],16:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -805,7 +1004,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],16:[function(require,module,exports){
+},{"../directive":7}],17:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -837,7 +1036,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],17:[function(require,module,exports){
+},{"../directive":7}],18:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -878,7 +1077,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],18:[function(require,module,exports){
+},{"../directive":7}],19:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -903,7 +1102,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],19:[function(require,module,exports){
+},{"../directive":7}],20:[function(require,module,exports){
 const Directive = require('../directive');
 
 module.exports = new Directive({
@@ -915,7 +1114,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6}],20:[function(require,module,exports){
+},{"../directive":7}],21:[function(require,module,exports){
 const Directive = require('../directive');
 const Expression = require('../expression');
 
@@ -950,7 +1149,7 @@ module.exports = new Directive({
   }
 
 });
-},{"../directive":6,"../expression":21}],21:[function(require,module,exports){
+},{"../directive":7,"../expression":22}],22:[function(require,module,exports){
 const Class = require('cify');
 const utils = require('ntils');
 
@@ -1082,7 +1281,7 @@ const Expression = new Class({
 });
 
 module.exports = Expression;
-},{"cify":26,"ntils":28}],22:[function(require,module,exports){
+},{"cify":27,"ntils":29}],23:[function(require,module,exports){
 const Compiler = require('./compiler');
 const Directive = require('./directive');
 const Expression = require('./expression');
@@ -1100,7 +1299,7 @@ Template.Observer = Observer;
 Template.utils = utils;
 
 module.exports = Template;
-},{"./compiler":5,"./directive":6,"./directives/":10,"./expression":21,"./observer":23,"./template":24,"ntils":28}],23:[function(require,module,exports){
+},{"./compiler":6,"./directive":7,"./directives/":11,"./expression":22,"./observer":24,"./template":25,"ntils":29}],24:[function(require,module,exports){
 const Class = require('cify');
 const utils = require('ntils');
 const EventEmitter = require('events');
@@ -1115,7 +1314,7 @@ const EVENT_MAX_DISPATCH_LAYER = 20;
  *   对于父子关系和事件冒泡，目前方案如果用 delete 删除一个属性，无关真实删除关系，
  *   即便调用 clearReference 也无法再清除关系，子对象的 parents 中会一直有一个引用，当前方案最高效
  * 其它方法一:
- *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件��� filter 出来，
+ *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件中 filter 出来，
  *   基本和目前方法类似，但是关系在外部存领教，所以 clearReference 可清除。
  * 其它方案二: 
  *   构造时添加到全局数组，每一个 observer change 时都让放到全局的 observer 遍历自身的，
@@ -1173,7 +1372,7 @@ const Observer = new Class({
           observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
         }
         observer.shadow[name] = value;
-        observer._emitChange({ path: name });
+        observer._emitChange({ path: name, value: value });
       },
       configurable: true,
       enumerable: true
@@ -1203,6 +1402,7 @@ const Observer = new Class({
    */
   clearReference: function () {
     utils.each(this.target, function (name, value) {
+      if (utils.isNull(value)) return;
       var child = value[OBSERVER_PROP_NAME];
       if (child) this.removeChild(child);
     }, this);
@@ -1296,27 +1496,29 @@ const Observer = new Class({
     utils.defineFreezeProp(array, 'push', function () {
       var items = [].slice.call(arguments);
       items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
         this[OBSERVER_PROP_NAME].set(array.length, item);
       }, this);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length' });
+      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
     });
     utils.defineFreezeProp(array, 'pop', function () {
       var item = [].pop.apply(this, arguments);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: this.length });
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length' });
+      this[OBSERVER_PROP_NAME]._emitChange({ path: this.length, value: item });
+      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
       return item;
     });
     utils.defineFreezeProp(array, 'unshift', function () {
       var items = [].slice.call(arguments);
       items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
         this[OBSERVER_PROP_NAME].set(0, item);
       }, this);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length' });
+      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
     });
     utils.defineFreezeProp(array, 'shift', function () {
       var item = [].shift.apply(this, arguments);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 0 });
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length' });
+      this[OBSERVER_PROP_NAME]._emitChange({ path: 0, value: item });
+      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
       return item;
     });
     utils.defineFreezeProp(array, 'splice', function () {
@@ -1326,14 +1528,14 @@ const Observer = new Class({
         : this.length - 1;
       var items = [].splice.apply(this, arguments);
       for (var i = startIndex; i <= endIndex; i++) {
-        this[OBSERVER_PROP_NAME]._emitChange({ path: i });
+        this[OBSERVER_PROP_NAME]._emitChange({ path: i, value: items[i - startIndex] });
       };
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length' });
+      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
       return items;
     });
     utils.defineFreezeProp(array, 'set', function (index, value) {
       if (index >= this.length) {
-        this[OBSERVER_PROP_NAME]._emitChange({ path: 'length' });
+        this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
       }
       this[OBSERVER_PROP_NAME].set(index, value);
     });
@@ -1351,7 +1553,7 @@ Observer.observe = function (target) {
 };
 
 module.exports = Observer;
-},{"cify":26,"events":27,"ntils":28}],24:[function(require,module,exports){
+},{"cify":27,"events":28,"ntils":29}],25:[function(require,module,exports){
 const Class = require('cify');
 const Observer = require('./observer');
 const EventEmitter = require('events');
@@ -1438,7 +1640,7 @@ const Template = new Class({
 });
 
 module.exports = Template;
-},{"./compiler":5,"./observer":23,"cify":26,"events":27}],25:[function(require,module,exports){
+},{"./compiler":6,"./observer":24,"cify":27,"events":28}],26:[function(require,module,exports){
 const Class = require('cify');
 const utils = require('ntils');
 
@@ -1480,7 +1682,7 @@ const Watcher = new Class({
 });
 
 module.exports = Watcher;
-},{"cify":26,"ntils":28}],26:[function(require,module,exports){
+},{"cify":27,"ntils":29}],27:[function(require,module,exports){
 ; (function () {
   var createInstance = (function () {
     var fnBody = ['switch(args.length){']
@@ -1599,7 +1801,7 @@ module.exports = Watcher;
   }
 })()
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1903,7 +2105,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 (function (owner) {
   "use strict";
 
@@ -2555,5 +2757,5 @@ function isUndefined(arg) {
 
 })((typeof exports === 'undefined') ? (window.ntils = {}) : exports);
 //-
-},{}]},{},[4])
+},{}]},{},[5])
 //# sourceMappingURL=bundle.js.map
