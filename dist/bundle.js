@@ -53,6 +53,13 @@ const utils = Template.utils;
 const EventEmitter = require('events');
 const Observer = Template.Observer;
 
+const RESERVED_WORDS = [
+  '$compile', '$data', '$dispose', '$element', '$mount', '$properties',
+  '$remove', '$watch', '_callHook', '_compiled', '_createData', '_createProperties',
+  '_createWatches', '_disposed', '_extends', '_mounted', '_observer', '_onTemplateUpdate',
+  '_removed', '_template', '_watchers'
+];
+
 /**
  * 组件类
  * 用于定义一个新的组件
@@ -64,12 +71,10 @@ const Component = function (options) {
     throw new Error('Invalid component options');
   }
 
-  //处理继承
-  options.extends = options.extends || Component;
+  //处理「继承」
   if (utils.isFunction(options.extends)) {
     options.extends = options.extends.prototype;
   }
-  options.__proto__ = options.extends;
 
   /**
    * 定义组件类
@@ -77,8 +82,8 @@ const Component = function (options) {
    */
   var ComponentClass = new Class({
 
-    //通过 cify 定义为一个「类」，将 _extends 指向 componentProto
-    _extends: Object.create(options.extends),
+    //通过 cify 定义为一个「类」，并指定「父类」或「原型」
+    _extends: options.extends,
 
     /**
      * 组件类构造函数
@@ -86,13 +91,11 @@ const Component = function (options) {
      */
     constructor: function () {
       this._onTemplateUpdate = this._onTemplateUpdate.bind(this);
-      this._onScopeUpdate = this._onScopeUpdate.bind(this);
       this._createData(options.data);
       this._createProperties(options.properties);
       this._createWatches(options.watches);
       this._callHook('onInit');
       this._observer = Observer.observe(this);
-      this._observer.on('change', this._onScopeUpdate);
     },
 
     /**
@@ -139,30 +142,49 @@ const Component = function (options) {
      * @returns {void} 无返回
      */
     _createProperties: function (properties) {
+      this.$properties = {};
       var isArray = utils.isArray(properties);
-      this.$properties = [];
       utils.each(properties, function (name, descriptor) {
-        if (!utils.isObject(descriptor) && isArray) {
-          descriptor = { name: descriptor, value: null };
-        } else if (!utils.isObject(descriptor) && !isArray) {
+        if (utils.isFunction(descriptor)) {
+          descriptor = { get: descriptor };
+        }
+        if (!utils.isObject(descriptor)) {
           descriptor = { value: descriptor };
         }
-        descriptor.name = isArray ? descriptor.name : name;
-        descriptor.configurable = true;
-        descriptor.enumerable = true;
-        if ('value' in descriptor) {
-          descriptor.writable = utils.isNull(descriptor.writable) ?
-            true : descriptor.writable;
-        } else if (descriptor.set) {
-          var set = descriptor.set;
+        var hasGetterOrSetter = descriptor.get || descriptor.set;
+        var hasValue = ('value' in descriptor);
+        if (hasGetterOrSetter && hasValue) {
+          throw new Error('Cannot specify both value and setter/getter' + '` for property `' + name + '`');
+        }
+        if (!hasGetterOrSetter) {
+          if (!hasValue) descriptor.value = null;
+          descriptor.get = function () {
+            return descriptor.value;
+          };
           descriptor.set = function (value) {
-            if (this._disposed) return;
-            this._onScopeUpdate({ path: name, value: value });
-            set.call(this, value);
+            descriptor.value = value;
           };
         }
-        Object.defineProperty(this, descriptor.name, descriptor);
-        this.$properties.push(descriptor);
+        Object.defineProperty(this, name, {
+          configurable: true,
+          enumerable: true,
+          get: function () {
+            if (!descriptor.get) {
+              throw new Error('Property `' + name + '` cannot be read');
+            }
+            return descriptor.get.call(this);
+          },
+          set: function (value) {
+            if (!descriptor.set) {
+              throw new Error('Property `' + name + '` cannot be written');
+            }
+            if (descriptor.test && !descriptor.test(value)) {
+              throw new Error('Invalid value `' + value + '` for property `' + name + '`');
+            }
+            descriptor.set.call(this, value);
+          }
+        });
+        this.$properties[name] = descriptor;
       }, this);
     },
 
@@ -187,23 +209,6 @@ const Component = function (options) {
     _onTemplateUpdate: function () {
       this._watchers.forEach(function (watcher) {
         watcher.calc();
-      }, this);
-    },
-
-    /**
-     * 在 scope 发生更新时
-     * @param {Object} event 事件对象
-     * @returns {void} 无返回
-     */
-    _onScopeUpdate: function (event) {
-      if (!this.$properties) return;
-      this.$properties.forEach(function (descriptor) {
-        if (event.path !== descriptor.name) return;
-        if (descriptor.test && descriptor.test(event.value) === false) {
-          var err = new Error('Invalid value `' + event.value + '` for property `' + descriptor.name + '`');
-          this.$dispose();
-          throw err;
-        }
       }, this);
     },
 
@@ -277,7 +282,6 @@ const Component = function (options) {
     $dispose: function () {
       this.$remove();
       this._callHook('onDispose');
-      this._observer.removeListener('change', this._onScopeUpdate);
       if (this._compiled) {
         this._template.unbind();
       }
@@ -290,6 +294,14 @@ const Component = function (options) {
     }
 
   });
+
+  //向 ComponentClass.prototype 上拷贝成员
+  utils.each(options, function (name, value) {
+    if (RESERVED_WORDS.indexOf(name) > -1) {
+      throw new Error('Name `' + name + '` is reserved')
+    }
+    ComponentClass.prototype[name] = value;
+  }, this);
 
   //使 ComponentClass instanceof Component === true
   ComponentClass.__proto__ = Component.prototype;
@@ -306,32 +318,32 @@ Component.extend = function (options) {
 module.exports = Component;
 },{"../template":23,"../watcher":26,"cify":27,"events":28}],4:[function(require,module,exports){
 const Component = require('./component');
+const utils = require('ntils');
 
 const Dynamic = new Component({
 
-  template: '<div m:on:click="alert(name)">Hello {{user.name}}</div>',
+  template: '<div>fullName: {{fullName}}, firstName: {{firstName}}, lastName: {{lastName}}</div>',
 
   data: function () {
     return {
-      user: {
-        name: 'houfeng'
-      }
+      firstName: 'Hou',
+      lastName: 'Feng'
     };
   },
 
   properties: {
-    src: {
-      test: function (value) {
-        return value < 100;
-      },
-      set: function (value) {
-        console.log(value);
+    fullName: {
+      get: function () {
+        return this.firstName + ' ' + this.lastName;
       }
     }
   },
 
   watches: {
-
+    lastName() {
+      this.firstName = '#' + this.lastName;
+      console.log('aaa');
+    }
   },
 
   alert: function (name) {
@@ -347,7 +359,7 @@ const Dynamic = new Component({
 
 module.exports = Dynamic;
 window.Dynamic = Dynamic;
-},{"./component":3}],5:[function(require,module,exports){
+},{"./component":3,"ntils":29}],5:[function(require,module,exports){
 const info = require('../.tmp/info.json');
 const utils = require('ntils');
 const Template = require('./template');
@@ -1258,12 +1270,13 @@ const Expression = new Class({
   },
 
   /**
-   * 通过闭包和「try-cache」包裹代码
+   * 通过闭包和 try/cache 包裹代码
+   * 将模板中错误的代码直接显示在「模板中用到的位置」，更易于定位错误。
    * @param {string} str 源字符串
    * @returns {string} 处理后的字符串
    */
   _wrapCode: function (code) {
-    return '((function(){try{return (' + code + ')}catch(err){return ""}})())';
+    return '((function(){try{return (' + code + ')}catch(err){return err;}})())';
   },
 
   /**
@@ -1607,14 +1620,14 @@ const Template = new Class({
   /**
    * 将模板绑定到一个 scope
    * @param {Object} scope 绑定的上下文对象
-   * @param {boolean} disFirst 是否禁用第一次的自动渲染
+   * @param {boolean} disableFirst 是否禁用第一次的自动渲染
    * @returns {void} 无返回
    */
-  bind: function (scope, disFirst) {
+  bind: function (scope, disableFirst) {
     this.unbind();
     this.observer = new Observer(scope);
     this.observer.on('change', this.update);
-    if (!disFirst) this.update();
+    if (!disableFirst) this.update();
   },
 
   /**
@@ -2451,7 +2464,7 @@ function isUndefined(arg) {
    * 拷贝对象
    * @method copy
    * @param {Object} obj1 源对象
-   * @param {Object} obj2 目标���象
+   * @param {Object} obj2 目标对象
    * @static
    */
   owner.copy = function (obj1, obj2) {
