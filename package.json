@@ -14,7 +14,7 @@
   "devDependencies": {
     "browserify": "^13.1.0",
     "exorcist": "^0.4.0",
-    "nokitjs": "^1.25.9",
+    "nokitjs": "^1.26.1",
     "selenium-webdriver": "^3.0.0",
     "uglifyify": "^3.0.3",
     "watchify": "^3.7.0"
