@@ -254,7 +254,7 @@ const Component = function (options) {
      */
     $mount: function (mountNode) {
       this.$compile();
-      if (this._mounted) return;
+      if (this._mounted || this._disposed) return;
       this._callHook('onMount');
       mountNode.parentNode.insertBefore(this.$element, mountNode);
       this._mounted = true;
@@ -271,6 +271,7 @@ const Component = function (options) {
       this._callHook('onRemove');
       this.$element.parentNode.removeChild(this.$element);
       this._removed = true;
+      this._mounted = false;
       this._callHook('onRemoved');
     },
 
@@ -285,6 +286,8 @@ const Component = function (options) {
         this._template.unbind();
       }
       this._callHook('onDisposed');
+      this.__observer__ = null;
+      this.__proto__ = null;
       for (name in this) {
         this[name] = null;
         delete this[name];
@@ -333,6 +336,11 @@ const Dynamic = new Component({
 
   properties: {
     src: null
+  },
+
+  refresh: function () {
+    if (!this.src) return;
+    this.src = this.src.split('?')[0] + '?=' + Date.now();
   }
 
 });
@@ -538,7 +546,7 @@ const Compiler = new Class({
         directive.scope = scope;
         directive.execute(scope);
       }, this);
-      //执行子元素编译函数
+      //执行子元素编���函数
       handler.children.forEach(function (childHandler) {
         childHandler(scope);
       }, this);
@@ -1648,7 +1656,7 @@ const Watcher = new Class({
    * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
    * @param {function} calcor 计算函数
    * @param {function} handler 处理函数
-   * @param {boolean} first 是���自动执行第一次
+   * @param {boolean} first 是否自动执行第一次
    * @param {void} 无返回
    */
   constructor: function (calcor, handler, first) {

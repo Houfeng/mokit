@@ -10,7 +10,7 @@
     "watch": "npm run clear && node ./bin/info.js && watchify ./lib/index.js -o 'exorcist ./dist/bundle.js.map > ./dist/bundle.js' -d"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache License",
   "devDependencies": {
     "browserify": "^13.1.0",
     "exorcist": "^0.4.0",
