@@ -290,7 +290,6 @@ const Component = function (options) {
       }
       this._callHook('onDisposed');
       for (name in this) {
-        this[name] = null;
         delete this[name];
       }
       ['__observer__', '$element', '_template']
@@ -340,13 +339,27 @@ const Dynamic = new Component({
   template: '<iframe src="{{src}}"></iframe>',
 
   properties: {
-    src: null
+    src: {
+      value: null,
+      test: function (value) {
+        return value && value.length > 5;
+      }
+    }
   },
 
   refresh: function () {
     if (!this.src) return;
     this.src = this.src.split('?')[0] + '?=' + Date.now();
+  },
+
+  onReady: function () {
+
+  },
+
+  watches: {
+
   }
+
 
 });
 
