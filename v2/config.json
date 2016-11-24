@@ -1,6 +1,0 @@
-{
-    "handlers": {
-        ".less$": "nokit-handler-less",
-        ".css$": "nokit-handler-less"
-    }
-}

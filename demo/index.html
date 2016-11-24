@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>demo</title>
+	<title>demo - {{user.name}}</title>
 	<style>
 		td {
 			padding: 10px;
@@ -19,32 +19,24 @@
 
 <body>
 
-	<input type="text" m:model="user.name"><button m:on:click="alert(user.name)">{{user.name}}</button><br/>
-	<textarea m:model="user.name"></textarea><br/>
-	<select m:model="user.sex">
-    <option value="{{item}}" m:each="item of sexs" m:text="item"></option>
-  </select>
-	<div>
-		<input type="radio" name="sex" id="" m:model="user.sex" value="男">
-		<input type="radio" name="sex" id="" m:model="user.sex" value="女">
-		<input type="checkbox" name="sex" id="" m:model="sexs" value="男">
-		<input type="checkbox" name="sex" id="" m:model="sexs" value="女">
+	<div id="app">
+		<div>
+			<a m:on:click="go('http://local.jd.com:8001')">test1</a>
+			<a m:on:click="go('http://local.jd.com:8002')">test2</a>
+		</div>
+		<m:dynamic></m:dynamic>
 	</div>
-	<div contenteditable="true" m:model="user.name"></div>
-	<div cloak>{{user.name}}/{{user.sex}}</div>
-	<div m:text="user.name"></div>
 
 	<script src="../dist/bundle.js"></script>
 	<script>
-    var app = new mokit({
-      element:document.body
+    var App = new mokit({
+      element:document.getElementById('app'),
+			go:function(url){
+				this.$children[0].src=url;
+			},
+			components:mokit.components
     });
-    app.sexs=['男','女'];
-    app.user={
-        name: 'test',
-        sex: ['女']
-    };
-    app.start();
+    var app = new App();
   </script>
 </body>
 
