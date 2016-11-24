@@ -21,18 +21,22 @@
 
 	<div id="app">
 		<div>
-			<a m:on:click="go('http://local.jd.com:8001')">test1</a>
-			<a m:on:click="go('http://local.jd.com:8002')">test2</a>
+			<button m:on:click="go('http://local.jd.com:8001')">test1</button>
+			<button m:on:click="go('http://local.jd.com:8002')">test2</button>
 		</div>
-		<m:dynamic></m:dynamic>
+		<div> {{url}} </div>
+		<m:dynamic src="url"></m:dynamic>
 	</div>
 
 	<script src="../dist/bundle.js"></script>
 	<script>
     var App = new mokit({
       element:document.getElementById('app'),
+			data:function(){
+				return {url:''};
+			},
 			go:function(url){
-				this.$children[0].src=url;
+				this.url=url;
 			},
 			components:mokit.components
     });
