@@ -5,12 +5,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>demo - {{user.name}}</title>
+	<title>TODO</title>
 	<style>
-		td {
-			padding: 10px;
-		}
-		
 		[cloak] {
 			visibility: hidden;
 		}
@@ -20,36 +16,12 @@
 <body>
 
 	<div id="app">
-		<div>
-			<button m:each="item,index of list" m:on:click="go(item)">组件{{index}}</button>
-		</div>
-		<m:view is="name">
-		</m:view>
+		<input type="text" m:model="text" m:on:change="add()" placeholder="What needs to be done?">
+		<m:list list="list"></m:list>
 	</div>
 
 	<script src="../dist/bundle.js"></script>
-	<script>
-		var list = [
-				new mokit({
-					template:'<div>c1</div>'
-				}),
-				new mokit({
-					template:'<div>c2</div>'
-				})
-		];
-    var App = new mokit({
-      element:document.getElementById('app'),
-			properties:{
-				list:{value:list},
-				name:{value:list[0]}
-			},
-			go:function(name){
-				this.name=name;
-			}
-    });
-    var app = App.create();
-		
-  </script>
+	<script src="./todo.js"></script>
 </body>
 
 </html>
