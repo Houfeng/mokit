@@ -1,0 +1,67 @@
+[cloak] {
+  visibility: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Lantinghei SC", "Open Sans", Arial, "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", "STHeiti", "WenQuanYi Micro Hei", "SimSun", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: #eee;
+}
+
+#app {
+  margin: 50px auto;
+  width: 600px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, .2);
+}
+
+#app input[type="text"] {
+  padding: 15px;
+  width: 100%;
+  font-size: 20px;
+  outline: none;
+  border: none;
+}
+
+#app ul {
+  margin: 0;
+  padding: 0;
+}
+
+#app ul li {
+  margin: 0;
+  list-style-type: none;
+  padding: 15px;
+  border-top: solid 1px #eee;
+  background-color: #fafafa;
+  font-size: 18px;
+}
+
+#app ul li input, #app ul li span {
+  vertical-align: middle;
+}
+
+#app ul li span {
+  padding: 0 5px;
+  outline: none;
+}
+
+#app ul li span.done {
+  color: #aaa;
+  text-decoration: line-through;
+}
+
+#app ul li a {
+  float: right;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 0;
+  color: #aaa;
+}
+
+#app ul li a:hover {
+  color: #337ab7;
+}

@@ -6,21 +6,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>TODO</title>
-	<style>
-		[cloak] {
-			visibility: hidden;
-		}
-	</style>
+	<link rel="stylesheet" href="./todo.css" />
 </head>
 
 <body>
 
 	<div id="app">
-		<input type="text" m:model="text" m:on:change="add()" placeholder="What needs to be done?">
-		<m:list list="list"></m:list>
+		<input class="input" type="text" m:model="text" m:on:change="add()" placeholder="What needs to be done?">
+		<m:list list="list" m:if="list.length"></m:list>
 	</div>
 
-	<script src="../dist/bundle.js"></script>
+	<script src="../../dist/bundle.js"></script>
 	<script src="./todo.js"></script>
 </body>
 
