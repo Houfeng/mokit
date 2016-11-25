@@ -20,6 +20,7 @@ body {
 }
 
 #app input[type="text"] {
+  margin: 0;
   padding: 15px 20px;
   width: 100%;
   font-size: 20px;
