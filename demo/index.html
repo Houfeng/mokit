@@ -21,43 +21,37 @@
 
 	<div id="app">
 		<div>
-			<button m:on:click="go('http://local.jd.com:8001')">test1</button>
-			<button m:on:click="go('http://local.jd.com:8002')">test2</button>
+			<button m:on:click="go('C1')">test1</button>
+			<button m:on:click="go('C2')">test2</button>
 		</div>
-		<div> {{test}} </div>
-		<m:view style="border:solid 5px #ddd;width:800px;height:400px;">
+		<div> {{name}} </div>
+		<m:view is="name">
 		</m:view>
 	</div>
 
 	<script src="../dist/bundle.js"></script>
 	<script>
 		var C1 = new mokit({
-			template:'<span>c1</span>'
+			template:'<div>c1</div>'
 		});
 		var C2 = new mokit({
-			template:'<span>c2</span>'
+			template:'<div>c2<iframe src="http://local.jd.com:8001" style="border:solid 5px #ddd;width:800px;height:400px;"></iframe></div>'
 		});
+
     var App = new mokit({
       element:document.getElementById('app'),
 			properties:{
-				url:'',
-				test:{
-					get:function(){
-						return 'URL: '+this.url;
-					}
-				}
+				name:'C1'
 			},
-			watches:{
-				url:function(val){
-					console.log('watch: ',val);
-				}
+			go:function(name){
+				this.name=name;
 			},
-			go:function(url){
-				this.url=url;
-			},
-			components:mokit.components
+			components:{
+				C1,C2
+			}
     });
     var app = App.create();
+		
   </script>
 </body>
 

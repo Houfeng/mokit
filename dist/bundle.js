@@ -93,6 +93,7 @@ const Component = function (classOpts) {
       this._createData(this.data);
       this._createProperties(this.properties);
       this._createWatches(this.watches);
+      this._importComponents(require('./components'));
       this._importComponents(this.components);
       this._callHook('onInit');
       this._observer = Observer.observe(this);
@@ -109,14 +110,21 @@ const Component = function (classOpts) {
      * @returns 无返回
      */
     _importComponents: function (components) {
+      utils.each(components, this._importComponent, this);
+    },
+
+    /**
+     * 导入一个用到的子组件类
+     * @param {Object} components 引入的组件
+     * @returns 无返回
+     */
+    _importComponent: function (name, component) {
       this._directives = this._directives || [];
-      utils.each(components, function (name, component) {
-        this._directives.push(new ComponentDirective({
-          name: name,
-          component: component,
-          parent: this
-        }));
-      }, this);
+      this._directives.push(new ComponentDirective({
+        name: name,
+        component: component,
+        parent: this
+      }));
     },
 
     /**
@@ -323,7 +331,7 @@ const Component = function (classOpts) {
       for (name in this) {
         delete this[name];
       }
-      ['__observer__', '$element', '_template']
+      ['__observer__', '$element', '$children', '$parent', '_template']
         .forEach(function (name) {
           delete this[name];
         }, this);
@@ -366,7 +374,7 @@ Component.extend = function (classOpts) {
 };
 
 module.exports = Component;
-},{"../template":26,"./component-directive":2,"./watcher":7,"cify":29,"events":30}],4:[function(require,module,exports){
+},{"../template":26,"./component-directive":2,"./components":4,"./watcher":7,"cify":29,"events":30}],4:[function(require,module,exports){
 module.exports = {
   View: require('./view')
 };
@@ -374,16 +382,21 @@ module.exports = {
 const Component = require('../component');
 const utils = require('ntils');
 
-const Dynamic = new Component({
+const View = new Component({
 
   template: '<div></div>',
 
   properties: {
     is: {
       test: function (value) {
-        return utils.isFunction(value);
+        return utils.isFunction(value) || utils.isString(value);
       },
       set: function (value) {
+        if (utils.isString(value)) {
+          this.is = this.$parent && this.$parent.components ?
+            this.$parent.components[value] : null;
+          return;
+        }
         if (this._component) {
           this._component.$dispose();
         }
@@ -401,9 +414,8 @@ const Dynamic = new Component({
 
 });
 
-
-module.exports = Dynamic;
-window.Dynamic = Dynamic;
+module.exports = View;
+window.Dynamic = View;
 },{"../component":3,"ntils":31}],6:[function(require,module,exports){
 const Component = require('./component');
 const Watcher = require('./watcher');
