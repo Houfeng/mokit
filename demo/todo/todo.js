@@ -46,14 +46,14 @@
       type: 'all',
       filteredList: function () {
         if (this.type == 'active')
-          return this.list.filter(item => !item.done);
+          return this.list.filter(function (item) { return !item.done });
         else if (this.type == 'done')
-          return this.list.filter(item => item.done);
+          return this.list.filter(function (item) { return item.done });
         else
           return this.list;
       },
       doneCount: function () {
-        return this.list.filter(item => item.done).length;
+        return this.list.filter(function (item) { return item.done }).length;
       }
     },
     watches: {
