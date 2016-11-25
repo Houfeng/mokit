@@ -10,6 +10,7 @@
 
 body {
   background-color: #eee;
+  user-select: none;
 }
 
 #app {
@@ -19,11 +20,12 @@ body {
 }
 
 #app input[type="text"] {
-  padding: 15px;
+  padding: 15px 20px;
   width: 100%;
   font-size: 20px;
   outline: none;
   border: none;
+  background-color: #fff;
 }
 
 #app ul {
@@ -31,12 +33,27 @@ body {
   padding: 0;
 }
 
+#app .bar, #app ul li {
+  border-top: solid 1px #eee;
+}
+
+#app .bar {
+  font-size: 12px;
+  color: #aaa;
+  padding: 15px;
+  background-color: #fdfdfd;
+}
+
+#app .bar label {
+  margin-right: 25px;
+  cursor: pointer;
+}
+
 #app ul li {
   margin: 0;
   list-style-type: none;
   padding: 15px;
-  border-top: solid 1px #eee;
-  background-color: #fafafa;
+  background-color: #f8f8f8;
   font-size: 18px;
 }
 
@@ -44,14 +61,26 @@ body {
   vertical-align: middle;
 }
 
-#app ul li span {
+#app ul li span, #app ul li input[type="text"] {
+  display: inline-block;
+  border: none;
+  background-color: transparent;
+  font-size: 18px;
   padding: 0 5px;
-  outline: none;
+  width: 80%;
+  height: 19px;
+  line-height: 19px;
+  margin: 0;
+}
+
+#app ul li.editing {
+  background-color: #ffe;
 }
 
 #app ul li span.done {
   color: #aaa;
   text-decoration: line-through;
+  font-style: italic;
 }
 
 #app ul li a {
@@ -62,6 +91,6 @@ body {
   color: #aaa;
 }
 
-#app ul li a:hover {
+#app ul li a:hover, #app .bar label:hover {
   color: #337ab7;
 }

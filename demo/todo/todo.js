@@ -2,14 +2,25 @@
 
   var List = new mokit.Component({
     template: `<ul>
-      <li m:each="item,index of list">
+      <li m:each="item,index of list" class="{{item.editing&&!item.done?'editing':''}}">
         <input type="checkbox" m:model="item.done"/>
-        <span class="{{item.done?'done':''}}">{{item.text}}</span>
-        <a m:on:click="del(index)">删除</a>
+        <span m:if="!item.editing||item.done" m:on:click="edit(item,true,$event)" class="{{item.done?'done':''}}">
+          {{item.text}}
+        </span>
+        <input m:on:change="edit(item,false,$event)" m:on:blur="edit(item,false,$event)" type="text" m:if="item.editing&&!item.done" m:model="item.text"/>
+        <a m:on:click="del(index)">DEL</a>
       </li>
     </ul>`,
     properties: {
       list: null
+    },
+    edit: function (item, state, event) {
+      var itemEl = event.target.parentNode;
+      item.editing = state;
+      setTimeout(function () {
+        var box = itemEl.querySelector('input[type="text"]');
+        box && box.focus();
+      }, 10);
     },
     del: function (index) {
       this.list.splice(index, 1);
@@ -25,11 +36,37 @@
         list: []
       };
     },
+    onInit: function () {
+      var list = localStorage.getItem('todo://list');
+      if (list) {
+        this.list = JSON.parse(list);
+      }
+    },
+    properties: {
+      type: 'all',
+      filteredList: function () {
+        if (this.type == 'active')
+          return this.list.filter(item => !item.done);
+        else if (this.type == 'done')
+          return this.list.filter(item => item.done);
+        else
+          return this.list;
+      },
+      doneCount: function () {
+        return this.list.filter(item => item.done).length;
+      }
+    },
+    watches: {
+      list: function (list) {
+        localStorage.setItem('todo://list', JSON.stringify(list));
+      }
+    },
     add: function () {
       if (!this.text) return;
       this.list.push({
         text: this.text,
-        done: false
+        done: false,
+        editing: false
       });
       this.text = ''
     }
