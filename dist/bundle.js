@@ -211,6 +211,7 @@ const Component = function (classOpts) {
               throw new Error('Invalid value `' + value + '` for property `' + name + '`');
             }
             descriptor.set.call(this, value);
+            this.__observer__.emitChange({ path: name, value: value });
           }
         });
         this.$properties[name] = descriptor;
@@ -415,7 +416,6 @@ const View = new Component({
 });
 
 module.exports = View;
-window.Dynamic = View;
 },{"../component":3,"ntils":31}],6:[function(require,module,exports){
 const Component = require('./component');
 const Watcher = require('./watcher');
@@ -1487,7 +1487,7 @@ const Observer = new Class({
           observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
         }
         observer.shadow[name] = value;
-        observer._emitChange({ path: name, value: value });
+        observer.emitChange({ path: name, value: value });
       },
       configurable: true,
       enumerable: true
@@ -1584,7 +1584,7 @@ const Observer = new Class({
    * @param {Object} event 事件对象
    * @returns {void} 无返回
    */
-  _emitChange: function (event) {
+  emitChange: function (event) {
     this.dispatch(CHANGE_EVENT_NAME, event);
   },
 
@@ -1614,12 +1614,12 @@ const Observer = new Class({
         //这里也会触发对应 index 的 change 事件
         this[OBSERVER_PROP_NAME].set(array.length, item);
       }, this);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
     utils.defineFreezeProp(array, 'pop', function () {
       var item = [].pop.apply(this, arguments);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: this.length, value: item });
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
+      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
     utils.defineFreezeProp(array, 'unshift', function () {
@@ -1628,12 +1628,12 @@ const Observer = new Class({
         //这里也会触发对应 index 的 change 事件
         this[OBSERVER_PROP_NAME].set(0, item);
       }, this);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
     utils.defineFreezeProp(array, 'shift', function () {
       var item = [].shift.apply(this, arguments);
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 0, value: item });
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
     utils.defineFreezeProp(array, 'splice', function () {
@@ -1643,14 +1643,14 @@ const Observer = new Class({
         : this.length - 1;
       var items = [].splice.apply(this, arguments);
       for (var i = startIndex; i <= endIndex; i++) {
-        this[OBSERVER_PROP_NAME]._emitChange({ path: i, value: items[i - startIndex] });
+        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
       };
-      this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return items;
     });
     utils.defineFreezeProp(array, 'set', function (index, value) {
       if (index >= this.length) {
-        this[OBSERVER_PROP_NAME]._emitChange({ path: 'length', value: this.length });
+        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       }
       this[OBSERVER_PROP_NAME].set(index, value);
     });

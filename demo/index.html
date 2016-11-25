@@ -21,33 +21,30 @@
 
 	<div id="app">
 		<div>
-			<button m:on:click="go('C1')">test1</button>
-			<button m:on:click="go('C2')">test2</button>
+			<button m:each="item,index of list" m:on:click="go(item)">组件{{index}}</button>
 		</div>
-		<div> {{name}} </div>
 		<m:view is="name">
 		</m:view>
 	</div>
 
 	<script src="../dist/bundle.js"></script>
 	<script>
-		var C1 = new mokit({
-			template:'<div>c1</div>'
-		});
-		var C2 = new mokit({
-			template:'<div>c2<iframe src="http://local.jd.com:8001" style="border:solid 5px #ddd;width:800px;height:400px;"></iframe></div>'
-		});
-
+		var list = [
+				new mokit({
+					template:'<div>c1</div>'
+				}),
+				new mokit({
+					template:'<div>c2</div>'
+				})
+		];
     var App = new mokit({
       element:document.getElementById('app'),
 			properties:{
-				name:'C1'
+				list:{value:list},
+				name:{value:list[0]}
 			},
 			go:function(name){
 				this.name=name;
-			},
-			components:{
-				C1,C2
 			}
     });
     var app = App.create();
