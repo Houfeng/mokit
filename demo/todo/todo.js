@@ -2,13 +2,13 @@
 
   var List = new mokit.Component({
     template: `<ul>
-      <li m:each="item,index of list" class="{{item.editing&&!item.done?'editing':''}}">
+      <li m:each="item of list" class="{{item.editing&&!item.done?'editing':''}}">
         <input type="checkbox" m:model="item.done"/>
         <span m:if="!item.editing||item.done" m:on:click="edit(item,true,$event)" class="{{item.done?'done':''}}">
           {{item.text}}
         </span>
         <input m:on:change="edit(item,false,$event)" m:on:blur="edit(item,false,$event)" type="text" m:if="item.editing&&!item.done" m:model="item.text"/>
-        <a m:on:click="del(index)">DEL</a>
+        <a m:on:click="del(item)">DEL</a>
       </li>
     </ul>`,
     properties: {
@@ -22,7 +22,8 @@
         box && box.focus();
       }, 10);
     },
-    del: function (index) {
+    del: function (item) {
+      var index = this.list.indexOf(item);
       this.list.splice(index, 1);
     }
   });
