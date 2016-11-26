@@ -38,9 +38,9 @@
     },
     onInit: function () {
       var list = localStorage.getItem('todo://list');
-      if (list) {
-        this.list = JSON.parse(list);
-      }
+      if (list) this.list = JSON.parse(list);
+      var type = localStorage.getItem('todo://type');
+      if (type) this.type = type;
     },
     properties: {
       type: 'all',
@@ -59,6 +59,9 @@
     watches: {
       list: function (list) {
         localStorage.setItem('todo://list', JSON.stringify(list));
+      },
+      type: function (type) {
+        localStorage.setItem('todo://type', type);
       }
     },
     add: function () {
