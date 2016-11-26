@@ -7,7 +7,8 @@
     "start": "nokit stop && nokit start --public ./ --port 8002",
     "clear": "rm -rf ./dist/** && mkdir -p ./.tmp && mkdir -p ./dist",
     "build": "npm run clear && node ./bin/info.js && browserify ./lib/index.js | uglifyjs -m  > ./dist/bundle.js",
-    "watch": "npm run clear && node ./bin/info.js && watchify ./lib/index.js -o 'exorcist ./dist/bundle.js.map > ./dist/bundle.js' -d"
+    "watch": "npm run clear && node ./bin/info.js && watchify ./lib/index.js -o 'exorcist ./dist/bundle.js.map > ./dist/bundle.js' -d",
+    "test": "echo ..."
   },
   "author": "",
   "license": "Apache License",
