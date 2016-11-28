@@ -44,7 +44,7 @@
       if (type) this.type = type;
     },
     onReady: function () {
-      console.log(this.itemList);
+      console.log(this.inputBox);
     },
     properties: {
       type: 'all',
