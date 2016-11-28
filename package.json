@@ -13,15 +13,13 @@
   "author": "",
   "license": "Apache License",
   "devDependencies": {
-    "browserify": "^13.1.0",
+    "browserify": "^13.1.1",
+    "cify": "^1.0.2",
     "exorcist": "^0.4.0",
     "nokitjs": "^1.26.1",
-    "selenium-webdriver": "^3.0.0",
-    "uglifyify": "^3.0.3",
+    "ntils": "^1.2.0",
+    "selenium-webdriver": "^3.0.1",
+    "uglifyify": "^3.0.4",
     "watchify": "^3.7.0"
-  },
-  "dependencies": {
-    "cify": "^1.0.2",
-    "ntils": "^1.1.3"
   }
 }
