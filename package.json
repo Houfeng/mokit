@@ -1,7 +1,7 @@
 {
   "name": "mokit",
   "version": "0.0.1",
-  "description": "",
+  "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
     "start": "nokit stop && nokit start --public ./ --port 8002",
