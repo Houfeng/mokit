@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:m="http://www.example.com/2014/test" lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -9,8 +9,7 @@
 	<link rel="stylesheet" href="./todo.css" />
 </head>
 
-<body>
-
+<body m:test="1">
 	<div id="app">
 		<input class="input" type="text" m:model="text" m:on:change="add()" placeholder="What needs to be done?">
 		<m:list list="filteredList" m:if="list.length"></m:list>
