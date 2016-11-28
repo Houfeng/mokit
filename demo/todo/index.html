@@ -12,7 +12,7 @@
 <body m:test="1">
 	<div id="app">
 		<input class="input" type="text" m:model="text" m:on:change="add()" placeholder="What needs to be done?">
-		<m:list list="filteredList" m:if="list.length"></m:list>
+		<m:list m:id="itemList" list="filteredList" m:if="list.length"></m:list>
 		<div class="bar">
 			<label>
 				<input name="type" m:model="type" type="radio" value="all">

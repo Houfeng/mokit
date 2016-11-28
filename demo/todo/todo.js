@@ -43,6 +43,9 @@
       var type = localStorage.getItem('todo://type');
       if (type) this.type = type;
     },
+    onReady: function () {
+      console.log(this.itemList);
+    },
     properties: {
       type: 'all',
       filteredList: function () {
