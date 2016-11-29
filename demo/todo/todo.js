@@ -44,7 +44,6 @@
       if (type) this.type = type;
     },
     onReady: function () {
-      console.log(this.inputBox);
     },
     properties: {
       type: 'all',
