@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "0.0.1",
+  "version": "3.0.0-rc3",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "clear": "./scripts/clear.sh",
     "build": "./scripts/build.sh",
     "watch": "./scripts/watch.sh",
-    "test": "echo ..."
+    "test": "echo ...",
+    "prepublish":"./scripts/prepublish.sh"
   },
   "author": "",
   "license": "Apache License",
