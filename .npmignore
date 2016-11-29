@@ -1,0 +1,6 @@
+*.DS_Store
+*.log
+*.sh
+logs/
+node_modules/
+scripts/

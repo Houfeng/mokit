@@ -4,10 +4,10 @@
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
-    "start": "nokit stop && nokit start --public ./ --port 8002",
-    "clear": "rm -rf ./dist/** && mkdir -p ./.tmp && mkdir -p ./dist",
-    "build": "npm run clear && node ./bin/info.js && browserify ./lib/index.js | uglifyjs -m  > ./dist/$npm_package_name.js",
-    "watch": "npm run clear && node ./bin/info.js && watchify ./lib/index.js -o 'exorcist ./dist/$npm_package_name.js.map > ./dist/$npm_package_name.js' -d",
+    "start": "./scripts/start.sh",
+    "clear": "./scripts/clear.sh",
+    "build": "./scripts/build.sh",
+    "watch": "./scripts/watch.sh",
     "test": "echo ..."
   },
   "author": "",
@@ -21,5 +21,8 @@
     "selenium-webdriver": "^3.0.1",
     "uglifyify": "^3.0.4",
     "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "cmdline": "^1.1.7"
   }
 }
