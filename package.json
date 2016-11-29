@@ -15,7 +15,7 @@
   "license": "Apache License",
   "devDependencies": {
     "browserify": "^13.1.1",
-    "cify": "^2.0.0",
+    "cify": "^2.0.1",
     "exorcist": "^0.4.0",
     "nokitjs": "^1.26.1",
     "ntils": "^1.2.0",
