@@ -1,2 +1,2936 @@
-(function e(t,i,n){function s(o,c){if(!i[o]){if(!t[o]){var h=typeof require=="function"&&require;if(!c&&h)return h(o,!0);if(r)return r(o,!0);var a=new Error("Cannot find module '"+o+"'");throw a.code="MODULE_NOT_FOUND",a}var u=i[o]={exports:{}};t[o][0].call(u.exports,function(e){var i=t[o][1][e];return s(i?i:e)},u,u.exports,e,t,i,n)}return i[o].exports}var r=typeof require=="function"&&require;for(var o=0;o<n.length;o++)s(n[o]);return s})({1:[function(e,t,i){t.exports={name:"mokit",version:"0.0.1"}},{}],2:[function(e,t,i){const n=e("cify");const s=e("../template");const r=s.utils;const o=s.Directive;const c=s.Expression;function h(e){var t=e.component;var i=e.parent;return new o({name:e.name,type:o.TYPE_ELEMENT,literal:true,final:true,level:o.LEVEL_ELEMENT,bind:function(){this.component=new t({parent:e.parent||this.scope});this.handleId();this.handleAttrs();this.handleContents();this.component.$mount(this.node);if(this.node.parentNode){this.node.parentNode.removeChild(this.node)}},handleId:function(){if(!i)return;var e=this.node.getAttribute(this.prefix+":id");if(e in i)throw new Error("Conflicting component id `"+e+"`");i[e]=this.component},handleAttrs:function(){this.propExprs={};this.attrs=[].slice.call(this.node.attributes);var e=new RegExp("^"+this.prefix+":","i");this.attrs.forEach(function(t){if(e.test(t.name))return;if(t.name in this.component.$properties){this.propExprs[t.name]=new c(t.value)}else{this.component.$element.setAttribute(t.name,t.value)}},this)},handleContents:function(){this.placeHandlers=[];var e=[].slice.call(this.component.$element.querySelectorAll("["+this.prefix+"\\:content]"));e.forEach(function(e){var t=null;var i=e.getAttribute(this.prefix+":content");if(!i){t=[].slice.call(this.node.childNodes)}else{t=[].slice.call(this.node.querySelectorAll(i))}if(!t||t.length<1)return;e.innerHTML="";t.forEach(function(t){e.appendChild(t.cloneNode(true))},this);var n=this.compiler.compile(e);this.placeHandlers.push(n)},this)},execute:function(e){r.each(this.propExprs,function(t){this.component[t]=this.propExprs[t].execute(e)},this);this.placeHandlers.forEach(function(t){t(e)},this)}})}t.exports=h},{"../template":28,cify:31}],3:[function(e,t,i){const n=e("cify");const s=e("../template");const r=e("./watcher");const o=s.utils;const c=e("events");const h=s.Observer;const a=e("./component-directive");const u=["$compile","$data","$dispose","$element","$mount","$properties","$remove","$watch","_callHook","_compiled","_createData","_createProperties","_createWatches","_extends","_mounted","_observer","_onTemplateUpdate","_removed","_template","_watchers","$children","$parent","_directives","_importComponents","$nextTick"];const l=function(t){t=t||Object.create(null);if(o.isFunction(t.extends)){t.extends=t.extends.prototype}var i=new n({_extends:t.extends,constructor:function(t){t=t||{};o.each(t,function(e,t){if(!(e in this))this[e]=t});this._onTemplateUpdate=this._onTemplateUpdate.bind(this);this._createData(this.data);this._createProperties(this.properties);this._createWatches(this.watches);this._importComponents(e("./components"));this._importComponents(this.components);this._callHook("onInit");this._observer=h.observe(this);o.defineFreezeProp(this,"$children",[]);o.defineFreezeProp(this,"$parent",t.parent);if(this.$parent)this.$parent.$children.push(this);this.$compile();this._mounted=!!this.element},_importComponents:function(e){o.each(e,this._importComponent,this)},_importComponent:function(e,t){this._directives=this._directives||[];this._directives.push(new a({name:e,component:t,parent:this}))},_callHook:function(e,t){if(!o.isFunction(this[e]))return;this[e].apply(this,t)},_createData:function(e){if(o.isFunction(e)){this.$data=e.call(this)}else{this.$data=e||{}}o.each(this.$data,function(e){Object.defineProperty(this,e,{configurable:true,enumerable:true,get:function(){if(!this.$data)return;return this.$data[e]},set:function(t){if(!this.$data)return;this.$data[e]=t}})},this)},_createProperties:function(e){this.$properties={};var t=o.isArray(e);o.each(e,function(e,t){if(o.isFunction(t)){t={get:t}}if(!o.isObject(t)){t={value:t}}var i=t.get||t.set;var n="value"in t;if(i&&n){throw new Error("Cannot specify both value and setter/getter"+"` for property `"+e+"`")}if(!i){if(!n)t.value=null;t.get=function(){return t.value};t.set=function(e){t.value=e}}Object.defineProperty(this,e,{configurable:true,enumerable:true,get:function(){if(!t.get){throw new Error("Property `"+e+"` cannot be read")}return t.get.call(this)},set:function(i){if(!t.set){throw new Error("Property `"+e+"` cannot be written")}if(t.test&&!t.test(i)){throw new Error("Invalid value `"+i+"` for property `"+e+"`")}t.set.call(this,i);if(this.__observer__){this.__observer__.emitChange({path:e,value:i})}}});this.$properties[e]=t},this)},_createWatches:function(e){this._watchers=this._watchers||[];o.each(e,function(e,t){this.$watch(e,t)},this)},_onTemplateUpdate:function(){this._watchers.forEach(function(e){e.calc()},this)},$watch:function(e,t){if(!o.isFunction(t))return;if(!o.isFunction(e)){var i=e;e=function(){return o.getByPath(this,i)}}this._watchers.push(new r(e.bind(this),t.bind(this)))},$compile:function(){if(this._compiled)return;this._compiled=true;this._callHook("onCreate");o.defineFreezeProp(this,"$element",this.element||o.parseDom(this.template)[0]);if(!this.$element||this.$element.nodeName==="#text"){throw new Error("Invalid component template")}this._callHook("onCreated");o.defineFreezeProp(this,"_template",new s(this.$element,{directives:this._directives}));this._template.bind(this);this._template.on("update",this._onTemplateUpdate);this._template.on("bind",function(){this._callHook("onReady")}.bind(this))},$mount:function(e,t){if(!e||this._mounted)return;this._callHook("onMount");e._targetNode=this.$element;this.$element._mountNode=e;if(t){e.appendChild(this.$element)}else if(e.parentNode){e.parentNode.insertBefore(this.$element,e)}this._mounted=true;this._removed=false;this._callHook("onMounted")},$remove:function(){if(this._removed||!this._mounted)return;this._callHook("onRemove");if(this.$element.parentNode){this.$element.parentNode.removeChild(this.$element)}this._removed=true;this._mounted=false;this._callHook("onRemoved")},$dispose:function(){this.$remove();this.$children.forEach(function(e){e.$dispose()},this);if(this.$parent){var e=this.$parent.$children.indexOf(this);this.$parent.$children.splice(e,1)}this._callHook("onDispose");if(this._compiled){this._template.unbind()}this._callHook("onDisposed");for(name in this){delete this[name]}["__observer__","$element","$children","$parent","_template"].forEach(function(e){delete this[e]},this);this.__proto__=null}});o.each(t,function(e,t){if(u.indexOf(e)>-1){throw new Error("Name `"+e+"` is reserved")}i.prototype[e]=t},this);i.__proto__=l.prototype;i.extend=function(e){e=e||Object.create(null);e.extends=this;return new l(e)};i.create=function(e){return new i(e)};return i};l.extend=function(e){e=e||Object.create(null);return new l(e)};t.exports=l},{"../template":28,"./component-directive":2,"./components":4,"./watcher":7,cify:31,events:32}],4:[function(e,t,i){t.exports={View:e("./view")}},{"./view":5}],5:[function(e,t,i){const n=e("../component");const s=e("ntils");const r=new n({template:"<div></div>",properties:{is:{test:function(e){return s.isFunction(e)||s.isString(e)},set:function(e){if(s.isString(e)){this.is=this.$parent&&this.$parent.components?this.$parent.components[e]:null;return}if(this._component){this._component.$dispose()}this._Component=e;this._component=new this._Component({parent:this});this._component.$mount(this.$element,true)},get:function(){return this._Component}}}});t.exports=r},{"../component":3,ntils:33}],6:[function(e,t,i){const n=e("./component");const s=e("./watcher");const r=e("./components");n.Watcher=s;n.components=r;n.Component=n;n.component=function(e,t){if(!t)return r[e];r[e]=t};t.exports=n},{"./component":3,"./components":4,"./watcher":7}],7:[function(e,t,i){const n=e("cify");const s=e("ntils");const r=new n({constructor:function(e,t,i){if(!s.isFunction(e)||!s.isFunction(t)){throw new Error("Invalid parameters")}this.calcor=e;this.handler=t;if(i)this.calc(true)},calc:function(e){var t=this.calcor();if(e||!s.deepEqual(t,this.value)){this.handler(t,this.value)}this.value=s.clone(t)}});t.exports=r},{cify:31,ntils:33}],8:[function(e,t,i){const n=e("../.tmp/info.json");const s=e("ntils");const r=e("./template");const o=e("./component");o.version=n.version;o.Template=r;s.copy(r,o);if(window)window[n.name]=o;if(typeof define!=="undefined"&&define.amd){define(n.name,[],function(){return o})}t.exports=o},{"../.tmp/info.json":1,"./component":6,"./template":28,ntils:33}],9:[function(e,t,i){const n=e("cify");const s=e("./directive");const r=e("ntils");const o=e("./expression");const c=e("./directives");const h="m";const a=new n({constructor:function(e){e=e||Object.create(null);e.directives=e.directives||[];this.prefix=e.prefix||h;this.directives=c.concat(e.directives)},_parseMatchInfo:function(e,t,i){var n=e.toLowerCase().split(":");var s={type:t,compiler:this,node:i};if(n.length>1){s.prefix=n[0];s.name=n[1];s.decorates=n.slice(2)}else{s.prefix=null;s.name=n[0];s.decorates=[]}return s},_findDirectives:function(e){return this.directives.filter(function(t){return t.definition.test(e)},this)},_createDirectiveInstance:function(e,t){t.compiler=this;t.prefix=this.prefix;return new e(t)},_bindHandler:function(e){e.directives=e.directives.sort(function(e,t){return t.level-e.level});var t=[];r.each(e.directives,function(i,n){n.index=i;n.bind();t.push(n);if(n.final)return e.final=true},this);e.directives=t},_compileElement:function(e,t){var i=this._parseMatchInfo(t.nodeName,s.TYPE_ELEMENT,t);var n=this._findDirectives(i);n.forEach(function(n){e.directives.push(this._createDirectiveInstance(n,{handler:e,node:t,decorates:i.decorates}))},this)},_compileAttributes:function(e,t){r.toArray(t.attributes).forEach(function(i){var n=this._parseMatchInfo(i.name,s.TYPE_ATTRIBUTE,t);var r=this._findDirectives(n);r.forEach(function(s){var r=s.definition;e.directives.push(this._createDirectiveInstance(s,{handler:e,node:t,attribute:i,expression:r.literal?i.value:new o(i.value),decorates:n.decorates}))},this)},this)},_compileChildren:function(e,t){if(e.final)return;r.toArray(t.childNodes).forEach(function(t){var i=this.compile(t);i.parent=this;e.children.push(i)},this)},compile:function(e){var t=function(e){if(r.isNull(e))e=Object.create(null);t.directives.forEach(function(t){t.scope=e;t.execute(e)},this);t.children.forEach(function(t){t(e)},this)};t.dispose=function(){t.directives.forEach(function(e){e.unbind()},this);t.children.forEach(function(e){e.dispose()},this)};t.directives=[];t.children=[];if(e){this._compileElement(t,e);this._compileAttributes(t,e);this._bindHandler(t);this._compileChildren(t,e)}return t.bind(null)}});t.exports=a},{"./directive":10,"./directives":15,"./expression":27,cify:31,ntils:33}],10:[function(e,t,i){const n=e("cify");const s=e("ntils");const r=e("./expression");const o=new n({_extends:c.prototype,constructor:function(e){if(!e||!s.isString(e.name)||e.name.length<1){throw new Error("Invalid directive options")}this.customTest=e.test;delete e.test;s.copy(this._faultHanlde(e),this)},_faultHanlde:function(e){e.type=e.type||c.TYPE_ATTRIBUTE;e.level=e.level||c.LEVEL_GENERAL;e.match=e.match||e.name;if(!(e.match instanceof RegExp)){e.match=new RegExp("^"+e.match+"$","i")}if(e.tag&&!(e.tag instanceof RegExp)){e.tag=new RegExp("^"+e.tag+"$","i")}return e},test:function(e){return this.type===e.type&&(!this.tag||e.node&&this.tag.test(e.node.nodeName))&&(this.prefix===false||e.prefix===e.compiler.prefix)&&this.match.test(e.name)&&(!this.customTest||this.customTest(e))}});function c(e){const t=new o(e);const i=new n({_extends:t,constructor:function(e){s.copy(e,this)},definition:t,bind:e.bind||s.noop,execute:e.execute||function(e){this.scope=e;if(this.definition.type===c.TYPE_ELEMENT){return this.update()}var t=this.definition.literal?this.attribute.value:this.expression.execute(e);if(!s.deepEqual(this.__value__,t)){this.update(t,this.__value__);this.__value__=t}},update:e.update||s.noop,unbind:e.unbind||s.noop,utils:s,Expression:r});i.definition=t;i.__proto__=t;return i}c.Definition=o;c.TYPE_ATTRIBUTE="attribute";c.TYPE_ELEMENT="element";c.LEVEL_PREVENT=3e3;c.LEVEL_STATEMENT=2e3;c.LEVEL_ELEMENT=1e3;c.LEVEL_GENERAL=0;c.LEVEL_ATTRIBUTE=-1e3;c.LEVEL_CLOAK=-2e3;t.exports=c},{"./expression":27,cify:31,ntils:33}],11:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"attr",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_ATTRIBUTE,prefix:false,literal:true,match:/[\s\S]/i,bind:function(){this.computedName=this.attribute.name;this.computedValue=this.attribute.value;this.nameExpr=new this.Expression(this.attribute.name,true);this.valueExpr=new this.Expression(this.attribute.value,true)},execute:function(e){var t=this.nameExpr.execute(e);if(this.computedName!==t){this.node.removeAttribute(this.computedName);this.computedName=t;if(!this.utils.isNull(this.computedName)&&this.computedName.length>0){this.node.setAttribute(this.computedName,"")}}var i=this.valueExpr.execute(e);i=this.utils.isNull(i)?"":i;if(this.computedValue!==i){this.computedValue=i;this.node.setAttribute(this.computedName,this.computedValue)}}})},{"../directive":10}],12:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"each",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_STATEMENT,final:true,literal:true,bind:function(){this.mountNode=document.createTextNode("");this.node.parentNode.insertBefore(this.mountNode,this.node);this.node.removeAttribute(this.attribute.name);this.node.parentNode.removeChild(this.node);this.parseExpr();this.eachItems=[]},parseExpr:function(){this.eachType=this.attribute.value.indexOf(" in ")>-1?"in":"of";var e=this.attribute.value.split(" "+this.eachType+" ");var t="with(scope){utils.each("+e[1]+",fn,this)}";this.each=new Function("utils","scope","fn",t).bind(null,this.utils);var i=e[0].split(",").map(function(e){return e.trim()});if(this.eachType=="in"){this.keyName=i[0];this.valueName=i[1]}else{this.keyName=i[1];this.valueName=i[0]}},execute:function(e){var t=0;var i=document.createDocumentFragment();this.each(e,function(n,s){var r={__proto__:e};if(this.keyName)r[this.keyName]=n;if(this.valueName)r[this.valueName]=s;var o=this.eachItems[n];if(o){if(!o.handler)console.log("a",this.eachItems,o);o.handler(r)}else{var c=Object.create(null);c.node=this.node.cloneNode(true);i.appendChild(c.node);c.handler=this.compiler.compile(c.node);c.handler(r);this.eachItems[n]=c}t++}.bind(this));this.eachItems.splice(t).forEach(function(e){e.node.parentNode.removeChild(e.node)});if(i.childNodes.length>0){this.mountNode.parentNode.insertBefore(i,this.mountNode)}}})},{"../directive":10}],13:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"id",type:n.TYPE_ATTRIBUTE,literal:true,update:function(e){this.scope[e]=this.node}})},{"../directive":10}],14:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"if",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_STATEMENT,final:true,bind:function(){this.mountNode=document.createTextNode("");this.node.parentNode.insertBefore(this.mountNode,this.node);this.node.removeAttribute(this.attribute.name);this.node.parentNode.removeChild(this.node);this._oldValue=false;this._handler=this.compiler.compile(this.node)},execute:function(e){var t=this.expression.execute(e);var i=this.node._targetNode||this.node;if(t){this._handler(e);if(!this._oldValue){this.mountNode.parentNode.insertBefore(i,this.mountNode)}}else if(this._oldValue&&i.parentNode){i.parentNode.removeChild(i)}this._oldValue=t}})},{"../directive":10}],15:[function(e,t,i){t.exports=[e("./text"),e("./attr"),e("./each"),e("./if"),e("./prop"),e("./on"),e("./inner-html"),e("./inner-text"),e("./prevent"),e("./id"),e("./model-input"),e("./model-select"),e("./model-radio"),e("./model-checkbox"),e("./model-editable")]},{"./attr":11,"./each":12,"./id":13,"./if":14,"./inner-html":16,"./inner-text":17,"./model-checkbox":18,"./model-editable":19,"./model-input":20,"./model-radio":21,"./model-select":22,"./on":23,"./prevent":24,"./prop":25,"./text":26}],16:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"html",type:n.TYPE_ATTRIBUTE,update:function(e){this.node.innerHTML=e}})},{"../directive":10}],17:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"text",type:n.TYPE_ATTRIBUTE,update:function(e){this.node.innerText=e}})},{"../directive":10}],18:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"model",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_ATTRIBUTE,tag:"input",test:function(e){var t=e.node.getAttribute("type");return t==="checkbox"},bind:function(){this.bindPath=this.attribute.value;this.node.addEventListener("change",function(){if(this.utils.isNull(this.scope))return;var e=this.utils.getByPath(this.scope,this.bindPath);if(this.utils.isArray(e)&&this.node.checked){e.push(this.node.value)}else if(this.utils.isArray(e)&&!this.node.checked){var t=e.indexOf(this.node.value);e.splice(t,1)}else{this.utils.setByPath(this.scope,this.bindPath,this.node.checked)}}.bind(this),false)},execute:function(e){this.scope=e;var t=this.expression.execute(e);if(this.utils.isArray(t)){this.node.checked=t.indexOf(this.node.value)>-1}else{this.node.checked=t}}})},{"../directive":10}],19:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"model",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_ATTRIBUTE,test:function(e){return e.node.isContentEditable},bind:function(){this.bindPath=this.attribute.value;this.node.addEventListener("input",function(){if(this.utils.isNull(this.scope))return;this.utils.setByPath(this.scope,this.bindPath,this.node.innerHTML)}.bind(this),false)},execute:function(e){var t=this.expression.execute(e);if(this.node.innerHTML!==t){this.node.innerHTML=t}}})},{"../directive":10}],20:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"model",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_ATTRIBUTE,tag:/^(input|textarea)$/i,test:function(e){var t=e.node.getAttribute("type");return t!=="radio"&&t!=="checkbox"},bind:function(){this.bindPath=this.attribute.value;this.node.addEventListener("input",function(){if(this.utils.isNull(this.scope))return;this.utils.setByPath(this.scope,this.bindPath,this.node.value)}.bind(this),false)},execute:function(e){var t=this.expression.execute(e);if(this.node.value!==t){this.node.value=t}}})},{"../directive":10}],21:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"model",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_ATTRIBUTE,tag:"input",test:function(e){var t=e.node.getAttribute("type");return t==="radio"},bind:function(){this.bindPath=this.attribute.value;this.node.addEventListener("change",function(){if(this.utils.isNull(this.scope))return;this.utils.setByPath(this.scope,this.bindPath,this.node.value)}.bind(this),false)},execute:function(e){this.scope=e;var t=this.expression.execute(e);this.node.checked=t==this.node.value}})},{"../directive":10}],22:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"model",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_ATTRIBUTE,final:true,tag:"select",bind:function(){this.bindPath=this.attribute.value;this.node.removeAttribute(this.attribute.name);this._handler=this.compiler.compile(this.node);this.node.addEventListener("change",function(){if(this.utils.isNull(this.scope))return;var e=this.node.selectedOptions;var t=this.node.multiple?[].slice.call(e).map(function(e){return e.value},this):e[0].value;this.utils.setByPath(this.scope,this.bindPath,t)}.bind(this),false)},execute:function(e){this.scope=e;this._handler(e);var t=this.expression.execute(e);if(!this.utils.isArray(t))t=[t];[].slice.call(this.node.options).forEach(function(e){e.selected=t.indexOf(e.value)>-1},this)}})},{"../directive":10}],23:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"on",type:n.TYPE_ATTRIBUTE,bind:function(){this.node.addEventListener(this.decorates[0],function(e){if(this.utils.isNull(this.scope))return;var t={__proto__:this.scope};t.event=t.$event=e;this.expression.execute(t)}.bind(this),false)},execute:function(e){this.scope=e}})},{"../directive":10}],24:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"prevent",type:n.TYPE_ATTRIBUTE,level:n.LEVEL_PREVENT,final:true})},{"../directive":10}],25:[function(e,t,i){const n=e("../directive");t.exports=new n({name:"prop",type:n.TYPE_ATTRIBUTE,update:function(e){this.node[this.decorates[0]]=e}})},{"../directive":10}],26:[function(e,t,i){const n=e("../directive");const s=e("../expression");const r="cloak";t.exports=new n({name:"#text",type:n.TYPE_ELEMENT,prefix:false,test:function(e){return e.node.nodeValue.trim().length>4},bind:function(){this.expr=new s(this.node.nodeValue,true);this.node.nodeValue="";if(this.node.parentNode){this.node.parentNode.removeAttribute(r)}},execute:function(e){this.scope=e;var t=this.expr.execute(e);if(this.node.nodeValue!==t){this.node.nodeValue=t}}})},{"../directive":10,"../expression":27}],27:[function(e,t,i){const n=e("cify");const s=e("ntils");const r=new n({constructor:function(e,t){this.func=t?this._compileMixedCode(e):this._compileCode(e)},_compileCode:function(e){e=this._escapeEOL(this._wrapCode(e));return this._createFunction(e)},_compileMixedCode:function(e){var t=this._parseMixedCode(e);e=this._escapeEOL(t.join("+"));return this._createFunction(e)},_createFunction:function(e){var t=new Function("utils","scope","with(scope){return "+e+"}");return t.bind(null,s)},_parseMixedCode:function(e){var t=0,i=e.length;var n="",r=false,o=[];while(t<=i){var c=e[t++];var h=e[t];if(s.isNull(c)){if(n.length>0){o.push('"'+this._escapeCode(n)+'"')}n="";r=false}else if(!r&&c+h=="{{"){if(n.length>0){o.push('"'+this._escapeCode(n)+'"')}n="";r=true;t++}else if(r&&c+h=="}}"){if(n.length>0){o.push(this._wrapCode(n))}n="";r=false;t++}else{n+=c}}return o},_escapeCode:function(e){return e.replace(/"/,'\\"').replace("\r\n","\\r\\n").replace("\n","\\n")},_escapeEOL:function(e){return e.replace(/\n/gm,"\\\n")},_wrapCode:function(e){return"((function(){try{return ("+e+")}catch(err){console.error(err);return err;}})())"},execute:function(e){if(s.isNull(e)){e=Object.create(null)}return this.func.call(e,e)}});t.exports=r},{cify:31,ntils:33}],28:[function(e,t,i){const n=e("./compiler");const s=e("./directive");const r=e("./expression");const o=e("./observer");const c=e("./template");const h=e("./directives/");const a=e("ntils");c.Template=c;c.Compiler=n;c.Directive=s;c.directives=h;c.Expression=r;c.Observer=o;c.utils=a;t.exports=c},{"./compiler":9,"./directive":10,"./directives/":15,"./expression":27,"./observer":29,"./template":30,ntils:33}],29:[function(e,t,i){const n=e("cify");const s=e("ntils");const r=e("events");const o="__observer__";const c="change";const h=20;const a=new n({_extends:r,constructor:function(e){if(s.isNull(e)){throw new Error("Invalid target")}var t=e[o];if(t){t.apply();return t}s.defineFreezeProp(this,"shadow",Object.create(null));s.defineFreezeProp(this,"target",e);s.defineFreezeProp(this,"parents",[]);s.defineFreezeProp(e,o,this);this.apply()},set:function(e,t){if(s.isFunction(t))return;Object.defineProperty(this.target,e,{get:function(){return this[o].shadow[e]},set:function(t){var i=this[o];var n=i.shadow[e];if(n===t)return;if(s.isObject(t)){var r=new a(t,e);i.addChild(r,e)}if(n&&n[o]){i.removeChild(n[o],e)}i.shadow[e]=t;i.emitChange({path:e,value:t})},configurable:true,enumerable:true});this.target[e]=t},apply:function(){if(s.isArray(this.target)){this._wrapArray(this.target)}var e=this._getPropertyNames(this.target);e.forEach(function(e){var t=Object.getOwnPropertyDescriptor(this.target,e);if(!("value"in t))return;this.set(e,this.target[e])},this)},clearReference:function(){s.each(this.target,function(e,t){if(s.isNull(t))return;var i=t[o];if(i)this.removeChild(i)},this)},dispatch:function(e,t){t.__layer__=t.__layer__||0;t.__layer__++;if(t.__layer__>=h)return;this.emit(e,t);if(!this.parents||this.parents.length<1)return;this.parents.forEach(function(i){if(!(i.name in i.parent.target)){return i.parent.removeChild(this)}var n=s.copy(t);n.path=i.name+"."+t.path;i.parent.dispatch(e,n)},this)},addChild:function(e,t){if(s.isNull(e)||s.isNull(t)){throw new Error("Invalid paramaters")}e.parents.push({parent:this,name:t})},removeChild:function(e,t){if(s.isNull(e)){throw new Error("Invalid paramaters")}var i=-1;e.parents.forEach(function(e,n){if(e.parent===this&&e.name===t){i=n}},this);if(i>-1){e.parents.splice(i,1)}},emitChange:function(e){this.dispatch(c,e)},_getPropertyNames:function(){var e=s.isArray(this.target)?this.target.map(function(e,t){return t}):Object.keys(this.target);return e.filter(function(e){return e!==o})},_wrapArray:function(e){s.defineFreezeProp(e,"push",function(){var t=[].slice.call(arguments);t.forEach(function(t){this[o].set(e.length,t)},this);this[o].emitChange({path:"length",value:this.length})});s.defineFreezeProp(e,"pop",function(){var e=[].pop.apply(this,arguments);this[o].emitChange({path:this.length,value:e});this[o].emitChange({path:"length",value:this.length});return e});s.defineFreezeProp(e,"unshift",function(){var e=[].slice.call(arguments);e.forEach(function(e){this[o].set(0,e)},this);this[o].emitChange({path:"length",value:this.length})});s.defineFreezeProp(e,"shift",function(){var e=[].shift.apply(this,arguments);this[o].emitChange({path:0,value:e});this[o].emitChange({path:"length",value:this.length});return e});s.defineFreezeProp(e,"splice",function(){var e=arguments[0];var t=s.isNull(arguments[1])?e+arguments[1]:this.length-1;var i=[].splice.apply(this,arguments);for(var n=e;n<=t;n++){this[o].emitChange({path:n,value:i[n-e]})}this[o].emitChange({path:"length",value:this.length});return i});s.defineFreezeProp(e,"set",function(e,t){if(e>=this.length){this[o].emitChange({path:"length",value:this.length})}this[o].set(e,t)})}});a.observe=function(e){return new a(e)};t.exports=a},{cify:31,events:32,ntils:33}],30:[function(e,t,i){const n=e("cify");const s=e("./observer");const r=e("events");const o=e("./compiler");const c=new n({_extends:r,constructor:function(e,t){t=t||Object.create(null);this.element=e;this.compiler=t.compiler||new o(t);this.render=this.compiler.compile(this.element);this.update=this.update.bind(this);this._update=this._update.bind(this);this._updateTimer=0},update:function(){if(this._updateTimer){clearTimeout(this._updateTimer);this._updateTimer=null}this._updateTimer=setTimeout(this._update,0)},_update:function(){if(!this._updateTimer||!this.observer)return;this.emit("update",this);this.render(this.observer.target);this._onBind()},_onBind:function(){if(this._bound)return;this._bound=true;this.emit("bind",this)},bind:function(e,t){this.unbind();this.observer=new s(e);this.observer.on("change",this.update);if(t){this._onBind()}else{this.update()}},unbind:function(){if(!this.observer)return;this.observer.removeListener("change",this.update);this.observer.clearReference();this.observer=null},dispose:function(){this.unbind();this.render.dispose()}});t.exports=c},{"./compiler":9,"./observer":29,cify:31,events:32}],31:[function(e,t,i){(function(){var e=function(){var e=["switch(args.length){"];for(var t=20;t>0;t--){var i=[];for(var n=0;n<t;n++)i.push("args["+n+"]");e.push("case "+t+":return new Fn("+i.join(",")+");")}e.push("case 0:default:return new Fn();}");return new Function("Fn","args",e.join(""))}();function i(e){var t=Object.getOwnPropertyNames(e);if(e.__proto__){t.push.apply(t,i(e.__proto__))}return t}function n(e,t){if(e.__proto__==t.prototype){return true}else if(e.prototype){return n(e.prototype,t)}else{return false}}function s(e,t){var n=function(){if(t.constructor){t.constructor.apply(e,arguments)}};delete n.name;var s=i(t);s.forEach(function(i){if(i=="_super"||i=="_extends"||i=="_static"||i=="constructor"){return}if(typeof t[i]==="function"){n[i]=n[i]||t[i].bind(e)}else{n[i]=n[i]||t[i]}});n.__proto__={};return n}function r(t){var i=(typeof t==="function"?t():t)||{};var r=i._extends;var o=i._static||{};if(typeof r==="function"){i.__proto__=r.prototype;o.__proto__=r}else if(r){i.__proto__=r}else{i.__proto__={}}i.__defineGetter__("_super",function(){this.__super__=this.__super__||s(this,i.__proto__);return this.__super__});c.prototype=i;c.__proto__=o;function c(){var t=this;if(typeof r==="function"){t=e(r,arguments)}t.constructor=c;t._static=t.Class=c;t.__proto__=c.prototype;var n=t.__proto__.constructor;if(n!=null&&n!=Object){var s=n.apply(t,arguments);t=s&&i.hasOwnProperty("constructor")?s:t}t.__proto__=c.prototype;delete t._extends;return t}c.extendsOf=function(e){return n(this,e)};c.superOf=function(e){return n(e,this)};return c}r.prototype.__proto__=Function.prototype;r.Class=r;if(typeof t!="undefined"){t.exports=r}if(typeof define=="function"&&define.amd){define("cify",[],function(){return r})}if(typeof window!="undefined"){window.cify=window.Class=r}})()},{}],32:[function(e,t,i){function n(){this._events=this._events||{};this._maxListeners=this._maxListeners||undefined}t.exports=n;n.EventEmitter=n;n.prototype._events=undefined;n.prototype._maxListeners=undefined;n.defaultMaxListeners=10;n.prototype.setMaxListeners=function(e){if(!r(e)||e<0||isNaN(e))throw TypeError("n must be a positive number");this._maxListeners=e;return this};n.prototype.emit=function(e){var t,i,n,r,h,a;if(!this._events)this._events={};if(e==="error"){if(!this._events.error||o(this._events.error)&&!this._events.error.length){t=arguments[1];if(t instanceof Error){throw t}else{var u=new Error('Uncaught, unspecified "error" event. ('+t+")");u.context=t;throw u}}}i=this._events[e];if(c(i))return false;if(s(i)){switch(arguments.length){case 1:i.call(this);break;case 2:i.call(this,arguments[1]);break;case 3:i.call(this,arguments[1],arguments[2]);break;default:r=Array.prototype.slice.call(arguments,1);i.apply(this,r)}}else if(o(i)){r=Array.prototype.slice.call(arguments,1);a=i.slice();n=a.length;for(h=0;h<n;h++)a[h].apply(this,r)}return true};n.prototype.addListener=function(e,t){var i;if(!s(t))throw TypeError("listener must be a function");if(!this._events)this._events={};if(this._events.newListener)this.emit("newListener",e,s(t.listener)?t.listener:t);if(!this._events[e])this._events[e]=t;else if(o(this._events[e]))this._events[e].push(t);else this._events[e]=[this._events[e],t];if(o(this._events[e])&&!this._events[e].warned){if(!c(this._maxListeners)){i=this._maxListeners}else{i=n.defaultMaxListeners}if(i&&i>0&&this._events[e].length>i){this._events[e].warned=true;console.error("(node) warning: possible EventEmitter memory "+"leak detected. %d listeners added. "+"Use emitter.setMaxListeners() to increase limit.",this._events[e].length);if(typeof console.trace==="function"){console.trace()}}}return this};n.prototype.on=n.prototype.addListener;n.prototype.once=function(e,t){if(!s(t))throw TypeError("listener must be a function");var i=false;function n(){this.removeListener(e,n);if(!i){i=true;t.apply(this,arguments)}}n.listener=t;this.on(e,n);return this};n.prototype.removeListener=function(e,t){var i,n,r,c;if(!s(t))throw TypeError("listener must be a function");if(!this._events||!this._events[e])return this;i=this._events[e];r=i.length;n=-1;if(i===t||s(i.listener)&&i.listener===t){delete this._events[e];if(this._events.removeListener)this.emit("removeListener",e,t)}else if(o(i)){for(c=r;c-- >0;){if(i[c]===t||i[c].listener&&i[c].listener===t){n=c;break}}if(n<0)return this;if(i.length===1){i.length=0;delete this._events[e]}else{i.splice(n,1)}if(this._events.removeListener)this.emit("removeListener",e,t)}return this};n.prototype.removeAllListeners=function(e){var t,i;if(!this._events)return this;if(!this._events.removeListener){if(arguments.length===0)this._events={};else if(this._events[e])delete this._events[e];return this}if(arguments.length===0){for(t in this._events){if(t==="removeListener")continue;this.removeAllListeners(t)}this.removeAllListeners("removeListener");this._events={};return this}i=this._events[e];if(s(i)){this.removeListener(e,i);
-}else if(i){while(i.length)this.removeListener(e,i[i.length-1])}delete this._events[e];return this};n.prototype.listeners=function(e){var t;if(!this._events||!this._events[e])t=[];else if(s(this._events[e]))t=[this._events[e]];else t=this._events[e].slice();return t};n.prototype.listenerCount=function(e){if(this._events){var t=this._events[e];if(s(t))return 1;else if(t)return t.length}return 0};n.listenerCount=function(e,t){return e.listenerCount(t)};function s(e){return typeof e==="function"}function r(e){return typeof e==="number"}function o(e){return typeof e==="object"&&e!==null}function c(e){return e===void 0}},{}],33:[function(e,t,i){(function(e){"use strict";e.noop=function(){};e.isNull=function(e){return e===null||typeof e==="undefined"};e.trim=function(e){if(this.isNull(e))return e;if(e.trim){return e.trim()}else{return e.replace(/(^[\\s]*)|([\\s]*$)/g,"")}};e.replace=function(e,t,i){if(this.isNull(e))return e;return e.replace(new RegExp(t,"g"),i)};e.startWith=function(e,t){if(this.isNull(e)||this.isNull(t))return false;return e.indexOf(t)===0};e.contains=function(e,t){var i=this;if(this.isNull(e)||this.isNull(t))return false;return e.indexOf(t)>-1};e.endWith=function(e,t){if(this.isNull(e)||this.isNull(t))return false;return e.indexOf(t)===e.length-t.length};e.has=e.hasProperty=function(e,t){if(this.isNull(e)||this.isNull(t))return false;return t in e||e.hasOwnProperty(t)};e.isFunction=function(e){if(this.isNull(e))return false;return typeof e==="function"};e.isString=function(e){if(this.isNull(e))return false;return typeof e==="string"||e instanceof String};e.isNumber=function(e){if(this.isNull(e))return false;return typeof e==="number"||e instanceof Number};e.isBoolean=function(e){if(this.isNull(e))return false;return typeof e==="boolean"||e instanceof Boolean};e.isElement=function(e){if(this.isNull(e))return false;if(window.Element)return e instanceof Element;else return e.tagName&&e.nodeType&&e.nodeName&&e.attributes&&e.ownerDocument};e.isText=function(e){if(this.isNull(e))return false;return e instanceof Text};e.isObject=function(e){if(this.isNull(e))return false;return typeof e==="object"};e.isArray=function(e){if(this.isNull(e))return false;var t=Object.prototype.toString.call(e)==="[object Array]";var i=e instanceof Array;var n=!this.isString(e)&&this.isNumber(e.length)&&this.isFunction(e.splice);var s=!this.isString(e)&&this.isNumber(e.length)&&e[0];return t||i||n||s};e.isDate=function(e){if(this.isNull(e))return false;return e instanceof Date};e.toArray=function(e){if(this.isNull(e))return[];return Array.prototype.slice.call(e)};e.toDate=function(e){var t=this;if(t.isNumber(e))return new Date(e);else if(t.isString(e))return new Date(t.replace(t.replace(e,"-","/"),"T"," "));else if(t.isDate(e))return e;else return null};e.each=function(e,t,i){if(this.isNull(e)||this.isNull(t))return;if(this.isArray(e)){var n=e.length;for(var s=0;s<n;s++){var r=t.call(i||e[s],s,e[s]);if(!this.isNull(r))return r}}else{for(var o in e){var r=t.call(i||e[o],o,e[o]);if(!this.isNull(r))return r}}};e.formatDate=function(e,t,i){if(this.isNull(t)||this.isNull(e))return e;e=this.toDate(e);i=i||{};var n={"M+":e.getMonth()+1,"d+":e.getDate(),"h+":e.getHours(),"m+":e.getMinutes(),"s+":e.getSeconds(),"w+":e.getDay(),"q+":Math.floor((e.getMonth()+3)/3),S:e.getMilliseconds()};if(/(y+)/.test(t)){t=t.replace(RegExp.$1,(e.getFullYear()+"").substr(4-RegExp.$1.length))}for(var s in n){if(new RegExp("("+s+")").test(t)){var r=n[s];r=i[r]||r;t=t.replace(RegExp.$1,RegExp.$1.length==1?r:("00"+r).substr((""+r).length))}}return t};e.clone=function(e,t){if(this.isNull(e)||this.isString(e)||this.isNumber(e)||this.isBoolean(e)||this.isDate(e)){return e}var i=e;try{i=new e.constructor}catch(e){}for(var n in e){if(i[n]!=e[n]&&!this.contains(t,n)){if(typeof e[n]==="object"){i[n]=this.clone(e[n],t)}else{i[n]=e[n]}}}this.each(["toString","valueOf"],function(s,r){if(this.contains(t,n))return;i[r]=e[r]},this);return i};e.copy=function(e,t){t=t||{};this.each(e,function(i){try{t[i]=e[i]}catch(e){}});return t};e.defineFreezeProp=function(e,t,i){Object.defineProperty(e,t,{value:i,enumerable:false,configurable:true,writable:false})};e.keys=function(e){if(Object.keys)return Object.keys(e);var t=[];this.each(e,function(e){t.push(e)});return t};e.create=function(e){if(Object.create)return Object.create(e);return{__proto__:e}};e.deepEqual=function(e,t){if(e===t)return true;if(!this.isObject(e)||!this.isObject(t))return false;var i=this.keys(e);var n=this.keys(t);if(i.length!==n.length)return false;var s=i.concat(n);var r=this.create(null);var o=true;this.each(s,function(i,n){if(r[n])return;if(!this.deepEqual(e[n],t[n]))o=false;r[n]=true},this);return o};e.fromTo=function(e,t,i,n){if(!n)n=[i,i=n][0];i=Math.abs(i||1);if(e<t){for(var s=e;s<=t;s+=i)n(s)}else{for(var s=e;s>=t;s-=i)n(s)}};e.newGuid=function(){var e=function(){return((1+Math.random())*65536|0).toString(16).substring(1)};return e()+e()+"-"+e()+"-"+e()+"-"+e()+"-"+e()+e()+e()};e.map=function(e,t){var i=this.isArray(e)?[]:{};this.each(e,function(e,n){i[e]=t(e,n)});return i};e.setByPath=function(e,t,i){if(this.isNull(e)||this.isNull(t)||t===""){return}if(!this.isArray(t)){t=t.replace(/\[/,".").replace(/\]/,".").split(".")}this.each(t,function(n,s){if(this.isNull(s)||s.length<1)return;if(n===t.length-1){e[s]=i}else{e[s]=e[s]||{};e=e[s]}},this)};e.getByPath=function(e,t){if(this.isNull(e)||this.isNull(t)||t===""){return e}if(!this.isArray(t)){t=t.replace(/\[/,".").replace(/\]/,".").split(".")}this.each(t,function(t,i){if(this.isNull(i)||i.length<1)return;if(!this.isNull(e))e=e[i]},this);return e};e.unique=function(e){if(this.isNull(e))return e;var t=[];this.each(e,function(e,i){if(t.indexOf(i)>-1)return;t.push(i)});return t};e.getFunctionArgumentNames=function(e){if(!e)return[];var t=e.toString();var i=t.split(")")[0].split("=>")[0].split("(");return(i[1]||i[0]).split(",").map(function(e){return e.trim()}).filter(function(e){return e!="function"})};e.mix=function(t,i,n,s,r,o){if(!i||!t){return t||e}if(r){switch(r){case 1:return e.mix(t.prototype,i.prototype,n,s,0,o);case 2:e.mix(t.prototype,i.prototype,n,s,0,o);break;case 3:return e.mix(t,i.prototype,n,s,0,o);case 4:return e.mix(t.prototype,i,n,s,0,o);default:}}var c,h,a,u;if(s&&s.length){for(c=0,h=s.length;c<h;++c){a=s[c];isObject=e.isObject(t[a]);if(i.hasOwnProperty(a)){if(o&&isObject){e.mix(t[a],i[a])}else if(n||!(a in t)){t[a]=i[a]}}}}else{for(c in i){if(i.hasOwnProperty(c)){if(o&&e.isObject(t[c],true)){e.mix(t[c],i[c],n,s,0,true)}else if(n||!(c in t)){t[c]=i[c]}}}}return t};e.short=function(e,t){if(!e)return e;t=t||40;var i=e.length;var n=t/2;return i>t?e.substr(0,n)+"..."+e.substr(i-n):e};e.firstUpper=function(e){if(this.isNull(e))return;e[0]=e[0].toLowerCase();return e};e.parseDom=function(e){this._PARSER_DOM_DIV=this._PARSER_DOM_DIV||document.createElement("dev");this._PARSER_DOM_DIV.innerHTML=e;var t=this.toArray(this._PARSER_DOM_DIV.childNodes);this._PARSER_DOM_DIV.innerHTML="";return t};if(typeof define==="function"&&define.amd){define("ntils",[],function(){return e})}})(typeof i==="undefined"?window.ntils={}:i)},{}]},{},[8]);
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports={"name":"mokit","version":"0.0.1"}
+},{}],2:[function(require,module,exports){
+const Class = require('cify');
+const Template = require('../template');
+const utils = Template.utils;
+const Directive = Template.Directive;
+const Expression = Template.Expression;
+
+/**
+ * 创建一个组件指令
+ * @param {object} options 选项
+ */
+function ComponentDirective(options) {
+
+  var Component = options.component;
+  var parent = options.parent;
+
+  return new Directive({
+    name: options.name,
+    type: Directive.TYPE_ELEMENT,
+    literal: true,
+    final: true,
+    level: Directive.LEVEL_ELEMENT,
+
+    bind: function () {
+      this.component = new Component({
+        parent: options.parent || this.scope
+      });
+      this.handleId();
+      this.handleAttrs();
+      this.handleContents();
+      this.component.$mount(this.node);
+      if (this.node.parentNode) {
+        this.node.parentNode.removeChild(this.node);
+      }
+    },
+
+    handleId: function () {
+      if (!parent) return;
+      var id = this.node.getAttribute(this.prefix + ':id');
+      if (id in parent) throw new Error('Conflicting component id `' + id + '`');
+      parent[id] = this.component;
+    },
+
+    handleAttrs: function () {
+      this.propExprs = {};
+      this.attrs = [].slice.call(this.node.attributes);
+      var directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
+      this.attrs.forEach(function (attr) {
+        if (directiveRegexp.test(attr.name)) return;
+        if (attr.name in this.component.$properties) {
+          this.propExprs[attr.name] = new Expression(attr.value);
+        } else {
+          this.component.$element.setAttribute(attr.name, attr.value);
+        }
+      }, this);
+    },
+
+    handleContents: function () {
+      this.placeHandlers = [];
+      var places = [].slice.call(
+        this.component.$element.querySelectorAll('[' + this.prefix + '\\:content]')
+      );
+      places.forEach(function (place) {
+        //将内容插入到指定的「位置」
+        var contents = null;
+        var selector = place.getAttribute(this.prefix + ':content');
+        if (!selector) {
+          contents = [].slice.call(this.node.childNodes);
+        } else {
+          contents = [].slice.call(this.node.querySelectorAll(selector));
+        }
+        if (!contents || contents.length < 1) return;
+        place.innerHTML = '';
+        contents.forEach(function (content) {
+          place.appendChild(content.cloneNode(true));
+        }, this);
+        //编译插入后的子「内容模板」
+        var handler = this.compiler.compile(place);
+        this.placeHandlers.push(handler);
+      }, this);
+    },
+
+    execute: function (scope) {
+      utils.each(this.propExprs, function (name) {
+        var value = this.propExprs[name].execute(scope);
+        //if (utils.deepEqual(this.propExprs[name]._oldValue, value)) return;
+        this.propExprs[name]._oldValue = value;
+        this.component[name] = value;
+      }, this);
+      this.placeHandlers.forEach(function (handler) {
+        handler(scope);
+      }, this);
+    }
+
+  });
+};
+
+module.exports = ComponentDirective;
+},{"../template":28,"cify":31}],3:[function(require,module,exports){
+const Class = require('cify');
+const Template = require('../template');
+const Watcher = require('./watcher');
+const utils = Template.utils;
+const EventEmitter = require('events');
+const Observer = Template.Observer;
+const ComponentDirective = require('./component-directive');
+
+const RESERVED_WORDS = [
+  '$compile', '$data', '$dispose', '$element', '$mount', '$properties',
+  '$remove', '$watch', '_callHook', '_compiled', '_createData', '_createProperties',
+  '_createWatches', '_extends', '_mounted', '_observer', '_onTemplateUpdate',
+  '_removed', '_template', '_watchers', '$children', '$parent', '_directives',
+  '_importComponents', '$nextTick'
+];
+
+/**
+ * 组件类
+ * 用于定义一个新的组件
+ */
+const Component = function (classOpts) {
+
+  //处理组件选项
+  classOpts = classOpts || Object.create(null);
+
+  //处理「继承」
+  if (utils.isFunction(classOpts.extends)) {
+    classOpts.extends = classOpts.extends.prototype;
+  }
+
+  /**
+   * 定义组件类
+   * 可以通过 new ComponentClass() 创建组件实例
+   */
+  var ComponentClass = new Class({
+
+    //通过 cify 定义为一个「类」，并指定「父类」或「原型」
+    _extends: classOpts.extends,
+
+    /**
+     * 组件类构造函数
+     * @returns {void} 无返回
+     */
+    constructor: function (instanceOpts) {
+      instanceOpts = instanceOpts || {};
+      utils.each(instanceOpts, function (name, value) {
+        if (!(name in this)) this[name] = value;
+      });
+      this._onTemplateUpdate = this._onTemplateUpdate.bind(this);
+      this._createData(this.data);
+      this._createProperties(this.properties);
+      this._createWatches(this.watches);
+      this._importComponents(require('./components'));
+      this._importComponents(this.components);
+      this._callHook('onInit');
+      this._observer = Observer.observe(this);
+      utils.defineFreezeProp(this, '$children', []);
+      utils.defineFreezeProp(this, '$parent', instanceOpts.parent);
+      if (this.$parent) this.$parent.$children.push(this);
+      this.$compile();
+      this._mounted = !!this.element;
+    },
+
+    /**
+     * 导入用到的子组件类
+     * @param {Object} components 引入的组件
+     * @returns 无返回
+     */
+    _importComponents: function (components) {
+      utils.each(components, this._importComponent, this);
+    },
+
+    /**
+     * 导入一个用到的子组件类
+     * @param {Object} components 引入的组件
+     * @returns 无返回
+     */
+    _importComponent: function (name, component) {
+      this._directives = this._directives || [];
+      this._directives.push(new ComponentDirective({
+        name: name,
+        component: component,
+        parent: this
+      }));
+    },
+
+    /**
+     * 调用生命周期 hook
+     * @param {string} name 调用的 hook 名称
+     * @param {Array} args 调用 hook 的参数列表
+     * @returns {void} 无反回
+     */
+    _callHook: function (name, args) {
+      if (!utils.isFunction(this[name])) return;
+      this[name].apply(this, args);
+    },
+
+    /**
+     * 创建数据对象
+     * @param {Object} data 组件数据对象
+     * @returns {void} 无返回
+     */
+    _createData: function (data) {
+      if (utils.isFunction(data)) {
+        this.$data = data.call(this);
+      } else {
+        this.$data = data || {};
+      }
+      utils.each(this.$data, function (name) {
+        Object.defineProperty(this, name, {
+          configurable: true,
+          enumerable: true,
+          get: function () {
+            if (!this.$data) return;
+            return this.$data[name];
+          },
+          set: function (value) {
+            if (!this.$data) return;
+            this.$data[name] = value;
+          }
+        });
+      }, this);
+    },
+
+    /**
+     * 创建组件属性
+     * @param {Object} properties 属性定义对象
+     * @returns {void} 无返回
+     */
+    _createProperties: function (properties) {
+      this.$properties = {};
+      var isArray = utils.isArray(properties);
+      utils.each(properties, function (name, descriptor) {
+        if (utils.isFunction(descriptor)) {
+          descriptor = { get: descriptor };
+        }
+        if (!utils.isObject(descriptor)) {
+          descriptor = { value: descriptor };
+        }
+        var hasGetterOrSetter = descriptor.get || descriptor.set;
+        var hasValue = ('value' in descriptor);
+        if (hasGetterOrSetter && hasValue) {
+          throw new Error('Cannot specify both value and setter/getter' + '` for property `' + name + '`');
+        }
+        if (!hasGetterOrSetter) {
+          if (!hasValue) descriptor.value = null;
+          descriptor.get = function () {
+            return descriptor.value;
+          };
+          descriptor.set = function (value) {
+            descriptor.value = value;
+          };
+        }
+        Object.defineProperty(this, name, {
+          configurable: true,
+          enumerable: true,
+          get: function () {
+            if (!descriptor.get) {
+              throw new Error('Property `' + name + '` cannot be read');
+            }
+            return descriptor.get.call(this);
+          },
+          set: function (value) {
+            if (!descriptor.set) {
+              throw new Error('Property `' + name + '` cannot be written');
+            }
+            if (descriptor.test && !descriptor.test(value)) {
+              throw new Error('Invalid value `' + value + '` for property `' + name + '`');
+            }
+            descriptor.set.call(this, value);
+            if (this.__observer__) {
+              this.__observer__.emitChange({ path: name, value: value });
+            }
+          }
+        });
+        this.$properties[name] = descriptor;
+      }, this);
+    },
+
+    /**
+     * 创建监控
+     * 为什么用 watches 而不是 watchers 或其它？
+     * 因为，这里仅是「监控配置」并且是「复数」
+     * @param {Object} watches 监控定义对象
+     * @returns {void} 无返回
+     */
+    _createWatches: function (watches) {
+      this._watchers = this._watchers || [];
+      utils.each(watches, function (name, handler) {
+        this.$watch(name, handler);
+      }, this);
+    },
+
+    /**
+     * 在模板发生更新时
+     * @returns {void} 无返回
+     */
+    _onTemplateUpdate: function () {
+      this._watchers.forEach(function (watcher) {
+        watcher.calc();
+      }, this);
+    },
+
+    /**
+     * 添加一个监控
+     * @param {string|function} calcer 计算函数或路径
+     * @param {function} handler 处理函数
+     * @returns {void} 无返回
+     */
+    $watch: function (calcer, handler) {
+      if (!utils.isFunction(handler)) return;
+      if (!utils.isFunction(calcer)) {
+        var path = calcer;
+        calcer = function () {
+          return utils.getByPath(this, path);
+        };
+      }
+      this._watchers.push(new Watcher(calcer.bind(this), handler.bind(this)));
+    },
+
+    /**
+     * 编译自身模板并完成绑定
+     * @returns {void} 无返回
+     */
+    $compile: function () {
+      if (this._compiled) return;
+      this._compiled = true;
+      this._callHook('onCreate');
+      utils.defineFreezeProp(this, '$element', this.element || utils.parseDom(this.template)[0]);
+      if (!this.$element || this.$element.nodeName === '#text') {
+        throw new Error('Invalid component template');
+      }
+      this._callHook('onCreated');
+      utils.defineFreezeProp(this, '_template', new Template(this.$element, {
+        directives: this._directives,
+        root: true
+      }));
+      this._template.bind(this);
+      this._template.on('update', this._onTemplateUpdate);
+      this._template.on('bind', function () {
+        this._callHook('onReady');
+      }.bind(this));
+    },
+
+    /**
+     * 向 DOM tree 中挂截组件
+     * @param {HTMLNode} mountNode 挂载点元素
+     * @returns 无返回 
+     */
+    $mount: function (mountNode, append) {
+      if (!mountNode || this._mounted) return;
+      this._callHook('onMount');
+      mountNode._targetNode = this.$element;
+      this.$element._mountNode = mountNode;
+      if (append) {
+        mountNode.appendChild(this.$element);
+      } else if (mountNode.parentNode) {
+        mountNode.parentNode.insertBefore(this.$element, mountNode);
+      }
+      this._mounted = true;
+      this._removed = false;
+      this._callHook('onMounted');
+    },
+
+    /**
+     * 移除组件
+     * @returns {void} 无返回
+     */
+    $remove: function () {
+      if (this._removed || !this._mounted) return;
+      this._callHook('onRemove');
+      if (this.$element.parentNode) {
+        this.$element.parentNode.removeChild(this.$element);
+      }
+      this._removed = true;
+      this._mounted = false;
+      this._callHook('onRemoved');
+    },
+
+    /**
+     * 释放组件
+     * @returns {void} 无返回
+     */
+    $dispose: function () {
+      this.$remove();
+      this.$children.forEach(function (child) {
+        child.$dispose();
+      }, this);
+      if (this.$parent) {
+        var index = this.$parent.$children.indexOf(this);
+        this.$parent.$children.splice(index, 1);
+      }
+      this._callHook('onDispose');
+      if (this._compiled) {
+        this._template.unbind();
+      }
+      this._callHook('onDisposed');
+      for (name in this) {
+        delete this[name];
+      }
+      ['__observer__', '$element', '$children', '$parent', '_template']
+        .forEach(function (name) {
+          delete this[name];
+        }, this);
+      this.__proto__ = null;
+    }
+
+  });
+
+  //向 ComponentClass.prototype 上拷贝成员
+  utils.each(classOpts, function (name, value) {
+    if (RESERVED_WORDS.indexOf(name) > -1) {
+      throw new Error('Name `' + name + '` is reserved')
+    }
+    ComponentClass.prototype[name] = value;
+  }, this);
+
+  //使 ComponentClass instanceof Component === true
+  ComponentClass.__proto__ = Component.prototype;
+
+  //定义扩展方法
+  ComponentClass.extend = function (classOpts) {
+    classOpts = classOpts || Object.create(null);
+    classOpts.extends = this;
+    return new Component(classOpts);
+  };
+
+  //创建实例的方法
+  ComponentClass.create = function (instanceOpts) {
+    return new ComponentClass(instanceOpts);
+  };
+
+  return ComponentClass;
+
+};
+
+//组件扩展方法，简单封装 extends
+Component.extend = function (classOpts) {
+  classOpts = classOpts || Object.create(null);
+  return new Component(classOpts);
+};
+
+module.exports = Component;
+},{"../template":28,"./component-directive":2,"./components":4,"./watcher":7,"cify":31,"events":32}],4:[function(require,module,exports){
+module.exports = {
+  View: require('./view')
+};
+},{"./view":5}],5:[function(require,module,exports){
+const Component = require('../component');
+const utils = require('ntils');
+
+const View = new Component({
+
+  template: '<div></div>',
+
+  properties: {
+    is: {
+      test: function (value) {
+        return utils.isFunction(value) || utils.isString(value);
+      },
+      set: function (value) {
+        if (utils.isString(value)) {
+          this.is = this.$parent && this.$parent.components ?
+            this.$parent.components[value] : null;
+          return;
+        }
+        if (this._component) {
+          this._component.$dispose();
+        }
+        this._Component = value;
+        this._component = new this._Component({
+          parent: this
+        });
+        this._component.$mount(this.$element, true);
+      },
+      get: function () {
+        return this._Component;
+      }
+    }
+  }
+
+});
+
+module.exports = View;
+},{"../component":3,"ntils":33}],6:[function(require,module,exports){
+const Component = require('./component');
+const Watcher = require('./watcher');
+const components = require('./components');
+
+Component.Watcher = Watcher;
+Component.components = components;
+Component.Component = Component;
+
+Component.component = function (name, component) {
+  if (!component) return components[name];
+  components[name] = component;
+};
+
+module.exports = Component;
+},{"./component":3,"./components":4,"./watcher":7}],7:[function(require,module,exports){
+const Class = require('cify');
+const utils = require('ntils');
+
+/**
+ * Watcher 类
+ * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
+ */
+const Watcher = new Class({
+
+  /**
+   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
+   * @param {function} calcor 计算函数
+   * @param {function} handler 处理函数
+   * @param {boolean} first 是否自动执行第一次
+   * @param {void} 无返回
+   */
+  constructor: function (calcor, handler, first) {
+    if (!utils.isFunction(calcor) || !utils.isFunction(handler)) {
+      throw new Error('Invalid parameters');
+    }
+    this.calcor = calcor;
+    this.handler = handler;
+    if (first) this.calc(true);
+  },
+
+  /**
+   * 执行计算
+   * @param {boolean} force 是否强制触发「计算函数」
+   * @returns {Object} 计算后的值
+   */
+  calc: function (force) {
+    var newValue = this.calcor();
+    if (force || !utils.deepEqual(newValue, this.value)) {
+      this.handler(newValue, this.value);
+    }
+    this.value = utils.clone(newValue);
+  }
+
+});
+
+module.exports = Watcher;
+},{"cify":31,"ntils":33}],8:[function(require,module,exports){
+const info = require('../.tmp/info.json');
+const utils = require('ntils');
+const Template = require('./template');
+const Component = require('./component');
+
+Component.version = info.version;
+Component.Template = Template;
+
+//持载模板相关对象
+utils.copy(Template, Component);
+
+//普通脚本引入
+if (window) window[info.name] = Component;
+//amd 模块
+if (typeof define !== 'undefined' && define.amd) {
+  define(info.name, [], function () {
+    return Component;
+  });
+}
+
+module.exports = Component;
+},{"../.tmp/info.json":1,"./component":6,"./template":28,"ntils":33}],9:[function(require,module,exports){
+const Class = require('cify');
+const Directive = require('./directive');
+const utils = require('ntils');
+const Expression = require('./expression');
+const directives = require('./directives');
+
+const DEFAULT_PREFIX = 'm';
+
+/**
+ * 模板编译器
+ * 可以通过指定「前缀」或「指令集」构建实例
+ */
+const Compiler = new Class({
+
+  /**
+   * 构造一个编译器
+   * @param {Object} options 选项
+   * @returns {void} 无返回
+   */
+  constructor: function (options) {
+    options = options || Object.create(null);
+    options.directives = options.directives || [];
+    this.prefix = options.prefix || DEFAULT_PREFIX;
+    this.directives = directives.concat(options.directives);
+  },
+
+  /**
+   * 解析要匹配的名称
+   * @param {string} name 要解析的名称字符串
+   * @param {HTMLNode} node 当前 HTML 元素结点
+   * @returns {Object} 解析后的对象
+   */
+  _parseMatchInfo: function (name, type, node) {
+    var parts = name.toLowerCase().split(':');
+    var info = {
+      type: type,
+      compiler: this,
+      node: node
+    };
+    if (parts.length > 1) {
+      info.prefix = parts[0];
+      info.name = parts[1];
+      info.decorates = parts.slice(2);
+    } else {
+      info.prefix = null;
+      info.name = parts[0];
+      info.decorates = [];
+    }
+    return info;
+  },
+
+  /**
+   * 查找所有匹配的指令
+   * @param {Object} matchInfo 匹配信息
+   * @returns {Array} 指令列表
+   */
+  _findDirectives: function (matchInfo) {
+    return this.directives.filter(function (Directive) {
+      return Directive.definition.test(matchInfo);
+    }, this);
+  },
+
+  /**
+   * 创建一个指令实例
+   * @param {Directive} Directive 指令类
+   * @param {Object} options 指令构建选项
+   * @returns {Directive} 指令实例
+   */
+  _createDirectiveInstance: function (Directive, options) {
+    options.compiler = this;
+    options.prefix = this.prefix;
+    return new Directive(options);
+  },
+
+  /**
+   * 初始化一个编译完成的 handler
+   * @param {function} handler 编译后的的模板函数
+   * @returns {void} 无返回
+   */
+  _bindHandler: function (handler) {
+    //排序 directives
+    handler.directives = handler.directives.sort(function (a, b) {
+      return b.level - a.level;
+    });
+    //初始化 directives
+    var boundDirectives = [];
+    utils.each(handler.directives, function (index, directive) {
+      directive.index = index;
+      directive.bind();
+      boundDirectives.push(directive);
+      //移除完成绑定的指令对应的 attribute
+      if (directive.remove !== false && directive.attribute) {
+        directive.node.removeAttribute(directive.attribute.name);
+      }
+      //如果遇到一个「终态」指令，停止向下初始化
+      //如果 each、if 等为「终态指令」
+      if (directive.final) {
+        return handler.final = true;
+      }
+    }, this);
+    handler.directives = boundDirectives;
+  },
+
+  /**
+   * 编辑一个元素本身
+   * @param {function} handler 当前模板函数
+   * @param {HTMLNode} node 当前 HTML 结点
+   * @returns {void} 无返回
+   */
+  _compileElement: function (handler, node) {
+    var matchInfo = this._parseMatchInfo(node.nodeName, Directive.TYPE_ELEMENT, node);
+    var elementDirectives = this._findDirectives(matchInfo);
+    elementDirectives.forEach(function (Directive) {
+      handler.directives.push(this._createDirectiveInstance(Directive, {
+        handler: handler,
+        node: node,
+        decorates: matchInfo.decorates
+      }));
+    }, this);
+  },
+
+  /**
+   * 编辑一个元素所有 attributes 
+   * @param {function} handler 当前模板函数
+   * @param {HTMLNode} node 当前 HTML 结点
+   * @returns {void} 无返回
+   */
+  _compileAttributes: function (handler, node) {
+    utils.toArray(node.attributes).forEach(function (attribute) {
+      var matchInfo = this._parseMatchInfo(attribute.name, Directive.TYPE_ATTRIBUTE, node);
+      var attributeDirectives = this._findDirectives(matchInfo);
+      attributeDirectives.forEach(function (Directive) {
+        var definition = Directive.definition;
+        handler.directives.push(this._createDirectiveInstance(Directive, {
+          handler: handler,
+          node: node,
+          attribute: attribute,
+          expression: definition.literal ?
+            attribute.value : new Expression(attribute.value),
+          decorates: matchInfo.decorates
+        }));
+      }, this);
+    }, this);
+  },
+
+  /**
+   * 编辑所有子结点
+   * @param {function} handler 当前模板函数
+   * @param {HTMLNode} node 当前 HTML 结点
+   * @returns {void} 无返回
+   */
+  _compileChildren: function (handler, node) {
+    if (handler.final) return;
+    utils.toArray(node.childNodes).forEach(function (childNode) {
+      var childHandler = this.compile(childNode);
+      childHandler.parent = this;
+      handler.children.push(childHandler);
+    }, this);
+  },
+
+  /**
+   * 编译一个模板
+   * @param {HTMLNode} node 模板根元素
+   * @returns {function} 模板函数
+   */
+  compile: function (node) {
+    //定义编译结果函数
+    var handler = function (scope) {
+      if (utils.isNull(scope)) scope = Object.create(null);
+      //执行指令
+      handler.directives.forEach(function (directive) {
+        directive.scope = scope;
+        directive.execute(scope);
+      }, this);
+      //执行子元素编译函数
+      handler.children.forEach(function (childHandler) {
+        childHandler(scope);
+      }, this);
+    };
+    handler.dispose = function () {
+      //执行指令
+      handler.directives.forEach(function (directive) {
+        directive.unbind();
+      }, this);
+      //执行子元素编译函数
+      handler.children.forEach(function (childHandler) {
+        childHandler.dispose();
+      }, this);
+    };
+    handler.node = node;
+    //定义 children & directives 
+    handler.directives = [];
+    handler.children = [];
+    if (node) {
+      //编辑相关指令
+      this._compileElement(handler, node);
+      this._compileAttributes(handler, node);
+      this._bindHandler(handler);
+      this._compileChildren(handler, node);
+    }
+    //返回编译后函数
+    return handler.bind(null);
+  }
+
+});
+
+module.exports = Compiler;
+},{"./directive":10,"./directives":15,"./expression":27,"cify":31,"ntils":33}],10:[function(require,module,exports){
+const Class = require('cify');
+const utils = require('ntils');
+const Expression = require('./expression');
+
+/**
+ * 指令定义信息类
+ * 可以通过每一个「指令类」的的「静态成员」访问
+ * 也可通过「指令实例」的「实例成员」访问
+ */
+const DirectiveDefinition = new Class({
+
+  _extends: Directive.prototype,
+
+  /**
+   * 构造一个指令定义信息对象
+   * @param {Object} options 选项
+   * @returns {void} 无返回
+   */
+  constructor: function (options) {
+    if (!options ||
+      !utils.isString(options.name) ||
+      options.name.length < 1) {
+      throw new Error('Invalid directive options');
+    }
+    //拷贝所有成员到当前 definition 实例
+    this.customTest = options.test;
+    delete options.test;
+    utils.copy(this._faultHanlde(options), this);
+  },
+
+  /**
+   * 针对「选项」做容错处理
+   * @param {Object} options 原姓选项
+   * @returns {Object} 处理后的选项
+   */
+  _faultHanlde: function (options) {
+    options.type = options.type || Directive.TYPE_ATTRIBUTE;
+    options.level = options.level || Directive.LEVEL_GENERAL;
+    options.match = options.match || options.name;
+    if (!(options.match instanceof RegExp)) {
+      options.match = new RegExp('^' + options.match + '$', 'i');
+    }
+    if (options.tag && !(options.tag instanceof RegExp)) {
+      options.tag = new RegExp('^' + options.tag + '$', 'i');
+    }
+    return options;
+  },
+
+  /**
+   * 检查指令是否匹配
+   * @returns {boolean} 测试结果
+   */
+  test: function (matchInfo) {
+    return (this.type === matchInfo.type) &&
+      (!this.tag || matchInfo.node && this.tag.test(matchInfo.node.nodeName)) &&
+      (this.prefix === false || matchInfo.prefix === matchInfo.compiler.prefix) &&
+      (this.match.test(matchInfo.name)) &&
+      (!this.customTest || this.customTest(matchInfo));
+  }
+
+});
+
+/**
+ * 指定定义工场函数
+ * @param {Object} defineOpts 选项
+ * @returns {Directive} 指令类
+ */
+function Directive(options) {
+  //创建 definition 实例
+  const definition = new DirectiveDefinition(options);
+  //生成指令类
+  const DirectiveClass = new Class({
+    _extends: definition,
+    //指令构建函数
+    constructor: function (instanceOptions) {
+      utils.copy(instanceOptions, this);
+    },
+    //挂载实例上的 definition
+    definition: definition,
+    //挂载实例核心方法
+    bind: options.bind || utils.noop,
+    execute: options.execute || function (scope) {
+      this.scope = scope;
+      if (this.definition.type === Directive.TYPE_ELEMENT) {
+        return this.update();
+      }
+      var newValue = this.definition.literal ?
+        this.attribute.value : this.expression.execute(scope);
+      if (!utils.deepEqual(this.__value__, newValue)) {
+        this.update(newValue, this.__value__);
+        this.__value__ = newValue;
+      }
+    },
+    update: options.update || utils.noop,
+    unbind: options.unbind || utils.noop,
+    //挂载指令常用的类型
+    utils: utils,
+    Expression: Expression
+  });
+  //向指令类添加「指令定义信息」
+  DirectiveClass.definition = definition;
+  DirectiveClass.__proto__ = definition;
+  return DirectiveClass;
+};
+
+//挂载指令定义信息类
+Directive.Definition = DirectiveDefinition;
+
+//指令类型
+Directive.TYPE_ATTRIBUTE = 'attribute';
+Directive.TYPE_ELEMENT = 'element';
+
+//指令级别
+Directive.LEVEL_PREVENT = 3000;
+Directive.LEVEL_STATEMENT = 2000;
+Directive.LEVEL_ELEMENT = 1000;
+Directive.LEVEL_GENERAL = 0;
+Directive.LEVEL_ATTRIBUTE = -1000;
+Directive.LEVEL_CLOAK = -2000;
+
+module.exports = Directive;
+},{"./expression":27,"cify":31,"ntils":33}],11:[function(require,module,exports){
+const Directive = require('../directive');
+
+/**
+ * 通用的 attribute 指令
+ * 用于所有 attribute 的处理
+ * 例如:
+ *  <div attr1="{{expr1}}" {{expr2}} {{attr3}}="{{expr3}}">
+ *  </div>
+ */
+module.exports = new Directive({
+  name: 'attr',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_ATTRIBUTE,
+  prefix: false,
+  literal: true,
+  remove: false,
+  match: /[\s\S]/i,
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.computedName = this.attribute.name;
+    this.computedValue = this.attribute.value;
+    this.nameExpr = new this.Expression(this.attribute.name, true);
+    this.valueExpr = new this.Expression(this.attribute.value, true);
+  },
+
+  execute: function (scope) {
+    var newComputedName = this.nameExpr.execute(scope);
+    if (this.computedName !== newComputedName) {
+      this.node.removeAttribute(this.computedName);
+      this.computedName = newComputedName;
+      if (!this.utils.isNull(this.computedName) && this.computedName.length > 0) {
+        this.node.setAttribute(this.computedName, '');
+      }
+    }
+    var newComputeValue = this.valueExpr.execute(scope);
+    newComputeValue = this.utils.isNull(newComputeValue) ? '' : newComputeValue;
+    if (this.computedValue !== newComputeValue) {
+      this.computedValue = newComputeValue;
+      this.node.setAttribute(
+        this.computedName,
+        this.computedValue
+      );
+    }
+  }
+
+});
+},{"../directive":10}],12:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'each',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_STATEMENT,
+  final: true,
+  literal: true,
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.mountNode = document.createTextNode('');
+    this.node.parentNode.insertBefore(this.mountNode, this.node);
+    //虽然，bind 完成后，也会进行 attribute 的移除，
+    //但 each 指令必须先移除，否再进行 item 编译时 each 还会生效
+    this.node.removeAttribute(this.attribute.name);
+    this.node.parentNode.removeChild(this.node);
+    this.parseExpr();
+    this.eachItems = [];
+  },
+
+  parseExpr: function () {
+    this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
+    var tokens = this.attribute.value.split(' ' + this.eachType + ' ');
+    var fnText = 'with(scope){utils.each(' + tokens[1] + ',fn,this)}';
+    this.each = new Function('utils', 'scope', 'fn', fnText).bind(null, this.utils);
+    var names = tokens[0].split(',').map(function (name) {
+      return name.trim();
+    });
+    if (this.eachType == 'in') {
+      this.keyName = names[0];
+      this.valueName = names[1];
+    } else {
+      this.keyName = names[1];
+      this.valueName = names[0];
+    }
+  },
+
+  execute: function (scope) {
+    var eachCount = 0;
+    var itemsFragment = document.createDocumentFragment();
+    this.each(scope, function (key, value) {
+      //创建新 scope
+      var newScope = { __proto__: scope };
+      if (this.keyName) newScope[this.keyName] = key;
+      if (this.valueName) newScope[this.valueName] = value;
+      var oldItem = this.eachItems[key];
+      if (oldItem) {
+        if (!oldItem.handler) console.log('a', this.eachItems, oldItem);
+        oldItem.handler(newScope);
+      } else {
+        var newItem = Object.create(null);
+        //创建新元素
+        newItem.node = this.node.cloneNode(true);
+        itemsFragment.appendChild(newItem.node);
+        newItem.handler = this.compiler.compile(newItem.node);
+        newItem.handler(newScope);
+        this.eachItems[key] = newItem;
+      }
+      eachCount++;
+    }.bind(this));
+    this.eachItems.splice(eachCount).forEach(function (item) {
+      item.node.parentNode.removeChild(item.node);
+    });
+    if (itemsFragment.childNodes.length > 0) {
+      this.mountNode.parentNode.insertBefore(itemsFragment, this.mountNode);
+    }
+  }
+
+});
+},{"../directive":10}],13:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'id',
+  type: Directive.TYPE_ATTRIBUTE,
+  literal: true,
+
+  update: function (value) {
+    this.scope[value] = this.node;
+  }
+
+});
+},{"../directive":10}],14:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'if',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_STATEMENT,
+  final: true,
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.mountNode = document.createTextNode('');
+    this.node.parentNode.insertBefore(this.mountNode, this.node);
+    //虽然，bind 完成后，也会进行 attribute 的移除，
+    //但 if 指令必须先移除，否再进行 item 编译时 if 还会生效
+    this.node.removeAttribute(this.attribute.name);
+    this.node.parentNode.removeChild(this.node);
+    this._oldValue = false;
+    this._handler = this.compiler.compile(this.node);
+  },
+
+  execute: function (scope) {
+    var newValue = this.expression.execute(scope);
+    var node = this.node._targetNode || this.node;
+    if (newValue) {
+      //如果新计算的结果为 true 才执行 
+      this._handler(scope);
+      if (!this._oldValue) {
+        this.mountNode.parentNode.insertBefore(node, this.mountNode);
+      }
+    } else if (this._oldValue && node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+    this._oldValue = newValue;
+  }
+
+});
+},{"../directive":10}],15:[function(require,module,exports){
+module.exports = [
+  require('./text'),
+  require('./attr'),
+  require('./each'),
+  require('./if'),
+  require('./prop'),
+  require('./on'),
+  require('./inner-html'),
+  require('./inner-text'),
+  require('./prevent'),
+  require('./id'),
+  require('./model-input'),
+  require('./model-select'),
+  require('./model-radio'),
+  require('./model-checkbox'),
+  require('./model-editable')
+];
+},{"./attr":11,"./each":12,"./id":13,"./if":14,"./inner-html":16,"./inner-text":17,"./model-checkbox":18,"./model-editable":19,"./model-input":20,"./model-radio":21,"./model-select":22,"./on":23,"./prevent":24,"./prop":25,"./text":26}],16:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'html',
+  type: Directive.TYPE_ATTRIBUTE,
+
+  update: function (newValue) {
+    this.node.innerHTML = newValue;
+  }
+
+});
+},{"../directive":10}],17:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'text',
+  type: Directive.TYPE_ATTRIBUTE,
+
+  update: function (newValue) {
+    this.node.innerText = newValue;
+  }
+
+});
+},{"../directive":10}],18:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'model',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_ATTRIBUTE,
+  tag: 'input',
+
+  test: function (matchInfo) {
+    var inputType = matchInfo.node.getAttribute('type');
+    return inputType === 'checkbox';
+  },
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.bindPath = this.attribute.value;
+    this.node.addEventListener('change', function () {
+      if (this.utils.isNull(this.scope)) return;
+      var value = this.utils.getByPath(this.scope, this.bindPath);
+      if (this.utils.isArray(value) && this.node.checked) {
+        value.push(this.node.value);
+      } else if (this.utils.isArray(value) && !this.node.checked) {
+        var index = value.indexOf(this.node.value);
+        value.splice(index, 1);
+      } else {
+        this.utils.setByPath(this.scope, this.bindPath, this.node.checked);
+      }
+    }.bind(this), false);
+  },
+
+  execute: function (scope) {
+    this.scope = scope;
+    var value = this.expression.execute(scope);
+    if (this.utils.isArray(value)) {
+      this.node.checked = value.indexOf(this.node.value) > -1;
+    } else {
+      this.node.checked = value;
+    }
+  }
+
+});
+},{"../directive":10}],19:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'model',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_ATTRIBUTE,
+  test: function (matchInfo) {
+    return matchInfo.node.isContentEditable;
+  },
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.bindPath = this.attribute.value;
+    this.node.addEventListener('input', function () {
+      if (this.utils.isNull(this.scope)) return;
+      this.utils.setByPath(this.scope, this.bindPath, this.node.innerHTML);
+    }.bind(this), false);
+  },
+
+  execute: function (scope) {
+    var value = this.expression.execute(scope);
+    if (this.node.innerHTML !== value) {
+      this.node.innerHTML = value;
+    }
+  }
+
+});
+},{"../directive":10}],20:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'model',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_ATTRIBUTE,
+  tag: /^(input|textarea)$/i,
+  test: function (matchInfo) {
+    var inputType = matchInfo.node.getAttribute('type');
+    return inputType !== 'radio' && inputType !== 'checkbox';
+  },
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.bindPath = this.attribute.value;
+    this.node.addEventListener('input', function () {
+      if (this.utils.isNull(this.scope)) return;
+      this.utils.setByPath(this.scope, this.bindPath, this.node.value);
+    }.bind(this), false);
+  },
+
+  execute: function (scope) {
+    var value = this.expression.execute(scope);
+    if (this.node.value !== value) {
+      this.node.value = value;
+    }
+  }
+
+});
+},{"../directive":10}],21:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'model',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_ATTRIBUTE,
+  tag: 'input',
+  test: function (matchInfo) {
+    var inputType = matchInfo.node.getAttribute('type');
+    return inputType === 'radio';
+  },
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.bindPath = this.attribute.value;
+    this.node.addEventListener('change', function () {
+      if (this.utils.isNull(this.scope)) return;
+      this.utils.setByPath(this.scope, this.bindPath, this.node.value);
+    }.bind(this), false);
+  },
+
+  execute: function (scope) {
+    this.scope = scope;
+    var value = this.expression.execute(scope);
+    this.node.checked = value == this.node.value;
+  }
+
+});
+},{"../directive":10}],22:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'model',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_ATTRIBUTE,
+  final: true,
+  tag: 'select',
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.bindPath = this.attribute.value;
+    this.node.removeAttribute(this.attribute.name);
+    this._handler = this.compiler.compile(this.node);
+    this.node.addEventListener('change', function () {
+      if (this.utils.isNull(this.scope)) return;
+      var selectedOptions = this.node.selectedOptions;
+      var value = this.node.multiple
+        ? [].slice.call(selectedOptions).map(function (option) {
+          return option.value;
+        }, this)
+        : selectedOptions[0].value;
+      this.utils.setByPath(this.scope, this.bindPath, value);
+    }.bind(this), false);
+  },
+
+  execute: function (scope) {
+    this.scope = scope;
+    this._handler(scope);
+    var value = this.expression.execute(scope);
+    if (!this.utils.isArray(value)) value = [value];
+    [].slice.call(this.node.options).forEach(function (option) {
+      option.selected = value.indexOf(option.value) > -1;
+    }, this);
+  }
+
+});
+},{"../directive":10}],23:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'on',
+  type: Directive.TYPE_ATTRIBUTE,
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.node.addEventListener(this.decorates[0], function (event) {
+      if (this.utils.isNull(this.scope)) return;
+      var scope = { __proto__: this.scope };
+      scope.event = scope.$event = event;
+      this.expression.execute(scope);
+    }.bind(this), false);
+  },
+
+  execute: function (scope) {
+    this.scope = scope;
+  }
+
+});
+},{"../directive":10}],24:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'prevent',
+  type: Directive.TYPE_ATTRIBUTE,
+  level: Directive.LEVEL_PREVENT,
+  final: true
+});
+},{"../directive":10}],25:[function(require,module,exports){
+const Directive = require('../directive');
+
+module.exports = new Directive({
+  name: 'prop',
+  type: Directive.TYPE_ATTRIBUTE,
+
+  update: function (value) {
+    this.node[this.decorates[0]] = value;
+  }
+
+});
+},{"../directive":10}],26:[function(require,module,exports){
+const Directive = require('../directive');
+const Expression = require('../expression');
+
+const CLOAK_CLASS_NAME = 'cloak';
+
+module.exports = new Directive({
+  name: '#text',
+  type: Directive.TYPE_ELEMENT,
+  prefix: false,
+  test: function (matchInfo) {
+    return matchInfo.node.nodeValue.trim().length > 4;
+  },
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  bind: function () {
+    this.expr = new Expression(this.node.nodeValue, true);
+    this.node.nodeValue = '';
+    if (this.node.parentNode) {
+      this.node.parentNode.removeAttribute(CLOAK_CLASS_NAME);
+    }
+  },
+
+  execute: function (scope) {
+    this.scope = scope;
+    var newValue = this.expr.execute(scope);
+    if (this.node.nodeValue !== newValue) {
+      this.node.nodeValue = newValue;
+    }
+  }
+
+});
+},{"../directive":10,"../expression":27}],27:[function(require,module,exports){
+const Class = require('cify');
+const utils = require('ntils');
+
+/**
+ * 表达式类型，将字符串构析为可执行表达式实例
+ */
+const Expression = new Class({
+
+  /**
+   * 通过字符串构造一个表达式实例
+   * @param {string} code 代码字符串
+   * @param {boolean} mix 是否是混合代码
+   * @returns {void} 无返回
+   */
+  constructor: function (code, mix) {
+    this.func = mix ?
+      this._compileMixedCode(code) :
+      this._compileCode(code);
+  },
+
+  /**
+   * 编译普通表达式代码
+   * @param {string} code 代码字符串
+   * @returns {function} 编辑后的函数
+   */
+  _compileCode: function (code) {
+    code = this._escapeEOL(this._wrapCode(code));
+    return this._createFunction(code);
+  },
+
+  /**
+   * 编辑混合的表达式代码
+   * @param {string} code 代码字符串
+   * @returns {function} 编辑后的函数
+   */
+  _compileMixedCode: function (code) {
+    var statements = this._parseMixedCode(code);
+    code = this._escapeEOL(statements.join('+'));
+    return this._createFunction(code);
+  },
+
+  /**
+   * 通过符串代码创建一个可执行函数
+   * @param {string} code 代码字符串
+   * @returns {function} 创建的函数
+   */
+  _createFunction: function (code) {
+    var func = new Function('utils', 'scope', 'with(scope){return ' + code + '}');
+    return func.bind(null, utils);
+  },
+
+  /**
+   * 解析混合代码字符串
+   * @param {string} code 混合代码字符串
+   * @returns {Array} 解析后的「token」列表
+   */
+  _parseMixedCode: function (code) {
+    var index = 0, length = code.length;
+    var token = '', isExpr = false, tokens = [];
+    while (index <= length) {
+      var char = code[index++];
+      var nextChar = code[index];
+      if (utils.isNull(char)) {
+        if (token.length > 0) {
+          tokens.push('"' + this._escapeCode(token) + '"');
+        }
+        token = '';
+        isExpr = false;
+      } else if (!isExpr && char + nextChar == '{{') {
+        if (token.length > 0) {
+          tokens.push('"' + this._escapeCode(token) + '"');
+        }
+        token = '';
+        isExpr = true;
+        index++;
+      } else if (isExpr && char + nextChar == '}}') {
+        if (token.length > 0) {
+          tokens.push(this._wrapCode(token));
+        }
+        token = '';
+        isExpr = false;
+        index++;
+      } else {
+        token += char;
+      }
+    }
+    return tokens;
+  },
+
+  /**
+   * 转义处理代码字符串
+   * @param {string} str 源字符串
+   * @returns {string} 处理后的字符串
+   */
+  _escapeCode: function (str) {
+    return str.replace(/"/, '\\"').replace('\r\n', '\\r\\n').replace('\n', '\\n');
+  },
+
+  /**
+   * 转义换行符
+   * @param {string} str 源字符串
+   * @returns {string} 处理后的字符串
+   */
+  _escapeEOL: function (code) {
+    return code.replace(/\n/gm, '\\\n');
+  },
+
+  /**
+   * 通过闭包和 try/cache 包裹代码
+   * 将模板中错误的代码直接显示在「模板中用到的位置」，更易于定位错误。
+   * @param {string} str 源字符串
+   * @returns {string} 处理后的字符串
+   */
+  _wrapCode: function (code) {
+    return '((function(){try{return (' + code + ')}catch(err){console.error(err);return err;}})())';
+  },
+
+  /**
+   * 通过 scope 对象执行表达式
+   * @param {Object} scope 上下文对象
+   * @returns {Object} 执行结果
+   */
+  execute: function (scope) {
+    if (utils.isNull(scope)) {
+      scope = Object.create(null);
+    }
+    return this.func.call(scope, scope);
+  }
+
+});
+
+module.exports = Expression;
+},{"cify":31,"ntils":33}],28:[function(require,module,exports){
+const Compiler = require('./compiler');
+const Directive = require('./directive');
+const Expression = require('./expression');
+const Observer = require('./observer');
+const Template = require('./template');
+const directives = require('./directives/');
+const utils = require('ntils');
+
+Template.Template = Template;
+Template.Compiler = Compiler;
+Template.Directive = Directive;
+Template.directives = directives;
+Template.Expression = Expression;
+Template.Observer = Observer;
+Template.utils = utils;
+
+module.exports = Template;
+},{"./compiler":9,"./directive":10,"./directives/":15,"./expression":27,"./observer":29,"./template":30,"ntils":33}],29:[function(require,module,exports){
+const Class = require('cify');
+const utils = require('ntils');
+const EventEmitter = require('events');
+
+const OBSERVER_PROP_NAME = '__observer__';
+const CHANGE_EVENT_NAME = 'change';
+const EVENT_MAX_DISPATCH_LAYER = 20;
+
+/**
+ * 对象观察类，可以监控对象变化
+ * 目前方案问题:
+ *   对于父子关系和事件冒泡，目前方案如果用 delete 删除一个属性，无关真实删除关系，
+ *   即便调用 clearReference 也无法再清除关系，子对象的 parents 中会一直有一个引用，当前方案最高效
+ * 其它方法一:
+ *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件中 filter 出来，
+ *   基本和目前方法类似，但是关系在外部存领教，所以 clearReference 可清除。
+ * 其它方案二: 
+ *   构造时添加到全局数组，每一个 observer change 时都让放到全局的 observer 遍历自身的，
+ *   检果事件源是不是自已的子对象，如果是则触发自身 change 事件，这样 ob 对象本身没有相关引用
+ *   clearReference 时只从全局清除掉就行了，并且 delete 操作也不会影响，但效率稍差。
+ * 其它方案三: 
+ *   给构造函数添加一个 deep 属性，只有 deep 的 ob 对象，才放入到全局数组中，检查时逻辑同方案二
+ *   但是因为要检查的对象会少很多，效率会更高一点。
+ */
+const Observer = new Class({
+  _extends: EventEmitter,
+
+  /**
+   * 通过目标对象构造一个观察对象
+   * @param {Object} target 目标对象
+   * @returns {void} 无返回
+   */
+  constructor: function (target, options) {
+    if (utils.isNull(target)) {
+      throw new Error('Invalid target');
+    }
+    options = options || Object.create(null);
+    var observer = target[OBSERVER_PROP_NAME];
+    if (observer) {
+      utils.copy(options, observer.options);
+      if (observer.options.root) {
+        observer.parents.length = 0;
+      }
+      observer.apply();
+      return observer;
+    }
+    utils.defineFreezeProp(this, 'options', options);
+    utils.defineFreezeProp(this, 'shadow', Object.create(null));
+    utils.defineFreezeProp(this, 'target', target);
+    utils.defineFreezeProp(this, 'parents', []);
+    utils.defineFreezeProp(target, OBSERVER_PROP_NAME, this);
+    this.apply();
+  },
+
+  /**
+   * 添加一个属性，动态添中的属性，无法被观察，
+   * 但是通过 set 方法添加的属性可能被观察。
+   */
+  set: function (name, value) {
+    if (utils.isFunction(value)) return;
+    Object.defineProperty(this.target, name, {
+      get: function () {
+        return this[OBSERVER_PROP_NAME].shadow[name];
+      },
+      set: function (value) {
+        var observer = this[OBSERVER_PROP_NAME];
+        var oldValue = observer.shadow[name];
+        if (oldValue === value) return;
+        if (utils.isObject(value)) {
+          var childObserver = new Observer(value);
+          observer.addChild(childObserver, name);
+        }
+        //移除旧值的父引用
+        //如果用 delete 删除属性将无法移除父子引用
+        if (oldValue && oldValue[OBSERVER_PROP_NAME]) {
+          observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
+        }
+        observer.shadow[name] = value;
+        observer.emitChange({ path: name, value: value });
+      },
+      configurable: true,
+      enumerable: true
+    });
+    this.target[name] = value;
+  },
+
+  /**
+   * 自动应用所有动态添加的属性
+   * @returns {void} 无返回
+   */
+  apply: function () {
+    if (utils.isArray(this.target)) {
+      this._wrapArray(this.target);
+    }
+    var names = this._getPropertyNames(this.target);
+    names.forEach(function (name) {
+      var desc = Object.getOwnPropertyDescriptor(this.target, name);
+      if (!('value' in desc)) return;
+      this.set(name, this.target[name]);
+    }, this);
+  },
+
+  /**
+   * 清除所有父子引用
+   * @returns {void} 无返回
+   */
+  clearReference: function () {
+    utils.each(this.target, function (name, value) {
+      if (utils.isNull(value)) return;
+      var child = value[OBSERVER_PROP_NAME];
+      if (child) this.removeChild(child);
+    }, this);
+  },
+
+  /**
+   * 派发一个事件，事件会向父级对象冒泡
+   * @param {string} eventName 事件名称
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+  dispatch: function (eventName, event) {
+    event.__layer__ = event.__layer__ || 0;
+    event.__layer__++;
+    if (event.__layer__ >= EVENT_MAX_DISPATCH_LAYER) return;
+    this.emit(eventName, event);
+    if (!this.parents || this.parents.length < 1) return;
+    this.parents.forEach(function (item) {
+      if (!(item.name in item.parent.target)) {
+        return item.parent.removeChild(this);
+      }
+      var parentEvent = utils.copy(event);
+      parentEvent.path = item.name + '.' + event.path;
+      item.parent.dispatch(eventName, parentEvent);
+    }, this);
+  },
+
+  /**
+   * 添子观察者对象
+   * @param {Object} child 父对象
+   * @param {String} name 属性名
+   * @returns {void} 无返回
+   */
+  addChild: function (child, name) {
+    if (utils.isNull(child) || utils.isNull(name)) {
+      throw new Error('Invalid paramaters');
+    }
+    if (child.options.root) return;
+    child.parents.push({ parent: this, name: name });
+  },
+
+  /**
+   * 移除子对象
+   * @param {Object} child 父对象
+   * @param {String} name 属性名
+   * @returns {void} 无返回
+   */
+  removeChild: function (child, name) {
+    if (utils.isNull(child)) {
+      throw new Error('Invalid paramaters');
+    }
+    var foundIndex = -1;
+    child.parents.forEach(function (item, index) {
+      if (item.parent === this && item.name === name) {
+        foundIndex = index;
+      }
+    }, this);
+    if (foundIndex > -1) {
+      child.parents.splice(foundIndex, 1);
+    }
+  },
+
+  /**
+   * 触发 change 事件
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+  emitChange: function (event) {
+    this.dispatch(CHANGE_EVENT_NAME, event);
+  },
+
+  /**
+   * 获取所有成员名称列表
+   * @returns {Array} 所有成员名称列表
+   */
+  _getPropertyNames: function () {
+    var names = utils.isArray(this.target) ?
+      this.target.map(function (item, index) {
+        return index;
+      }) : Object.keys(this.target);
+    return names.filter(function (name) {
+      return name !== OBSERVER_PROP_NAME;
+    });
+  },
+
+  /**
+   * 包裹数组
+   * @param {array} array 源数组
+   * @returns {array} 处理后的数组
+   */
+  _wrapArray: function (array) {
+    utils.defineFreezeProp(array, 'push', function () {
+      var items = [].slice.call(arguments);
+      items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
+        this[OBSERVER_PROP_NAME].set(array.length, item);
+      }, this);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+    });
+    utils.defineFreezeProp(array, 'pop', function () {
+      var item = [].pop.apply(this, arguments);
+      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return item;
+    });
+    utils.defineFreezeProp(array, 'unshift', function () {
+      var items = [].slice.call(arguments);
+      items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
+        this[OBSERVER_PROP_NAME].set(0, item);
+      }, this);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+    });
+    utils.defineFreezeProp(array, 'shift', function () {
+      var item = [].shift.apply(this, arguments);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return item;
+    });
+    utils.defineFreezeProp(array, 'splice', function () {
+      var startIndex = arguments[0];
+      var endIndex = utils.isNull(arguments[1])
+        ? startIndex + arguments[1]
+        : this.length - 1;
+      var items = [].splice.apply(this, arguments);
+      for (var i = startIndex; i <= endIndex; i++) {
+        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
+      };
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return items;
+    });
+    utils.defineFreezeProp(array, 'set', function (index, value) {
+      if (index >= this.length) {
+        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      }
+      this[OBSERVER_PROP_NAME].set(index, value);
+    });
+  }
+
+});
+
+/**
+ * 观察一个对象
+ * @param {Object} target 目标对象
+ * @return {Observer} 观察者对象
+ */
+Observer.observe = function (target) {
+  return new Observer(target);
+};
+
+module.exports = Observer;
+},{"cify":31,"events":32,"ntils":33}],30:[function(require,module,exports){
+const Class = require('cify');
+const Observer = require('./observer');
+const EventEmitter = require('events');
+const Compiler = require('./compiler');
+
+/**
+ * 模板类
+ * 可能通过 element 作为参数，创建一个模板实例
+ */
+const Template = new Class({
+  _extends: EventEmitter,
+
+  /**
+   * 构建一个模板板实例
+   * @param {HTMLNode} element HTML 元素
+   * @param {Object} options 选项
+   * @returns void 无返回
+   */
+  constructor: function (element, options) {
+    options = options || Object.create(null);
+    this.options = options;
+    this.element = element;
+    this.compiler = options.compiler || new Compiler(options);
+    this.render = this.compiler.compile(this.element);
+    this.update = this.update.bind(this);
+    this._update = this._update.bind(this);
+    this._updateTimer = 0;
+  },
+
+  /**
+   * 更新当前模板 (会过滤不必要的更新)
+   * @returns {void} 无返回
+   */
+  update: function () {
+    if (this._updateTimer) {
+      clearTimeout(this._updateTimer);
+      this._updateTimer = null;
+    }
+    this._updateTimer = setTimeout(this._update, 0);
+  },
+
+  /**
+   * 更新当前模板内部方法 
+   * @returns {void} 无返回
+   */
+  _update: function () {
+    if (!this._updateTimer || !this.observer) return;
+    this.emit('update', this);
+    this.render(this.observer.target);
+    this._onBind();
+  },
+
+  /**
+   * 在绑定成功时
+   * @returns {void} 无返回
+   */
+  _onBind: function () {
+    if (this._bound) return;
+    this._bound = true;
+    this.emit('bind', this);
+  },
+
+  /**
+   * 将模板绑定到一个 scope
+   * @param {Object} scope 绑定的上下文对象
+   * @param {boolean} disableFirst 是否禁用第一次的自动渲染
+   * @returns {void} 无返回
+   */
+  bind: function (scope, disableFirst) {
+    this.unbind();
+    this.observer = new Observer(scope, {
+      root: this.options.root
+    });
+    this.observer.on('change', this.update);
+    if (disableFirst) {
+      this._onBind();
+    } else {
+      this.update();
+    }
+  },
+
+  /**
+   * 解绑定
+   * @returns {void} 无返回
+   */
+  unbind: function () {
+    if (!this.observer) return;
+    this.observer.removeListener('change', this.update);
+    this.observer.clearReference();
+    this.observer = null;
+  },
+
+  /**
+   * 释放
+   * @returns {void} 无返回
+   */
+  dispose: function () {
+    this.unbind();
+    this.render.dispose();
+  }
+
+});
+
+module.exports = Template;
+},{"./compiler":9,"./observer":29,"cify":31,"events":32}],31:[function(require,module,exports){
+; (function () {
+  var createInstance = (function () {
+    var fnBody = ['switch(args.length){']
+    for (var i = 20; i > 0; i--) {
+      var fnArgs = []
+      for (var j = 0; j < i; j++) fnArgs.push('args[' + j + ']')
+      fnBody.push('case ' + i + ':return new Fn(' + fnArgs.join(',') + ');')
+    }
+    fnBody.push('case 0:default:return new Fn();}')
+    return new Function('Fn', 'args', fnBody.join(''))
+  })()
+
+  function getPropertyNames(obj) {
+    var nameList = Object.getOwnPropertyNames(obj)
+    if (obj.__proto__) {
+      nameList.push.apply(nameList, getPropertyNames(obj.__proto__))
+    }
+    return nameList
+  }
+
+  function isChildClass(_child, _super) {
+    if (_child.__proto__ == _super.prototype) {
+      return true
+    } else if (_child.prototype) {
+      return isChildClass(_child.prototype, _super)
+    } else {
+      return false
+    }
+  }
+
+  function createSuper(_self, proto) {
+    var _super = function () {
+      if (proto.constructor) {
+        proto.constructor.apply(_self, arguments)
+      }
+    }
+    delete _super.name
+    var nameList = getPropertyNames(proto)
+    nameList.forEach(function (name) {
+      if (name == '_super' ||
+        name == '_extends' ||
+        name == '_static' ||
+        name == 'constructor') {
+        return
+      }
+      if (typeof proto[name] === 'function') {
+        _super[name] = _super[name] || proto[name].bind(_self)
+      } else {
+        _super[name] = _super[name] || proto[name]
+      }
+    })
+    _super.__proto__ = {}
+    return _super
+  }
+
+  function defineClass(def) {
+    var classProto = ((typeof def === 'function') ? def() : def) || {}
+    var classExtends = classProto._extends
+    var clsssStatic = classProto._static || {}
+    if (typeof classExtends === 'function') {
+      classProto.__proto__ = classExtends.prototype
+      clsssStatic.__proto__ = classExtends
+    } else if (classExtends) {
+      classProto.__proto__ = classExtends
+    } else {
+      classProto.__proto__ = {}
+    }
+    classProto.__defineGetter__('_super', function () {
+      this.__super__ = this.__super__ || createSuper(this, classProto.__proto__)
+      return this.__super__
+    })
+    Class.prototype = classProto
+    Class.__proto__ = clsssStatic
+    function Class() {
+      var instance = this
+      if (typeof classExtends === 'function') {
+        instance = createInstance(classExtends, arguments)
+      }
+      instance.constructor = Class
+      instance._static = instance.Class = Class
+      instance.__proto__ = Class.prototype
+      var constructor = instance.__proto__.constructor
+      if (constructor != null &&
+        constructor != Object) {
+        var rs = constructor.apply(instance, arguments)
+        instance = rs && classProto.hasOwnProperty('constructor') ? rs : instance
+      }
+      instance.__proto__ = Class.prototype
+      delete instance._extends
+      return instance
+    }
+    Class.extendsOf = function (_super) {
+      return isChildClass(this, _super)
+    };
+    Class.superOf = function (_child) {
+      return isChildClass(_child, this)
+    };
+    return Class
+  }
+
+  defineClass.prototype.__proto__ = Function.prototype
+  defineClass.Class = defineClass
+
+  if (typeof module != 'undefined') {
+    module.exports = defineClass
+  }
+
+  if (typeof define == 'function' && define.amd) {
+    define('cify', [], function () {
+      return defineClass
+    })
+  }
+
+  if (typeof window != 'undefined') {
+    window.cify = window.Class = defineClass
+  }
+})()
+
+},{}],32:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],33:[function(require,module,exports){
+(function (owner) {
+  "use strict";
+
+  /**
+   * 空函数
+   */
+  owner.noop = function () { };
+
+  /**
+   * 验证一个对象是否为NULL
+   * @method isNull
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isNull = function (obj) {
+    return obj === null || typeof obj === "undefined";
+  };
+
+  /**
+   * 除去字符串两端的空格
+   * @method trim
+   * @param  {String} str 源字符串
+   * @return {String}     结果字符串
+   * @static
+   */
+  owner.trim = function (str) {
+    if (this.isNull(str)) return str;
+    if (str.trim) {
+      return str.trim();
+    } else {
+      return str.replace(/(^[\\s]*)|([\\s]*$)/g, "");
+    }
+  };
+
+  /**
+   * 替换所有
+   * @method replace
+   * @param {String} str 源字符串
+   * @param {String} str1 要替换的字符串
+   * @param {String} str2 替换为的字符串
+   * @static
+   */
+  owner.replace = function (str, str1, str2) {
+    if (this.isNull(str)) return str;
+    return str.replace(new RegExp(str1, 'g'), str2);
+  };
+
+  /**
+   * 从字符串开头匹配
+   * @method startWith
+   * @param {String} str1 源字符串
+   * @param {String} str2 要匹配的字符串
+   * @return {Boolean} 匹配结果
+   * @static
+   */
+  owner.startWith = function (str1, str2) {
+    if (this.isNull(str1) || this.isNull(str2)) return false;
+    return str1.indexOf(str2) === 0;
+  };
+
+  /**
+   * 是否包含
+   * @method contains
+   * @param {String} str1 源字符串
+   * @param {String} str2 检查包括字符串
+   * @return {Boolean} 结果
+   * @static
+   */
+  owner.contains = function (str1, str2) {
+    var self = this;
+    if (this.isNull(str1) || this.isNull(str2)) return false;
+    return str1.indexOf(str2) > -1;
+  };
+
+  /**
+   * 从字符串结束匹配
+   * @method endWidth
+   * @param {String} str1 源字符串
+   * @param {String} str2 匹配字符串
+   * @return {Boolean} 匹配结果
+   * @static
+   */
+  owner.endWith = function (str1, str2) {
+    if (this.isNull(str1) || this.isNull(str2)) return false;
+    return str1.indexOf(str2) === (str1.length - str2.length);
+  };
+
+  /**
+   * 是否包含属性
+   * @method hasProperty
+   * @param  {Object}  obj  对象
+   * @param  {String}  name 属性名
+   * @return {Boolean}      结果
+   * @static
+   */
+  owner.has = owner.hasProperty = function (obj, name) {
+    if (this.isNull(obj) || this.isNull(name)) return false;
+    return (name in obj) || (obj.hasOwnProperty(name));
+  };
+
+  /**
+   * 验证一个对象是否为Function
+   * @method isFunction
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isFunction = function (obj) {
+    if (this.isNull(obj)) return false;
+    return typeof obj === "function";
+  };
+
+  /**
+   * 验证一个对象是否为String
+   * @method isString
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isString = function (obj) {
+    if (this.isNull(obj)) return false;
+    return typeof obj === 'string' || obj instanceof String;
+  };
+
+  /**
+   * 验证一个对象是否为Number
+   * @method isNumber
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isNumber = function (obj) {
+    if (this.isNull(obj)) return false;
+    return typeof obj === 'number' || obj instanceof Number;
+  };
+
+  /**
+   * 验证一个对象是否为Boolean
+   * @method isBoolean
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isBoolean = function (obj) {
+    if (this.isNull(obj)) return false;
+    return typeof obj === 'boolean' || obj instanceof Boolean;
+  };
+
+  /**
+   * 验证一个对象是否为HTML Element
+   * @method isElement
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isElement = function (obj) {
+    if (this.isNull(obj)) return false;
+    if (window.Element) return obj instanceof Element;
+    else return (obj.tagName && obj.nodeType && obj.nodeName && obj.attributes && obj.ownerDocument);
+  };
+
+  /**
+   * 验证一个对象是否为HTML Text Element
+   * @method isText
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isText = function (obj) {
+    if (this.isNull(obj)) return false;
+    return obj instanceof Text;
+  };
+
+  /**
+   * 验证一个对象是否为Object
+   * @method isObject
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isObject = function (obj) {
+    if (this.isNull(obj)) return false;
+    return typeof obj === "object";
+  };
+
+  /**
+   * 验证一个对象是否为Array或伪Array
+   * @method isArray
+   * @param  {Object}  obj 要验证的对象
+   * @return {Boolean}     结果
+   * @static
+   */
+  owner.isArray = function (obj) {
+    if (this.isNull(obj)) return false;
+    var v1 = Object.prototype.toString.call(obj) === '[object Array]';
+    var v2 = obj instanceof Array;
+    var v3 = !this.isString(obj) && this.isNumber(obj.length) && this.isFunction(obj.splice);
+    var v4 = !this.isString(obj) && this.isNumber(obj.length) && obj[0];
+    return v1 || v2 || v3 || v4;
+  };
+
+  /**
+   * 验证是不是一个日期对象
+   * @method isDate
+   * @param {Object} val   要检查的对象
+   * @return {Boolean}           结果
+   * @static
+   */
+  owner.isDate = function (val) {
+    if (this.isNull(val)) return false;
+    return val instanceof Date;
+  };
+
+  /**
+   * 转换为数组
+   * @method toArray
+   * @param {Array|Object} array 伪数组
+   * @return {Array} 转换结果数组
+   * @static
+   */
+  owner.toArray = function (array) {
+    if (this.isNull(array)) return [];
+    return Array.prototype.slice.call(array);
+  };
+
+  /**
+   * 转为日期格式
+   * @method toDate
+   * @param {Number|String} val 日期字符串或整型数值
+   * @return {Date} 日期对象
+   * @static
+   */
+  owner.toDate = function (val) {
+    var self = this;
+    if (self.isNumber(val))
+      return new Date(val);
+    else if (self.isString(val))
+      return new Date(self.replace(self.replace(val, '-', '/'), 'T', ' '));
+    else if (self.isDate(val))
+      return val;
+    else
+      return null;
+  };
+
+  /**
+   * 遍历一个对像或数组
+   * @method each
+   * @param  {Object or Array}   obj  要遍历的数组或对象
+   * @param  {Function} fn            处理函数
+   * @return {void}                   无返回值
+   * @static
+   */
+  owner.each = function (list, handler, scope) {
+    if (this.isNull(list) || this.isNull(handler)) return;
+    if (this.isArray(list)) {
+      var listLength = list.length;
+      for (var i = 0; i < listLength; i++) {
+        var rs = handler.call(scope || list[i], i, list[i]);
+        if (!this.isNull(rs)) return rs;
+      }
+    } else {
+      for (var key in list) {
+        var rs = handler.call(scope || list[key], key, list[key]);
+        if (!this.isNull(rs)) return rs;
+      }
+    }
+  };
+
+  /**
+   * 格式化日期
+   * @method formatDate
+   * @param {Date|String|Number} date 日期
+   * @param {String} format 格式化字符串
+   * @param {object} dict 反译字典
+   * @return {String} 格式化结果
+   * @static
+   */
+  owner.formatDate = function (date, format, dict) {
+    if (this.isNull(format) || this.isNull(date)) return date;
+    date = this.toDate(date);
+    dict = dict || {};
+    var placeholder = {
+      "M+": date.getMonth() + 1, //month
+      "d+": date.getDate(), //day
+      "h+": date.getHours(), //hour
+      "m+": date.getMinutes(), //minute
+      "s+": date.getSeconds(), //second
+      "w+": date.getDay(), //week
+      "q+": Math.floor((date.getMonth() + 3) / 3), //quarter
+      "S": date.getMilliseconds() //millisecond
+    }
+    if (/(y+)/.test(format)) {
+      format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+    }
+    for (var key in placeholder) {
+      if (new RegExp("(" + key + ")").test(format)) {
+        var value = placeholder[key];
+        value = dict[value] || value;
+        format = format.replace(RegExp.$1, RegExp.$1.length == 1
+          ? value : ("00" + value).substr(("" + value).length));
+      }
+    }
+    return format;
+  };
+
+  /**
+   * 深度克隆对象
+   * @method clone
+   * @param {Object} obj 源对象
+   * @return {Object} 新对象
+   * @static
+   */
+  owner.clone = function (obj, igonreArray) {
+    if (this.isNull(obj) || this.isString(obj) || this.isNumber(obj) || this.isBoolean(obj) || this.isDate(obj)) {
+      return obj;
+    }
+    var objClone = obj;
+    try {
+      objClone = new obj.constructor();
+    } catch (ex) { }
+    for (var key in obj) {
+      if (objClone[key] != obj[key] && !this.contains(igonreArray, key)) {
+        if (typeof (obj[key]) === 'object') {
+          objClone[key] = this.clone(obj[key], igonreArray);
+        } else {
+          objClone[key] = obj[key];
+        }
+      }
+    }
+    this.each(['toString', 'valueOf'], function (i, name) {
+      if (this.contains(igonreArray, key)) return;
+      objClone[name] = obj[name];
+    }, this);
+    return objClone;
+  };
+
+  /**
+   * 拷贝对象
+   * @method copy
+   * @param {Object} obj1 源对象
+   * @param {Object} obj2 目标对象
+   * @static
+   */
+  owner.copy = function (obj1, obj2) {
+    obj2 = obj2 || {};
+    this.each(obj1, function (name) {
+      try {
+        obj2[name] = obj1[name];
+      } catch (ex) { }
+    })
+    return obj2;
+  };
+
+  /**
+   * 定义不可遍历的属性
+   **/
+  owner.defineFreezeProp = function (obj, name, value) {
+    Object.defineProperty(obj, name, {
+      value: value,
+      enumerable: false,
+      configurable: true, //能不能重写定义
+      writable: false //能不能用「赋值」运算更改
+    });
+  };
+
+  /**
+   * 获取所有 key 
+   */
+  owner.keys = function (obj) {
+    if (Object.keys) return Object.keys(obj);
+    var keys = [];
+    this.each(obj, function (key) {
+      keys.push(key);
+    });
+    return keys;
+  };
+
+  /**
+   * 创建一个对象
+   */
+  owner.create = function (proto) {
+    if (Object.create) return Object.create(proto);
+    return { __proto__: proto };
+  };
+
+  /**
+   * 是否深度相等
+   */
+  owner.deepEqual = function (a, b) {
+    if (a === b) return true;
+    if (!this.isObject(a) || !this.isObject(b)) return false;
+    var aKeys = this.keys(a);
+    var bKeys = this.keys(b);
+    if (aKeys.length !== bKeys.length) return false;
+    var allKeys = aKeys.concat(bKeys);
+    var checkedMap = this.create(null);
+    var result = true;
+    this.each(allKeys, function (i, key) {
+      if (checkedMap[key]) return;
+      if (!this.deepEqual(a[key], b[key])) result = false;
+      checkedMap[key] = true;
+    }, this);
+    return result;
+  };
+
+  /**
+   * 从一个数值循环到别一个数
+   * @param {number} fromNum 开始数值
+   * @param {Number} toNum 结束数值
+   * @param {Number} step 步长值
+   * @param {function} handler 执行函数
+   * @returns {void} 无返回
+   */
+  owner.fromTo = function (fromNum, toNum, step, handler) {
+    if (!handler) handler = [step, step = handler][0];
+    step = Math.abs(step || 1);
+    if (fromNum < toNum) {
+      for (var i = fromNum; i <= toNum; i += step) handler(i);
+    } else {
+      for (var i = fromNum; i >= toNum; i -= step) handler(i);
+    }
+  };
+
+  /**
+   * 生成一个Guid
+   * @method newGuid
+   * @return {String} GUID字符串
+   * @static
+   */
+  owner.newGuid = function () {
+    var S4 = function () {
+      return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+  };
+
+  /**
+   * 对象变换
+   **/
+  owner.map = function (list, fn) {
+    var buffer = this.isArray(list) ? [] : {};
+    this.each(list, function (name, value) {
+      buffer[name] = fn(name, value);
+    });
+    return buffer;
+  };
+
+  /**
+   * 通过路径设置属性值
+   */
+  owner.setByPath = function (obj, path, value) {
+    if (this.isNull(obj) || this.isNull(path) || path === '') {
+      return;
+    }
+    if (!this.isArray(path)) {
+      path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
+    }
+    this.each(path, function (index, name) {
+      if (this.isNull(name) || name.length < 1) return;
+      if (index === path.length - 1) {
+        obj[name] = value;
+      } else {
+        obj[name] = obj[name] || {};
+        obj = obj[name];
+      }
+    }, this);
+  };
+
+  /**
+   * 通过路径获取属性值
+   */
+  owner.getByPath = function (obj, path) {
+    if (this.isNull(obj) || this.isNull(path) || path === '') {
+      return obj;
+    }
+    if (!this.isArray(path)) {
+      path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
+    }
+    this.each(path, function (index, name) {
+      if (this.isNull(name) || name.length < 1) return;
+      if (!this.isNull(obj)) obj = obj[name];
+    }, this);
+    return obj;
+  };
+
+  /**
+   * 数组去重
+   **/
+  owner.unique = function (array) {
+    if (this.isNull(array)) return array;
+    var newArray = [];
+    this.each(array, function (i, value) {
+      if (newArray.indexOf(value) > -1) return;
+      newArray.push(value);
+    });
+    return newArray;
+  };
+
+  /**
+   * 解析 function 的参数列表
+   **/
+  owner.getFunctionArgumentNames = function (fn) {
+    if (!fn) return [];
+    var src = fn.toString();
+    var parts = src.split(')')[0].split('=>')[0].split('(');
+    return (parts[1] || parts[0]).split(',').map(function (name) {
+      return name.trim();
+    }).filter(function (name) {
+      return name != 'function';
+    });
+  };
+
+  /**
+   * 合并对象
+   * @method mix
+   * @return 合并后的对象
+   * @param {Object} r 目标对象
+   * @param {Object} s 源对象
+   * @param {Boolean} ov 是否覆盖
+   * @param {Object} wl 白名单
+   * @param {Number} mode 模式
+   * @param {Boolean} merge 深度合并
+   */
+  owner.mix = function (r, s, ov, wl, mode, merge) {
+    if (!s || !r) {
+      return r || owner;
+    }
+    //根据模式来判断，默认是Obj to Obj的  
+    if (mode) {
+      switch (mode) {
+        case 1: // proto to proto  
+          return owner.mix(r.prototype, s.prototype, ov, wl, 0, merge);
+        case 2: // object to object and proto to proto  
+          owner.mix(r.prototype, s.prototype, ov, wl, 0, merge);
+          break; // pass through  
+        case 3: // proto to static  
+          return owner.mix(r, s.prototype, ov, wl, 0, merge);
+        case 4: // static to proto  
+          return owner.mix(r.prototype, s, ov, wl, 0, merge);
+        default: // object to object is what happens below  
+      }
+    }
+    // Maybe don't even need this wl && wl.length check anymore??  
+    var i, l, p, type;
+    //白名单如果有值，就对白名单里面的属性进行合并，如果有ov，那么就  
+    if (wl && wl.length) {
+      for (i = 0, l = wl.length; i < l; ++i) {
+        p = wl[i];
+        isObject = owner.isObject(r[p]); //看具体的属性是什么类型的  
+        if (s.hasOwnProperty(p)) { //如果这个属性是p自己的  
+          if (merge && isObject) { //如果设定了merge并且属性是一个对象，那么就调用mix本身，把s[p]的属性加到r[p]上面  
+            owner.mix(r[p], s[p]);
+          } else if (ov || !(p in r)) { //如果允许ov或者r里面没有p，那么就在r里面加上p这个属性  
+            r[p] = s[p];
+          }
+        }
+      }
+    } else { //如果没有wl  
+      for (i in s) { //遍历s里面的属性  
+        if (s.hasOwnProperty(i)) { //如果i是s本身的属性，就按规则合并属性  
+          if (merge && owner.isObject(r[i], true)) {
+            owner.mix(r[i], s[i], ov, wl, 0, true); // recursive  
+          } else if (ov || !(i in r)) {
+            r[i] = s[i];
+          }
+        }
+      }
+    }
+    return r;
+  };
+
+  /**
+   * 缩短字符串
+   */
+  owner.short = function (str, maxLength) {
+    if (!str) return str;
+    maxLength = maxLength || 40;
+    var strLength = str.length;
+    var trimLength = maxLength / 2;
+    return strLength > maxLength ? str.substr(0, trimLength) + '...' + str.substr(strLength - trimLength) : str;
+  };
+
+  /**
+   * 首字母大写
+   */
+  owner.firstUpper = function (str) {
+    if (this.isNull(str)) return;
+    str[0] = str[0].toLowerCase();
+    return str;
+  };
+
+  /**
+   * 解析字符串为 dom 
+   * @param {string} str 字符串
+   * @returns {HTMLNode} 解析后的 DOM 
+   */
+  owner.parseDom = function (str) {
+    this._PARSER_DOM_DIV = this._PARSER_DOM_DIV || document.createElement('dev');
+    this._PARSER_DOM_DIV.innerHTML = str;
+    var domNodes = this.toArray(this._PARSER_DOM_DIV.childNodes);
+    this._PARSER_DOM_DIV.innerHTML = '';
+    return domNodes;
+  };
+
+  //----
+
+  //兼容AMD模块
+  if (typeof define === 'function' && define.amd) {
+    define('ntils', [], function () {
+      return owner;
+    });
+  }
+
+})((typeof exports === 'undefined') ? (window.ntils = {}) : exports);
+//-
+},{}]},{},[8])
+//# sourceMappingURL=mokit.js.map
