@@ -8,14 +8,14 @@
     "clear": "./scripts/clear.sh",
     "build": "./scripts/build.sh",
     "watch": "./scripts/watch.sh",
-    "test": "echo ...",
-    "prepublish":"./scripts/prepublish.sh"
+    "test": "./scripts/test.sh",
+    "prepublish": "./scripts/prepublish.sh"
   },
   "author": "",
   "license": "Apache License",
   "devDependencies": {
     "browserify": "^13.1.1",
-    "cify": "^1.0.2",
+    "cify": "^2.0.0",
     "exorcist": "^0.4.0",
     "nokitjs": "^1.26.1",
     "ntils": "^1.2.0",
