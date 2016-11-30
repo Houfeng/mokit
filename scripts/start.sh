@@ -2,4 +2,4 @@
 
 set -e
 
-nokit stop && nokit start --public ./ --port 8002
+nokit stop && nokit start --name mokit --public ./ --port 8002

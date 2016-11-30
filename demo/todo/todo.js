@@ -8,7 +8,7 @@
           {{item.text}}
         </span>
         <input m:on:change="edit(item,false,$event)" m:on:blur="edit(item,false,$event)" type="text" m:if="item.editing&&!item.done" m:model="item.text"/>
-        <a m:on:click="del(item)">DEL</a>
+        <a m:on:tap="del(item)">DEL</a>
       </li>
     </ul>`,
     properties: {
