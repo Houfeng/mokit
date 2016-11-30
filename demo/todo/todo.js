@@ -21,10 +21,12 @@
         var box = itemEl.querySelector('input[type="text"]');
         box && box.focus();
       }, 10);
+      this.$emit('edit', item);
     },
     del: function (item) {
       var index = this.list.indexOf(item);
       this.list.splice(index, 1);
+      this.$emit('del', item);
     }
   });
 
@@ -66,6 +68,9 @@
       type: function (type) {
         localStorage.setItem('todo://type', type);
       }
+    },
+    del: function (item) {
+      console.log('del', item);
     },
     add: function () {
       if (!this.text) return;
