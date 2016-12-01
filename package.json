@@ -24,6 +24,8 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
-    "cmdline": "^1.1.7"
+    "cify": "^2.0.3",
+    "cmdline": "^1.1.7",
+    "ntils": "^1.2.5"
   }
 }
