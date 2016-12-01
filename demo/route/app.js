@@ -1,4 +1,4 @@
-//(function () {
+(function () {
 
   var Component1 = new mokit.Component({
     template: `<span m:on:click="clickMe">{{name}}</span>`,
@@ -24,4 +24,4 @@
     router: router
   }).start();
 
-//})();
+})();
