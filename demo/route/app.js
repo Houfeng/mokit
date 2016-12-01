@@ -1,11 +1,15 @@
-(function () {
+//(function () {
 
   var Component1 = new mokit.Component({
-    template: `<span>Component1</span>`
+    template: `<span m:on:click="clickMe">{{name}}</span>`,
+    properties: { name: 'Component1' },
+    clickMe: function () {
+      alert('My name is' + this.name);
+    }
   });
 
-  var Component2 = new mokit.Component({
-    template: `<span>Component2</span>`
+  var Component2 = Component1.extend({
+    properties: { name: 'Component2' },
   });
 
   var router = new mokit.Router();
@@ -20,4 +24,4 @@
     router: router
   }).start();
 
-})();
+//})();
