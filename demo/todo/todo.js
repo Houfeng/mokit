@@ -32,7 +32,7 @@
 
   window.todo = new mokit({
     element: document.getElementById('app'),
-    components: { list: List },
+    components: { List: List },
     data: function () {
       return {
         text: '',
