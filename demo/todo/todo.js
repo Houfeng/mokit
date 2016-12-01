@@ -81,6 +81,6 @@
       });
       this.text = ''
     }
-  }).create();
+  }).start();
 
 })();
