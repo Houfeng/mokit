@@ -18,7 +18,7 @@
     "cify": "^2.0.1",
     "exorcist": "^0.4.0",
     "nokitjs": "^1.26.1",
-    "ntils": "^1.2.0",
+    "ntils": "^1.2.3",
     "selenium-webdriver": "^3.0.1",
     "uglifyify": "^3.0.4",
     "watchify": "^3.7.0"
