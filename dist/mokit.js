@@ -1267,7 +1267,10 @@ const Router = new Class({
     return this._view;
   },
 
-  set view(value) {
+  set view(view) {
+    if (!(view instanceof RouterView)) {
+      throw new Error('Invalid RouterView');
+    }
     this._view = value;
     this._view._router = this;
   },
@@ -1315,7 +1318,7 @@ Router.install = function (owner) {
   });
 
   //添加全局组件 RouterView
-  owner.component('router-view', RouterView);
+  owner.component('RouterView', RouterView);
 
 };
 
@@ -1327,8 +1330,15 @@ const View = require('../component').components.View;
 const RouterView = View.extend({
   properties: {
     router: {
+      test: function (router) {
+        return !!router;
+      },
       get: function () {
-        return 0;
+        return this._router
+      },
+      set: function (router) {
+        this._router = router;
+        this._router._view = this;
       }
     }
   }
@@ -1842,7 +1852,9 @@ const DirectiveDefinition = new Class({
     options.level = options.level || Directive.LEVEL_GENERAL;
     options.match = options.match || options.name;
     if (!(options.match instanceof RegExp)) {
-      options.match = new RegExp('^' + options.match + '$', 'i');
+      var expr = options.match.replace(/([A-Z])/g, '-$1').toLowerCase();
+      if (expr[0] == '-') expr = expr.slice(1);
+      options.match = new RegExp('^' + expr + '$', 'i');
     }
     if (options.tag && !(options.tag instanceof RegExp)) {
       options.tag = new RegExp('^' + options.tag + '$', 'i');
@@ -2683,7 +2695,7 @@ const Template = new Class({
   },
 
   /**
-   * 将模板绑定到一个 scope
+   * 将模板绑定到一��� scope
    * @param {Object} scope 绑定的上下文对象
    * @param {boolean} disableFirst 是否禁用第一次的自动渲染
    * @returns {void} 无返回
@@ -3203,7 +3215,7 @@ module.exports = Class;
       value: value,
       enumerable: false,
       configurable: true, //能不能重写定义
-      writable: false //能不能用「赋值���运算更改
+      writable: false //能不能用「赋值」运算更改
     });
   };
 
