@@ -7,22 +7,27 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>Todo</title>
 	<link rel="stylesheet" href="./todo.css" />
+	<style type="text/css">
+		[cloak] {
+			display: none;
+		}
+	</style>
 </head>
 
-<body m:test="1">
+<body>
 	<div id="app">
 		<input m:id="inputBox" class="input" type="text" m:model="text" m:on:change="add()" placeholder="What needs to be done?">
 		<m:list m:id="itemList" m:on:del="del" m:prop:list="filteredList" m:if="list.length"></m:list>
 		<div class="bar">
-			<label>
+			<label cloak>
 				<input name="type" m:model="type" type="radio" value="all">
 				TOTAL {{list.length}}
 			</label>
-			<label>
+			<label cloak>
 				<input name="type" m:model="type" type="radio" value="active">
 				ACTIVE {{list.length-doneCount}}
 			</label>
-			<label>
+			<label cloak>
 				<input name="type" m:model="type" type="radio" value="done">
 				DONE {{doneCount}}
 			</label>
