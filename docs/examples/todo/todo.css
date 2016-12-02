@@ -63,7 +63,7 @@ body {
   font-size: 18px;
 }
 
-#app ul li input, #app .bar label input {
+#app ul li input, #app .bar label input, #app ul li span, #app .bar label span {
   vertical-align: middle;
 }
 

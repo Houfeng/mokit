@@ -14,17 +14,17 @@
 		<input m:id="inputBox" class="input" type="text" m:model="text" m:on:change="add()" placeholder="What needs to be done?">
 		<m:list m:id="itemList" m:on:del="del" m:prop:list="filteredList" m:if="list.length"></m:list>
 		<div class="bar">
-			<label cloak>
+			<label>
 				<input name="type" m:model="type" type="radio" value="all">
-				TOTAL {{list.length}}
+				<span cloak>TOTAL {{list.length}}</span>
 			</label>
-			<label cloak>
+			<label>
 				<input name="type" m:model="type" type="radio" value="active">
-				ACTIVE {{list.length-doneCount}}
+				<span cloak>ACTIVE {{list.length-doneCount}}</span>
 			</label>
-			<label cloak>
+			<label>
 				<input name="type" m:model="type" type="radio" value="done">
-				DONE {{doneCount}}
+				<span cloak>DONE {{doneCount}}</span>
 			</label>
 		</div>
 	</div>
