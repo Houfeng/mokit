@@ -554,7 +554,7 @@
 	   * 创建一个对象
 	   */
 	  ntils.create = function (proto) {
-	    if (utils.create( ) return utils.create(proto);
+	    if (Object.create) return Object.create(proto);
 	    return { __proto__: proto };
 	  };
 	
@@ -2178,7 +2178,7 @@
 	      if (oldItem) {
 	        oldItem.handler(newScope);
 	      } else {
-	        var newItem = utils.create(null);
+	        var newItem = this.utils.create(null);
 	        //创建新元素
 	        newItem.node = this.node.cloneNode(true);
 	        itemsFragment.appendChild(newItem.node);
