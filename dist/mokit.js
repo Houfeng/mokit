@@ -2996,10 +2996,12 @@
 	    $watch: function /*istanbul ignore next*/$watch(calcer, handler) {
 	      if (!utils.isFunction(handler)) return;
 	      if (!utils.isFunction(calcer)) {
-	        var path = calcer;
-	        calcer = function /*istanbul ignore next*/calcer() {
-	          return utils.getByPath(this, path);
-	        };
+	        /*istanbul ignore next*/(function () {
+	          var path = calcer;
+	          calcer = function /*istanbul ignore next*/calcer() {
+	            return utils.getByPath(this, path);
+	          };
+	        })();
 	      }
 	      this._watchers.push(new Watcher(calcer.bind(this), handler.bind(this)));
 	    },
@@ -3244,7 +3246,7 @@
 	    execute: function /*istanbul ignore next*/execute(scope) {
 	      this.handler(scope);
 	      // utils.each(this.propExprs, function (name) {
-	      //   var value = this.propExprs[name].execute(scope);
+	      //   let value = this.propExprs[name].execute(scope);
 	      //   this.propExprs[name]._oldValue = value;
 	      //   this.component[name] = value;
 	      // }, this);

@@ -1,6 +1,6 @@
 (function () {
 
-  var List = new mokit.Component({
+  let List = new mokit.Component({
     template: `<ul>
       <li m:each="item of list" class="{{item.editing&&!item.done?'editing':''}}">
         <input type="checkbox" m:model="item.done"/>
@@ -15,10 +15,10 @@
       list: null
     },
     edit: function (item, state, event) {
-      var itemEl = event.target.parentNode;
+      let itemEl = event.target.parentNode;
       item.editing = state;
       setTimeout(function () {
-        var box = itemEl.querySelector('input[type="text"]');
+        let box = itemEl.querySelector('input[type="text"]');
         box && box.focus();
       }, 10);
       this.$emit('edit', item);
@@ -38,9 +38,9 @@
       };
     },
     onInit: function () {
-      var list = localStorage.getItem('todo://list');
+      let list = localStorage.getItem('todo://list');
       if (list) this.list = JSON.parse(list);
-      var type = localStorage.getItem('todo://type');
+      let type = localStorage.getItem('todo://type');
       if (type) this.type = type;
     },
     onReady: function () {
@@ -68,7 +68,7 @@
       }
     },
     del: function (item) {
-      var index = this.list.indexOf(item);
+      let index = this.list.indexOf(item);
       this.list.splice(index, 1);
     },
     add: function () {
