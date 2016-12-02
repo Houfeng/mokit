@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "3.0.0-rc9",
+  "version": "3.0.0-rc10",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
@@ -15,17 +15,12 @@
   "license": "Apache License",
   "devDependencies": {
     "browserify": "^13.1.1",
-    "cify": "^2.0.1",
+    "cify": "^2.0.7",
     "exorcist": "^0.4.0",
     "nokitjs": "^1.26.1",
-    "ntils": "^1.2.3",
+    "ntils": "^2.0.0",
     "selenium-webdriver": "^3.0.1",
     "uglifyify": "^3.0.4",
     "watchify": "^3.7.0"
-  },
-  "dependencies": {
-    "cify": "^2.0.6",
-    "cmdline": "^1.1.7",
-    "ntils": "^1.2.8"
   }
 }
