@@ -19,9 +19,14 @@
     '/test2': Component2
   });
 
-  mokit({
-    element: document.getElementById('app'),
-    router: router
-  }).start();
+  var App = mokit.Component({
+    template: `<div>
+    <button m:link="/test1">test1</button>
+		<button m:link="/test2">test2</button>
+    <m:router-view></m:router-view>
+    </div>`
+  });
+
+  router.start(App, document.getElementById('app'));
 
 })();
