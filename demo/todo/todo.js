@@ -24,13 +24,11 @@
       this.$emit('edit', item);
     },
     del: function (item) {
-      var index = this.list.indexOf(item);
-      this.list.splice(index, 1);
       this.$emit('del', item);
     }
   });
 
-  window.todo = new mokit({
+  window.todo = mokit({
     element: document.getElementById('app'),
     components: { List: List },
     data: function () {
@@ -70,7 +68,8 @@
       }
     },
     del: function (item) {
-      console.log('del', item);
+      var index = this.list.indexOf(item);
+      this.list.splice(index, 1);
     },
     add: function () {
       if (!this.text) return;
