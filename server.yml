@@ -1,0 +1,14 @@
+port: 8002
+filters:
+    ^/: 'nokit-filter-proxy'
+public: 
+      ^/: './'
+cache: 
+    enabled: false
+log:
+    enabled: false
+session:
+    enabled: false
+proxy:
+    rules: 
+      ^/api: '...'

@@ -3,8 +3,9 @@
 set -e
 
 npm run clear 
+#npm run lint
 node ./scripts/info.js 
-browserify ./lib/index.js | uglifyjs -m  > ./dist/$npm_package_name.js
+webpack --display-error-details
 
 rm -rf ./docs/dist/
 mkdir -p ./docs/dist/
