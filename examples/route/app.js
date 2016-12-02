@@ -1,5 +1,7 @@
 (function () {
 
+  'use strict';
+
   let Component1 = new mokit.Component({
     template: '<span m:on:click="clickMe">{{name}}: {{$route.query.say}}</span>',
     properties: { name: 'Component1' },

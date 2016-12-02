@@ -1,5 +1,7 @@
 (function () {
 
+  'use strict';
+
   let List = new mokit.Component({
     template: `<ul>
       <li m:each="item of list" class="{{item.editing&&!item.done?'editing':''}}">
