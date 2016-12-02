@@ -899,7 +899,7 @@
 	    if (utils.isNull(target)) {
 	      throw new Error('Invalid target');
 	    }
-	    options = options || Object.create(null);
+	    options = options || utils.create(null);
 	    var observer = target[OBSERVER_PROP_NAME];
 	    if (observer) {
 	      utils.copy(options, observer.options);
@@ -911,7 +911,7 @@
 	    }
 	    EventEmitter.call(this);
 	    utils.defineFreezeProp(this, 'options', options);
-	    utils.defineFreezeProp(this, 'shadow', Object.create(null));
+	    utils.defineFreezeProp(this, 'shadow', utils.create(null));
 	    utils.defineFreezeProp(this, 'target', target);
 	    utils.defineFreezeProp(this, 'parents', []);
 	    utils.defineFreezeProp(target, OBSERVER_PROP_NAME, this);
@@ -1560,7 +1560,7 @@
 	   * @returns {void} 无返回
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(options) {
-	    options = options || Object.create(null);
+	    options = options || utils.create(null);
 	    options.directives = options.directives || [];
 	    this.prefix = options.prefix || DEFAULT_PREFIX;
 	    this.directives = directives.concat(options.directives);
@@ -1713,7 +1713,7 @@
 	    options = options || utils.create(null);
 	    //定义编译结果函数
 	    var handler = function handler(scope) {
-	      if (utils.isNull(scope)) scope = Object.create(null);
+	      if (utils.isNull(scope)) scope = utils.create(null);
 	      //执行指令
 	      handler.directives.forEach(function (directive) {
 	        directive.scope = scope;
@@ -2012,7 +2012,7 @@
 	   */
 	  execute: function /*istanbul ignore next*/execute(scope) {
 	    if (utils.isNull(scope)) {
-	      scope = Object.create(null);
+	      scope = utils.create(null);
 	    }
 	    return this.func.call(scope, scope);
 	  }
@@ -2178,7 +2178,7 @@
 	      if (oldItem) {
 	        oldItem.handler(newScope);
 	      } else {
-	        var newItem = Object.create(null);
+	        var newItem = this.utils.create(null);
 	        //创建新元素
 	        newItem.node = this.node.cloneNode(true);
 	        itemsFragment.appendChild(newItem.node);
@@ -2668,7 +2668,7 @@
 	   * @returns {void} 无返回
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(element, options) {
-	    options = options || Object.create(null);
+	    options = options || utils.create(null);
 	    EventEmitter.call(this);
 	    this.options = options;
 	    this.element = element;
@@ -2799,7 +2799,7 @@
 	function Component(classOpts) {
 	
 	  //处理组件选项
-	  classOpts = classOpts || Object.create(null);
+	  classOpts = classOpts || utils.create(null);
 	
 	  //处理「继承」，目前的机制，只能用「合并类选项」
 	  var mixObjects = classOpts.mixs;
@@ -3142,7 +3142,7 @@
 	
 	//定义扩展方法
 	Component.prototype.extend = function (classOpts) {
-	  classOpts = classOpts || Object.create(null);
+	  classOpts = classOpts || utils.create(null);
 	  classOpts.extends = this;
 	  return new Component(classOpts);
 	};
