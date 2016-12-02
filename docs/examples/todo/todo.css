@@ -14,9 +14,14 @@ body {
 }
 
 #app {
-  margin: 50px auto;
-  width: 600px;
   box-shadow: 0 1px 8px rgba(0, 0, 0, .2);
+}
+
+@media screen and (min-width: 800px) {
+  #app {
+    margin: 50px auto;
+    max-width: 600px;
+  }
 }
 
 #app input[type="text"] {
@@ -46,7 +51,7 @@ body {
 }
 
 #app .bar label {
-  margin-right: 25px;
+  margin-right: 10px;
   cursor: pointer;
 }
 
@@ -58,7 +63,7 @@ body {
   font-size: 18px;
 }
 
-#app ul li input, #app ul li span {
+#app ul li input, #app .bar label input {
   vertical-align: middle;
 }
 
@@ -69,8 +74,8 @@ body {
   font-size: 18px;
   padding: 0 5px;
   width: 80%;
-  height: 19px;
-  line-height: 19px;
+  height: 20px;
+  line-height: 20px;
   margin: 0;
 }
 
