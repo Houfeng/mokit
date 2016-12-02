@@ -1,5 +1,5 @@
 (function () {
-  
+
   'use strict';
 
   let List = new mokit.Component({

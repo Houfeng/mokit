@@ -530,6 +530,7 @@
 	   * 定义不可遍历的属性
 	   **/
 	  ntils.defineFreezeProp = function (obj, name, value) {
+	    delete obj[name];
 	    Object.defineProperty(obj, name, {
 	      value: value,
 	      enumerable: false,
