@@ -69,7 +69,7 @@
 	//定义安装插件的方法
 	Component.use = function (plugin) {
 	  if (utils.isNull(plugin) || !utils.isFunction(plugin.install)) {
-	    throw new Error( /*istanbul ignore next*/'Invalid Plugin ' + info.name);
+	    throw new Error('Invalid Plugin');
 	  }
 	  plugin.install(this);
 	};
@@ -99,7 +99,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-rc14"
+		"version": "3.0.0-rc15"
 	};
 
 /***/ },

@@ -5,7 +5,8 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const extractCSS = new ExtractTextPlugin("css/bundle.css");
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'prod';
+const NODE_ENV = process.env.NODE_ENV || 'prod';
+console.log('NODE_ENV:', NODE_ENV);
 
 const configs = {
   entry: {
@@ -13,9 +14,9 @@ const configs = {
   },
   output: {
     path: './dist/',
-    filename: '[name].js'
+    filename: '[name]' + (NODE_ENV == 'prod' ? '.min' : '') + '.js'
   },
-  devtool: process.env.NODE_ENV != 'prod' ? 'source-map' : null,
+  devtool: NODE_ENV != 'prod' ? 'source-map' : null,
   module: {
     loaders: [
       {
@@ -55,7 +56,7 @@ const configs = {
   plugins: []
 };
 
-if (process.env.NODE_ENV == 'prod') {
+if (NODE_ENV == 'prod') {
   configs.plugins.push(new webpack.optimize.UglifyJsPlugin({
     compress: {
       warnings: false
