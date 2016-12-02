@@ -77,6 +77,8 @@
 	//安装内置的路由插件
 	Component.use(Router);
 	
+	/* eslint-disable */
+	
 	//兼容 amd 模块
 	if (true) {
 	  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
@@ -89,6 +91,8 @@
 	  window[info.name] = Component;
 	}
 	
+	/* eslint-enable */
+	
 	module.exports = Component;
 
 /***/ },
@@ -99,7 +103,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-rc15"
+		"version": "3.0.0-rc16"
 	};
 
 /***/ },
@@ -751,7 +755,7 @@
 	   * @param {function} calcor 计算函数
 	   * @param {function} handler 处理函数
 	   * @param {boolean} first 是否自动执行第一次
-	   * @param {void} 无返回
+	   * @returns {void} 无返回
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(calcor, handler, first) {
 	    if (!utils.isFunction(calcor) || !utils.isFunction(handler)) {
@@ -888,6 +892,7 @@
 	  /**
 	   * 通过目标对象构造一个观察对象
 	   * @param {Object} target 目标对象
+	   * @param {Object} options 选项
 	   * @returns {void} 无返回
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(target, options) {
@@ -916,6 +921,9 @@
 	  /**
 	   * 添加一个属性，动态添中的属性，无法被观察，
 	   * 但是通过 set 方法添加的属性可能被观察。
+	   * @param {string} name 名称
+	   * @param {Object} value 值
+	   * @returns {void} 无返回
 	   */
 	  set: function /*istanbul ignore next*/set(name, value) {
 	    if (utils.isFunction(value)) return;
@@ -1092,7 +1100,7 @@
 	      var items = [].splice.apply(this, arguments);
 	      for (var i = startIndex; i <= endIndex; i++) {
 	        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
-	      };
+	      }
 	      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
 	      return items;
 	    });
@@ -1314,14 +1322,13 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var EventEmitter = __webpack_require__(7);
 	var utils = __webpack_require__(2);
 	
 	var SUPPORT_TOUCH = 'ontouchstart' in document;
 	var START_EVENT_NAME = SUPPORT_TOUCH ? 'touchstart' : 'mousedown';
 	var MOVE_EVENT_NAME = SUPPORT_TOUCH ? 'touchmove' : 'mousemove';
 	var END_EVENT_NAME = SUPPORT_TOUCH ? 'touchend' : 'mouseup';
-	var CUSTOM_EVENT_NAMES = "tap,taphold,dbltap,swipe,swipeup,swiperight,swipedown,swipeleft,pointdown,pointmove,pointup";
+	var CUSTOM_EVENT_NAMES = 'tap,taphold,dbltap,swipe,swipeup,swiperight,swipedown,swipeleft,pointdown,pointmove,pointup';
 	
 	module.exports = {
 	  name: CUSTOM_EVENT_NAMES,
@@ -1344,10 +1351,10 @@
 	    listener.touchstart = listener.touchstart || function (event) {
 	      var point = event.changedTouches ? event.changedTouches[0] : event;
 	      listener.startPoint = listener.endPoint = {
-	        "x": point.pageX,
-	        "y": point.pageY,
-	        "timeStamp": event.timeStamp,
-	        "point": point
+	        'x': point.pageX,
+	        'y': point.pageY,
+	        'timeStamp': event.timeStamp,
+	        'point': point
 	      };
 	      if (name == 'taphold') {
 	        listener.createHoldHandler(event);
@@ -1388,10 +1395,10 @@
 	    listener.getTouchInfo = function (event) {
 	      var point = event.changedTouches ? event.changedTouches[0] : event;
 	      listener.endPoint = {
-	        "x": point.pageX,
-	        "y": point.pageY,
-	        "timeStamp": event.timeStamp,
-	        "point": point
+	        'x': point.pageX,
+	        'y': point.pageY,
+	        'timeStamp': event.timeStamp,
+	        'point': point
 	      };
 	      //
 	      var option = self.option;
@@ -1483,23 +1490,23 @@
 	    };
 	
 	    //绑定组合事件
-	    emitter.on(START_EVENT_NAME, listener.touchstart);
-	    emitter.on(MOVE_EVENT_NAME, listener.touchmove);
-	    emitter.on(END_EVENT_NAME, listener.done);
+	    emitter.on(START_EVENT_NAME, listener.touchstart, capture);
+	    emitter.on(MOVE_EVENT_NAME, listener.touchmove, capture);
+	    emitter.on(END_EVENT_NAME, listener.done, capture);
 	  },
 	
-	  removeListener: function /*istanbul ignore next*/removeListener(emitter, name, listener, useCapture) {
+	  removeListener: function /*istanbul ignore next*/removeListener(emitter, name, listener, capture) {
 	    //只有指定了 handler 才能取消构成组合事件的 “原事件”
 	    //否则会直接移除会将其他 touchstart 等事件也移除
 	    if (utils.isFunction(listener)) {
 	      if (utils.isFunction(listener.touchstart)) {
-	        emitter.off(START_EVENT_NAME, listener.touchstart);
+	        emitter.off(START_EVENT_NAME, listener.touchstart, capture);
 	      }
 	      if (utils.isFunction(listener.touchmove)) {
-	        emitter.off(MOVE_EVENT_NAME, listener.touchmove);
+	        emitter.off(MOVE_EVENT_NAME, listener.touchmove, capture);
 	      }
 	      if (utils.isFunction(listener.done)) {
-	        emitter.off(END_EVENT_NAME, listener.done);
+	        emitter.off(END_EVENT_NAME, listener.done, capture);
 	      }
 	    }
 	  }
@@ -1562,6 +1569,7 @@
 	  /**
 	   * 解析要匹配的名称
 	   * @param {string} name 要解析的名称字符串
+	   * @param {string} type 指令类型
 	   * @param {HTMLNode} node 当前 HTML 元素结点
 	   * @returns {Object} 解析后的对象
 	   */
@@ -1800,6 +1808,7 @@
 	
 	  /**
 	   * 检查指令是否匹配
+	   * @param {Object} matchInfo 匹配信息
 	   * @returns {boolean} 测试结果
 	   */
 	  test: function /*istanbul ignore next*/test(matchInfo) {
@@ -1810,7 +1819,7 @@
 	
 	/**
 	 * 指定定义工场函数
-	 * @param {Object} defineOpts 选项
+	 * @param {Object} options 选项
 	 * @returns {Directive} 指令类
 	 */
 	function Directive(options) {
@@ -1850,7 +1859,7 @@
 	  DirectiveClass.definition = definition;
 	  DirectiveClass.__proto__ = definition;
 	  return DirectiveClass;
-	};
+	}
 	
 	//挂载指令定义信息类
 	Directive.Definition = DirectiveDefinition;
@@ -1970,16 +1979,16 @@
 	
 	  /**
 	   * 转义处理代码字符串
-	   * @param {string} str 源字符串
+	   * @param {string} code 源字符串
 	   * @returns {string} 处理后的字符串
 	   */
-	  _escapeCode: function /*istanbul ignore next*/_escapeCode(str) {
-	    return str.replace(/"/, '\\"').replace('\r\n', '\\r\\n').replace('\n', '\\n');
+	  _escapeCode: function /*istanbul ignore next*/_escapeCode(code) {
+	    return code.replace(/"/, '\\"').replace('\r\n', '\\r\\n').replace('\n', '\\n');
 	  },
 	
 	  /**
 	   * 转义换行符
-	   * @param {string} str 源字符串
+	   * @param {string} code 源字符串
 	   * @returns {string} 处理后的字符串
 	   */
 	  _escapeEOL: function /*istanbul ignore next*/_escapeEOL(code) {
@@ -1989,7 +1998,7 @@
 	  /**
 	   * 通过闭包和 try/cache 包裹代码
 	   * 将模板中错误的代码直接显示在「模板中用到的位置」，更易于定位错误。
-	   * @param {string} str 源字符串
+	   * @param {string} code 源字符串
 	   * @returns {string} 处理后的字符串
 	   */
 	  _wrapCode: function /*istanbul ignore next*/_wrapCode(code) {
@@ -2167,7 +2176,6 @@
 	      if (this.valueName) newScope[this.valueName] = value;
 	      var oldItem = this.eachItems[key];
 	      if (oldItem) {
-	        if (!oldItem.handler) console.log('a', this.eachItems, oldItem);
 	        oldItem.handler(newScope);
 	      } else {
 	        var newItem = Object.create(null);
@@ -2657,7 +2665,7 @@
 	   * 构建一个模板板实例
 	   * @param {HTMLNode} element HTML 元素
 	   * @param {Object} options 选项
-	   * @returns void 无返回
+	   * @returns {void} 无返回
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(element, options) {
 	    options = options || Object.create(null);
@@ -2785,6 +2793,8 @@
 	/**
 	 * 组件类
 	 * 用于定义一个新的组件
+	 * @param {Object} classOpts 类选项
+	 * @returns {Component} 组件类
 	 */
 	function Component(classOpts) {
 	
@@ -2821,6 +2831,7 @@
 	
 	    /**
 	     * 组件类构造函数
+	     * @param {object} instanceOpts 实例选项
 	     * @returns {void} 无返回
 	     */
 	    constructor: function /*istanbul ignore next*/constructor(instanceOpts) {
@@ -2852,7 +2863,7 @@
 	    /**
 	     * 导入用到的子组件类
 	     * @param {Object} components 引入的组件
-	     * @returns 无返回
+	     * @returns {void} 无返回
 	     */
 	    _importComponents: function /*istanbul ignore next*/_importComponents(components) {
 	      utils.each(components, this._importComponent, this);
@@ -2860,8 +2871,9 @@
 	
 	    /**
 	     * 导入一个用到的子组件类
-	     * @param {Object} components 引入的组件
-	     * @returns 无返回
+	     * @param {string} name 组件类名
+	     * @param {Object} component 引入的组件
+	     * @returns {void} 无返回
 	     */
 	    _importComponent: function /*istanbul ignore next*/_importComponent(name, component) {
 	      this.$components = this.$components || {};
@@ -2919,7 +2931,6 @@
 	     */
 	    _createProperties: function /*istanbul ignore next*/_createProperties(properties) {
 	      this.$properties = {};
-	      var isArray = utils.isArray(properties);
 	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
 	          descriptor = { get: descriptor };
@@ -3033,7 +3044,8 @@
 	    /**
 	     * 向 DOM tree 中挂截组件
 	     * @param {HTMLNode} mountNode 挂载点元素
-	     * @returns 无返回 
+	     * @param {append} append 是否 append 到挂载元素内
+	     * @returns {void} 无返回 
 	     */
 	    $mount: function /*istanbul ignore next*/$mount(mountNode, append) {
 	      if (!mountNode || this._mounted) return;
@@ -3097,11 +3109,11 @@
 	        this._template.unbind();
 	      }
 	      this._callHook('onDisposed');
-	      for (name in this) {
-	        delete this[name];
+	      for (var key in this) {
+	        delete this[key];
 	      }
-	      ['__observer__', '$element', '$children', '$parent', '_template'].forEach(function (name) {
-	        delete this[name];
+	      ['__observer__', '$element', '$children', '$parent', '_template'].forEach(function (key) {
+	        delete this[key];
 	      }, this);
 	      this.__proto__ = null;
 	    }
@@ -3156,15 +3168,13 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
 	var Template = __webpack_require__(9);
-	var utils = __webpack_require__(2);
 	var Directive = Template.Directive;
-	var Expression = Template.Expression;
 	
 	/**
 	 * 创建一个组件指令
 	 * @param {object} options 选项
+	 * @returns {object} 组件指令
 	 */
 	function ComponentDirective(options) {
 	
@@ -3212,7 +3222,6 @@
 	      this.attrs.forEach(function (attr) {
 	        if (directiveRegexp.test(attr.name)) return;
 	        if (attr.name in this.component.$properties) {
-	          //this.propExprs[attr.name] = new Expression(attr.value);
 	          this.component[attr.name] = attr.value;
 	        } else {
 	          this.component.$element.setAttribute(attr.name, attr.value);
@@ -3245,18 +3254,13 @@
 	
 	    execute: function /*istanbul ignore next*/execute(scope) {
 	      this.handler(scope);
-	      // utils.each(this.propExprs, function (name) {
-	      //   let value = this.propExprs[name].execute(scope);
-	      //   this.propExprs[name]._oldValue = value;
-	      //   this.component[name] = value;
-	      // }, this);
 	      this.placeHandlers.forEach(function (handler) {
 	        handler(scope);
 	      }, this);
 	    }
 	
 	  });
-	};
+	}
 	
 	module.exports = ComponentDirective;
 
@@ -3382,7 +3386,7 @@
 	  /**
 	   * 路由发生变化时的处理函数
 	   * @param {string} path 将要转到的路径
-	   * @param {void} 无返回
+	   * @returns {void} 无返回
 	   */
 	  _onChanged: function /*istanbul ignore next*/_onChanged(path) {
 	    path = path || '/';
@@ -3399,7 +3403,7 @@
 	  /**
 	   * 转到一个路径
 	   * @param {string} path 将要转到的路径
-	   * @param {void} 无返回
+	   * @returns {void} 无返回
 	   */
 	  go: function /*istanbul ignore next*/go(path) {
 	    this.dirvier.set(path);
@@ -3408,7 +3412,7 @@
 	  /**
 	   * 映射路由配置
 	   * @param {Object} map 路由配置
-	   * @returns (void) 无返回
+	   * @returns {void} 无返回
 	   */
 	  map: function /*istanbul ignore next*/map(_map) {
 	    utils.each(_map, function (pattern, item) {
@@ -3468,7 +3472,7 @@
 	   * 启动应用
 	   * @param {Component} root 应用根组件类
 	   * @param {element} element 挂载元素
-	   * @param {Component} 应用根件实例
+	   * @returns {Component} 应用根件实例
 	   */
 	  start: function /*istanbul ignore next*/start(root, element) {
 	    this.app = new root({
@@ -3484,7 +3488,8 @@
 	
 	/**
 	 * 路由插件安装方法
-	 * @parent {Component} owner 组件类
+	 * @param {Component} owner 组件类
+	 * @returns {void} 无返回
 	 */
 	Router.install = function (owner) {
 	
@@ -3523,7 +3528,7 @@
 /* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*istanbul ignore next*/"use strict";
+	/*istanbul ignore next*/'use strict';
 	
 	var utils = __webpack_require__(2);
 	
@@ -3531,8 +3536,8 @@
 	 * 定义正则表达式常量
 	 */
 	var PLACE_HOLDER_EXPR = /\{.+?\}/gim;
-	var COLLECT_EXPR_STR = "([^\\/]+)";
-	var GREEDY_COLLECT_EXPR_STR = "(.+)";
+	var COLLECT_EXPR_STR = '([^\\/]+)';
+	var GREEDY_COLLECT_EXPR_STR = '(.+)';
 	
 	/**
 	 * 定义路由实例扩展 __proto__
@@ -3541,16 +3546,21 @@
 	
 	/**
 	 * 生成 action URL
+	 * @param {String} action action 名称
+	 * @return {String} 对应的 path
 	 **/
 	routeInstanceProto.actionUrl = function (action) {
 	  var self = this;
-	  var actionUrl = self.withoutActionUrl + "/" + action;
-	  actionUrl = actionUrl.replace(/\/\//igm, "/");
+	  var actionUrl = self.withoutActionUrl + '/' + action;
+	  actionUrl = actionUrl.replace(/\/\//igm, '/');
 	  return actionUrl;
 	};
 	
 	/**
 	 * 定义路由对象
+	 * @param {Object} routes 路由眏射表
+	 * @param {Object} options 选项
+	 * @returns {void} 无返回
 	 */
 	function Router(routes, options) {
 	  var self = this;
@@ -3560,17 +3570,19 @@
 	  if (routes) {
 	    self.add(routes);
 	  }
-	};
+	}
 	
 	/**
 	 * 解析占位符 key 定义
+	 * @param {String} _keyDefStr 占位符定义
+	 * @returns {Object} 占符符信息对象
 	 **/
 	Router.prototype._parseKeyDef = function (_keyDefStr) {
 	  var keyDefStr = _keyDefStr.substring(1, _keyDefStr.length - 1);
 	  var keyDefParts = keyDefStr.split(':');
 	  var keyDef = {};
 	  keyDef.name = keyDefParts[0];
-	  if (keyDef.name[0] == "*") {
+	  if (keyDef.name[0] == '*') {
 	    keyDef.greedy = true;
 	    keyDef.name = keyDef.name.substring(1);
 	  }
@@ -3582,6 +3594,8 @@
 	
 	/**
 	 * 添加一个路由配置
+	 * @param {Object} route 路由项
+	 * @returns {void} 无返回
 	 */
 	Router.prototype.addOne = function (route) {
 	  var self = this;
@@ -3599,7 +3613,7 @@
 	      index: i,
 	      expr: keyDef.expr
 	    };
-	    //将 "key 占位符" 的表达式，替换为 "提交值的正则表达式"
+	    //将 'key 占位符' 的表达式，替换为 '提交值的正则表达式'
 	    var collectExprStr = keyDef.greedy ? GREEDY_COLLECT_EXPR_STR : COLLECT_EXPR_STR;
 	    exprStr = exprStr.replace(keyDefs[i], collectExprStr);
 	  });
@@ -3618,27 +3632,26 @@
 	};
 	
 	/**
-	 * 添加路由配置表
-	 * @param {Route} route 一个路由实体,格式:{pattern:'',target:object}
-	 * @method addRoute
-	 * @static
+	 * 添加一组路由配置表
+	 * @param {Route} routes 一个路由实体,格式:{pattern:'',target:object}
+	 * @returns {void} 无返回
 	 */
 	Router.prototype.add = function (routes) {
 	  var self = this;
 	  utils.each(routes, function (_name, _route) {
 	    //判断是字符串还是一个对象，并都将 _route 转为对象
-	    var route = utils.isString(_route) ? { "target": _route } : _route;
+	    var route = utils.isString(_route) ? { 'target': _route } : _route;
 	    //尝试从名称中解析出 method 和 pattern
-	    var name = (_name || "/").toString();
+	    var name = (_name || '/').toString();
 	    var nameParts = name.split(' ');
 	    if (nameParts.length > 1) {
-	      route.methods = nameParts[0].split(",");
+	      route.methods = nameParts[0].split(',');
 	      route.pattern = route.pattern || nameParts[1];
 	    } else {
 	      route.pattern = route.pattern || nameParts[0];
 	    }
 	    //解析 controller 和 action
-	    //target 和 controller 不可同时配置，target 可以为 "controller action" 这样的格式
+	    //target 和 controller 不可同时配置，target 可以为 'controller action' 这样的格式
 	    if (route.target) {
 	      var targetParts = route.target.split(' ');
 	      route.controller = route.controller || targetParts[0];
@@ -3652,11 +3665,13 @@
 	
 	/**
 	 * 解析路由动态 action
+	 * @param {Object} route 路由项
+	 * @returns {Object} 解析后路由项
 	 **/
 	Router.prototype._parseDynamicAction = function (route) {
 	  if (route && route.action && route.action.indexOf('{') > -1) {
 	    utils.each(route.params, function (key, val) {
-	      route.action = utils.replace(route.action, "{" + key + "}", val);
+	      route.action = utils.replace(route.action, '{' + key + '}', val);
 	    });
 	  }
 	  return route;
@@ -3664,6 +3679,10 @@
 	
 	/**
 	 * 创建一个路由实例
+	 * @param {object} srcRoute 路由项原型 proto
+	 * @param {String} url URL
+	 * @param {Object} params 参数
+	 * @returns {Object} 路由实例
 	 **/
 	Router.prototype._createRouteInstance = function (srcRoute, url, params) {
 	  var self = this;
@@ -3681,10 +3700,9 @@
 	
 	/**
 	 * 通过请求路径获取第一个匹配的路由
-	 * @param  {String} url 请求路径
-	 * @return {Route} 路由实体
-	 * @method get
-	 * @static
+	 * @param {String} url 请求路径
+	 * @param {Boolean} handleActionFromUrl 是否从 URL 中分析 action
+	 * @returns {Route} 路由实体
 	 */
 	Router.prototype.get = function (url, handleActionFromUrl) {
 	  var self = this;
@@ -3692,11 +3710,11 @@
 	  if (utils.isNull(url)) {
 	    return routeArray;
 	  }
-	  url = url.replace(/\/\//igm, "/");
+	  url = url.replace(/\/\//igm, '/');
 	  utils.each(self.table, function (i, route) {
 	    route.expr.lastIndex = 0;
 	    if (!route.expr.test(url)) return;
-	    //通过子表达式 "正则的()" 取值
+	    //通过子表达式 '正则的()' 取值
 	    route.expr.lastIndex = 0;
 	    var values = route.expr.exec(url);
 	    //生成 params
@@ -3724,6 +3742,8 @@
 	
 	/**
 	 * 从 url 中分解出来 action ，然后获取 route array
+	 * @param {String} url 路径
+	 * @returns {Object} 路由实例
 	 **/
 	Router.prototype._getForActionFromUrl = function (url) {
 	  var self = this;
@@ -3734,11 +3754,11 @@
 	  var lastIndex = urlParts.length - 1;
 	  var action = urlParts[lastIndex];
 	  //检查分解出来的 action 是否合法
-	  if (action === "" || action.indexOf('.') > -1) {
+	  if (action === '' || action.indexOf('.') > -1) {
 	    return null;
 	  }
 	  var ctrlRouteUrl = urlParts.slice(0, lastIndex).join('/');
-	  if (ctrlRouteUrl === '') ctrlRouteUrl = "/";
+	  if (ctrlRouteUrl === '') ctrlRouteUrl = '/';
 	  var ctrlRouteArray = self.get(ctrlRouteUrl, false) || [];
 	  var routeArray = ctrlRouteArray.filter(function (route) {
 	    /**
@@ -3757,6 +3777,9 @@
 	
 	/**
 	 * 过滤出包含指定 method 的 route
+	 * @param {array} routeArray 路由实例数组
+	 * @param {String} method HTTP method
+	 * @returns {Object} 匹配的路由实例
 	 **/
 	Router.prototype.matchByMethod = function (routeArray, method) {
 	  if (!routeArray || routeArray.length < 1) {
@@ -3782,7 +3805,6 @@
 	
 	var Class = __webpack_require__(4);
 	var EventEmitter = __webpack_require__(6);
-	var utils = __webpack_require__(2);
 	
 	var SEPARATOR = '#!';
 	var ROOT_PATH = '/';
@@ -3817,7 +3839,7 @@
 	
 	  /**
 	   * 设置当前路径
-	   * @param {string} 要转到的路径
+	   * @param {string} path 要转到的路径
 	   * @returns {void} 无返回
 	   */
 	  set: function /*istanbul ignore next*/set(path) {
@@ -3828,7 +3850,7 @@
 	  /**
 	   * 路由发生变化时的处理函数
 	   * @param {string} path 将要转到的路径
-	   * @param {void} 无返回
+	   * @returns {void} 无返回
 	   */
 	  _onChange: function /*istanbul ignore next*/_onChange(path) {
 	    path = path || this.get() || '';
@@ -3846,7 +3868,6 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
 	var View = __webpack_require__(31).components.View;
 	
 	var RouterView = View.extend({
@@ -3890,7 +3911,7 @@
 	  bind: function /*istanbul ignore next*/bind() {
 	    var eventTarget = this.node.$target || this.node;
 	    this.emiter = new EventEmitter(eventTarget);
-	    this.emiter.addListener(this.decorates[0] || 'tap', function (event) {
+	    this.emiter.addListener(this.decorates[0] || 'tap', function () {
 	      if (!this.scope || !this.scope.$router) return;
 	      this.scope.$router.go(this.path);
 	    }.bind(this), false);
