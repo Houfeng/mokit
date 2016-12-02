@@ -103,7 +103,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-rc16"
+		"version": "3.0.0-rc18"
 	};
 
 /***/ },
@@ -530,13 +530,16 @@
 	   * 定义不可遍历的属性
 	   **/
 	  ntils.defineFreezeProp = function (obj, name, value) {
-	    delete obj[name];
-	    Object.defineProperty(obj, name, {
-	      value: value,
-	      enumerable: false,
-	      configurable: true, //能不能重写定义
-	      writable: false //能不能用「赋值」运算更改
-	    });
+	    try {
+	      Object.defineProperty(obj, name, {
+	        value: value,
+	        enumerable: false,
+	        configurable: true, //能不能重写定义
+	        writable: false //能不能用「赋值」运算更改
+	      });
+	    } catch (err) {
+	      //noop
+	    }
 	  };
 	
 	  /**

@@ -2,25 +2,25 @@
 
   'use strict';
 
-  let List = new mokit.Component({
-    template: `<ul>
-      <li m:each="item of list" class="{{item.editing&&!item.done?'editing':''}}">
-        <input type="checkbox" m:model="item.done"/>
-        <span m:if="!item.editing||item.done" m:on:click="edit(item,true,$event)" class="{{item.done?'done':''}}">
-          {{item.text}}
-        </span>
-        <input m:on:change="edit(item,false,$event)" m:on:blur="edit(item,false,$event)" type="text" m:if="item.editing&&!item.done" m:model="item.text"/>
-        <a m:on:tap="del(item)">DEL</a>
-      </li>
-    </ul>`,
+  var List = new mokit.Component({
+    template: '<ul>\
+      <li m:each="item of list" class="{{item.editing&&!item.done?\'editing\':\'\'}}">\
+        <input type="checkbox" m:model="item.done"/>\
+        <span m:if="!item.editing||item.done" m:on:click="edit(item,true,$event)" class="{{item.done?\'done\':\'\'}}">\
+          {{item.text}}\
+        </span>\
+        <input m:on:change="edit(item,false,$event)" m:on:blur="edit(item,false,$event)" type="text" m:if="item.editing&&!item.done" m:model="item.text"/>\
+        <a m:on:tap="del(item)">DEL</a>\
+      </li>\
+    </ul>',
     properties: {
       list: null
     },
     edit: function (item, state, event) {
-      let itemEl = event.target.parentNode;
+      var itemEl = event.target.parentNode;
       item.editing = state;
       setTimeout(function () {
-        let box = itemEl.querySelector('input[type="text"]');
+        var box = itemEl.querySelector('input[type="text"]');
         box && box.focus();
       }, 10);
       this.$emit('edit', item);
@@ -40,9 +40,9 @@
       };
     },
     onInit: function () {
-      let list = localStorage.getItem('todo://list');
+      var list = localStorage.getItem('todo://list');
       if (list) this.list = JSON.parse(list);
-      let type = localStorage.getItem('todo://type');
+      var type = localStorage.getItem('todo://type');
       if (type) this.type = type;
     },
     onReady: function () {
@@ -70,7 +70,8 @@
       }
     },
     del: function (item) {
-      let index = this.list.indexOf(item);
+      if (!confirm('Confirm delete?')) return;
+      var index = this.list.indexOf(item);
       this.list.splice(index, 1);
     },
     add: function () {
@@ -81,6 +82,9 @@
         editing: false
       });
       this.text = ''
+      if (this.type == 'done') {
+        this.type = 'all';
+      }
     }
   }).start();
 
