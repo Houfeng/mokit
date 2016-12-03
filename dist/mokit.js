@@ -3287,11 +3287,19 @@
 	var Component = __webpack_require__(32);
 	var utils = __webpack_require__(2);
 	
+	/**
+	 * 内置视图组件
+	 * 可以加载并显示其它组件，并可以指定「转场效果」
+	 */
 	var View = new Component({
 	
 	  template: '<div></div>',
 	
 	  properties: {
+	
+	    /**
+	     * 显示到视图中的组件
+	     */
 	    component: {
 	      test: function /*istanbul ignore next*/test(value) {
 	        if (!value) return false;
@@ -3307,28 +3315,91 @@
 	          }
 	          return;
 	        }
-	        //销毁旧组件实例
-	        if (this.componentInstance) {
-	          this.componentInstance.$dispose();
-	        }
+	        //声明新旧组件变量
+	        var newComponentInstance = null;
+	        var oldComponentInstance = this.componentInstance;
 	        //创建新组件实例
 	        if (utils.isFunction(component)) {
-	          this.componentInstance = new component({
+	          newComponentInstance = new component({
 	            parent: this
 	          });
 	        } else {
-	          this.componentInstance = component;
+	          newComponentInstance = component;
 	        }
+	        //通过转场控制器进行转场准备
+	        this.transition.prep(newComponentInstance, oldComponentInstance);
 	        //挂载新组件实例
-	        this.componentInstance.$mount(this.$element, true);
+	        newComponentInstance.$mount(this.$element, true);
+	        //通过转场控制器进行转场
+	        this.transition.go(newComponentInstance, oldComponentInstance, function () {
+	          //销毁旧组件实例
+	          if (oldComponentInstance) {
+	            oldComponentInstance.$dispose();
+	          }
+	        }.bind(this));
+	        //暂存当前组件实例
+	        this.componentInstance = newComponentInstance;
 	      },
 	      get: function /*istanbul ignore next*/get() {
 	        return this._Component;
 	      }
+	    },
+	
+	    /**
+	     * 视图的转场控制对象
+	     */
+	    transition: {
+	      get: function /*istanbul ignore next*/get() {
+	        return this._transition || View.transition;
+	      },
+	      set: function /*istanbul ignore next*/set(transition) {
+	        if (!transition || utils.isFunction(transition.prep) && utils.isFunction(transition.go)) {
+	          if (this._transition && utils.isFunction(this._transition.clean)) {
+	            this._transition.clean();
+	          }
+	          if (transition && utils.isFunction(transition)) {
+	            transition.init(this);
+	          }
+	          this._transition = transition;
+	        } else {
+	          throw new Error('Invalid transition');
+	        }
+	      }
 	    }
+	
 	  }
 	
 	});
+	
+	/**
+	 * 默认转场设置
+	 */
+	View.transition = {
+	  //init: function () { },
+	  //clean: function () { },
+	
+	  /**
+	   * 转场开始前的准备
+	   * @param {Component} newComponent 新组件
+	   * @param {Component} oldComponent 旧组件
+	   * @returns {void} 无返回
+	   */
+	  prep: function /*istanbul ignore next*/prep(newComponent, oldComponent) {
+	    if (oldComponent) oldComponent.$element.style.display = 'none';
+	  },
+	
+	  /**
+	   * 执行转场动画
+	   * @param {Component} newComponent 新组件
+	   * @param {Component} oldComponent 旧组件
+	   * @returns {void} 无返回
+	   */
+	  go: function /*istanbul ignore next*/go(newComponent, oldComponent, done) {
+	    setTimeout(function () {
+	      done();
+	    }, 3000);
+	  }
+	};
 	
 	module.exports = View;
 
