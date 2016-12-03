@@ -51,9 +51,9 @@
 	var Watcher = __webpack_require__(3);
 	var Observer = __webpack_require__(5);
 	var Template = __webpack_require__(9);
-	var Component = __webpack_require__(31);
+	var Component = __webpack_require__(32);
 	var EventEmitter = __webpack_require__(6);
-	var Router = __webpack_require__(36);
+	var Router = __webpack_require__(37);
 	
 	//持载模板相关对象
 	utils.copy(Template, Component);
@@ -103,7 +103,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-rc18"
+		"version": "3.0.0-rc19"
 	};
 
 /***/ },
@@ -1526,7 +1526,7 @@
 	var Compiler = __webpack_require__(10);
 	var Directive = __webpack_require__(11);
 	var Expression = __webpack_require__(12);
-	var Template = __webpack_require__(30);
+	var Template = __webpack_require__(31);
 	var directives = __webpack_require__(13);
 	
 	Template.Template = Template;
@@ -2031,7 +2031,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	module.exports = [__webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29)];
+	module.exports = [__webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30)];
 
 /***/ },
 /* 14 */
@@ -2412,6 +2412,24 @@
 	/*istanbul ignore next*/'use strict';
 	
 	var Directive = __webpack_require__(11);
+	
+	module.exports = new Directive({
+	  name: 'show',
+	  type: Directive.TYPE_ATTRIBUTE,
+	
+	  update: function /*istanbul ignore next*/update(value) {
+	    this.node.style.display = value ? '' : 'none';
+	  }
+	
+	});
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Directive = __webpack_require__(11);
 	var EventEmitter = __webpack_require__(6);
 	
 	module.exports = new Directive({
@@ -2451,7 +2469,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2502,7 +2520,7 @@
 	});
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2546,7 +2564,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2603,7 +2621,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2646,7 +2664,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2760,13 +2778,13 @@
 	module.exports = Template;
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(32);
-	var components = __webpack_require__(34);
+	var Component = __webpack_require__(33);
+	var components = __webpack_require__(35);
 	
 	Component.components = components;
 	Component.Component = Component;
@@ -2779,7 +2797,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2790,7 +2808,7 @@
 	var utils = __webpack_require__(2);
 	var EventEmitter = __webpack_require__(6);
 	var Observer = __webpack_require__(5);
-	var ComponentDirective = __webpack_require__(33);
+	var ComponentDirective = __webpack_require__(34);
 	
 	var RESERVED_WORDS = ['$compile', '$data', '$dispose', '$element', '$mount', '$properties', '$remove', '$watch', '_callHook', '_compiled', '_createData', '_createProperties', '_createWatches', '$extends', '_mounted', '_observer', '_onTemplateUpdate', '_removed', '_template', '_watchers', '$children', '$parent', '_directives', '_importComponents', '$nextTick', '_isElement', '_listeners', '__emitter__', '__observer__', '_target', '$on', '$off', '$emit', '$dispatch'];
 	
@@ -2852,7 +2870,7 @@
 	      delete this.properties;
 	      this._createWatches(this.watches);
 	      delete this.watches;
-	      this._importComponents(__webpack_require__(34));
+	      this._importComponents(__webpack_require__(35));
 	      this._importComponents(this.components);
 	      delete this.components;
 	      this._callHook('onInit');
@@ -3167,7 +3185,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -3269,29 +3287,37 @@
 	module.exports = ComponentDirective;
 
 /***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = {
-	  View: __webpack_require__(35)
-	};
-
-/***/ },
 /* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(32);
+	module.exports = {
+	  View: __webpack_require__(36)
+	};
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Component = __webpack_require__(33);
 	var utils = __webpack_require__(2);
 	
+	/**
+	 * 内置视图组件
+	 * 可以加载并显示其它组件，并可以指定「转场效果」
+	 */
 	var View = new Component({
 	
 	  template: '<div></div>',
 	
 	  properties: {
+	
+	    /**
+	     * 显示到视图中的组件
+	     */
 	    component: {
 	      test: function /*istanbul ignore next*/test(value) {
 	        if (!value) return false;
@@ -3307,44 +3333,105 @@
 	          }
 	          return;
 	        }
-	        //销毁旧组件实例
-	        if (this.componentInstance) {
-	          this.componentInstance.$dispose();
-	        }
+	        //声明新旧组件变量
+	        var newComponentInstance = null;
+	        var oldComponentInstance = this.componentInstance;
 	        //创建新组件实例
 	        if (utils.isFunction(component)) {
-	          this.componentInstance = new component({
+	          newComponentInstance = new component({
 	            parent: this
 	          });
 	        } else {
-	          this.componentInstance = component;
+	          newComponentInstance = component;
 	        }
+	        //通过转场控制器进行转场准备
+	        this.transition.prep(newComponentInstance, oldComponentInstance);
 	        //挂载新组件实例
-	        this.componentInstance.$mount(this.$element, true);
+	        newComponentInstance.$mount(this.$element, true);
+	        //通过转场控制器进行转场
+	        this.transition.go(newComponentInstance, oldComponentInstance, function () {
+	          //销毁旧组件实例
+	          if (oldComponentInstance) {
+	            oldComponentInstance.$dispose();
+	          }
+	        }.bind(this));
+	        //暂存当前组件实例
+	        this.componentInstance = newComponentInstance;
 	      },
 	      get: function /*istanbul ignore next*/get() {
 	        return this._Component;
 	      }
+	    },
+	
+	    /**
+	     * 视图的转场控制对象
+	     */
+	    transition: {
+	      get: function /*istanbul ignore next*/get() {
+	        return this._transition || View.transition;
+	      },
+	      set: function /*istanbul ignore next*/set(transition) {
+	        if (!transition || utils.isFunction(transition.prep) && utils.isFunction(transition.go)) {
+	          if (this._transition && utils.isFunction(this._transition.clean)) {
+	            this._transition.clean();
+	          }
+	          if (transition && utils.isFunction(transition)) {
+	            transition.init(this);
+	          }
+	          this._transition = transition;
+	        } else {
+	          throw new Error('Invalid transition');
+	        }
+	      }
 	    }
+	
 	  }
 	
 	});
 	
+	/**
+	 * 默认转场设置
+	 */
+	View.transition = {
+	  //init: function () { },
+	  //clean: function () { },
+	
+	  /**
+	   * 转场开始前的准备
+	   * @param {Component} newComponent 新组件
+	   * @param {Component} oldComponent 旧组件
+	   * @returns {void} 无返回
+	   */
+	  prep: function /*istanbul ignore next*/prep(newComponent, oldComponent) {
+	    if (oldComponent) oldComponent.$element.style.display = 'none';
+	  },
+	
+	  /**
+	   * 执行转场动画
+	   * @param {Component} newComponent 新组件
+	   * @param {Component} oldComponent 旧组件
+	   * @returns {void} 无返回
+	   */
+	  go: function /*istanbul ignore next*/go(newComponent, oldComponent, done) {
+	    done();
+	  }
+	};
+	
 	module.exports = View;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
 	var utils = __webpack_require__(2);
 	var Class = __webpack_require__(4);
-	var RouterBase = __webpack_require__(37);
-	var HashDirver = __webpack_require__(38);
-	var RouterView = __webpack_require__(39);
-	var LinkDirective = __webpack_require__(40);
-	var Component = __webpack_require__(31);
+	var RouterBase = __webpack_require__(38);
+	var HashDirver = __webpack_require__(39);
+	var RouterView = __webpack_require__(40);
+	var LinkDirective = __webpack_require__(41);
+	var Component = __webpack_require__(32);
 	
 	var ROOT_PATH = '/';
 	
@@ -3529,7 +3616,7 @@
 	module.exports = Router;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -3802,7 +3889,7 @@
 	/*end*/
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -3867,12 +3954,12 @@
 	module.exports = HashDriver;
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var View = __webpack_require__(31).components.View;
+	var View = __webpack_require__(32).components.View;
 	
 	var RouterView = View.extend({
 	  properties: {
@@ -3899,7 +3986,7 @@
 	module.exports = RouterView;
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
