@@ -1,0 +1,27 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#app {
+  border: solid 5px #888;
+  background-color: #000;
+  width: 320px;
+  height: 480px;
+  margin: 50px auto;
+}
+
+@media screen and (max-width: 800px) {
+  #app {
+    border: none;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+}
+
+#app .container, #app .container .page {
+  height: 100%;
+  width: 100%;
+}

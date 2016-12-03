@@ -48,7 +48,8 @@
 	
 	var info = __webpack_require__(1);
 	var utils = __webpack_require__(2);
-	var Watcher = __webpack_require__(3);
+	var Class = __webpack_require__(3);
+	var Watcher = __webpack_require__(4);
 	var Observer = __webpack_require__(5);
 	var Template = __webpack_require__(9);
 	var Component = __webpack_require__(32);
@@ -63,8 +64,9 @@
 	Component.Watcher = Watcher;
 	Component.Observer = Observer;
 	Component.EventEmitter = EventEmitter;
-	Component.utils = utils;
 	Component.Router = Router;
+	Component.utils = utils;
+	Component.Class = Class;
 	
 	//定义安装插件的方法
 	Component.use = function (plugin) {
@@ -103,7 +105,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-rc20"
+		"version": "3.0.0-rc21"
 	};
 
 /***/ },
@@ -744,55 +746,6 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
-	var utils = __webpack_require__(2);
-	
-	/**
-	 * Watcher 类
-	 * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
-	 */
-	var Watcher = new Class({
-	  $name: 'Watcher',
-	
-	  /**
-	   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
-	   * @param {function} calcor 计算函数
-	   * @param {function} handler 处理函数
-	   * @param {boolean} first 是否自动执行第一次
-	   * @returns {void} 无返回
-	   */
-	  constructor: function /*istanbul ignore next*/constructor(calcor, handler, first) {
-	    if (!utils.isFunction(calcor) || !utils.isFunction(handler)) {
-	      throw new Error('Invalid parameters');
-	    }
-	    this.calcor = calcor;
-	    this.handler = handler;
-	    if (first) this.calc(true);
-	  },
-	
-	  /**
-	   * 执行计算
-	   * @param {boolean} force 是否强制触发「计算函数」
-	   * @returns {Object} 计算后的值
-	   */
-	  calc: function /*istanbul ignore next*/calc(force) {
-	    var newValue = this.calcor();
-	    if (force || !utils.deepEqual(newValue, this.value)) {
-	      this.handler(newValue, this.value);
-	    }
-	    this.value = utils.clone(newValue);
-	  }
-	
-	});
-	
-	module.exports = Watcher;
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
 	var utils = __webpack_require__(2);
 	
 	var RESERVED = ['$extends', '$name', '$class', '$super', '$super_result', '$super_called'];
@@ -860,12 +813,61 @@
 	module.exports = Class;
 
 /***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Class = __webpack_require__(3);
+	var utils = __webpack_require__(2);
+	
+	/**
+	 * Watcher 类
+	 * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
+	 */
+	var Watcher = new Class({
+	  $name: 'Watcher',
+	
+	  /**
+	   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
+	   * @param {function} calcor 计算函数
+	   * @param {function} handler 处理函数
+	   * @param {boolean} first 是否自动执行第一次
+	   * @returns {void} 无返回
+	   */
+	  constructor: function /*istanbul ignore next*/constructor(calcor, handler, first) {
+	    if (!utils.isFunction(calcor) || !utils.isFunction(handler)) {
+	      throw new Error('Invalid parameters');
+	    }
+	    this.calcor = calcor;
+	    this.handler = handler;
+	    if (first) this.calc(true);
+	  },
+	
+	  /**
+	   * 执行计算
+	   * @param {boolean} force 是否强制触发「计算函数」
+	   * @returns {Object} 计算后的值
+	   */
+	  calc: function /*istanbul ignore next*/calc(force) {
+	    var newValue = this.calcor();
+	    if (force || !utils.deepEqual(newValue, this.value)) {
+	      this.handler(newValue, this.value);
+	    }
+	    this.value = utils.clone(newValue);
+	  }
+	
+	});
+	
+	module.exports = Watcher;
+
+/***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var utils = __webpack_require__(2);
 	var EventEmitter = __webpack_require__(6);
 	
@@ -1150,7 +1152,7 @@
 	/*istanbul ignore next*/'use strict';
 	
 	var utils = __webpack_require__(2);
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	
 	/**
 	 * 事件触发器基类
@@ -1543,7 +1545,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var Directive = __webpack_require__(11);
 	var utils = __webpack_require__(2);
 	var Expression = __webpack_require__(12);
@@ -1761,7 +1763,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var utils = __webpack_require__(2);
 	var Expression = __webpack_require__(12);
 	
@@ -1890,7 +1892,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var utils = __webpack_require__(2);
 	
 	/**
@@ -2669,7 +2671,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var Observer = __webpack_require__(5);
 	var EventEmitter = __webpack_require__(6);
 	var Compiler = __webpack_require__(10);
@@ -2802,9 +2804,9 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var Template = __webpack_require__(9);
-	var Watcher = __webpack_require__(3);
+	var Watcher = __webpack_require__(4);
 	var utils = __webpack_require__(2);
 	var EventEmitter = __webpack_require__(6);
 	var Observer = __webpack_require__(5);
@@ -2873,13 +2875,51 @@
 	      this._importComponents(__webpack_require__(35));
 	      this._importComponents(this.components);
 	      delete this.components;
+	      utils.defineFreezeProp(this, '$children', []);
+	      if (instanceOpts.parent) {
+	        this.$setParent(instanceOpts.parent);
+	      }
 	      this._callHook('onInit');
 	      this._observer = Observer.observe(this);
-	      utils.defineFreezeProp(this, '$children', []);
-	      utils.defineFreezeProp(this, '$parent', instanceOpts.parent);
-	      if (this.$parent) this.$parent.$children.push(this);
 	      this.$compile();
 	      this._mounted = !!this.element;
+	    },
+	
+	    /**
+	     * 设定父组件
+	     * @param {Object} parent 父组件
+	     * @returns {void} 无返回
+	     */
+	    $setParent: function /*istanbul ignore next*/$setParent(parent) {
+	      if (this.$parent === parent) return;
+	      if (this.$parent) {
+	        this.$parent.$removeChild(this);
+	      }
+	      if (parent) {
+	        parent.$addChild(this);
+	      }
+	    },
+	
+	    /**
+	     * 添加子组件
+	     * @param {Object} child 子组件
+	     * @returns {void} 无返回
+	     */
+	    $addChild: function /*istanbul ignore next*/$addChild(child) {
+	      if (!(child instanceof Component)) return;
+	      this.$children.push(child);
+	      utils.defineFreezeProp(child, '$parent', this);
+	    },
+	
+	    /**
+	     * 移除子组件
+	     * @param {Object} child 子组件
+	     * @returns {void} 无返回
+	     */
+	    $removeChild: function /*istanbul ignore next*/$removeChild(child) {
+	      var index = this.$children.indexOf(child);
+	      this.$children.splice(index, 1);
+	      utils.defineFreezeProp(child, '$parent', null);
 	    },
 	
 	    /**
@@ -3342,6 +3382,7 @@
 	            parent: this
 	          });
 	        } else {
+	          component.$setParent(this);
 	          newComponentInstance = component;
 	        }
 	        //通过转场控制器进行转场准备
@@ -3373,9 +3414,9 @@
 	      set: function /*istanbul ignore next*/set(transition) {
 	        if (!transition || utils.isFunction(transition.prep) && utils.isFunction(transition.go)) {
 	          if (this._transition && utils.isFunction(this._transition.clean)) {
-	            this._transition.clean();
+	            this._transition.clean(this);
 	          }
-	          if (transition && utils.isFunction(transition)) {
+	          if (transition && utils.isFunction(transition.init)) {
 	            transition.init(this);
 	          }
 	          this._transition = transition;
@@ -3426,7 +3467,7 @@
 	/*istanbul ignore next*/'use strict';
 	
 	var utils = __webpack_require__(2);
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var RouterBase = __webpack_require__(38);
 	var HashDirver = __webpack_require__(39);
 	var RouterView = __webpack_require__(40);
@@ -3894,7 +3935,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(4);
+	var Class = __webpack_require__(3);
 	var EventEmitter = __webpack_require__(6);
 	
 	var SEPARATOR = '#!';
