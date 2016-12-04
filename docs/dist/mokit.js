@@ -3364,6 +3364,8 @@
 	        return value instanceof Component || utils.isString(value);
 	      },
 	      set: function /*istanbul ignore next*/set(component) {
+	        if (this._transitioning) return;
+	        this._transitioning = true;
 	        //如果 value 是字符串则尝试从 $parent.components 中获取组件类 
 	        if (utils.isString(component)) {
 	          if (this.$parent && this.$parent.$components) {
@@ -3395,6 +3397,7 @@
 	          if (oldComponentInstance) {
 	            oldComponentInstance.$dispose();
 	          }
+	          this._transitioning = false;
 	        }.bind(this));
 	        //暂存当前组件实例
 	        this.componentInstance = newComponentInstance;
@@ -3412,6 +3415,7 @@
 	        return this._transition || View.transition;
 	      },
 	      set: function /*istanbul ignore next*/set(transition) {
+	        if (this._transitioning) return;
 	        if (!transition || utils.isFunction(transition.prep) && utils.isFunction(transition.go)) {
 	          if (this._transition && utils.isFunction(this._transition.clean)) {
 	            this._transition.clean(this);
@@ -3424,21 +3428,20 @@
 	          throw new Error('Invalid transition');
 	        }
 	      }
-	    },
-	
-	    /**
-	     * 切换到指定的组件
-	     * @param {Component} component 组件
-	     * @param {transition} transition 转场控制组件
-	     * @returns 无返回
-	     */
-	    switchTo: function /*istanbul ignore next*/switchTo(component, transition) {
-	      if (transition) {
-	        this.transition = transition;
-	      }
-	      this.component = component;
 	    }
+	  },
 	
+	  /**
+	   * 切换到指定的组件
+	   * @param {Component} component 组件
+	   * @param {transition} transition 转场控制组件
+	   * @returns 无返回
+	   */
+	  switchTo: function /*istanbul ignore next*/switchTo(component, transition) {
+	    if (transition) {
+	      this.transition = transition;
+	    }
+	    this.component = component;
 	  }
 	
 	});
