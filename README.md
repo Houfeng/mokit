@@ -9,3 +9,4 @@
 # 示例
 - [Todo](http://houfeng.net/mokit/examples/todo)
 - [Route](http://houfeng.net/mokit/examples/route)
+- [Transition](http://houfeng.net/mokit/examples/transition)
