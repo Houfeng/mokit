@@ -7,12 +7,12 @@
   };
 
   var Page = new mokit.Component({
-    template: '<div class="page" style="background-color:{{color}}"></div>',
+    template: '<div class="page" style="background-color:{{color}}"><span>Tap me</span></div>',
     properties: { color: '#000' },
     onInit: function () {
-      this.color = 'rgb(' + random(50, 255) + ',' +
-        random(50, 255) + ',' +
-        random(50, 255) + ')';
+      this.color = 'rgb(' + random(50, 200) + ',' +
+        random(50, 200) + ',' +
+        random(50, 200) + ')';
     }
   });
 

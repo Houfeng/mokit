@@ -1,6 +1,16 @@
 (function (mokit) {
 
-  var ANIMATION_END_EVENT_NAME = 'animationend';
+  // 取浏览器的 CSS 前缀
+  var prefix = (function () {
+    var styles = window.getComputedStyle(document.documentElement, '');
+    return (Array.prototype.slice
+      .call(styles)
+      .join('')
+      .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
+    )[1];
+  })();
+
+  var ANIMATION_END_EVENT_NAME = prefix + 'AnimationEnd';
   var EventEmitter = mokit.EventEmitter;
   var Class = mokit.Class;
   var utils = mokit.utils;

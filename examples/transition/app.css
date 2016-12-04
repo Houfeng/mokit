@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  user-select: none;
 }
 
 #app {
@@ -24,4 +25,19 @@ html, body {
 #app .container, #app .container .page {
   height: 100%;
   width: 100%;
+}
+
+#app .container .page span {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -15px;
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+  line-height: 30px;
+  height: 30px;
+  color: rgba(225, 225, 225, .85);
+  font-weight: bold;
 }
