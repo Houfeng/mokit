@@ -3424,6 +3424,19 @@
 	          throw new Error('Invalid transition');
 	        }
 	      }
+	    },
+	
+	    /**
+	     * 切换到指定的组件
+	     * @param {Component} component 组件
+	     * @param {transition} transition 转场控制组件
+	     * @returns 无返回
+	     */
+	    switchTo: function /*istanbul ignore next*/switchTo(component, transition) {
+	      if (transition) {
+	        this.transition = transition;
+	      }
+	      this.component = component;
 	    }
 	
 	  }
