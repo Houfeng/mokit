@@ -105,7 +105,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta25"
+		"version": "3.0.0-beta26"
 	};
 
 /***/ },
@@ -2675,6 +2675,7 @@
 	var Observer = __webpack_require__(5);
 	var EventEmitter = __webpack_require__(6);
 	var Compiler = __webpack_require__(10);
+	var utils = __webpack_require__(2);
 	
 	/**
 	 * 模板类
@@ -3435,7 +3436,7 @@
 	   * 切换到指定的组件
 	   * @param {Component} component 组件
 	   * @param {transition} transition 转场控制组件
-	   * @returns 无返回
+	   * @returns {void} 无返回
 	   */
 	  switchTo: function /*istanbul ignore next*/switchTo(component, transition) {
 	    if (transition) {
@@ -3467,6 +3468,7 @@
 	   * 执行转场动画
 	   * @param {Component} newComponent 新组件
 	   * @param {Component} oldComponent 旧组件
+	   * @param {Function} done 完成后的回调
 	   * @returns {void} 无返回
 	   */
 	  go: function /*istanbul ignore next*/go(newComponent, oldComponent, done) {
