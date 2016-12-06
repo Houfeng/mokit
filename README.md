@@ -7,6 +7,7 @@ v3 是一个「极轻量」的 MVVM 框架，相较目前主流的类似的框�
 希望为开发人员提供多一种的选择。
 
 ## 相较 v2 主要变化
+- MVC -> MVVM
 - 重写模板引擎（由字符模板改为 DOM 模板），新增支持双向绑定
 - 原来的 View 类改为 Component，同时取消了 Controller 类
 - options 选项改为 properties，并支持计算属性
