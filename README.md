@@ -15,7 +15,7 @@ v3 是一个「极轻量」的 MVVM 框架，相较目前主流的类似的框�
 
 ## 特性
 - 面向移动设备，内置支持常用「手势事件」并可以轻松添加自定义事件。
-- 极其轻量「核心 + 手势 API + Router」仅 13k (uglify+gzip)
+- 极其轻量「核心 + 手势 API + Router」仅 ```13k``` (uglify+gzip)
 - 提供类 WebCompoents 的支持，并支持「组件继承」
 
 # Hello world
