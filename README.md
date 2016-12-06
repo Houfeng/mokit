@@ -1,5 +1,7 @@
 # A minimal mvvm framework
 
+> 一个 MVC 框架以 MVVM 之「魂」复活了！  
+
 mokit 最初编写于 2012 年，是一个面向移动应用的前端 mvc 框架，v3 版本进行了大量的重构或重写，并尽可能的保持了和之前版本类似的 API，
 v3 是一个「极轻量」的 MVVM 框架，相较目前主流的类似的框架(react/vue/angular)，mokit v3 更为「轻量」，
 希望为开发人员提供多一种的选择。
@@ -18,9 +20,6 @@ v3 是一个「极轻量」的 MVVM 框架，相较目前主流的类似的框�
 - 面向移动设备，内置支持常用「手势事件」并可以轻松添加自定义事件。
 - 极其轻量「核心 + 手势 API + Router」仅 ```13k``` (uglify+gzip)
 - 提供类 WebCompoents 的支持，并支持「组件继承」
-
-
-> 一个 MVC 框架以 MVVM 之「魂」复活了！  
 
 
 # Hello world
