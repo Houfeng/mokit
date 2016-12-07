@@ -52,9 +52,9 @@
 	var Watcher = __webpack_require__(4);
 	var Observer = __webpack_require__(5);
 	var Template = __webpack_require__(9);
-	var Component = __webpack_require__(32);
+	var Component = __webpack_require__(33);
 	var EventEmitter = __webpack_require__(6);
-	var Router = __webpack_require__(37);
+	var Router = __webpack_require__(38);
 	
 	//持载模板相关对象
 	utils.copy(Template, Component);
@@ -105,7 +105,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta26"
+		"version": "3.0.0-beta27"
 	};
 
 /***/ },
@@ -1528,7 +1528,7 @@
 	var Compiler = __webpack_require__(10);
 	var Directive = __webpack_require__(11);
 	var Expression = __webpack_require__(12);
-	var Template = __webpack_require__(31);
+	var Template = __webpack_require__(32);
 	var directives = __webpack_require__(13);
 	
 	Template.Template = Template;
@@ -1642,7 +1642,6 @@
 	        directive.node.removeAttribute(directive.attribute.name);
 	      }
 	      //如果遇到一个「终态」指令，停止向下初始化
-	      //如果 each、if 等为「终态指令」
 	      if (directive.final) {
 	        return handler.final = true;
 	      }
@@ -1720,22 +1719,19 @@
 	    //定义编译结果函数
 	    var handler = function handler(scope) {
 	      if (utils.isNull(scope)) scope = utils.create(null);
-	      //执行指令
 	      handler.directives.forEach(function (directive) {
 	        directive.scope = scope;
 	        directive.execute(scope);
 	      }, this);
-	      //执行子元素编译函数
 	      handler.children.forEach(function (childHandler) {
 	        childHandler(scope);
 	      }, this);
 	    };
+	    //--
 	    handler.dispose = function () {
-	      //执行指令
 	      handler.directives.forEach(function (directive) {
 	        directive.unbind();
 	      }, this);
-	      //执行子元素编译函数
 	      handler.children.forEach(function (childHandler) {
 	        childHandler.dispose();
 	      }, this);
@@ -1789,7 +1785,7 @@
 	    //拷贝所有成员到当前 definition 实例
 	    this.customTest = options.test;
 	    delete options.test;
-	    utils.copy(this._faultHanlde(options), this);
+	    utils.copy(this._faultHandle(options), this);
 	  },
 	
 	  /**
@@ -1797,7 +1793,7 @@
 	   * @param {Object} options 原姓选项
 	   * @returns {Object} 处理后的选项
 	   */
-	  _faultHanlde: function /*istanbul ignore next*/_faultHanlde(options) {
+	  _faultHandle: function /*istanbul ignore next*/_faultHandle(options) {
 	    options.type = options.type || Directive.TYPE_ATTRIBUTE;
 	    options.level = options.level || Directive.LEVEL_GENERAL;
 	    options.match = options.match || options.name;
@@ -1824,7 +1820,7 @@
 	});
 	
 	/**
-	 * 指定定义工场函数
+	 * 指令定义工场函数
 	 * @param {Object} options 选项
 	 * @returns {Directive} 指令类
 	 */
@@ -2033,7 +2029,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	module.exports = [__webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30)];
+	module.exports = [__webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31)];
 
 /***/ },
 /* 14 */
@@ -2087,7 +2083,7 @@
 	 *  </div>
 	 */
 	module.exports = new Directive({
-	  name: 'attr',
+	  name: 'attribute',
 	  type: Directive.TYPE_ATTRIBUTE,
 	  level: Directive.LEVEL_ATTRIBUTE,
 	  prefix: false,
@@ -2276,6 +2272,27 @@
 	/*istanbul ignore next*/'use strict';
 	
 	var Directive = __webpack_require__(11);
+	
+	module.exports = new Directive({
+	  name: 'attr',
+	  type: Directive.TYPE_ATTRIBUTE,
+	
+	  update: function /*istanbul ignore next*/update(value) {
+	    var target = this.node.$target || this.node;
+	    if (target && target.setAttribute) {
+	      target.setAttribute(this.decorates[0], value);
+	    }
+	  }
+	
+	});
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Directive = __webpack_require__(11);
 	var EventEmitter = __webpack_require__(6);
 	
 	module.exports = new Directive({
@@ -2314,7 +2331,7 @@
 	});
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2332,7 +2349,7 @@
 	});
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2350,7 +2367,7 @@
 	});
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2365,7 +2382,7 @@
 	});
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2387,7 +2404,7 @@
 	});
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2408,7 +2425,7 @@
 	});
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2426,7 +2443,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2471,7 +2488,7 @@
 	});
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2522,7 +2539,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2566,7 +2583,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2623,7 +2640,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2666,7 +2683,7 @@
 	});
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2781,13 +2798,13 @@
 	module.exports = Template;
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(33);
-	var components = __webpack_require__(35);
+	var Component = __webpack_require__(34);
+	var components = __webpack_require__(36);
 	
 	Component.components = components;
 	Component.Component = Component;
@@ -2800,7 +2817,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2811,7 +2828,7 @@
 	var utils = __webpack_require__(2);
 	var EventEmitter = __webpack_require__(6);
 	var Observer = __webpack_require__(5);
-	var ComponentDirective = __webpack_require__(34);
+	var ComponentDirective = __webpack_require__(35);
 	
 	var RESERVED_WORDS = ['$compile', '$data', '$dispose', '$element', '$mount', '$properties', '$remove', '$watch', '_callHook', '_compiled', '_createData', '_createProperties', '_createWatches', '$extends', '_mounted', '_observer', '_onTemplateUpdate', '_removed', '_template', '_watchers', '$children', '$parent', '_directives', '_importComponents', '$nextTick', '_isElement', '_listeners', '__emitter__', '__observer__', '_target', '$on', '$off', '$emit', '$dispatch'];
 	
@@ -2873,7 +2890,7 @@
 	      delete this.properties;
 	      this._createWatches(this.watches);
 	      delete this.watches;
-	      this._importComponents(__webpack_require__(35));
+	      this._importComponents(__webpack_require__(36));
 	      this._importComponents(this.components);
 	      delete this.components;
 	      utils.defineFreezeProp(this, '$children', []);
@@ -3226,7 +3243,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -3328,22 +3345,22 @@
 	module.exports = ComponentDirective;
 
 /***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = {
-	  View: __webpack_require__(36)
-	};
-
-/***/ },
 /* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(33);
+	module.exports = {
+	  View: __webpack_require__(37)
+	};
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Component = __webpack_require__(34);
 	var utils = __webpack_require__(2);
 	
 	/**
@@ -3479,18 +3496,18 @@
 	module.exports = View;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
 	var utils = __webpack_require__(2);
 	var Class = __webpack_require__(3);
-	var RouterBase = __webpack_require__(38);
-	var HashDirver = __webpack_require__(39);
-	var RouterView = __webpack_require__(40);
-	var LinkDirective = __webpack_require__(41);
-	var Component = __webpack_require__(32);
+	var RouterBase = __webpack_require__(39);
+	var HashDirver = __webpack_require__(40);
+	var RouterView = __webpack_require__(41);
+	var LinkDirective = __webpack_require__(42);
+	var Component = __webpack_require__(33);
 	
 	var ROOT_PATH = '/';
 	
@@ -3643,6 +3660,8 @@
 	 */
 	Router.install = function (owner) {
 	
+	  owner.Router = this;
+	
 	  //为组件实例扩展 $router 属性
 	  Object.defineProperty(owner.prototype, '$router', {
 	    get: function /*istanbul ignore next*/get() {
@@ -3675,7 +3694,7 @@
 	module.exports = Router;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -3948,7 +3967,7 @@
 	/*end*/
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -4013,12 +4032,12 @@
 	module.exports = HashDriver;
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var View = __webpack_require__(32).components.View;
+	var View = __webpack_require__(33).components.View;
 	
 	var RouterView = View.extend({
 	  properties: {
@@ -4045,7 +4064,7 @@
 	module.exports = RouterView;
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
