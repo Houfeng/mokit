@@ -92,7 +92,7 @@ mokit({
 # 在线示例
 - [Todo](http://houfeng.net/mokit/examples/todo)
 - [Route](http://houfeng.net/mokit/examples/route)
-- [Transition](http://houfeng.net/mokit/examples/transition)
+- [Transition](http://houfeng.net/mokit-transition/examples/)
 
 # 规划
 - 支持服务端渲染
