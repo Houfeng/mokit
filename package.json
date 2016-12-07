@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "3.0.0-beta27",
+  "version": "3.0.0-beta29",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
@@ -38,8 +38,5 @@
     "ntils": "^2.0.2",
     "selenium-webdriver": "^3.0.1",
     "webpack": "^1.13.3"
-  },
-  "dependencies": {
-    "cmdline": "^1.1.7"
   }
 }
