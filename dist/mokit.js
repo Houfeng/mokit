@@ -47,14 +47,47 @@
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*istanbul ignore next*/'use strict';
 	
 	var info = __webpack_require__(1);
-	var utils = __webpack_require__(2);
-	var Class = __webpack_require__(3);
-	var Watcher = __webpack_require__(4);
-	var Observer = __webpack_require__(5);
-	var Template = __webpack_require__(9);
-	var Component = __webpack_require__(33);
-	var EventEmitter = __webpack_require__(6);
-	var Router = __webpack_require__(38);
+	var entry = __webpack_require__(2);
+	
+	/* eslint-disable */
+	//兼容 amd 模块
+	if (true) {
+	  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    return entry;
+	  }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	}
+	//普通脚本引入
+	if (typeof window !== 'undefined') {
+	  window[info.name] = entry;
+	}
+	/* eslint-enable */
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+	/*istanbul ignore next*/"use strict";
+	
+	module.exports = {
+		"name": "mokit",
+		"version": "3.0.0-beta30"
+	};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var info = __webpack_require__(1);
+	var utils = __webpack_require__(3);
+	var Class = __webpack_require__(4);
+	var Watcher = __webpack_require__(5);
+	var Observer = __webpack_require__(6);
+	var Template = __webpack_require__(10);
+	var Component = __webpack_require__(34);
+	var EventEmitter = __webpack_require__(7);
+	var Router = __webpack_require__(39);
 	
 	//持载模板相关对象
 	utils.copy(Template, Component);
@@ -79,37 +112,10 @@
 	//安装内置的路由插件
 	Component.use(Router);
 	
-	/* eslint-disable */
-	
-	//兼容 amd 模块
-	if (true) {
-	  !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	    return Component;
-	  }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}
-	
-	//普通脚本引入
-	if (typeof window !== 'undefined') {
-	  window[info.name] = Component;
-	}
-	
-	/* eslint-enable */
-	
 	module.exports = Component;
 
 /***/ },
-/* 1 */
-/***/ function(module, exports) {
-
-	/*istanbul ignore next*/"use strict";
-	
-	module.exports = {
-		"name": "mokit",
-		"version": "3.0.0-beta29"
-	};
-
-/***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/"use strict";
@@ -741,12 +747,12 @@
 	})( false ? window.ntils = {} : exports);
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var utils = __webpack_require__(2);
+	var utils = __webpack_require__(3);
 	
 	var RESERVED = ['$extends', '$name', '$class', '$super', '$super_result', '$super_called'];
 	
@@ -813,13 +819,13 @@
 	module.exports = Class;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var utils = __webpack_require__(2);
+	var Class = __webpack_require__(4);
+	var utils = __webpack_require__(3);
 	
 	/**
 	 * Watcher 类
@@ -862,14 +868,14 @@
 	module.exports = Watcher;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var utils = __webpack_require__(2);
-	var EventEmitter = __webpack_require__(6);
+	var Class = __webpack_require__(4);
+	var utils = __webpack_require__(3);
+	var EventEmitter = __webpack_require__(7);
 	
 	var OBSERVER_PROP_NAME = '__observer__';
 	var CHANGE_EVENT_NAME = 'change';
@@ -1132,13 +1138,13 @@
 	module.exports = Observer;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var EventEmitter = __webpack_require__(7);
-	var touch = __webpack_require__(8);
+	var EventEmitter = __webpack_require__(8);
+	var touch = __webpack_require__(9);
 	
 	EventEmitter.touch = touch;
 	EventEmitter.register(touch);
@@ -1146,13 +1152,13 @@
 	module.exports = EventEmitter;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var utils = __webpack_require__(2);
-	var Class = __webpack_require__(3);
+	var utils = __webpack_require__(3);
+	var Class = __webpack_require__(4);
 	
 	/**
 	 * 事件触发器基类
@@ -1323,12 +1329,12 @@
 	module.exports = EventEmitter;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var utils = __webpack_require__(2);
+	var utils = __webpack_require__(3);
 	
 	var SUPPORT_TOUCH = 'ontouchstart' in document;
 	var START_EVENT_NAME = SUPPORT_TOUCH ? 'touchstart' : 'mousedown';
@@ -1520,16 +1526,16 @@
 	};
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Compiler = __webpack_require__(10);
-	var Directive = __webpack_require__(11);
-	var Expression = __webpack_require__(12);
-	var Template = __webpack_require__(32);
-	var directives = __webpack_require__(13);
+	var Compiler = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
+	var Expression = __webpack_require__(13);
+	var Template = __webpack_require__(33);
+	var directives = __webpack_require__(14);
 	
 	Template.Template = Template;
 	Template.Compiler = Compiler;
@@ -1540,16 +1546,16 @@
 	module.exports = Template;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var Directive = __webpack_require__(11);
-	var utils = __webpack_require__(2);
-	var Expression = __webpack_require__(12);
-	var directives = __webpack_require__(13);
+	var Class = __webpack_require__(4);
+	var Directive = __webpack_require__(12);
+	var utils = __webpack_require__(3);
+	var Expression = __webpack_require__(13);
+	var directives = __webpack_require__(14);
 	
 	var DEFAULT_PREFIX = 'm';
 	
@@ -1754,14 +1760,14 @@
 	module.exports = Compiler;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var utils = __webpack_require__(2);
-	var Expression = __webpack_require__(12);
+	var Class = __webpack_require__(4);
+	var utils = __webpack_require__(3);
+	var Expression = __webpack_require__(13);
 	
 	/**
 	 * 指令定义信息类
@@ -1883,13 +1889,13 @@
 	module.exports = Directive;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var utils = __webpack_require__(2);
+	var Class = __webpack_require__(4);
+	var utils = __webpack_require__(3);
 	
 	/**
 	 * 表达式类型，将字符串构析为可执行表达式实例
@@ -2024,21 +2030,21 @@
 	module.exports = Expression;
 
 /***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = [__webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31)];
-
-/***/ },
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var Expression = __webpack_require__(12);
+	module.exports = [__webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32)];
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Directive = __webpack_require__(12);
+	var Expression = __webpack_require__(13);
 	
 	module.exports = new Directive({
 	  name: '#text',
@@ -2068,12 +2074,12 @@
 	});
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	/**
 	 * 通用的 attribute 指令
@@ -2122,12 +2128,12 @@
 	});
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'each',
@@ -2201,12 +2207,12 @@
 	});
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'if',
@@ -2247,12 +2253,12 @@
 	});
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'prop',
@@ -2266,12 +2272,12 @@
 	});
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'attr',
@@ -2287,13 +2293,13 @@
 	});
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var EventEmitter = __webpack_require__(6);
+	var Directive = __webpack_require__(12);
+	var EventEmitter = __webpack_require__(7);
 	
 	module.exports = new Directive({
 	  name: 'on',
@@ -2331,12 +2337,12 @@
 	});
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'html',
@@ -2349,12 +2355,12 @@
 	});
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'text',
@@ -2367,12 +2373,12 @@
 	});
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'prevent',
@@ -2382,12 +2388,12 @@
 	});
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'id',
@@ -2404,12 +2410,12 @@
 	});
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'cloak',
@@ -2425,12 +2431,12 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
+	var Directive = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  name: 'show',
@@ -2443,13 +2449,13 @@
 	});
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var EventEmitter = __webpack_require__(6);
+	var Directive = __webpack_require__(12);
+	var EventEmitter = __webpack_require__(7);
 	
 	module.exports = new Directive({
 	  name: 'model',
@@ -2488,13 +2494,13 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var EventEmitter = __webpack_require__(6);
+	var Directive = __webpack_require__(12);
+	var EventEmitter = __webpack_require__(7);
 	
 	module.exports = new Directive({
 	  name: 'model',
@@ -2539,13 +2545,13 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var EventEmitter = __webpack_require__(6);
+	var Directive = __webpack_require__(12);
+	var EventEmitter = __webpack_require__(7);
 	
 	module.exports = new Directive({
 	  name: 'model',
@@ -2583,13 +2589,13 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var EventEmitter = __webpack_require__(6);
+	var Directive = __webpack_require__(12);
+	var EventEmitter = __webpack_require__(7);
 	
 	module.exports = new Directive({
 	  name: 'model',
@@ -2640,13 +2646,13 @@
 	});
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var EventEmitter = __webpack_require__(6);
+	var Directive = __webpack_require__(12);
+	var EventEmitter = __webpack_require__(7);
 	
 	module.exports = new Directive({
 	  name: 'model',
@@ -2683,16 +2689,16 @@
 	});
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var Observer = __webpack_require__(5);
-	var EventEmitter = __webpack_require__(6);
-	var Compiler = __webpack_require__(10);
-	var utils = __webpack_require__(2);
+	var Class = __webpack_require__(4);
+	var Observer = __webpack_require__(6);
+	var EventEmitter = __webpack_require__(7);
+	var Compiler = __webpack_require__(11);
+	var utils = __webpack_require__(3);
 	
 	/**
 	 * 模板类
@@ -2798,13 +2804,13 @@
 	module.exports = Template;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(34);
-	var components = __webpack_require__(36);
+	var Component = __webpack_require__(35);
+	var components = __webpack_require__(37);
 	
 	Component.components = components;
 	Component.Component = Component;
@@ -2817,18 +2823,18 @@
 	module.exports = Component;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var Template = __webpack_require__(9);
-	var Watcher = __webpack_require__(4);
-	var utils = __webpack_require__(2);
-	var EventEmitter = __webpack_require__(6);
-	var Observer = __webpack_require__(5);
-	var ComponentDirective = __webpack_require__(35);
+	var Class = __webpack_require__(4);
+	var Template = __webpack_require__(10);
+	var Watcher = __webpack_require__(5);
+	var utils = __webpack_require__(3);
+	var EventEmitter = __webpack_require__(7);
+	var Observer = __webpack_require__(6);
+	var ComponentDirective = __webpack_require__(36);
 	
 	var RESERVED_WORDS = ['$compile', '$data', '$dispose', '$element', '$mount', '$properties', '$remove', '$watch', '_callHook', '_compiled', '_createData', '_createProperties', '_createWatches', '$extends', '_mounted', '_observer', '_onTemplateUpdate', '_removed', '_template', '_watchers', '$children', '$parent', '_directives', '_importComponents', '$nextTick', '_isElement', '_listeners', '__emitter__', '__observer__', '_target', '$on', '$off', '$emit', '$dispatch'];
 	
@@ -2890,7 +2896,7 @@
 	      delete this.properties;
 	      this._createWatches(this.watches);
 	      delete this.watches;
-	      this._importComponents(__webpack_require__(36));
+	      this._importComponents(__webpack_require__(37));
 	      this._importComponents(this.components);
 	      delete this.components;
 	      utils.defineFreezeProp(this, '$children', []);
@@ -3243,12 +3249,12 @@
 	module.exports = Component;
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Template = __webpack_require__(9);
+	var Template = __webpack_require__(10);
 	var Directive = Template.Directive;
 	
 	/**
@@ -3345,23 +3351,23 @@
 	module.exports = ComponentDirective;
 
 /***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = {
-	  View: __webpack_require__(37)
-	};
-
-/***/ },
 /* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(34);
-	var utils = __webpack_require__(2);
+	module.exports = {
+	  View: __webpack_require__(38)
+	};
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Component = __webpack_require__(35);
+	var utils = __webpack_require__(3);
 	
 	/**
 	 * 内置视图组件
@@ -3496,18 +3502,18 @@
 	module.exports = View;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var utils = __webpack_require__(2);
-	var Class = __webpack_require__(3);
-	var RouterBase = __webpack_require__(39);
-	var HashDirver = __webpack_require__(40);
-	var RouterView = __webpack_require__(41);
-	var LinkDirective = __webpack_require__(42);
-	var Component = __webpack_require__(33);
+	var utils = __webpack_require__(3);
+	var Class = __webpack_require__(4);
+	var RouterBase = __webpack_require__(40);
+	var HashDirver = __webpack_require__(41);
+	var RouterView = __webpack_require__(42);
+	var LinkDirective = __webpack_require__(43);
+	var Component = __webpack_require__(34);
 	
 	var ROOT_PATH = '/';
 	
@@ -3694,12 +3700,12 @@
 	module.exports = Router;
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var utils = __webpack_require__(2);
+	var utils = __webpack_require__(3);
 	
 	/**
 	 * 定义正则表达式常量
@@ -3967,13 +3973,13 @@
 	/*end*/
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Class = __webpack_require__(3);
-	var EventEmitter = __webpack_require__(6);
+	var Class = __webpack_require__(4);
+	var EventEmitter = __webpack_require__(7);
 	
 	var SEPARATOR = '#!';
 	var ROOT_PATH = '/';
@@ -4032,12 +4038,12 @@
 	module.exports = HashDriver;
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var View = __webpack_require__(33).components.View;
+	var View = __webpack_require__(34).components.View;
 	
 	var RouterView = View.extend({
 	  properties: {
@@ -4064,13 +4070,13 @@
 	module.exports = RouterView;
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(11);
-	var EventEmitter = __webpack_require__(6);
+	var Directive = __webpack_require__(12);
+	var EventEmitter = __webpack_require__(7);
 	
 	module.exports = new Directive({
 	  name: 'link',

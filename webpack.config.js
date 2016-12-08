@@ -10,7 +10,7 @@ console.log('NODE_ENV:', NODE_ENV);
 
 const configs = {
   entry: {
-    mokit: `./lib/index.js`
+    mokit: `./lib/entry.js`
   },
   output: {
     path: './dist/',
