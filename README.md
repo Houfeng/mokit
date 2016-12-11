@@ -47,7 +47,7 @@ mokit({
 ```js
 //定义一个 hello 组件
 var Hello = new mokit.Component({
-  template: '<button m:on:tap="say(name)" m:content></button>',
+  template: '<button m:on:click="say(name)" m:content></button>',
   properties: { name: null},
   say: function (name) {
     alert('hello '+ name);
