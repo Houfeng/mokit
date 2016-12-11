@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta32"
+		"version": "3.0.0-beta33"
 	};
 
 /***/ },

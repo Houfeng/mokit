@@ -79,14 +79,14 @@ mokit({
 ```
 
 # 插件列表
-- [路由](http://houfeng.net/mokit-route/)
+- [路由](http://houfeng.net/mokit-router/)
 - [转场动画](http://houfeng.net/mokit-transition/)
 - [Touch API](http://houfeng.net/mokit-touch/)
 
 # 在线示例
 - [Todo](http://houfeng.net/mokit/examples/todo/)
 - [Transition](http://houfeng.net/mokit-transition/examples/)
-- [Route](http://houfeng.net/mokit-route/examples/)
+- [Route](http://houfeng.net/mokit-router/examples/)
 - [Touch](http://houfeng.net/mokit-touch/examples/)
 
 # 规划
