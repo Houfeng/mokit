@@ -79,9 +79,9 @@ mokit({
 ```
 
 # 插件列表
-- [路由](http://houfeng.net/mokit-router/)
-- [转场动画](http://houfeng.net/mokit-transition/)
-- [Touch API](http://houfeng.net/mokit-touch/)
+- [路由](/Houfeng/mokit-router/)
+- [转场动画](/Houfeng/mokit-transition/)
+- [Touch API](/Houfeng/mokit-touch/)
 
 # 在线示例
 - [Todo](http://houfeng.net/mokit/examples/todo/)
