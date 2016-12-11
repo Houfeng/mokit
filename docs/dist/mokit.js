@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta33"
+		"version": "3.0.0-beta34"
 	};
 
 /***/ },
@@ -775,17 +775,21 @@
 	        }
 	        return this.$super_result;
 	      });
-	      utils.each(superPrototype, function (name, value) {
+	      for (var name in superPrototype) {
+	        var value = superPrototype[name];
 	        if (utils.isFunction(value)) {
 	          this.$super[name] = value.bind(this);
 	        } else {
 	          this.$super[name] = value;
 	        }
-	      }, this);
+	      }
 	    }
 	    //调用构造
-	    if (utils.isFunction(options.constructor)) {
+	    if (utils.isFunction(options.constructor) && options.constructor !== Object) {
 	      return options.constructor.apply(this, arguments);
+	    } else {
+	      //如果没有实现 constructor 则调用父类构造
+	      this.$super.apply(this, arguments);
 	    }
 	  };
 	  //处理 prototype
