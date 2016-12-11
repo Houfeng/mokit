@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "3.0.0-beta30",
+  "version": "3.0.0-beta32",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
