@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta34"
+		"version": "3.0.0-beta35"
 	};
 
 /***/ },
@@ -3233,6 +3233,9 @@
 	        newComponentInstance.$mount(this.$element, true);
 	        //通过转场控制器进行转场
 	        this.transition.go(newComponentInstance, oldComponentInstance, function () {
+	          //触发相关事件
+	          this.$emit('enter', newComponentInstance);
+	          this.$emit('leave', oldComponentInstance);
 	          //销毁旧组件实例
 	          if (oldComponentInstance) {
 	            oldComponentInstance.$dispose();
