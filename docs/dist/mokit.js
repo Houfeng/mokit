@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta35"
+		"version": "3.0.0-beta36"
 	};
 
 /***/ },
@@ -1452,7 +1452,7 @@
 	   * @returns {void} 无返回
 	   */
 	  _compileElement: function /*istanbul ignore next*/_compileElement(handler, node) {
-	    var matchInfo = this._parseMatchInfo(node.nodeName, Directive.TYPE_ELEMENT, node);
+	    var matchInfo = this._parseMatchInfo(node.nodeName, Directive.TE, node);
 	    var elementDirectives = this._findDirectives(matchInfo);
 	    elementDirectives.forEach(function (Directive) {
 	      handler.directives.push(this._createDirectiveInstance(Directive, {
@@ -1471,7 +1471,7 @@
 	   */
 	  _compileAttributes: function /*istanbul ignore next*/_compileAttributes(handler, node) {
 	    utils.toArray(node.attributes).forEach(function (attribute) {
-	      var matchInfo = this._parseMatchInfo(attribute.name, Directive.TYPE_ATTRIBUTE, node);
+	      var matchInfo = this._parseMatchInfo(attribute.name, Directive.TA, node);
 	      var attributeDirectives = this._findDirectives(matchInfo);
 	      attributeDirectives.forEach(function (Directive) {
 	        var definition = Directive.definition;
@@ -1542,7 +1542,7 @@
 	    this._bindHandler(handler);
 	    if (options.children !== false) this._compileChildren(handler, node);
 	    //返回编译后函数
-	    return handler.bind(null);
+	    return handler;
 	  }
 	
 	});
@@ -1590,8 +1590,8 @@
 	   * @returns {Object} 处理后的选项
 	   */
 	  _faultHandle: function /*istanbul ignore next*/_faultHandle(options) {
-	    options.type = options.type || Directive.TYPE_ATTRIBUTE;
-	    options.level = options.level || Directive.LEVEL_GENERAL;
+	    options.type = options.type || Directive.TA;
+	    options.level = options.level || Directive.LG;
 	    options.match = options.match || options.name;
 	    if (!(options.match instanceof RegExp)) {
 	      var expr = options.match.replace(/([A-Z])/g, '-$1').toLowerCase();
@@ -1638,7 +1638,7 @@
 	    bind: options.bind || utils.noop,
 	    execute: options.execute || function (scope) {
 	      this.scope = scope;
-	      if (this.definition.type === Directive.TYPE_ELEMENT) {
+	      if (this.definition.type === Directive.TE) {
 	        return this.update();
 	      }
 	      var newValue = this.definition.literal ? this.attribute.value : this.expression.execute(scope);
@@ -1663,16 +1663,16 @@
 	Directive.Definition = DirectiveDefinition;
 	
 	//指令类型
-	Directive.TYPE_ATTRIBUTE = 'attribute';
-	Directive.TYPE_ELEMENT = 'element';
+	Directive.TA = 'A';
+	Directive.TE = 'E';
 	
 	//指令级别
-	Directive.LEVEL_PREVENT = 3000;
-	Directive.LEVEL_STATEMENT = 2000;
-	Directive.LEVEL_ELEMENT = 1000;
-	Directive.LEVEL_GENERAL = 0;
-	Directive.LEVEL_ATTRIBUTE = -1000;
-	Directive.LEVEL_CLOAK = -2000;
+	Directive.LP = 3000;
+	Directive.LS = 2000;
+	Directive.LE = 1000;
+	Directive.LG = 0;
+	Directive.LA = -1000;
+	Directive.LC = -2000;
 	
 	utils.defineFreezeProp(Directive, 'name', 'Directive');
 	
@@ -1838,7 +1838,7 @@
 	
 	module.exports = new Directive({
 	  name: '#text',
-	  type: Directive.TYPE_ELEMENT,
+	  type: Directive.TE,
 	  prefix: false,
 	  test: function /*istanbul ignore next*/test(matchInfo) {
 	    return matchInfo.node.nodeValue.trim().length > 4;
@@ -1880,8 +1880,8 @@
 	 */
 	module.exports = new Directive({
 	  name: 'attribute',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_ATTRIBUTE,
+	  type: Directive.TA,
+	  level: Directive.LA,
 	  prefix: false,
 	  literal: true,
 	  remove: false,
@@ -1927,8 +1927,8 @@
 	
 	module.exports = new Directive({
 	  name: 'each',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_STATEMENT,
+	  type: Directive.TA,
+	  level: Directive.LS,
 	  final: true,
 	  literal: true,
 	
@@ -2006,8 +2006,8 @@
 	
 	module.exports = new Directive({
 	  name: 'if',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_STATEMENT,
+	  type: Directive.TA,
+	  level: Directive.LS,
 	  final: true,
 	
 	  /**
@@ -2031,7 +2031,7 @@
 	    if (newValue) {
 	      //如果新计算的结果为 true 才执行 
 	      this._handler(scope);
-	      if (!this._oldValue) {
+	      if (!node.parentNode) {
 	        this.mountNode.parentNode.insertBefore(node, this.mountNode);
 	      }
 	    } else if (this._oldValue && node.parentNode) {
@@ -2052,7 +2052,7 @@
 	
 	module.exports = new Directive({
 	  name: 'prop',
-	  type: Directive.TYPE_ATTRIBUTE,
+	  type: Directive.TA,
 	
 	  update: function /*istanbul ignore next*/update(value) {
 	    var target = this.node.$target || this.node;
@@ -2071,7 +2071,7 @@
 	
 	module.exports = new Directive({
 	  name: 'attr',
-	  type: Directive.TYPE_ATTRIBUTE,
+	  type: Directive.TA,
 	
 	  update: function /*istanbul ignore next*/update(value) {
 	    var target = this.node.$target || this.node;
@@ -2093,7 +2093,7 @@
 	
 	module.exports = new Directive({
 	  name: 'on',
-	  type: Directive.TYPE_ATTRIBUTE,
+	  type: Directive.TA,
 	  literal: true,
 	
 	  /**
@@ -2136,7 +2136,7 @@
 	
 	module.exports = new Directive({
 	  name: 'html',
-	  type: Directive.TYPE_ATTRIBUTE,
+	  type: Directive.TA,
 	
 	  update: function /*istanbul ignore next*/update(newValue) {
 	    this.node.innerHTML = newValue;
@@ -2154,7 +2154,7 @@
 	
 	module.exports = new Directive({
 	  name: 'text',
-	  type: Directive.TYPE_ATTRIBUTE,
+	  type: Directive.TA,
 	
 	  update: function /*istanbul ignore next*/update(newValue) {
 	    this.node.innerText = newValue;
@@ -2172,8 +2172,8 @@
 	
 	module.exports = new Directive({
 	  name: 'prevent',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_PREVENT,
+	  type: Directive.TA,
+	  level: Directive.LP,
 	  final: true
 	});
 
@@ -2187,7 +2187,7 @@
 	
 	module.exports = new Directive({
 	  name: 'id',
-	  type: Directive.TYPE_ATTRIBUTE,
+	  type: Directive.TA,
 	  literal: true,
 	
 	  update: function /*istanbul ignore next*/update(id) {
@@ -2209,8 +2209,8 @@
 	
 	module.exports = new Directive({
 	  name: 'cloak',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_CLOAK,
+	  type: Directive.TA,
+	  level: Directive.LC,
 	  literal: true,
 	  prefix: false,
 	
@@ -2230,7 +2230,7 @@
 	
 	module.exports = new Directive({
 	  name: 'show',
-	  type: Directive.TYPE_ATTRIBUTE,
+	  type: Directive.TA,
 	
 	  update: function /*istanbul ignore next*/update(value) {
 	    this.node.style.display = value ? '' : 'none';
@@ -2249,8 +2249,8 @@
 	
 	module.exports = new Directive({
 	  name: 'model',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_ATTRIBUTE,
+	  type: Directive.TA,
+	  level: Directive.LA,
 	  tag: /^(input|textarea)$/i,
 	  test: function /*istanbul ignore next*/test(matchInfo) {
 	    var inputType = matchInfo.node.getAttribute('type');
@@ -2294,8 +2294,8 @@
 	
 	module.exports = new Directive({
 	  name: 'model',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_ATTRIBUTE,
+	  type: Directive.TA,
+	  level: Directive.LA,
 	  final: true,
 	  tag: 'select',
 	
@@ -2345,8 +2345,8 @@
 	
 	module.exports = new Directive({
 	  name: 'model',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_ATTRIBUTE,
+	  type: Directive.TA,
+	  level: Directive.LA,
 	  tag: 'input',
 	  test: function /*istanbul ignore next*/test(matchInfo) {
 	    var inputType = matchInfo.node.getAttribute('type');
@@ -2389,8 +2389,8 @@
 	
 	module.exports = new Directive({
 	  name: 'model',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_ATTRIBUTE,
+	  type: Directive.TA,
+	  level: Directive.LA,
 	  tag: 'input',
 	
 	  test: function /*istanbul ignore next*/test(matchInfo) {
@@ -2446,8 +2446,8 @@
 	
 	module.exports = new Directive({
 	  name: 'model',
-	  type: Directive.TYPE_ATTRIBUTE,
-	  level: Directive.LEVEL_ATTRIBUTE,
+	  type: Directive.TA,
+	  level: Directive.LA,
 	  test: function /*istanbul ignore next*/test(matchInfo) {
 	    return matchInfo.node.isContentEditable;
 	  },
@@ -2626,7 +2626,7 @@
 	var Observer = __webpack_require__(6);
 	var ComponentDirective = __webpack_require__(34);
 	
-	var RESERVED_WORDS = ['$compile', '$data', '$dispose', '$element', '$mount', '$properties', '$remove', '$watch', '_callHook', '_compiled', '_createData', '_createProperties', '_createWatches', '$extends', '_mounted', '_observer', '_onTemplateUpdate', '_removed', '_template', '_watchers', '$children', '$parent', '$root', '_directives', '_importComponents', '$nextTick', '_isElement', '_listeners', '__emitter__', '__observer__', '_target', '$on', '$off', '$emit', '$dispatch'];
+	var RESERVED_WORDS = ['$compile', '$data', '$dispose', '$element', '$mount', '$properties', '$remove', '$watch', '$callHook', '_compiled', '_createData', '_createProperties', '_createWatches', '$extends', '_mounted', '_observer', '_onTemplateUpdate', '_removed', '_template', '_watchers', '$children', '$parent', '$root', '_directives', '_importComponents', '$nextTick', '_isElement', '_listeners', '__emitter__', '__observer__', '_target', '$on', '$off', '$emit', '$dispatch', '_createElement', '_created'];
 	
 	/**
 	 * 组件类
@@ -2677,8 +2677,7 @@
 	        return new this.$class(instanceOpts);
 	      }
 	      EventEmitter.call(this);
-	      instanceOpts = instanceOpts || {};
-	      utils.copy(instanceOpts, this);
+	      utils.copy(instanceOpts || {}, this);
 	      this._onTemplateUpdate = this._onTemplateUpdate.bind(this);
 	      this._createData(this.data);
 	      delete this.data;
@@ -2690,13 +2689,11 @@
 	      this._importComponents(this.components);
 	      delete this.components;
 	      utils.defineFreezeProp(this, '$children', []);
-	      if (instanceOpts.parent) {
-	        this.$setParent(instanceOpts.parent);
-	      }
-	      this._callHook('onInit');
+	      if (this.parent) this.$setParent(this.parent);
+	      this.$callHook('onInit');
 	      this._observer = Observer.observe(this);
-	      this.$compile();
-	      this._mounted = !!this.element;
+	      this._createElement();
+	      if (this.element) this.$mount();
 	    },
 	
 	    /**
@@ -2779,7 +2776,7 @@
 	     * @param {Array} args 调用 hook 的参数列表
 	     * @returns {void} 无反回
 	     */
-	    _callHook: function /*istanbul ignore next*/_callHook(name, args) {
+	    $callHook: function /*istanbul ignore next*/$callHook(name, args) {
 	      if (!utils.isFunction(this[name])) return;
 	      this[name].apply(this, args);
 	    },
@@ -2905,18 +2902,28 @@
 	    },
 	
 	    /**
+	     * 创建元素
+	     * @returns {void} 无返回
+	     */
+	    _createElement: function /*istanbul ignore next*/_createElement() {
+	      if (this._created) return;
+	      this._created = true;
+	      this.$callHook('onCreate');
+	      utils.defineFreezeProp(this, '$element', this.element || utils.parseDom(this.template)[0]);
+	      if (!this.$element || this.$element.nodeName === '#text') {
+	        throw new Error('Invalid component template');
+	      }
+	      this.$callHook('onCreated');
+	    },
+	
+	    /**
 	     * 编译自身模板并完成绑定
 	     * @returns {void} 无返回
 	     */
 	    $compile: function /*istanbul ignore next*/$compile() {
 	      if (this._compiled) return;
 	      this._compiled = true;
-	      this._callHook('onCreate');
-	      utils.defineFreezeProp(this, '$element', this.element || utils.parseDom(this.template)[0]);
-	      if (!this.$element || this.$element.nodeName === '#text') {
-	        throw new Error('Invalid component template');
-	      }
-	      this._callHook('onCreated');
+	      this._createElement();
 	      utils.defineFreezeProp(this, '_template', new Template(this.$element, {
 	        directives: this._directives,
 	        root: true
@@ -2924,7 +2931,7 @@
 	      this._template.bind(this);
 	      this._template.on('update', this._onTemplateUpdate);
 	      this._template.on('bind', function () {
-	        this._callHook('onReady');
+	        if (!this.deferReady) this.$callHook('onReady');
 	      }.bind(this));
 	    },
 	
@@ -2935,18 +2942,30 @@
 	     * @returns {void} 无返回 
 	     */
 	    $mount: function /*istanbul ignore next*/$mount(mountNode, append) {
-	      if (!mountNode || this._mounted) return;
-	      this._callHook('onMount');
-	      mountNode.$substitute = this.$element;
-	      this.$element._mountNode = mountNode;
-	      if (append) {
-	        mountNode.appendChild(this.$element);
-	      } else if (mountNode.parentNode) {
-	        mountNode.parentNode.insertBefore(this.$element, mountNode);
+	      if (this._mounted) return;
+	      this.$compile();
+	      this.$callHook('onMount');
+	      if (mountNode) {
+	        mountNode.$substitute = this.$element;
+	        this.$element._mountNode = mountNode;
+	        if (append) {
+	          mountNode.appendChild(this.$element);
+	        } else if (mountNode.parentNode) {
+	          mountNode.parentNode.insertBefore(this.$element, mountNode);
+	        }
 	      }
 	      this._mounted = true;
 	      this._removed = false;
-	      this._callHook('onMounted');
+	      this.$callHook('onMounted');
+	    },
+	
+	    /**
+	     * 将组件添加到指定容器元素内
+	     * @param {HTMLNode} node 容器元素
+	     * @returns {void} 无返回 
+	     */
+	    $appendTo: function /*istanbul ignore next*/$appendTo(node) {
+	      this.$mount(node, true);
 	    },
 	
 	    /**
@@ -2955,13 +2974,13 @@
 	     */
 	    $remove: function /*istanbul ignore next*/$remove() {
 	      if (this._removed || !this._mounted) return;
-	      this._callHook('onRemove');
+	      this.$callHook('onRemove');
 	      if (this.$element.parentNode) {
 	        this.$element.parentNode.removeChild(this.$element);
 	      }
 	      this._removed = true;
 	      this._mounted = false;
-	      this._callHook('onRemoved');
+	      this.$callHook('onRemoved');
 	    },
 	
 	    /**
@@ -3006,11 +3025,11 @@
 	        var index = this.$parent.$children.indexOf(this);
 	        this.$parent.$children.splice(index, 1);
 	      }
-	      this._callHook('onDispose');
+	      this.$callHook('onDispose');
 	      if (this._compiled) {
 	        this._template.unbind();
 	      }
-	      this._callHook('onDisposed');
+	      this.$callHook('onDisposed');
 	      for (var key in this) {
 	        delete this[key];
 	      }
@@ -3059,7 +3078,7 @@
 	  if (!this._options || !this._options.element) {
 	    throw new Error('Start method cannot be called');
 	  }
-	  return this.create(instanceOpts);
+	  this.create(instanceOpts);
 	};
 	
 	module.exports = Component;
@@ -3085,13 +3104,14 @@
 	
 	  return new Directive({
 	    name: options.name,
-	    type: Directive.TYPE_ELEMENT,
+	    type: Directive.TE,
 	    literal: true,
 	    final: true,
-	    level: Directive.LEVEL_ELEMENT,
+	    level: Directive.LE,
 	
 	    bind: function /*istanbul ignore next*/bind() {
 	      this.component = new Component({
+	        deferReady: true,
 	        parent: options.parent || this.scope
 	      });
 	      this.node.$target = this.component;
@@ -3099,7 +3119,6 @@
 	        element: false,
 	        children: false
 	      });
-	      //this.handleId();
 	      this.handleAttrs();
 	      this.handleContents();
 	      this.component.$mount(this.node);
@@ -3156,6 +3175,10 @@
 	
 	    execute: function /*istanbul ignore next*/execute(scope) {
 	      this.handler(scope);
+	      if (!this._ready) {
+	        this._ready = true;
+	        this.component.$callHook('onReady');
+	      }
 	      this.placeHandlers.forEach(function (handler) {
 	        handler(scope);
 	      }, this);
@@ -3230,7 +3253,7 @@
 	        //通过转场控制器进行转场准备
 	        this.transition.prep(newComponentInstance, oldComponentInstance);
 	        //挂载新组件实例
-	        newComponentInstance.$mount(this.$element, true);
+	        newComponentInstance.$appendTo(this.$element);
 	        //通过转场控制器进行转场
 	        this.transition.go(newComponentInstance, oldComponentInstance, function () {
 	          //触发相关事件

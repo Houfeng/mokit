@@ -27,6 +27,8 @@
     },
     del: function (item) {
       this.$emit('del', item);
+    },
+    onReady: function () {
     }
   });
 
