@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta39"
+		"version": "3.0.0-beta40"
 	};
 
 /***/ },
@@ -1377,7 +1377,9 @@
 	   */
 	  registerDirectives: function /*istanbul ignore next*/registerDirectives(directives) {
 	    utils.each(directives, function (name, directive) {
-	      var fullName = directive.options.prefix === false ? name : /*istanbul ignore next*/this.prefix + ':' + name.replace(/([A-Z])/g, '-$1');
+	      name = name.replace(/([A-Z])/g, '-$1');
+	      if (name[0] == '-') name = name.slice(1);
+	      var fullName = directive.options.prefix === false ? name : /*istanbul ignore next*/this.prefix + ':' + name;
 	      if (directive.options.type == Directive.TE) {
 	        this.elementDirectives[fullName.toUpperCase()] = directive;
 	      } else {
