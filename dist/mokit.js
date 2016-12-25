@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta40"
+		"version": "3.0.0-beta43"
 	};
 
 /***/ },
@@ -1492,6 +1492,7 @@
 	  _compileChildren: function /*istanbul ignore next*/_compileChildren(handler, node) {
 	    if (handler.final) return;
 	    utils.toArray(node.childNodes).forEach(function (childNode) {
+	      if (childNode.__compiled) return;
 	      var childHandler = this.compile(childNode);
 	      childHandler.parent = this;
 	      handler.children.push(childHandler);
@@ -1508,6 +1509,7 @@
 	    if (!node) {
 	      throw new Error('Invalid node for compile');
 	    }
+	    node.__compiled = true;
 	    options = options || utils.create(null);
 	    //定义编译结果函数
 	    var handler = function handler(scope) {
