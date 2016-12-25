@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta37"
+		"version": "3.0.0-beta38"
 	};
 
 /***/ },
@@ -2520,6 +2520,7 @@
 	
 	var Component = __webpack_require__(34);
 	var components = __webpack_require__(36);
+	var directives = __webpack_require__(8).directives;
 	
 	Component.components = components;
 	Component.Component = Component;
@@ -2527,6 +2528,11 @@
 	Component.component = function (name, component) {
 	  if (!component) return components[name];
 	  components[name] = component;
+	};
+	
+	Component.directive = function (name, directive) {
+	  if (!directive) return directives[name];
+	  directives[name] = directive;
 	};
 	
 	module.exports = Component;
