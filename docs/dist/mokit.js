@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta36"
+		"version": "3.0.0-beta37"
 	};
 
 /***/ },
@@ -1372,13 +1372,17 @@
 	
 	  /**
 	   * 添加指令
-	   * @param {Object} srcDirectives 指令集 
+	   * @param {Object} directives 指令集 
 	   * @returns {void} 无返回
 	   */
-	  registerDirectives: function /*istanbul ignore next*/registerDirectives(srcDirectives) {
-	    utils.each(srcDirectives, function (name, directive) {
-	      var dstDirectives = directive.options.type == Directive.TE ? this.elementDirectives : this.attributeDirectives;
-	      dstDirectives[/*istanbul ignore next*/this.prefix + ':' + name] = directive;
+	  registerDirectives: function /*istanbul ignore next*/registerDirectives(directives) {
+	    utils.each(directives, function (name, directive) {
+	      var fullName = directive.options.prefix === false ? name : /*istanbul ignore next*/this.prefix + ':' + name;
+	      if (directive.options.type == Directive.TE) {
+	        this.elementDirectives[fullName.toUpperCase()] = directive;
+	      } else {
+	        this.attributeDirectives[fullName] = directive;
+	      }
 	    }, this);
 	  },
 	
@@ -1447,7 +1451,7 @@
 	   * @returns {void} 无返回
 	   */
 	  _compileElement: function /*istanbul ignore next*/_compileElement(handler, node) {
-	    var ElementDirective = this.elementDirectives[node.nodeName];
+	    var ElementDirective = this.elementDirectives[node.nodeName.toUpperCase()];
 	    if (!ElementDirective) return;
 	    handler.directives.push(this._createDirectiveInstance(ElementDirective, {
 	      handler: handler,
@@ -2610,8 +2614,11 @@
 	      if (this.parent) this.$setParent(this.parent);
 	      this.$callHook('onInit');
 	      this._observer = Observer.observe(this);
-	      this._createElement();
-	      if (this.element) this.$mount();
+	      if (this.element) {
+	        this.$mount();
+	      } else {
+	        this.$compile();
+	      }
 	    },
 	
 	    /**
@@ -2828,7 +2835,7 @@
 	      if (this._created) return;
 	      this._created = true;
 	      this.$callHook('onCreate');
-	      utils.defineFreezeProp(this, '$element', this.element || utils.parseDom(this.template)[0]);
+	      utils.defineFreezeProp(this, '$element', this.element || ComponentClass.$template.cloneNode(true));
 	      if (!this.$element || this.$element.nodeName === '#text') {
 	        throw new Error('Invalid component template');
 	      }
@@ -2962,6 +2969,7 @@
 	
 	  //保存类选项
 	  ComponentClass.$options = classOpts;
+	  ComponentClass.$template = utils.parseDom(classOpts.template)[0];
 	
 	  //向 ComponentClass.prototype 上拷贝成员
 	  utils.copy(classOpts, ComponentClass.prototype, RESERVED_WORDS, 'Name `{name}` is reserved');
