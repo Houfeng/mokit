@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta38"
+		"version": "3.0.0-beta39"
 	};
 
 /***/ },
@@ -1377,7 +1377,7 @@
 	   */
 	  registerDirectives: function /*istanbul ignore next*/registerDirectives(directives) {
 	    utils.each(directives, function (name, directive) {
-	      var fullName = directive.options.prefix === false ? name : /*istanbul ignore next*/this.prefix + ':' + name;
+	      var fullName = directive.options.prefix === false ? name : /*istanbul ignore next*/this.prefix + ':' + name.replace(/([A-Z])/g, '-$1');
 	      if (directive.options.type == Directive.TE) {
 	        this.elementDirectives[fullName.toUpperCase()] = directive;
 	      } else {
@@ -2976,6 +2976,9 @@
 	  //保存类选项
 	  ComponentClass.$options = classOpts;
 	  ComponentClass.$template = utils.parseDom(classOpts.template)[0];
+	  if (ComponentClass.$template && ComponentClass.$template.normalize) {
+	    ComponentClass.$template.normalize();
+	  }
 	
 	  //向 ComponentClass.prototype 上拷贝成员
 	  utils.copy(classOpts, ComponentClass.prototype, RESERVED_WORDS, 'Name `{name}` is reserved');
