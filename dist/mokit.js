@@ -80,11 +80,11 @@
 	var info = __webpack_require__(1);
 	var utils = __webpack_require__(3);
 	var Class = __webpack_require__(4);
-	var Watcher = __webpack_require__(5);
-	var Observer = __webpack_require__(6);
-	var Template = __webpack_require__(8);
-	var Component = __webpack_require__(33);
-	var EventEmitter = __webpack_require__(7);
+	var Watcher = __webpack_require__(6);
+	var Observer = __webpack_require__(7);
+	var Template = __webpack_require__(9);
+	var Component = __webpack_require__(34);
+	var EventEmitter = __webpack_require__(8);
 	
 	//持载模板相关对象
 	utils.copy(Template, Component);
@@ -446,13 +446,16 @@
 	        if (err) throw new Error(err.replace('{name}', key));
 	        return;
 	      }
-	      try {
-	        if (Object.getOwnPropertyDescriptor) {
+	      delete dst[key];
+	      if (Object.getOwnPropertyDescriptor) {
+	        try {
 	          Object.defineProperty(dst, key, Object.getOwnPropertyDescriptor(src, key));
-	        } else {
+	        } catch (ex) {
 	          dst[key] = src[key];
 	        }
-	      } catch (ex) {}
+	      } else {
+	        dst[key] = src[key];
+	      }
 	    });
 	    return dst;
 	  };
@@ -543,7 +546,7 @@
 	        writable: false //能不能用「赋值」运算更改
 	      });
 	    } catch (err) {
-	      //noop
+	      obj[name] = value;
 	    }
 	  };
 	
@@ -749,7 +752,7 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var utils = __webpack_require__(3);
+	var utils = __webpack_require__(5);
 	
 	var RESERVED = ['$extends', '$name', '$class', '$super', '$super_result', '$super_called'];
 	
@@ -823,6 +826,641 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/*istanbul ignore next*/"use strict";
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	(function (ntils) {
+	
+	  /**
+	   * 空函数
+	   */
+	  ntils.noop = function () {};
+	
+	  /**
+	   * 验证一个对象是否为NULL
+	   * @method isNull
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isNull = function (obj) {
+	    return obj === null || typeof obj === "undefined";
+	  };
+	
+	  /**
+	   * 除去字符串两端的空格
+	   * @method trim
+	   * @param  {String} str 源字符串
+	   * @return {String}     结果字符串
+	   * @static
+	   */
+	  ntils.trim = function (str) {
+	    if (this.isNull(str)) return str;
+	    if (str.trim) {
+	      return str.trim();
+	    } else {
+	      return str.replace(/(^[\\s]*)|([\\s]*$)/g, "");
+	    }
+	  };
+	
+	  /**
+	   * 替换所有
+	   * @method replace
+	   * @param {String} str 源字符串
+	   * @param {String} str1 要替换的字符串
+	   * @param {String} str2 替换为的字符串
+	   * @static
+	   */
+	  ntils.replace = function (str, str1, str2) {
+	    if (this.isNull(str)) return str;
+	    return str.replace(new RegExp(str1, 'g'), str2);
+	  };
+	
+	  /**
+	   * 从字符串开头匹配
+	   * @method startWith
+	   * @param {String} str1 源字符串
+	   * @param {String} str2 要匹配的字符串
+	   * @return {Boolean} 匹配结果
+	   * @static
+	   */
+	  ntils.startWith = function (str1, str2) {
+	    if (this.isNull(str1) || this.isNull(str2)) return false;
+	    return str1.indexOf(str2) === 0;
+	  };
+	
+	  /**
+	   * 是否包含
+	   * @method contains
+	   * @param {String} str1 源字符串
+	   * @param {String} str2 检查包括字符串
+	   * @return {Boolean} 结果
+	   * @static
+	   */
+	  ntils.contains = function (str1, str2) {
+	    var self = this;
+	    if (this.isNull(str1) || this.isNull(str2)) return false;
+	    return str1.indexOf(str2) > -1;
+	  };
+	
+	  /**
+	   * 从字符串结束匹配
+	   * @method endWidth
+	   * @param {String} str1 源字符串
+	   * @param {String} str2 匹配字符串
+	   * @return {Boolean} 匹配结果
+	   * @static
+	   */
+	  ntils.endWith = function (str1, str2) {
+	    if (this.isNull(str1) || this.isNull(str2)) return false;
+	    return str1.indexOf(str2) === str1.length - str2.length;
+	  };
+	
+	  /**
+	   * 是否包含属性
+	   * @method hasProperty
+	   * @param  {Object}  obj  对象
+	   * @param  {String}  name 属性名
+	   * @return {Boolean}      结果
+	   * @static
+	   */
+	  ntils.has = ntils.hasProperty = function (obj, name) {
+	    if (this.isNull(obj) || this.isNull(name)) return false;
+	    return name in obj || obj.hasOwnProperty(name);
+	  };
+	
+	  /**
+	   * 验证一个对象是否为Function
+	   * @method isFunction
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isFunction = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    return typeof obj === "function";
+	  };
+	
+	  /**
+	   * 验证一个对象是否为String
+	   * @method isString
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isString = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    return typeof obj === 'string' || obj instanceof String;
+	  };
+	
+	  /**
+	   * 验证一个对象是否为Number
+	   * @method isNumber
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isNumber = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    return typeof obj === 'number' || obj instanceof Number;
+	  };
+	
+	  /**
+	   * 验证一个对象是否为Boolean
+	   * @method isBoolean
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isBoolean = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    return typeof obj === 'boolean' || obj instanceof Boolean;
+	  };
+	
+	  /**
+	   * 验证一个对象是否为HTML Element
+	   * @method isElement
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isElement = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    if (window.Element) {
+	      return obj instanceof Element;
+	    } else {
+	      return obj.tagName && obj.nodeType && obj.nodeName && obj.attributes && obj.ownerDocument;
+	    }
+	  };
+	
+	  /**
+	   * 验证一个对象是否为HTML Text Element
+	   * @method isText
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isText = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    return obj instanceof Text;
+	  };
+	
+	  /**
+	   * 验证一个对象是否为Object
+	   * @method isObject
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isObject = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    return (/*istanbul ignore next*/(typeof obj === "undefined" ? "undefined" : _typeof(obj)) === "object"
+	    );
+	  };
+	
+	  /**
+	   * 验证一个对象是否为Array或伪Array
+	   * @method isArray
+	   * @param  {Object}  obj 要验证的对象
+	   * @return {Boolean}     结果
+	   * @static
+	   */
+	  ntils.isArray = function (obj) {
+	    if (this.isNull(obj)) return false;
+	    var v1 = Object.prototype.toString.call(obj) === '[object Array]';
+	    var v2 = obj instanceof Array;
+	    var v3 = !this.isString(obj) && this.isNumber(obj.length) && this.isFunction(obj.splice);
+	    var v4 = !this.isString(obj) && this.isNumber(obj.length) && obj[0];
+	    return v1 || v2 || v3 || v4;
+	  };
+	
+	  /**
+	   * 验证是不是一个日期对象
+	   * @method isDate
+	   * @param {Object} val   要检查的对象
+	   * @return {Boolean}           结果
+	   * @static
+	   */
+	  ntils.isDate = function (val) {
+	    if (this.isNull(val)) return false;
+	    return val instanceof Date;
+	  };
+	
+	  /**
+	   * 验证是不是一个正则对象
+	   * @method isDate
+	   * @param {Object} val   要检查的对象
+	   * @return {Boolean}           结果
+	   * @static
+	   */
+	  ntils.isRegexp = function (val) {
+	    return val instanceof RegExp;
+	  };
+	
+	  /**
+	   * 转换为数组
+	   * @method toArray
+	   * @param {Array|Object} array 伪数组
+	   * @return {Array} 转换结果数组
+	   * @static
+	   */
+	  ntils.toArray = function (array) {
+	    if (this.isNull(array)) return [];
+	    return Array.prototype.slice.call(array);
+	  };
+	
+	  /**
+	   * 转为日期格式
+	   * @method toDate
+	   * @param {Number|String} val 日期字符串或整型数值
+	   * @return {Date} 日期对象
+	   * @static
+	   */
+	  ntils.toDate = function (val) {
+	    var self = this;
+	    if (self.isNumber(val)) return new Date(val);else if (self.isString(val)) return new Date(self.replace(self.replace(val, '-', '/'), 'T', ' '));else if (self.isDate(val)) return val;else return null;
+	  };
+	
+	  /**
+	   * 遍历一个对像或数组
+	   * @method each
+	   * @param  {Object or Array}   obj  要遍历的数组或对象
+	   * @param  {Function} fn            处理函数
+	   * @return {void}                   无返回值
+	   * @static
+	   */
+	  ntils.each = function (list, handler, scope) {
+	    if (this.isNull(list) || this.isNull(handler)) return;
+	    if (this.isArray(list)) {
+	      var listLength = list.length;
+	      for (var i = 0; i < listLength; i++) {
+	        var rs = handler.call(scope || list[i], i, list[i]);
+	        if (!this.isNull(rs)) return rs;
+	      }
+	    } else {
+	      for (var key in list) {
+	        var rs = handler.call(scope || list[key], key, list[key]);
+	        if (!this.isNull(rs)) return rs;
+	      }
+	    }
+	  };
+	
+	  /**
+	   * 格式化日期
+	   * @method formatDate
+	   * @param {Date|String|Number} date 日期
+	   * @param {String} format 格式化字符串
+	   * @param {object} dict 反译字典
+	   * @return {String} 格式化结果
+	   * @static
+	   */
+	  ntils.formatDate = function (date, format, dict) {
+	    if (this.isNull(format) || this.isNull(date)) return date;
+	    date = this.toDate(date);
+	    dict = dict || {};
+	    var placeholder = {
+	      "M+": date.getMonth() + 1, //month
+	      "d+": date.getDate(), //day
+	      "h+": date.getHours(), //hour
+	      "m+": date.getMinutes(), //minute
+	      "s+": date.getSeconds(), //second
+	      "w+": date.getDay(), //week
+	      "q+": Math.floor((date.getMonth() + 3) / 3), //quarter
+	      "S": date.getMilliseconds() //millisecond
+	    };
+	    if (/(y+)/.test(format)) {
+	      format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+	    }
+	    for (var key in placeholder) {
+	      if (new RegExp("(" + key + ")").test(format)) {
+	        var value = placeholder[key];
+	        value = dict[value] || value;
+	        format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? value : ("00" + value).substr(("" + value).length));
+	      }
+	    }
+	    return format;
+	  };
+	
+	  /**
+	   * 拷贝对象
+	   * @method copy
+	   * @param {Object} src 源对象
+	   * @param {Object} dst 目标对象
+	   * @param {String} err 错误消息模板
+	   * @static
+	   */
+	  ntils.copy = function (src, dst, igonres, err) {
+	    dst = dst || (this.isArray(src) ? [] : {});
+	    this.each(src, function (key) {
+	      if (igonres && igonres.indexOf(key) > -1) {
+	        if (err) throw new Error(err.replace('{name}', key));
+	        return;
+	      }
+	      delete dst[key];
+	      if (Object.getOwnPropertyDescriptor) {
+	        try {
+	          Object.defineProperty(dst, key, Object.getOwnPropertyDescriptor(src, key));
+	        } catch (ex) {
+	          dst[key] = src[key];
+	        }
+	      } else {
+	        dst[key] = src[key];
+	      }
+	    });
+	    return dst;
+	  };
+	
+	  /**
+	   * 深度克隆对象
+	   * @method clone
+	   * @param {Object} src 源对象
+	   * @return {Object} 新对象
+	   * @static
+	   */
+	  ntils.clone = function (src, igonres) {
+	    if (this.isNull(src) || this.isString(src) || this.isNumber(src) || this.isBoolean(src) || this.isDate(src)) {
+	      return src;
+	    }
+	    var objClone = src;
+	    try {
+	      objClone = new src.constructor();
+	    } catch (ex) {}
+	    this.each(src, function (key, value) {
+	      if (objClone[key] != value && !this.contains(igonres, key)) {
+	        if (this.isObject(value)) {
+	          objClone[key] = this.clone(value, igonres);
+	        } else {
+	          objClone[key] = value;
+	        }
+	      }
+	    }, this);
+	    ['toString', 'valueOf'].forEach(function (key) {
+	      if (this.contains(igonres, key)) return;
+	      this.defineFreezeProp(objClone, key, src[key]);
+	    }, this);
+	    return objClone;
+	  };
+	
+	  /**
+	   * 合并对象
+	   * @method mix
+	   * @return 合并后的对象
+	   * @param {Object} dst 目标对象
+	   * @param {Object} src 源对象
+	   * @param {Array} igonres 忽略的属性名,
+	   * @param {Number} mode 模式
+	   */
+	  ntils.mix = function (dst, src, igonres, mode) {
+	    //根据模式来判断，默认是Obj to Obj的  
+	    if (mode) {
+	      switch (mode) {
+	        case 1:
+	          // proto to proto  
+	          return ntils.mix(dst.prototype, src.prototype, igonres, 0);
+	        case 2:
+	          // object to object and proto to proto  
+	          ntils.mix(dst.prototype, src.prototype, igonres, 0);
+	          break; // pass through  
+	        case 3:
+	          // proto to static  
+	          return ntils.mix(dst, src.prototype, igonres, 0);
+	        case 4:
+	          // static to proto  
+	          return ntils.mix(dst.prototype, src, igonres, 0);
+	        default: // object to object is what happens below  
+	      }
+	    }
+	    //---
+	    src = src || {};
+	    dst = dst || (this.isArray(src) ? [] : {});
+	    this.keys(src).forEach(function (key) {
+	      if (this.contains(igonres, key)) return;
+	      if (this.isObject(src[key]) && (src[key].constructor == Object || src[key].constructor == Array || src[key].constructor == null)) {
+	        dst[key] = ntils.mix(dst[key], src[key], igonres, 0);
+	      } else {
+	        dst[key] = src[key];
+	      }
+	    }, this);
+	    return dst;
+	  };
+	
+	  /**
+	   * 定义不可遍历的属性
+	   **/
+	  ntils.defineFreezeProp = function (obj, name, value) {
+	    try {
+	      Object.defineProperty(obj, name, {
+	        value: value,
+	        enumerable: false,
+	        configurable: true, //能不能重写定义
+	        writable: false //能不能用「赋值」运算更改
+	      });
+	    } catch (err) {
+	      obj[name] = value;
+	    }
+	  };
+	
+	  /**
+	   * 获取所有 key 
+	   */
+	  ntils.keys = function (obj) {
+	    if (Object.keys) return Object.keys(obj);
+	    var keys = [];
+	    this.each(obj, function (key) {
+	      keys.push(key);
+	    });
+	    return keys;
+	  };
+	
+	  /**
+	   * 创建一个对象
+	   */
+	  ntils.create = function (proto) {
+	    if (Object.create) return Object.create(proto);
+	    return { __proto__: proto };
+	  };
+	
+	  /**
+	   * 设置 proto
+	   */
+	  ntils.setProto = function (obj, prototype) {
+	    if (obj.__proto__) {
+	      return ntils.setPrototype(obj.__proto__);
+	    } else {
+	      obj.__proto__ = prototype;
+	    }
+	  };
+	
+	  /**
+	   * 是否深度相等
+	   */
+	  ntils.deepEqual = function (a, b) {
+	    if (a === b) return true;
+	    if (!this.isObject(a) || !this.isObject(b)) return false;
+	    var aKeys = this.keys(a);
+	    var bKeys = this.keys(b);
+	    if (aKeys.length !== bKeys.length) return false;
+	    var allKeys = aKeys.concat(bKeys);
+	    var checkedMap = this.create(null);
+	    var result = true;
+	    this.each(allKeys, function (i, key) {
+	      if (checkedMap[key]) return;
+	      if (!this.deepEqual(a[key], b[key])) result = false;
+	      checkedMap[key] = true;
+	    }, this);
+	    return result;
+	  };
+	
+	  /**
+	   * 从一个数值循环到别一个数
+	   * @param {number} fromNum 开始数值
+	   * @param {Number} toNum 结束数值
+	   * @param {Number} step 步长值
+	   * @param {function} handler 执行函数
+	   * @returns {void} 无返回
+	   */
+	  ntils.fromTo = function (fromNum, toNum, step, handler) {
+	    if (!handler) handler = [step, step = handler][0];
+	    step = Math.abs(step || 1);
+	    if (fromNum < toNum) {
+	      for (var i = fromNum; i <= toNum; i += step) /*istanbul ignore next*/{
+	        handler(i);
+	      }
+	    } else {
+	      for (var i = fromNum; i >= toNum; i -= step) /*istanbul ignore next*/{
+	        handler(i);
+	      }
+	    }
+	  };
+	
+	  /**
+	   * 生成一个Guid
+	   * @method newGuid
+	   * @return {String} GUID字符串
+	   * @static
+	   */
+	  ntils.newGuid = function () {
+	    var S4 = function S4() {
+	      return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
+	    };
+	    return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+	  };
+	
+	  /**
+	   * 对象变换
+	   **/
+	  ntils.map = function (list, fn) {
+	    var buffer = this.isArray(list) ? [] : {};
+	    this.each(list, function (name, value) {
+	      buffer[name] = fn(name, value);
+	    });
+	    return buffer;
+	  };
+	
+	  /**
+	   * 通过路径设置属性值
+	   */
+	  ntils.setByPath = function (obj, path, value) {
+	    if (this.isNull(obj) || this.isNull(path) || path === '') {
+	      return;
+	    }
+	    if (!this.isArray(path)) {
+	      path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
+	    }
+	    this.each(path, function (index, name) {
+	      if (this.isNull(name) || name.length < 1) return;
+	      if (index === path.length - 1) {
+	        obj[name] = value;
+	      } else {
+	        obj[name] = obj[name] || {};
+	        obj = obj[name];
+	      }
+	    }, this);
+	  };
+	
+	  /**
+	   * 通过路径获取属性值
+	   */
+	  ntils.getByPath = function (obj, path) {
+	    if (this.isNull(obj) || this.isNull(path) || path === '') {
+	      return obj;
+	    }
+	    if (!this.isArray(path)) {
+	      path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
+	    }
+	    this.each(path, function (index, name) {
+	      if (this.isNull(name) || name.length < 1) return;
+	      if (!this.isNull(obj)) obj = obj[name];
+	    }, this);
+	    return obj;
+	  };
+	
+	  /**
+	   * 数组去重
+	   **/
+	  ntils.unique = function (array) {
+	    if (this.isNull(array)) return array;
+	    var newArray = [];
+	    this.each(array, function (i, value) {
+	      if (newArray.indexOf(value) > -1) return;
+	      newArray.push(value);
+	    });
+	    return newArray;
+	  };
+	
+	  /**
+	   * 解析 function 的参数列表
+	   **/
+	  ntils.getFunctionArgumentNames = function (fn) {
+	    if (!fn) return [];
+	    var src = fn.toString();
+	    var parts = src.split(')')[0].split('=>')[0].split('(');
+	    return (parts[1] || parts[0]).split(',').map(function (name) {
+	      return name.trim();
+	    }).filter(function (name) {
+	      return name != 'function';
+	    });
+	  };
+	
+	  /**
+	   * 缩短字符串
+	   */
+	  ntils.short = function (str, maxLength) {
+	    if (!str) return str;
+	    maxLength = maxLength || 40;
+	    var strLength = str.length;
+	    var trimLength = maxLength / 2;
+	    return strLength > maxLength ? str.substr(0, trimLength) + '...' + str.substr(strLength - trimLength) : str;
+	  };
+	
+	  /**
+	   * 首字母大写
+	   */
+	  ntils.firstUpper = function (str) {
+	    if (this.isNull(str)) return;
+	    str[0] = str[0].toLowerCase();
+	    return str;
+	  };
+	
+	  /**
+	   * 解析字符串为 dom 
+	   * @param {string} str 字符串
+	   * @returns {HTMLNode} 解析后的 DOM 
+	   */
+	  ntils.parseDom = function (str) {
+	    this._PARSER_DOM_DIV = this._PARSER_DOM_DIV || document.createElement('dev');
+	    this._PARSER_DOM_DIV.innerHTML = str;
+	    var domNodes = this.toArray(this._PARSER_DOM_DIV.childNodes);
+	    this._PARSER_DOM_DIV.innerHTML = '';
+	    return domNodes;
+	  };
+	})( false ? window.ntils = {} : exports);
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/*istanbul ignore next*/'use strict';
 	
 	var Class = __webpack_require__(4);
@@ -869,16 +1507,16 @@
 	module.exports = Watcher;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
 	var Class = __webpack_require__(4);
 	var utils = __webpack_require__(3);
-	var EventEmitter = __webpack_require__(7);
+	var EventEmitter = __webpack_require__(8);
 	
-	var OBSERVER_PROP_NAME = '__observer__';
+	var OBSERVER_PROP_NAME = '_observer_';
 	var CHANGE_EVENT_NAME = 'change';
 	var EVENT_MAX_DISPATCH_LAYER = 20;
 	
@@ -1139,7 +1777,7 @@
 	module.exports = Observer;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -1161,12 +1799,12 @@
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(target) {
 	    target = target || this;
-	    var emitter = target.__emitter__;
+	    var emitter = target._emitter_;
 	    if (emitter) return emitter;
-	    utils.defineFreezeProp(this, '_target', target);
-	    utils.defineFreezeProp(target, '__emitter__', this);
-	    this._isElement = utils.isElement(this._target);
-	    this._listeners = this._listeners || {};
+	    utils.defineFreezeProp(this, '_target_', target);
+	    utils.defineFreezeProp(target, '_emitter_', this);
+	    this._isElement_ = utils.isElement(this._target_);
+	    this._listeners_ = this._listeners_ || {};
 	    this.on = this.$on = this.$addListener = this.addListener;
 	    this.off = this.$off = this.$removeListener = this.removeListener;
 	    this.$emit = this.emit;
@@ -1180,12 +1818,12 @@
 	   * @returns {void} 无返回
 	   */
 	  addListener: function /*istanbul ignore next*/addListener(name, listener, capture) {
-	    if (this._isElement) {
+	    if (this._isElement_) {
 	      this._addElementEventListener(name, listener, capture);
 	    }
-	    this._listeners[name] = this._listeners[name] || [];
-	    this._listeners[name].push(listener);
-	    if (this._listeners[name].length > EventEmitter._maxListeners) {
+	    this._listeners_[name] = this._listeners_[name] || [];
+	    this._listeners_[name].push(listener);
+	    if (this._listeners_[name].length > EventEmitter._maxListeners) {
 	      throw new Error('The `' + name + '` event listener is not more than 10');
 	    }
 	  },
@@ -1199,24 +1837,24 @@
 	   */
 	  removeListener: function /*istanbul ignore next*/removeListener(name, listener, capture) {
 	    if (name && listener) {
-	      if (this._isElement) {
+	      if (this._isElement_) {
 	        this._removeElementEventListener(name, listener, capture);
 	      }
-	      if (!this._listeners[name]) return;
-	      var index = this._listeners[name].indexOf(listener);
-	      this._listeners[name].splice(index, 1);
+	      if (!this._listeners_[name]) return;
+	      var index = this._listeners_[name].indexOf(listener);
+	      this._listeners_[name].splice(index, 1);
 	    } else if (name) {
-	      if (this._isElement && this._listeners[name]) {
-	        this._listeners[name].forEach(function (_listener) {
+	      if (this._isElement_ && this._listeners_[name]) {
+	        this._listeners_[name].forEach(function (_listener) {
 	          this.removeListener(name, _listener, capture);
 	        }, this);
 	      }
-	      delete this._listeners[name];
+	      delete this._listeners_[name];
 	    } else {
-	      utils.each(this._listeners, function (name) {
+	      utils.each(this._listeners_, function (name) {
 	        this.removeListener(name, null, capture);
 	      }, this);
-	      this._listeners = {};
+	      this._listeners_ = {};
 	    }
 	  },
 	
@@ -1229,13 +1867,13 @@
 	   * @returns {void} 无返回
 	   */
 	  emit: function /*istanbul ignore next*/emit(name, data, canBubble, cancelAble) {
-	    if (this._isElement) {
+	    if (this._isElement_) {
 	      return this._emitElementEvent(name, data, canBubble, cancelAble);
 	    }
-	    if (!this._listeners[name]) return;
+	    if (!this._listeners_[name]) return;
 	    var stopPropagation = false;
-	    this._listeners[name].forEach(function (handler) {
-	      var rs = handler.call(this._target, data);
+	    this._listeners_[name].forEach(function (handler) {
+	      var rs = handler.call(this._target_, data);
 	      if (rs === false) stopPropagation = true;
 	    }, this);
 	    return stopPropagation;
@@ -1249,7 +1887,7 @@
 	   * @returns {void} 无返回
 	   */
 	  _addElementEventListener: function /*istanbul ignore next*/_addElementEventListener(name, listener, capture) {
-	    this._target.addEventListener(name, listener, capture);
+	    this._target_.addEventListener(name, listener, capture);
 	    //如果存在已注册的自定义 “组合事件”
 	    var descriptor = EventEmitter._events[name];
 	    if (descriptor) {
@@ -1266,7 +1904,7 @@
 	   * @returns {void} 无返回
 	   */
 	  _removeElementEventListener: function /*istanbul ignore next*/_removeElementEventListener(name, listener, capture) {
-	    this._target.removeEventListener(name, listener, capture);
+	    this._target_.removeEventListener(name, listener, capture);
 	    //如果存在已注册的自定义 “组合事件”
 	    var descriptor = EventEmitter._events[name];
 	    if (descriptor) {
@@ -1288,7 +1926,7 @@
 	    event.initEvent(name, canBubble, cancelAble);
 	    utils.copy(data, event, ['data']);
 	    event.data = data;
-	    return this._target.dispatchEvent(event);
+	    return this._target_.dispatchEvent(event);
 	  }
 	
 	});
@@ -1316,16 +1954,16 @@
 	module.exports = EventEmitter;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Compiler = __webpack_require__(9);
-	var Directive = __webpack_require__(10);
-	var Expression = __webpack_require__(11);
-	var Template = __webpack_require__(32);
-	var directives = __webpack_require__(12);
+	var Compiler = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
+	var Expression = __webpack_require__(12);
+	var Template = __webpack_require__(33);
+	var directives = __webpack_require__(13);
 	
 	Template.Template = Template;
 	Template.Compiler = Compiler;
@@ -1336,16 +1974,16 @@
 	module.exports = Template;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
 	var Class = __webpack_require__(4);
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	var utils = __webpack_require__(3);
-	var Expression = __webpack_require__(11);
-	var commonDirectives = __webpack_require__(12);
+	var Expression = __webpack_require__(12);
+	var commonDirectives = __webpack_require__(13);
 	
 	var DEFAULT_PREFIX = 'm';
 	
@@ -1549,14 +2187,14 @@
 	module.exports = Compiler;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
 	var Class = __webpack_require__(4);
 	var utils = __webpack_require__(3);
-	var Expression = __webpack_require__(11);
+	var Expression = __webpack_require__(12);
 	
 	/**
 	 * 指令定义工场函数
@@ -1622,7 +2260,7 @@
 	module.exports = Directive;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -1763,36 +2401,36 @@
 	module.exports = Expression;
 
 /***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = {
-	  '#text': __webpack_require__(13),
-	  'each': __webpack_require__(14),
-	  'if': __webpack_require__(15),
-	  'prop': __webpack_require__(16),
-	  'attr': __webpack_require__(17),
-	  'on': __webpack_require__(18),
-	  'html': __webpack_require__(19),
-	  'text': __webpack_require__(20),
-	  'prevent': __webpack_require__(21),
-	  'id': __webpack_require__(22),
-	  'cloak': __webpack_require__(23),
-	  'show': __webpack_require__(24),
-	  'model': __webpack_require__(25),
-	  '*': __webpack_require__(31) //处理所有未知 attr
-	};
-
-/***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
-	var Expression = __webpack_require__(11);
+	module.exports = {
+	  '#text': __webpack_require__(14),
+	  'each': __webpack_require__(15),
+	  'if': __webpack_require__(16),
+	  'prop': __webpack_require__(17),
+	  'attr': __webpack_require__(18),
+	  'on': __webpack_require__(19),
+	  'html': __webpack_require__(20),
+	  'text': __webpack_require__(21),
+	  'prevent': __webpack_require__(22),
+	  'id': __webpack_require__(23),
+	  'cloak': __webpack_require__(24),
+	  'show': __webpack_require__(25),
+	  'model': __webpack_require__(26),
+	  '*': __webpack_require__(32) //处理所有未知 attr
+	};
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Directive = __webpack_require__(11);
+	var Expression = __webpack_require__(12);
 	
 	module.exports = new Directive({
 	  type: Directive.TE,
@@ -1818,12 +2456,12 @@
 	});
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  level: Directive.LS,
@@ -1895,12 +2533,12 @@
 	});
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  level: Directive.LS,
@@ -1939,12 +2577,12 @@
 	});
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  update: function /*istanbul ignore next*/update(value) {
@@ -1954,12 +2592,12 @@
 	});
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  update: function /*istanbul ignore next*/update(value) {
@@ -1971,13 +2609,13 @@
 	});
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
-	var EventEmitter = __webpack_require__(7);
+	var Directive = __webpack_require__(11);
+	var EventEmitter = __webpack_require__(8);
 	
 	module.exports = new Directive({
 	  literal: true,
@@ -2013,30 +2651,16 @@
 	});
 
 /***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	var Directive = __webpack_require__(10);
-	
-	module.exports = new Directive({
-	  update: function /*istanbul ignore next*/update(newValue) {
-	    this.node.innerHTML = newValue;
-	  }
-	});
-
-/***/ },
 /* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  update: function /*istanbul ignore next*/update(newValue) {
-	    this.node.innerText = newValue;
+	    this.node.innerHTML = newValue;
 	  }
 	});
 
@@ -2046,11 +2670,12 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
-	  level: Directive.LP,
-	  final: true
+	  update: function /*istanbul ignore next*/update(newValue) {
+	    this.node.innerText = newValue;
+	  }
 	});
 
 /***/ },
@@ -2059,7 +2684,20 @@
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
+	
+	module.exports = new Directive({
+	  level: Directive.LP,
+	  final: true
+	});
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  literal: true,
@@ -2074,12 +2712,12 @@
 	});
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  level: Directive.LC,
@@ -2093,12 +2731,12 @@
 	});
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	module.exports = new Directive({
 	  update: function /*istanbul ignore next*/update(value) {
@@ -2107,16 +2745,16 @@
 	});
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var SelectDirective = __webpack_require__(26);
-	var EditableDirective = __webpack_require__(27);
-	var InputDirective = __webpack_require__(28);
-	var RadioDirective = __webpack_require__(29);
-	var CheckboxDirective = __webpack_require__(30);
+	var SelectDirective = __webpack_require__(27);
+	var EditableDirective = __webpack_require__(28);
+	var InputDirective = __webpack_require__(29);
+	var RadioDirective = __webpack_require__(30);
+	var CheckboxDirective = __webpack_require__(31);
 	
 	var Directive = function Directive(options) {
 	  var node = options.node;
@@ -2147,13 +2785,13 @@
 	module.exports = Directive;
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
-	var EventEmitter = __webpack_require__(7);
+	var Directive = __webpack_require__(11);
+	var EventEmitter = __webpack_require__(8);
 	
 	module.exports = new Directive({
 	  final: true,
@@ -2194,13 +2832,13 @@
 	});
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
-	var EventEmitter = __webpack_require__(7);
+	var Directive = __webpack_require__(11);
+	var EventEmitter = __webpack_require__(8);
 	
 	module.exports = new Directive({
 	
@@ -2231,13 +2869,13 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
-	var EventEmitter = __webpack_require__(7);
+	var Directive = __webpack_require__(11);
+	var EventEmitter = __webpack_require__(8);
 	
 	module.exports = new Directive({
 	
@@ -2268,13 +2906,13 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
-	var EventEmitter = __webpack_require__(7);
+	var Directive = __webpack_require__(11);
+	var EventEmitter = __webpack_require__(8);
 	
 	module.exports = new Directive({
 	  /**
@@ -2303,13 +2941,13 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
-	var EventEmitter = __webpack_require__(7);
+	var Directive = __webpack_require__(11);
+	var EventEmitter = __webpack_require__(8);
 	
 	module.exports = new Directive({
 	
@@ -2351,12 +2989,12 @@
 	});
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Directive = __webpack_require__(10);
+	var Directive = __webpack_require__(11);
 	
 	/**
 	 * 通用的 attribute 指令
@@ -2402,15 +3040,15 @@
 	});
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
 	var Class = __webpack_require__(4);
-	var Observer = __webpack_require__(6);
-	var EventEmitter = __webpack_require__(7);
-	var Compiler = __webpack_require__(9);
+	var Observer = __webpack_require__(7);
+	var EventEmitter = __webpack_require__(8);
+	var Compiler = __webpack_require__(10);
 	var utils = __webpack_require__(3);
 	
 	/**
@@ -2517,14 +3155,14 @@
 	module.exports = Template;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(34);
-	var components = __webpack_require__(36);
-	var directives = __webpack_require__(8).directives;
+	var Component = __webpack_require__(35);
+	var components = __webpack_require__(37);
+	var directives = __webpack_require__(9).directives;
 	
 	Component.components = components;
 	Component.Component = Component;
@@ -2542,20 +3180,18 @@
 	module.exports = Component;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
 	var Class = __webpack_require__(4);
-	var Template = __webpack_require__(8);
-	var Watcher = __webpack_require__(5);
+	var Template = __webpack_require__(9);
+	var Watcher = __webpack_require__(6);
 	var utils = __webpack_require__(3);
-	var EventEmitter = __webpack_require__(7);
-	var Observer = __webpack_require__(6);
-	var ComponentDirective = __webpack_require__(35);
-	
-	var RESERVED_WORDS = ['$compile', '$data', '$dispose', '$element', '$mount', '$properties', '$remove', '$watch', '$callHook', '_compiled', '_createData', '_createProperties', '_createWatches', '$extends', '_mounted', '_observer', '_onTemplateUpdate', '_removed', '_template', '_watchers', '$children', '$parent', '$root', '$directives', '_importComponents', '$nextTick', '_isElement', '_listeners', '__emitter__', '__observer__', '_target', '$on', '$off', '$emit', '$dispatch', '_createElement', '_created'];
+	var EventEmitter = __webpack_require__(8);
+	var Observer = __webpack_require__(7);
+	var ComponentDirective = __webpack_require__(36);
 	
 	/**
 	 * 组件类
@@ -2607,23 +3243,23 @@
 	      }
 	      EventEmitter.call(this);
 	      utils.copy(instanceOpts || {}, this);
-	      this._onTemplateUpdate = this._onTemplateUpdate.bind(this);
-	      this._createData(this.data);
+	      this._onTemplateUpdate_ = this._onTemplateUpdate_.bind(this);
+	      this._createdData_(this.data);
 	      delete this.data;
-	      this._createProperties(this.properties);
+	      this._createProperties_(this.properties);
 	      delete this.properties;
-	      this._createWatches(this.watches);
+	      this._createWatches_(this.watches);
 	      delete this.watches;
 	      this.$directives = this.$directives || utils.create(null);
-	      this._importDirectives(this.directives);
+	      this._importDirectives_(this.directives);
 	      this.$components = this.$components || utils.create(null);
-	      this._importComponents(__webpack_require__(36));
-	      this._importComponents(this.components);
+	      this._importComponents_(__webpack_require__(37));
+	      this._importComponents_(this.components);
 	      delete this.components;
 	      utils.defineFreezeProp(this, '$children', []);
 	      if (this.parent) this.$setParent(this.parent);
 	      this.$callHook('onInit');
-	      this._observer = Observer.observe(this);
+	      Observer.observe(this);
 	      if (this.element) {
 	        this.$mount();
 	      } else {
@@ -2684,7 +3320,7 @@
 	     * @param {Object} components 引入的组件
 	     * @returns {void} 无返回
 	     */
-	    _importComponents: function /*istanbul ignore next*/_importComponents(components) {
+	    _importComponents_: function /*istanbul ignore next*/_importComponents_(components) {
 	      utils.each(components, function (name, component) {
 	        this.$components[name] = component;
 	        this.$directives[name] = new ComponentDirective({
@@ -2700,7 +3336,7 @@
 	     * @param {Object} directives 引入的指令
 	     * @returns {void} 无返回
 	     */
-	    _importDirectives: function /*istanbul ignore next*/_importDirectives(directives) {
+	    _importDirectives_: function /*istanbul ignore next*/_importDirectives_(directives) {
 	      utils.each(directives, function (name, directive) {
 	        this.$directives[name] = directive;
 	      }, this);
@@ -2722,7 +3358,7 @@
 	     * @param {Object} data 组件数据对象
 	     * @returns {void} 无返回
 	     */
-	    _createData: function /*istanbul ignore next*/_createData(data) {
+	    _createdData_: function /*istanbul ignore next*/_createdData_(data) {
 	      if (utils.isFunction(data)) {
 	        this.$data = data.call(this);
 	      } else {
@@ -2749,7 +3385,7 @@
 	     * @param {Object} properties 属性定义对象
 	     * @returns {void} 无返回
 	     */
-	    _createProperties: function /*istanbul ignore next*/_createProperties(properties) {
+	    _createProperties_: function /*istanbul ignore next*/_createProperties_(properties) {
 	      this.$properties = {};
 	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
@@ -2785,8 +3421,8 @@
 	              throw new Error('Invalid value `' + value + '` for property `' + name + '`');
 	            }
 	            descriptor.set.call(this, value);
-	            if (this.__observer__) {
-	              this.__observer__.emitChange({ path: name, value: value });
+	            if (this._observer_) {
+	              this._observer_.emitChange({ path: name, value: value });
 	            }
 	          }
 	        });
@@ -2801,8 +3437,8 @@
 	     * @param {Object} watches 监控定义对象
 	     * @returns {void} 无返回
 	     */
-	    _createWatches: function /*istanbul ignore next*/_createWatches(watches) {
-	      this._watchers = this._watchers || [];
+	    _createWatches_: function /*istanbul ignore next*/_createWatches_(watches) {
+	      this._watchers_ = this._watchers_ || [];
 	      utils.each(watches, function (name, handler) {
 	        this.$watch(name, handler);
 	      }, this);
@@ -2812,8 +3448,8 @@
 	     * 在模板发生更新时
 	     * @returns {void} 无返回
 	     */
-	    _onTemplateUpdate: function /*istanbul ignore next*/_onTemplateUpdate() {
-	      this._watchers.forEach(function (watcher) {
+	    _onTemplateUpdate_: function /*istanbul ignore next*/_onTemplateUpdate_() {
+	      this._watchers_.forEach(function (watcher) {
 	        watcher.calc();
 	      }, this);
 	    },
@@ -2834,16 +3470,16 @@
 	          };
 	        })();
 	      }
-	      this._watchers.push(new Watcher(calcer.bind(this), handler.bind(this)));
+	      this._watchers_.push(new Watcher(calcer.bind(this), handler.bind(this)));
 	    },
 	
 	    /**
 	     * 创建元素
 	     * @returns {void} 无返回
 	     */
-	    _createElement: function /*istanbul ignore next*/_createElement() {
-	      if (this._created) return;
-	      this._created = true;
+	    _createElement_: function /*istanbul ignore next*/_createElement_() {
+	      if (this._created_) return;
+	      this._created_ = true;
 	      this.$callHook('onCreate');
 	      utils.defineFreezeProp(this, '$element', this.element || ComponentClass.$template.cloneNode(true));
 	      if (!this.$element || this.$element.nodeName === '#text') {
@@ -2857,16 +3493,16 @@
 	     * @returns {void} 无返回
 	     */
 	    $compile: function /*istanbul ignore next*/$compile() {
-	      if (this._compiled) return;
-	      this._compiled = true;
-	      this._createElement();
-	      utils.defineFreezeProp(this, '_template', new Template(this.$element, {
+	      if (this._compiled_) return;
+	      this._compiled_ = true;
+	      this._createElement_();
+	      utils.defineFreezeProp(this, '_template_', new Template(this.$element, {
 	        directives: this.$directives,
 	        root: true
 	      }));
-	      this._template.bind(this);
-	      this._template.on('update', this._onTemplateUpdate);
-	      this._template.on('bind', function () {
+	      this._template_.bind(this);
+	      this._template_.on('update', this._onTemplateUpdate_);
+	      this._template_.on('bind', function () {
 	        if (!this.deferReady) this.$callHook('onReady');
 	      }.bind(this));
 	    },
@@ -2878,7 +3514,7 @@
 	     * @returns {void} 无返回 
 	     */
 	    $mount: function /*istanbul ignore next*/$mount(mountNode, append) {
-	      if (this._mounted) return;
+	      if (this._mounted_) return;
 	      this.$compile();
 	      this.$callHook('onMount');
 	      if (mountNode) {
@@ -2890,8 +3526,8 @@
 	          mountNode.parentNode.insertBefore(this.$element, mountNode);
 	        }
 	      }
-	      this._mounted = true;
-	      this._removed = false;
+	      this._mounted_ = true;
+	      this._removed_ = false;
 	      this.$callHook('onMounted');
 	    },
 	
@@ -2909,13 +3545,13 @@
 	     * @returns {void} 无返回
 	     */
 	    $remove: function /*istanbul ignore next*/$remove() {
-	      if (this._removed || !this._mounted) return;
+	      if (this._removed_ || !this._mounted_) return;
 	      this.$callHook('onRemove');
 	      if (this.$element.parentNode) {
 	        this.$element.parentNode.removeChild(this.$element);
 	      }
-	      this._removed = true;
-	      this._mounted = false;
+	      this._removed_ = true;
+	      this._mounted_ = false;
 	      this.$callHook('onRemoved');
 	    },
 	
@@ -2962,14 +3598,14 @@
 	        this.$parent.$children.splice(index, 1);
 	      }
 	      this.$callHook('onDispose');
-	      if (this._compiled) {
-	        this._template.unbind();
+	      if (this._compiled_) {
+	        this._template_.unbind();
 	      }
 	      this.$callHook('onDisposed');
 	      for (var key in this) {
 	        delete this[key];
 	      }
-	      ['__observer__', '$element', '$children', '$parent', '_template'].forEach(function (key) {
+	      ['_observer_', '$element', '$children', '$parent', '_template_'].forEach(function (key) {
 	        delete this[key];
 	      }, this);
 	      this.__proto__ = null;
@@ -2985,7 +3621,7 @@
 	  }
 	
 	  //向 ComponentClass.prototype 上拷贝成员
-	  utils.copy(classOpts, ComponentClass.prototype, RESERVED_WORDS, 'Name `{name}` is reserved');
+	  utils.copy(classOpts, ComponentClass.prototype);
 	
 	  //使 ComponentClass instanceof Component === true
 	  ComponentClass.__proto__ = Component.prototype;
@@ -3024,12 +3660,12 @@
 	module.exports = Component;
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Template = __webpack_require__(8);
+	var Template = __webpack_require__(9);
 	var Directive = Template.Directive;
 	
 	/**
@@ -3129,22 +3765,22 @@
 	module.exports = ComponentDirective;
 
 /***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = {
-	  View: __webpack_require__(37)
-	};
-
-/***/ },
 /* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(34);
+	module.exports = {
+	  View: __webpack_require__(38)
+	};
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Component = __webpack_require__(35);
 	var utils = __webpack_require__(3);
 	
 	/**
