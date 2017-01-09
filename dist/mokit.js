@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta44"
+		"version": "3.0.0-beta46"
 	};
 
 /***/ },
@@ -2477,10 +2477,12 @@
 	   * @returns {void} 无返回
 	   */
 	  bind: function /*istanbul ignore next*/bind(scope, disableFirst) {
+	    if (!scope) return;
 	    this.unbind();
 	    this.observer = new Observer(scope, {
 	      root: this.options.root
 	    });
+	    scope.$self = scope;
 	    this.observer.on('change', this.update);
 	    if (disableFirst) {
 	      this._onBind();
@@ -2613,6 +2615,7 @@
 	      this._importDirectives_(this.directives);
 	      this.$components = this.$components || utils.create(null);
 	      this._importComponents_(__webpack_require__(36));
+	      this._importComponents_({ 'self': this['$class'] });
 	      this._importComponents_(this.components);
 	      delete this.components;
 	      utils.defineFreezeProp(this, '$children', []);
