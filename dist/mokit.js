@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta46"
+		"version": "3.0.0-beta47"
 	};
 
 /***/ },
@@ -2614,7 +2614,7 @@
 	      this._importDirectives_(this.directives);
 	      this.$components = this.$components || utils.create(null);
 	      this._importComponents_(__webpack_require__(36));
-	      this._importComponents_({ 'self': this['$class'] });
+	      this._importComponents_({ 'self': ComponentClass });
 	      this._importComponents_(this.components);
 	      delete this.components;
 	      utils.defineFreezeProp(this, '$children', []);
@@ -2748,7 +2748,7 @@
 	     */
 	    _createProperties_: function /*istanbul ignore next*/_createProperties_(properties) {
 	      this.$properties = {};
-	      utils.each(properties, function (name, descriptor) {
+	      utils.each(utils.clone(properties), function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
 	          descriptor = { get: descriptor };
 	        }

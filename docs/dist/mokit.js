@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta46"
+		"version": "3.0.0-beta47"
 	};
 
 /***/ },
@@ -1914,23 +1914,22 @@
 	    //但 if 指令必须先移除，否再进行 item 编译时 if 还会生效
 	    this.node.removeAttribute(this.attribute.name);
 	    this.node.parentNode.removeChild(this.node);
-	    this._oldValue = false;
 	  },
 	
 	  execute: function /*istanbul ignore next*/execute(scope) {
 	    var newValue = this.expression.execute(scope);
-	    var node = this.node.$substitute || this.node;
 	    if (newValue) {
 	      //如果新计算的结果为 true 才执行 
 	      this._handler = this._handler || this.compiler.compile(this.node);
 	      this._handler(scope);
+	      var node = this.node.$substitute || this.node;
 	      if (!node.parentNode) {
 	        this.mountNode.parentNode.insertBefore(node, this.mountNode);
 	      }
-	    } else if (this._oldValue && node.parentNode) {
-	      node.parentNode.removeChild(node);
+	    } else {
+	      var _node = this.node.$substitute || this.node;
+	      if (_node.parentNode) _node.parentNode.removeChild(_node);
 	    }
-	    this._oldValue = newValue;
 	  }
 	
 	});
@@ -2615,7 +2614,7 @@
 	      this._importDirectives_(this.directives);
 	      this.$components = this.$components || utils.create(null);
 	      this._importComponents_(__webpack_require__(36));
-	      this._importComponents_({ 'self': this['$class'] });
+	      this._importComponents_({ 'self': ComponentClass });
 	      this._importComponents_(this.components);
 	      delete this.components;
 	      utils.defineFreezeProp(this, '$children', []);
@@ -2749,7 +2748,7 @@
 	     */
 	    _createProperties_: function /*istanbul ignore next*/_createProperties_(properties) {
 	      this.$properties = {};
-	      utils.each(properties, function (name, descriptor) {
+	      utils.each(utils.clone(properties), function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
 	          descriptor = { get: descriptor };
 	        }
