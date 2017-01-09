@@ -1915,7 +1915,6 @@
 	    this.node.removeAttribute(this.attribute.name);
 	    this.node.parentNode.removeChild(this.node);
 	    this._oldValue = false;
-	    this._handler = this.compiler.compile(this.node);
 	  },
 	
 	  execute: function /*istanbul ignore next*/execute(scope) {
@@ -1923,6 +1922,7 @@
 	    var node = this.node.$substitute || this.node;
 	    if (newValue) {
 	      //如果新计算的结果为 true 才执行 
+	      this._handler = this._handler || this.compiler.compile(this.node);
 	      this._handler(scope);
 	      if (!node.parentNode) {
 	        this.mountNode.parentNode.insertBefore(node, this.mountNode);
