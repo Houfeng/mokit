@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta47"
+		"version": "3.0.0-beta48"
 	};
 
 /***/ },
@@ -1823,7 +1823,7 @@
 	var Directive = __webpack_require__(10);
 	
 	module.exports = new Directive({
-	  level: Directive.LS,
+	  level: Directive.LS + 1, //比 if 要高一个权重
 	  final: true,
 	  literal: true,
 	
@@ -2748,12 +2748,15 @@
 	     */
 	    _createProperties_: function /*istanbul ignore next*/_createProperties_(properties) {
 	      this.$properties = {};
-	      utils.each(utils.clone(properties), function (name, descriptor) {
+	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
 	          descriptor = { get: descriptor };
-	        }
-	        if (!utils.isObject(descriptor)) {
+	        } else if (!utils.isObject(descriptor)) {
 	          descriptor = { value: descriptor };
+	        } else {
+	          //不能直接用 descriptor，
+	          //因为为会导到多个组件实例间的影响
+	          descriptor = utils.copy(descriptor);
 	        }
 	        var hasGetterOrSetter = !!descriptor.get || !!descriptor.set;
 	        if (!hasGetterOrSetter) {
