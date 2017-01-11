@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0-beta48"
+		"version": "3.0.0-beta49"
 	};
 
 /***/ },
@@ -998,9 +998,11 @@
 	   * @returns {void} 无返回
 	   */
 	  dispatch: function /*istanbul ignore next*/dispatch(eventName, event) {
-	    event.__layer__ = event.__layer__ || 0;
-	    event.__layer__++;
-	    if (event.__layer__ >= EVENT_MAX_DISPATCH_LAYER) return;
+	    event._src_ = event._src_ || this;
+	    if (event._src_ === this) return;
+	    event._layer_ = event._layer_ || 0;
+	    event._layer_++;
+	    if (event._layer_ >= EVENT_MAX_DISPATCH_LAYER) return;
 	    this.emit(eventName, event);
 	    if (!this.parents || this.parents.length < 1) return;
 	    this.parents.forEach(function (item) {
@@ -1821,6 +1823,7 @@
 	/*istanbul ignore next*/'use strict';
 	
 	var Directive = __webpack_require__(10);
+	var utils = __webpack_require__(3);
 	
 	module.exports = new Directive({
 	  level: Directive.LS + 1, //比 if 要高一个权重
@@ -1839,7 +1842,7 @@
 	    this.node.removeAttribute(this.attribute.name);
 	    this.node.parentNode.removeChild(this.node);
 	    this.parseExpr();
-	    this.eachItems = [];
+	    this.eachItems = {};
 	  },
 	
 	  parseExpr: function /*istanbul ignore next*/parseExpr() {
@@ -1860,13 +1863,16 @@
 	  },
 	
 	  execute: function /*istanbul ignore next*/execute(scope) {
-	    var eachCount = 0;
+	    /*istanbul ignore next*/var _this = this;
+	
+	    var currentEachKeys = [];
 	    var itemsFragment = document.createDocumentFragment();
 	    this.each(scope, function (key, value) {
 	      //创建新 scope
-	      var newScope = { __proto__: scope };
+	      var newScope = {};
 	      if (this.keyName) newScope[this.keyName] = key;
 	      if (this.valueName) newScope[this.valueName] = value;
+	      newScope.__proto__ = scope;
 	      var oldItem = this.eachItems[key];
 	      if (oldItem) {
 	        oldItem.handler(newScope);
@@ -1879,11 +1885,17 @@
 	        newItem.handler(newScope);
 	        this.eachItems[key] = newItem;
 	      }
-	      eachCount++;
+	      currentEachKeys.push(key);
 	    }.bind(this));
-	    this.eachItems.splice(eachCount).forEach(function (item) {
-	      item.node.parentNode.removeChild(item.node);
-	    });
+	    utils.each(this.eachItems, function (key, item) {
+	      if (currentEachKeys.some(function (k) /*istanbul ignore next*/{
+	        return k == key;
+	      })) return;
+	      if (item.node.parentNode) {
+	        item.node.parentNode.removeChild(item.node);
+	      }
+	      delete /*istanbul ignore next*/_this.eachItems[key];
+	    }, this);
 	    if (itemsFragment.childNodes.length > 0) {
 	      this.mountNode.parentNode.insertBefore(itemsFragment, this.mountNode);
 	    }
@@ -2606,7 +2618,7 @@
 	      this._onTemplateUpdate_ = this._onTemplateUpdate_.bind(this);
 	      this._createdData_(this.data);
 	      delete this.data;
-	      this._createProperties_(this.properties);
+	      this._createProperties_(this.properties || this.props);
 	      delete this.properties;
 	      this._createWatches_(this.watches);
 	      delete this.watches;
