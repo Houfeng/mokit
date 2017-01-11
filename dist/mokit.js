@@ -910,7 +910,7 @@
 	    if (utils.isNull(target)) {
 	      throw new Error('Invalid target');
 	    }
-	    options = options || utils.create(null);
+	    options = options || {};
 	    var observer = target[OBSERVER_PROP_NAME];
 	    if (observer) {
 	      utils.copy(options, observer.options);
@@ -922,7 +922,7 @@
 	    }
 	    EventEmitter.call(this);
 	    utils.defineFreezeProp(this, 'options', options);
-	    utils.defineFreezeProp(this, 'shadow', utils.create(null));
+	    utils.defineFreezeProp(this, 'shadow', {});
 	    utils.defineFreezeProp(this, 'target', target);
 	    utils.defineFreezeProp(this, 'parents', []);
 	    utils.defineFreezeProp(target, OBSERVER_PROP_NAME, this);
@@ -1179,7 +1179,7 @@
 	    utils.defineFreezeProp(this, '_target_', target);
 	    utils.defineFreezeProp(target, '_emitter_', this);
 	    this._isElement_ = utils.isElement(this._target_);
-	    this._listeners_ = this._listeners_ || utils.create(null);
+	    this._listeners_ = this._listeners_ || {};
 	    this.on = this.$on = this.$addListener = this.addListener;
 	    this.off = this.$off = this.$removeListener = this.removeListener;
 	    this.$emit = this.emit;
@@ -1229,7 +1229,7 @@
 	      utils.each(this._listeners_, function (name) {
 	        this.removeListener(name, null, capture);
 	      }, this);
-	      this._listeners_ = utils.create(null);
+	      this._listeners_ = {};
 	    }
 	  },
 	
@@ -1375,10 +1375,10 @@
 	   * @returns {void} 无返回
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(options) {
-	    options = options || utils.create(null);
+	    options = options || {};
 	    this.prefix = options.prefix || DEFAULT_PREFIX;
-	    this.elementDirectives = utils.create(null);
-	    this.attributeDirectives = utils.create(null);
+	    this.elementDirectives = {};
+	    this.attributeDirectives = {};
 	    this.registerDirectives(commonDirectives);
 	    this.registerDirectives(options.directives);
 	  },
@@ -1408,7 +1408,7 @@
 	   */
 	  _parseAttrInfo: function /*istanbul ignore next*/_parseAttrInfo(attrName) {
 	    var parts = attrName.toLowerCase().split(':');
-	    var info = utils.create(null);
+	    var info = {};
 	    if (parts.length > 1) {
 	      info.name = /*istanbul ignore next*/parts[0] + ':' + parts[1];
 	      info.decorates = parts.slice(2);
@@ -1523,10 +1523,10 @@
 	      throw new Error('Invalid node for compile');
 	    }
 	    node._compiled_ = true;
-	    options = options || utils.create(null);
+	    options = options || {};
 	    //定义编译结果函数
 	    var handler = function handler(scope) {
-	      if (utils.isNull(scope)) scope = utils.create(null);
+	      if (utils.isNull(scope)) scope = {};
 	      handler.directives.forEach(function (directive) {
 	        directive.scope = scope;
 	        directive.execute(scope);
@@ -1578,7 +1578,7 @@
 	 */
 	function Directive(classOptions) {
 	  //处理指令选项
-	  classOptions = classOptions || utils.create(null);
+	  classOptions = classOptions || {};
 	  classOptions.type = classOptions.type || Directive.TA;
 	  classOptions.level = classOptions.level || Directive.LG;
 	
@@ -1766,7 +1766,7 @@
 	   */
 	  execute: function /*istanbul ignore next*/execute(scope) {
 	    if (utils.isNull(scope)) {
-	      scope = utils.create(null);
+	      scope = {};
 	    }
 	    return this.func.call(scope, scope);
 	  }
@@ -1856,7 +1856,7 @@
 	    this.node.removeAttribute(this.attribute.name);
 	    this.node.parentNode.removeChild(this.node);
 	    this.parseExpr();
-	    this.eachItems = utils.create(null);
+	    this.eachItems = {};
 	  },
 	
 	  parseExpr: function /*istanbul ignore next*/parseExpr() {
@@ -1893,7 +1893,7 @@
 	      if (oldItem) {
 	        oldItem.handler(newScope);
 	      } else {
-	        var newItem = this.utils.create(null);
+	        var newItem = {};
 	        //创建新元素
 	        newItem.node = this.node.cloneNode(true);
 	        itemsFragment.appendChild(newItem.node);
@@ -2496,7 +2496,7 @@
 	   * @returns {void} 无返回
 	   */
 	  constructor: function /*istanbul ignore next*/constructor(element, options) {
-	    options = options || utils.create(null);
+	    options = options || {};
 	    EventEmitter.call(this);
 	    this.options = options;
 	    this.element = element;
@@ -2633,7 +2633,7 @@
 	function Component(classOpts) {
 	
 	  //处理组件选项
-	  classOpts = classOpts || utils.create(null);
+	  classOpts = classOpts || {};
 	
 	  //处理「继承」，目前的机制，只能用「合并类选项」
 	  var mixObjects = classOpts.mixs;
@@ -2647,10 +2647,10 @@
 	  delete classOpts.extends;
 	  mixObjects.push(extendComponent);
 	  mixObjects.push(classOpts);
-	  var mixedClassOpts = utils.create(null);
+	  var mixedClassOpts = {};
 	  mixObjects.forEach(function (mixObject) {
 	    if (mixObject instanceof Component || mixObject == Component) {
-	      mixObject = mixObject.$options || utils.create(null);
+	      mixObject = mixObject.$options || {};
 	    }
 	    utils.mix(mixedClassOpts, mixObject);
 	  });
@@ -2673,7 +2673,7 @@
 	        return new this.$class(instanceOpts);
 	      }
 	      EventEmitter.call(this);
-	      utils.copy(instanceOpts || utils.create(null), this);
+	      utils.copy(instanceOpts || {}, this);
 	      this._onTemplateUpdate_ = this._onTemplateUpdate_.bind(this);
 	      this._createdData_(this.data);
 	      delete this.data;
@@ -2681,9 +2681,9 @@
 	      delete this.properties;
 	      this._createWatches_(this.watches);
 	      delete this.watches;
-	      this.$directives = this.$directives || utils.create(null);
+	      this.$directives = this.$directives || {};
 	      this._importDirectives_(this.directives);
-	      this.$components = this.$components || utils.create(null);
+	      this.$components = this.$components || {};
 	      this._importComponents_(__webpack_require__(37));
 	      this._importComponents_({ 'self': ComponentClass });
 	      this._importComponents_(this.components);
@@ -2794,7 +2794,7 @@
 	      if (utils.isFunction(data)) {
 	        this.$data = data.call(this);
 	      } else {
-	        this.$data = data || utils.create(null);
+	        this.$data = data || {};
 	      }
 	      utils.each(this.$data, function (name) {
 	        Object.defineProperty(this, name, {
@@ -2818,7 +2818,7 @@
 	     * @returns {void} 无返回
 	     */
 	    _createProperties_: function /*istanbul ignore next*/_createProperties_(properties) {
-	      this.$properties = utils.create(null);
+	      this.$properties = {};
 	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
 	          descriptor = { get: descriptor };
@@ -3088,7 +3088,7 @@
 	
 	//定义扩展方法
 	Component.prototype.extend = function (classOpts) {
-	  classOpts = classOpts || utils.create(null);
+	  classOpts = classOpts || {};
 	  classOpts.extends = this;
 	  return new Component(classOpts);
 	};
