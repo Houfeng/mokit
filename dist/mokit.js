@@ -83,7 +83,7 @@
 	var Watcher = __webpack_require__(5);
 	var Observer = __webpack_require__(6);
 	var Template = __webpack_require__(8);
-	var Component = __webpack_require__(33);
+	var Component = __webpack_require__(34);
 	var EventEmitter = __webpack_require__(7);
 	
 	//持载模板相关对象
@@ -878,6 +878,7 @@
 	var OBSERVER_PROP_NAME = '_observer_';
 	var CHANGE_EVENT_NAME = 'change';
 	var EVENT_MAX_DISPATCH_LAYER = 20;
+	var IGNORE_REGEXPS = [/^\_(.*)\_$/i, /^\_\_/i];
 	
 	/**
 	 * 对象观察类，可以监控对象变化
@@ -936,7 +937,9 @@
 	   * @returns {void} 无返回
 	   */
 	  set: function /*istanbul ignore next*/set(name, value) {
-	    if (utils.isFunction(value)) return;
+	    if (utils.isFunction(value) || Observer.isIgnore(name)) {
+	      return;
+	    }
 	    Object.defineProperty(this.target, name, {
 	      get: function /*istanbul ignore next*/get() {
 	        return this[OBSERVER_PROP_NAME].shadow[name];
@@ -998,8 +1001,8 @@
 	   * @returns {void} 无返回
 	   */
 	  dispatch: function /*istanbul ignore next*/dispatch(eventName, event) {
-	    event._src_ = event._src_ || this;
 	    if (event._src_ === this) return;
+	    event._src_ = event._src_ || this;
 	    event._layer_ = event._layer_ || 0;
 	    event._layer_++;
 	    if (event._layer_ >= EVENT_MAX_DISPATCH_LAYER) return;
@@ -1135,6 +1138,17 @@
 	  return new Observer(target);
 	};
 	
+	/**
+	 * 检查是不是忽略的属性名
+	 * @param {string} word 待检查的字符串
+	 * @returns {void} 无返回
+	 */
+	Observer.isIgnore = function (word) {
+	  return IGNORE_REGEXPS.some(function (re) /*istanbul ignore next*/{
+	    return re.test(word);
+	  });
+	};
+	
 	module.exports = Observer;
 
 /***/ },
@@ -1165,7 +1179,7 @@
 	    utils.defineFreezeProp(this, '_target_', target);
 	    utils.defineFreezeProp(target, '_emitter_', this);
 	    this._isElement_ = utils.isElement(this._target_);
-	    this._listeners_ = this._listeners_ || {};
+	    this._listeners_ = this._listeners_ || utils.create(null);
 	    this.on = this.$on = this.$addListener = this.addListener;
 	    this.off = this.$off = this.$removeListener = this.removeListener;
 	    this.$emit = this.emit;
@@ -1215,7 +1229,7 @@
 	      utils.each(this._listeners_, function (name) {
 	        this.removeListener(name, null, capture);
 	      }, this);
-	      this._listeners_ = {};
+	      this._listeners_ = utils.create(null);
 	    }
 	  },
 	
@@ -1323,7 +1337,7 @@
 	var Compiler = __webpack_require__(9);
 	var Directive = __webpack_require__(10);
 	var Expression = __webpack_require__(11);
-	var Template = __webpack_require__(32);
+	var Template = __webpack_require__(33);
 	var directives = __webpack_require__(12);
 	
 	Template.Template = Template;
@@ -1394,7 +1408,7 @@
 	   */
 	  _parseAttrInfo: function /*istanbul ignore next*/_parseAttrInfo(attrName) {
 	    var parts = attrName.toLowerCase().split(':');
-	    var info = {};
+	    var info = utils.create(null);
 	    if (parts.length > 1) {
 	      info.name = /*istanbul ignore next*/parts[0] + ':' + parts[1];
 	      info.decorates = parts.slice(2);
@@ -1491,7 +1505,7 @@
 	  _compileChildren: function /*istanbul ignore next*/_compileChildren(handler, node) {
 	    if (handler.final) return;
 	    utils.toArray(node.childNodes).forEach(function (childNode) {
-	      if (childNode.__compiled) return;
+	      if (childNode._compiled_) return;
 	      var childHandler = this.compile(childNode);
 	      childHandler.parent = this;
 	      handler.children.push(childHandler);
@@ -1508,7 +1522,7 @@
 	    if (!node) {
 	      throw new Error('Invalid node for compile');
 	    }
-	    node.__compiled = true;
+	    node._compiled_ = true;
 	    options = options || utils.create(null);
 	    //定义编译结果函数
 	    var handler = function handler(scope) {
@@ -1587,9 +1601,9 @@
 	        return this.update();
 	      }
 	      var newValue = this.options.literal ? this.attribute.value : this.expression.execute(scope);
-	      if (!utils.deepEqual(this.__value__, newValue)) {
-	        this.update(newValue, this.__value__);
-	        this.__value__ = newValue;
+	      if (!utils.deepEqual(this._value_, newValue)) {
+	        this.update(newValue, this._value_);
+	        this._value_ = newValue;
 	      }
 	    },
 	    update: classOptions.update || utils.noop,
@@ -1781,7 +1795,7 @@
 	  'cloak': __webpack_require__(23),
 	  'show': __webpack_require__(24),
 	  'model': __webpack_require__(25),
-	  '*': __webpack_require__(31) //处理所有未知 attr
+	  '*': __webpack_require__(32) //处理所有未知 attr
 	};
 
 /***/ },
@@ -1842,7 +1856,7 @@
 	    this.node.removeAttribute(this.attribute.name);
 	    this.node.parentNode.removeChild(this.node);
 	    this.parseExpr();
-	    this.eachItems = {};
+	    this.eachItems = utils.create(null);
 	  },
 	
 	  parseExpr: function /*istanbul ignore next*/parseExpr() {
@@ -1868,7 +1882,9 @@
 	    var currentEachKeys = [];
 	    var itemsFragment = document.createDocumentFragment();
 	    this.each(scope, function (key, value) {
-	      //创建新 scope
+	      //创建新 scope，必须选创建再设置 __proto__
+	      //因为指令参数指定的名称有可能和 scope 原有变量冲突
+	      //将导致针对 watch 变量的赋值，从引用发循环
 	      var newScope = {};
 	      if (this.keyName) newScope[this.keyName] = key;
 	      if (this.valueName) newScope[this.valueName] = value;
@@ -2004,9 +2020,8 @@
 	    this.emiter = new EventEmitter(eventTarget);
 	    this.emiter.addListener(this.decorates[0], function (event) {
 	      if (this.utils.isNull(this.scope)) return;
-	      var scope = { __proto__: this.scope };
-	      scope.event = scope.$event = event;
-	      this.expr.execute(scope);
+	      var newScope = { $event: event, __proto__: this.scope };
+	      this.expr.execute(newScope);
 	    }.bind(this), false);
 	  },
 	
@@ -2125,11 +2140,14 @@
 	var InputDirective = __webpack_require__(28);
 	var RadioDirective = __webpack_require__(29);
 	var CheckboxDirective = __webpack_require__(30);
+	var PropDirective = __webpack_require__(31);
 	
 	var Directive = function Directive(options) {
 	  var node = options.node;
 	  var tagName = node.tagName;
-	  if (tagName == 'INPUT') {
+	  if (options.decorates[0]) {
+	    return new PropDirective(options);
+	  } else if (tagName == 'INPUT') {
 	    var type = node.getAttribute('type');
 	    if (type == 'radio') {
 	      return new RadioDirective(options);
@@ -2138,12 +2156,14 @@
 	    } else {
 	      return new InputDirective(options);
 	    }
+	  } else if (tagName == 'TEXTAREA') {
+	    return new InputDirective(options);
 	  } else if (tagName == 'SELECT') {
 	    return new SelectDirective(options);
 	  } else if (node.isContentEditable) {
 	    return new EditableDirective(options);
 	  } else {
-	    throw new Error( /*istanbul ignore next*/'Directive cannot be used on `' + tagName + '`');
+	    throw new Error( /*istanbul ignore next*/'Directive `model` cannot be used on `' + tagName + '`');
 	  }
 	};
 	
@@ -2366,6 +2386,45 @@
 	
 	var Directive = __webpack_require__(10);
 	
+	module.exports = new Directive({
+	
+	  /**
+	   * 初始化指令
+	   * @returns {void} 无返回
+	   */
+	  bind: function /*istanbul ignore next*/bind() {
+	    /*istanbul ignore next*/var _this = this;
+	
+	    this.target = this.node.$target;
+	    this.bindPath = this.attribute.value;
+	    this.bindProp = this.decorates[0];
+	    if (!this.target) {
+	      throw new Error( /*istanbul ignore next*/'Directive `model:' + this.bindProp + '` cannot be used on `' + this.node.tagName + '`');
+	    }
+	    this.watcher = this.target.$watch(this.bindProp, function (value) {
+	      if ( /*istanbul ignore next*/_this.utils.isNull( /*istanbul ignore next*/_this.scope)) return;
+	      /*istanbul ignore next*/_this.utils.setByPath( /*istanbul ignore next*/_this.scope, /*istanbul ignore next*/_this.bindPath, value);
+	    });
+	  },
+	
+	  unbind: function /*istanbul ignore next*/unbind() {
+	    this.target.$unWatch(this.watcher);
+	  },
+	
+	  update: function /*istanbul ignore next*/update(value) {
+	    this.target[this.bindProp] = value;
+	  }
+	
+	});
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Directive = __webpack_require__(10);
+	
 	/**
 	 * 通用的 attribute 指令
 	 * 用于所有 attribute 的处理
@@ -2410,7 +2469,7 @@
 	});
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2527,13 +2586,13 @@
 	module.exports = Template;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(34);
-	var components = __webpack_require__(36);
+	var Component = __webpack_require__(35);
+	var components = __webpack_require__(37);
 	var directives = __webpack_require__(8).directives;
 	
 	Component.components = components;
@@ -2552,7 +2611,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2563,7 +2622,7 @@
 	var utils = __webpack_require__(3);
 	var EventEmitter = __webpack_require__(7);
 	var Observer = __webpack_require__(6);
-	var ComponentDirective = __webpack_require__(35);
+	var ComponentDirective = __webpack_require__(36);
 	
 	/**
 	 * 组件类
@@ -2588,10 +2647,10 @@
 	  delete classOpts.extends;
 	  mixObjects.push(extendComponent);
 	  mixObjects.push(classOpts);
-	  var mixedClassOpts = {};
+	  var mixedClassOpts = utils.create(null);
 	  mixObjects.forEach(function (mixObject) {
 	    if (mixObject instanceof Component || mixObject == Component) {
-	      mixObject = mixObject.$options || {};
+	      mixObject = mixObject.$options || utils.create(null);
 	    }
 	    utils.mix(mixedClassOpts, mixObject);
 	  });
@@ -2614,7 +2673,7 @@
 	        return new this.$class(instanceOpts);
 	      }
 	      EventEmitter.call(this);
-	      utils.copy(instanceOpts || {}, this);
+	      utils.copy(instanceOpts || utils.create(null), this);
 	      this._onTemplateUpdate_ = this._onTemplateUpdate_.bind(this);
 	      this._createdData_(this.data);
 	      delete this.data;
@@ -2625,7 +2684,7 @@
 	      this.$directives = this.$directives || utils.create(null);
 	      this._importDirectives_(this.directives);
 	      this.$components = this.$components || utils.create(null);
-	      this._importComponents_(__webpack_require__(36));
+	      this._importComponents_(__webpack_require__(37));
 	      this._importComponents_({ 'self': ComponentClass });
 	      this._importComponents_(this.components);
 	      delete this.components;
@@ -2735,7 +2794,7 @@
 	      if (utils.isFunction(data)) {
 	        this.$data = data.call(this);
 	      } else {
-	        this.$data = data || {};
+	        this.$data = data || utils.create(null);
 	      }
 	      utils.each(this.$data, function (name) {
 	        Object.defineProperty(this, name, {
@@ -2759,7 +2818,7 @@
 	     * @returns {void} 无返回
 	     */
 	    _createProperties_: function /*istanbul ignore next*/_createProperties_(properties) {
-	      this.$properties = {};
+	      this.$properties = utils.create(null);
 	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
 	          descriptor = { get: descriptor };
@@ -2846,7 +2905,21 @@
 	          };
 	        })();
 	      }
-	      this._watchers_.push(new Watcher(calcer.bind(this), handler.bind(this)));
+	      var watcher = new Watcher(calcer.bind(this), handler.bind(this));
+	      this._watchers_.push(watcher);
+	      return watcher;
+	    },
+	
+	    /**
+	     * 取消一个 watcher 对象
+	     * @param {object} watcher 监控对象实例
+	     * @returns {void} 无返回
+	     */
+	    $unWatch: function /*istanbul ignore next*/$unWatch(watcher) {
+	      var index = this._watchers_.findIndex(function (w) /*istanbul ignore next*/{
+	        return w === watcher;
+	      });
+	      this._watchers_.splice(index, 1);
 	    },
 	
 	    /**
@@ -2965,7 +3038,7 @@
 	     */
 	    $dispose: function /*istanbul ignore next*/$dispose() {
 	      this.$remove();
-	      this.__emitter__.off();
+	      this._emitter_.off();
 	      this.$children.forEach(function (child) {
 	        child.$dispose();
 	      }, this);
@@ -3036,7 +3109,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -3141,22 +3214,22 @@
 	module.exports = ComponentDirective;
 
 /***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = {
-	  View: __webpack_require__(37)
-	};
-
-/***/ },
 /* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(34);
+	module.exports = {
+	  View: __webpack_require__(38)
+	};
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Component = __webpack_require__(35);
 	var utils = __webpack_require__(3);
 	
 	/**
