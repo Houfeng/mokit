@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.0"
+		"version": "3.0.1"
 	};
 
 /***/ },
@@ -1862,7 +1862,7 @@
 	  parseExpr: function /*istanbul ignore next*/parseExpr() {
 	    this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
 	    var tokens = this.attribute.value.split(' ' + this.eachType + ' ');
-	    var fnText = 'with(scope){utils.each(' + tokens[1] + ',fn,this)}';
+	    var fnText = /*istanbul ignore next*/'with(scope){utils.each(' + tokens[1] + ',fn.bind(this,' + tokens[1] + '))}';
 	    this.each = new Function('utils', 'scope', 'fn', fnText).bind(null, this.utils);
 	    var names = tokens[0].split(',').map(function (name) {
 	      return name.trim();
@@ -1881,14 +1881,26 @@
 	
 	    var currentEachKeys = [];
 	    var itemsFragment = document.createDocumentFragment();
-	    this.each(scope, function (key, value) {
+	    var self = this;
+	    this.each(scope, function (eachTarget, key) {
 	      //创建新 scope，必须选创建再设置 __proto__
 	      //因为指令参数指定的名称有可能和 scope 原有变量冲突
 	      //将导致针对 watch 变量的赋值，从引用发循环
 	      var newScope = {};
-	      if (this.keyName) newScope[this.keyName] = key;
-	      if (this.valueName) newScope[this.valueName] = value;
+	      if (self.keyName) newScope[self.keyName] = key;
+	      //value 采用「属性」进行代理，否则将会使「双向」绑定无把回设值
+	      if (self.valueName) {
+	        Object.defineProperty(newScope, self.valueName, {
+	          /*istanbul ignore next*/get: function get() {
+	            return eachTarget[key];
+	          },
+	          /*istanbul ignore next*/set: function set(value) {
+	            eachTarget[key] = value;
+	          }
+	        });
+	      }
 	      newScope.__proto__ = scope;
+	      newScope.$origin = scope;
 	      var oldItem = this.eachItems[key];
 	      if (oldItem) {
 	        oldItem.handler(newScope);
@@ -2191,7 +2203,7 @@
 	   * @returns {void} 无返回
 	   */
 	  bind: function /*istanbul ignore next*/bind() {
-	    this.bindPath = this.attribute.value;
+	    this.backExpr = new this.Expression( /*istanbul ignore next*/this.attribute.value + '=_value_');
 	    this.node.removeAttribute(this.attribute.name);
 	    this._handler = this.compiler.compile(this.node);
 	    this.emiter = new EventEmitter(this.node);
@@ -2201,7 +2213,8 @@
 	      var value = this.node.multiple ? [].slice.call(selectedOptions).map(function (option) {
 	        return option.value;
 	      }, this) : selectedOptions[0].value;
-	      this.utils.setByPath(this.scope, this.bindPath, value);
+	      var newScope = { __proto__: this.scope, _value_: value };
+	      this.backExpr.execute(newScope);
 	    }.bind(this), false);
 	  },
 	
@@ -2237,11 +2250,12 @@
 	   * @returns {void} 无返回
 	   */
 	  bind: function /*istanbul ignore next*/bind() {
-	    this.bindPath = this.attribute.value;
+	    this.backExpr = new this.Expression( /*istanbul ignore next*/this.attribute.value + '=_value_');
 	    this.emiter = new EventEmitter(this.node);
 	    this.emiter.addListener('input', function () {
 	      if (this.utils.isNull(this.scope)) return;
-	      this.utils.setByPath(this.scope, this.bindPath, this.node.innerHTML);
+	      var newScope = { __proto__: this.scope, _value_: this.node.innerHTML };
+	      this.backExpr.execute(newScope);
 	    }.bind(this), false);
 	  },
 	
@@ -2274,11 +2288,12 @@
 	   * @returns {void} 无返回
 	   */
 	  bind: function /*istanbul ignore next*/bind() {
-	    this.bindPath = this.attribute.value;
+	    this.backExpr = new this.Expression( /*istanbul ignore next*/this.attribute.value + '=_value_');
 	    this.emiter = new EventEmitter(this.node);
 	    this.emiter.addListener('input', function () {
 	      if (this.utils.isNull(this.scope)) return;
-	      this.utils.setByPath(this.scope, this.bindPath, this.node.value);
+	      var newScope = { __proto__: this.scope, _value_: this.node.value };
+	      this.backExpr.execute(newScope);
 	    }.bind(this), false);
 	  },
 	
@@ -2310,11 +2325,12 @@
 	   * @returns {void} 无返回
 	   */
 	  bind: function /*istanbul ignore next*/bind() {
-	    this.bindPath = this.attribute.value;
+	    this.backExpr = new this.Expression( /*istanbul ignore next*/this.attribute.value + '=_value_');
 	    this.emiter = new EventEmitter(this.node);
 	    this.emiter.addListener('change', function () {
 	      if (this.utils.isNull(this.scope)) return;
-	      this.utils.setByPath(this.scope, this.bindPath, this.node.value);
+	      var newScope = { __proto__: this.scope, _value_: this.node.value };
+	      this.backExpr.execute(newScope);
 	    }.bind(this), false);
 	  },
 	
@@ -2346,18 +2362,19 @@
 	   * @returns {void} 无返回
 	   */
 	  bind: function /*istanbul ignore next*/bind() {
-	    this.bindPath = this.attribute.value;
+	    this.backExpr = new this.Expression( /*istanbul ignore next*/this.attribute.value + '=_value_');
 	    this.emiter = new EventEmitter(this.node);
 	    this.emiter.addListener('change', function () {
 	      if (this.utils.isNull(this.scope)) return;
-	      var value = this.utils.getByPath(this.scope, this.bindPath);
+	      var value = this.expression.execute(this.scope);
 	      if (this.utils.isArray(value) && this.node.checked) {
 	        value.push(this.node.value);
 	      } else if (this.utils.isArray(value) && !this.node.checked) {
 	        var index = value.indexOf(this.node.value);
 	        value.splice(index, 1);
 	      } else {
-	        this.utils.setByPath(this.scope, this.bindPath, this.node.checked);
+	        var newScope = { __proto__: this.scope, _value_: this.node.checked };
+	        this.backExpr.execute(newScope);
 	      }
 	    }.bind(this), false);
 	  },
@@ -2396,14 +2413,15 @@
 	    /*istanbul ignore next*/var _this = this;
 	
 	    this.target = this.node.$target;
-	    this.bindPath = this.attribute.value;
+	    this.backExpr = new this.Expression( /*istanbul ignore next*/this.attribute.value + '=_value_');
 	    this.bindProp = this.decorates[0];
 	    if (!this.target) {
 	      throw new Error( /*istanbul ignore next*/'Directive `model:' + this.bindProp + '` cannot be used on `' + this.node.tagName + '`');
 	    }
 	    this.watcher = this.target.$watch(this.bindProp, function (value) {
 	      if ( /*istanbul ignore next*/_this.utils.isNull( /*istanbul ignore next*/_this.scope)) return;
-	      /*istanbul ignore next*/_this.utils.setByPath( /*istanbul ignore next*/_this.scope, /*istanbul ignore next*/_this.bindPath, value);
+	      var newScope = { __proto__: /*istanbul ignore next*/_this.scope, _value_: value };
+	      /*istanbul ignore next*/_this.backExpr.execute(newScope);
 	    });
 	  },
 	
@@ -2668,30 +2686,24 @@
 	     * @returns {void} 无返回
 	     */
 	    constructor: function /*istanbul ignore next*/constructor(instanceOpts) {
-	      if (this == window) {
-	        return new this.$class(instanceOpts);
-	      }
+	      if (this == window) return new this.$class(instanceOpts);
 	      EventEmitter.call(this);
-	      utils.copy(instanceOpts || {}, this);
+	      instanceOpts = instanceOpts || {};
 	      this._onTemplateUpdate_ = this._onTemplateUpdate_.bind(this);
-	      this._createdData_(this.data);
-	      delete this.data;
-	      this._createProperties_(this.properties || this.props);
-	      delete this.properties;
-	      this._createWatches_(this.watches);
-	      delete this.watches;
+	      this._createdData_(classOpts.data);
+	      this._createProperties_(classOpts.properties || classOpts.props);
+	      this._createWatches_(classOpts.watches || classOpts.watch);
 	      this.$directives = this.$directives || {};
-	      this._importDirectives_(this.directives);
+	      this._importDirectives_(classOpts.directives);
 	      this.$components = this.$components || {};
 	      this._importComponents_(__webpack_require__(37));
 	      this._importComponents_({ 'self': ComponentClass });
-	      this._importComponents_(this.components);
-	      delete this.components;
+	      this._importComponents_(classOpts.components);
 	      utils.defineFreezeProp(this, '$children', []);
-	      if (this.parent) this.$setParent(this.parent);
+	      if (instanceOpts.parent) this.$setParent(instanceOpts.parent);
 	      this.$callHook('onInit');
 	      Observer.observe(this);
-	      if (this.element) {
+	      if (classOpts.element) {
 	        this.$mount();
 	      } else {
 	        this.$compile();
@@ -3070,6 +3082,7 @@
 	
 	  //向 ComponentClass.prototype 上拷贝成员
 	  utils.copy(classOpts, ComponentClass.prototype);
+	  utils.copy(classOpts.methods, ComponentClass.prototype);
 	
 	  //使 ComponentClass instanceof Component === true
 	  ComponentClass.__proto__ = Component.prototype;
