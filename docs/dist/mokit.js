@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.1"
+		"version": "3.0.2"
 	};
 
 /***/ },
@@ -750,16 +750,16 @@
 	
 	var utils = __webpack_require__(3);
 	
-	function Class(options) {
+	function ClassFactory(options) {
 	  //处理 options
 	  options = options || utils.create(null);
 	  options.$name = options.$name || 'Class';
-	  options.$extends = options.$extends || Class;
+	  options.$extends = options.$extends || ClassFactory;
 	  options.$static = options.$static || utils.create(null);
 	  //处理父类 prototype
 	  var superPrototype = utils.isFunction(options.$extends) ? options.$extends.prototype : options.$extends;
 	  //定义新类
-	  var NewClass = function NewClass() {
+	  var Class = function Class() {
 	    //处理 super
 	    if (!this.$super) {
 	      utils.defineFreezeProp(this, '$super', function () {
@@ -790,31 +790,30 @@
 	    }
 	  };
 	  //处理 prototype
-	  NewClass.prototype.__proto__ = superPrototype;
-	  utils.copy(options, NewClass.prototype);
-	  utils.defineFreezeProp(NewClass.prototype, '$class', NewClass);
+	  Class.prototype.__proto__ = superPrototype;
+	  utils.copy(options, Class.prototype);
+	  utils.defineFreezeProp(Class.prototype, '$class', Class);
 	  //处理静态成员
-	  utils.copy(options.$static, NewClass);
+	  utils.copy(options.$static, Class);
 	  if (utils.isFunction(options.$extends)) {
-	    NewClass.__proto__ = options.$extends;
+	    Class.__proto__ = options.$extends;
 	  }
 	  if (!options.$extends.$extend) {
-	    utils.copy(Class, NewClass);
+	    utils.copy(ClassFactory, Class);
 	  }
-	  utils.defineFreezeProp(NewClass, 'name', options.$name);
-	  utils.defineFreezeProp(NewClass, '$super', options.$extends);
+	  utils.defineFreezeProp(Class, '$super', options.$extends);
 	  //--
-	  return NewClass;
+	  return Class;
 	}
 	
 	//定义扩展方法
-	Class.$extend = function (options) {
+	ClassFactory.$extend = function (options) {
 	  options.$extends = this;
-	  return new Class(options);
+	  return new ClassFactory(options);
 	};
 	
-	Class.Class = Class;
-	module.exports = Class;
+	ClassFactory.Class = ClassFactory;
+	module.exports = ClassFactory;
 
 /***/ },
 /* 5 */
@@ -830,7 +829,6 @@
 	 * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
 	 */
 	var Watcher = new Class({
-	  $name: 'Watcher',
 	
 	  /**
 	   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
@@ -897,7 +895,6 @@
 	 *   但是因为要检查的对象会少很多，效率会更高一点。
 	 */
 	var Observer = new Class({
-	  $name: 'Observer',
 	  $extends: EventEmitter,
 	
 	  /**
@@ -1164,7 +1161,6 @@
 	 * 事件触发器基类
 	 */
 	var EventEmitter = new Class({
-	  $name: 'EventEmitter',
 	  $extends: Function,
 	
 	  /**
@@ -1367,7 +1363,6 @@
 	 * 可以通过指定「前缀」或「指令集」构建实例
 	 */
 	var Compiler = new Class({
-	  $name: 'Compiler',
 	
 	  /**
 	   * 构造一个编译器
@@ -1584,7 +1579,6 @@
 	
 	  //生成指令类
 	  var DirectiveClass = new Class({
-	    $name: 'Directive',
 	
 	    $extends: classOptions,
 	    //指令构建函数
@@ -1630,8 +1624,6 @@
 	Directive.LA = -1000; //any attribute
 	Directive.LC = -2000; //cloak
 	
-	utils.defineFreezeProp(Directive, 'name', 'Directive');
-	
 	module.exports = Directive;
 
 /***/ },
@@ -1647,7 +1639,6 @@
 	 * 表达式类型，将字符串构析为可执行表达式实例
 	 */
 	var Expression = new Class({
-	  $name: 'Expression',
 	
 	  /**
 	   * 通过字符串构造一个表达式实例
@@ -2502,7 +2493,6 @@
 	 * 可能通过 element 作为参数，创建一个模板实例
 	 */
 	var Template = new Class({
-	  $name: 'Template',
 	
 	  $extends: EventEmitter,
 	
@@ -2677,7 +2667,6 @@
 	   * 可以通过 new ComponentClass() 创建组件实例
 	   */
 	  var ComponentClass = new Class({
-	    $name: classOpts.$name || 'Component',
 	    $extends: extendComponent,
 	
 	    /**
@@ -3091,7 +3080,6 @@
 	}
 	
 	Component.prototype.__proto__ = EventEmitter.prototype;
-	utils.defineFreezeProp(Component, 'name', 'Component');
 	
 	//组件扩展方法，简单封装 extends
 	Component.extend = function (classOpts) {

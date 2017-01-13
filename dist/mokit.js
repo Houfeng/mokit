@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.1"
+		"version": "3.0.2"
 	};
 
 /***/ },
@@ -750,16 +750,16 @@
 	
 	var utils = __webpack_require__(3);
 	
-	function Class(options) {
+	function ClassFactory(options) {
 	  //处理 options
 	  options = options || utils.create(null);
 	  options.$name = options.$name || 'Class';
-	  options.$extends = options.$extends || Class;
+	  options.$extends = options.$extends || ClassFactory;
 	  options.$static = options.$static || utils.create(null);
 	  //处理父类 prototype
 	  var superPrototype = utils.isFunction(options.$extends) ? options.$extends.prototype : options.$extends;
 	  //定义新类
-	  var NewClass = function NewClass() {
+	  var Class = function Class() {
 	    //处理 super
 	    if (!this.$super) {
 	      utils.defineFreezeProp(this, '$super', function () {
@@ -790,31 +790,30 @@
 	    }
 	  };
 	  //处理 prototype
-	  NewClass.prototype.__proto__ = superPrototype;
-	  utils.copy(options, NewClass.prototype);
-	  utils.defineFreezeProp(NewClass.prototype, '$class', NewClass);
+	  Class.prototype.__proto__ = superPrototype;
+	  utils.copy(options, Class.prototype);
+	  utils.defineFreezeProp(Class.prototype, '$class', Class);
 	  //处理静态成员
-	  utils.copy(options.$static, NewClass);
+	  utils.copy(options.$static, Class);
 	  if (utils.isFunction(options.$extends)) {
-	    NewClass.__proto__ = options.$extends;
+	    Class.__proto__ = options.$extends;
 	  }
 	  if (!options.$extends.$extend) {
-	    utils.copy(Class, NewClass);
+	    utils.copy(ClassFactory, Class);
 	  }
-	  utils.defineFreezeProp(NewClass, 'name', options.$name);
-	  utils.defineFreezeProp(NewClass, '$super', options.$extends);
+	  utils.defineFreezeProp(Class, '$super', options.$extends);
 	  //--
-	  return NewClass;
+	  return Class;
 	}
 	
 	//定义扩展方法
-	Class.$extend = function (options) {
+	ClassFactory.$extend = function (options) {
 	  options.$extends = this;
-	  return new Class(options);
+	  return new ClassFactory(options);
 	};
 	
-	Class.Class = Class;
-	module.exports = Class;
+	ClassFactory.Class = ClassFactory;
+	module.exports = ClassFactory;
 
 /***/ },
 /* 5 */
@@ -1624,8 +1623,6 @@
 	Directive.LG = 0; //general
 	Directive.LA = -1000; //any attribute
 	Directive.LC = -2000; //cloak
-	
-	utils.defineFreezeProp(Directive, 'name', 'Directive');
 	
 	module.exports = Directive;
 
@@ -3083,7 +3080,6 @@
 	}
 	
 	Component.prototype.__proto__ = EventEmitter.prototype;
-	utils.defineFreezeProp(Component, 'name', 'Component');
 	
 	//组件扩展方法，简单封装 extends
 	Component.extend = function (classOpts) {
