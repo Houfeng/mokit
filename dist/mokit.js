@@ -830,7 +830,6 @@
 	 * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
 	 */
 	var Watcher = new Class({
-	  $name: 'Watcher',
 	
 	  /**
 	   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
@@ -897,7 +896,6 @@
 	 *   但是因为要检查的对象会少很多，效率会更高一点。
 	 */
 	var Observer = new Class({
-	  $name: 'Observer',
 	  $extends: EventEmitter,
 	
 	  /**
@@ -1164,7 +1162,6 @@
 	 * 事件触发器基类
 	 */
 	var EventEmitter = new Class({
-	  $name: 'EventEmitter',
 	  $extends: Function,
 	
 	  /**
@@ -1367,7 +1364,6 @@
 	 * 可以通过指定「前缀」或「指令集」构建实例
 	 */
 	var Compiler = new Class({
-	  $name: 'Compiler',
 	
 	  /**
 	   * 构造一个编译器
@@ -1584,7 +1580,6 @@
 	
 	  //生成指令类
 	  var DirectiveClass = new Class({
-	    $name: 'Directive',
 	
 	    $extends: classOptions,
 	    //指令构建函数
@@ -1647,7 +1642,6 @@
 	 * 表达式类型，将字符串构析为可执行表达式实例
 	 */
 	var Expression = new Class({
-	  $name: 'Expression',
 	
 	  /**
 	   * 通过字符串构造一个表达式实例
@@ -2502,7 +2496,6 @@
 	 * 可能通过 element 作为参数，创建一个模板实例
 	 */
 	var Template = new Class({
-	  $name: 'Template',
 	
 	  $extends: EventEmitter,
 	
@@ -2677,7 +2670,6 @@
 	   * 可以通过 new ComponentClass() 创建组件实例
 	   */
 	  var ComponentClass = new Class({
-	    $name: classOpts.$name || 'Component',
 	    $extends: extendComponent,
 	
 	    /**
