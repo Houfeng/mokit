@@ -32,7 +32,7 @@
     }
   });
 
-  window.todo = mokit({
+  var todo = mokit({
     element: document.getElementById('app'),
     components: { List: List },
     data: function () {
@@ -83,11 +83,12 @@
         done: false,
         editing: false
       });
-      this.text = ''
+      this.text = '';
       if (this.type == 'done') {
         this.type = 'all';
       }
     }
-  }).start();
+  });
+  todo.start();
 
 })();
