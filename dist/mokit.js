@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.2-beta2"
+		"version": "3.0.2-beta3"
 	};
 
 /***/ },
@@ -2706,8 +2706,8 @@
 	  } else {
 	    mixObjects = [];
 	  }
-	  var extendComponent = classOpts.extends || Component;
-	  delete classOpts.extends;
+	  var extendComponent = classOpts.extend || Component;
+	  delete classOpts.extend;
 	  mixObjects.push(extendComponent);
 	  mixObjects.push(classOpts);
 	  var mixedClassOpts = {};
@@ -2779,17 +2779,7 @@
 	      if (!(child instanceof Component)) return;
 	      this.$children.push(child);
 	      utils.defineFreezeProp(child, '$parent', this);
-	    },
-	
-	    /**
-	     * 获取根组件
-	     */
-	    get $root() {
-	      if (this.$parent) {
-	        return this.$parent.$root;
-	      } else {
-	        return this;
-	      }
+	      utils.defineFreezeProp(child, '$root', this.$root || this);
 	    },
 	
 	    /**
@@ -2801,6 +2791,18 @@
 	      var index = this.$children.indexOf(child);
 	      this.$children.splice(index, 1);
 	      utils.defineFreezeProp(child, '$parent', null);
+	      //utils.defineFreezeProp(child, '$root', null);
+	    },
+	
+	    /**
+	     * 获取根组件, 为了能通过 polyfill 处理 IE8 暂不用这种方式
+	     */
+	    get $root() {
+	      if (this.$parent) {
+	        return this.$parent.$root;
+	      } else {
+	        return this;
+	      }
 	    },
 	
 	    /**
@@ -2838,7 +2840,7 @@
 	     */
 	    $callHook: function /*istanbul ignore next*/$callHook(name, args) {
 	      if (!utils.isFunction(this[name])) return;
-	      this[name].apply(this, args);
+	      this[name].apply(this, args || []);
 	    },
 	
 	    /**
@@ -2947,19 +2949,17 @@
 	
 	    /**
 	     * 添加一个监控
-	     * @param {string|function} calcer 计算函数或路径
+	     * @param {string|function} path 计算函数或路径
 	     * @param {function} handler 处理函数
 	     * @returns {void} 无返回
 	     */
-	    $watch: function /*istanbul ignore next*/$watch(calcer, handler) {
+	    $watch: function /*istanbul ignore next*/$watch(path, handler) {
 	      if (!utils.isFunction(handler)) return;
-	      if (!utils.isFunction(calcer)) {
-	        /*istanbul ignore next*/(function () {
-	          var path = calcer;
-	          calcer = function /*istanbul ignore next*/calcer() {
-	            return utils.getByPath(this, path);
-	          };
-	        })();
+	      var calcer = path;
+	      if (!utils.isFunction(path)) {
+	        calcer = function /*istanbul ignore next*/calcer() {
+	          return utils.getByPath(this, path);
+	        };
 	      }
 	      var watcher = new Watcher(calcer.bind(this), handler.bind(this));
 	      this._watchers_.push(watcher);
@@ -3144,7 +3144,7 @@
 	//定义扩展方法
 	Component.prototype.extend = function (classOpts) {
 	  classOpts = classOpts || {};
-	  classOpts.extends = this;
+	  classOpts.extend = this;
 	  return new Component(classOpts);
 	};
 	

@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "3.0.2-beta2",
+  "version": "3.0.2-beta3",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
@@ -28,6 +28,8 @@
     "babel-runtime": "^6.20.0",
     "cify": "^2.1.10",
     "clean-webpack-plugin": "^0.1.14",
+    "es5-ext": "^0.10.12",
+    "es5-shim": "^4.5.9",
     "eslint": "^3.13.0",
     "exorcist": "^0.4.0",
     "extract-text-webpack-plugin": "^1.0.1",
