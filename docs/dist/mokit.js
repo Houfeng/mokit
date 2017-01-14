@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.2-beta1"
+		"version": "3.0.2-beta2"
 	};
 
 /***/ },
@@ -561,11 +561,13 @@
 	  /**
 	   * 创建一个对象
 	   */
-	  ntils.create = function (proto) {
-	    if (Object.create) return Object.create(proto);
+	  ntils.create = function (proto, props) {
+	    if (Object.create) return Object.create(proto, props);
 	    var Cotr = function Cotr() {};
 	    Cotr.prototype = proto;
-	    return new Cotr();
+	    var obj = new Cotr();
+	    if (props) this.copy(props, obj);
+	    return obj;
 	  };
 	
 	  /**
@@ -575,7 +577,7 @@
 	   */
 	  ntils.setPrototypeOf = function (obj, proto) {
 	    if (Object.setPrototypeOf) {
-	      return Object.setPrototypeOf(obj, proto);
+	      return Object.setPrototypeOf(obj, proto || this.create(null));
 	    } else {
 	      if (!('__proto__' in Object)) this.copy(proto, obj);
 	      obj.__proto__ = proto;
@@ -748,11 +750,14 @@
 	   * @returns {HTMLNode} 解析后的 DOM 
 	   */
 	  ntils.parseDom = function (str) {
-	    this._PARSER_DOM_DIV = this._PARSER_DOM_DIV || document.createElement('dev');
-	    this._PARSER_DOM_DIV.innerHTML = str;
-	    var domNodes = this.toArray(this._PARSER_DOM_DIV.childNodes);
-	    this._PARSER_DOM_DIV.innerHTML = '';
-	    return domNodes;
+	    this._PDD_ = this._PDD_ || document.createElement('div');
+	    this._PDD_.innerHTML = ntils.trim(str);
+	    var firstNode = this._PDD_.childNodes[0];
+	    //先 clone 一份再通过 innerHTML 清空
+	    //否则 IE9 下，清空时会导出返回的 DOM 没有子结点
+	    if (firstNode) firstNode = firstNode.cloneNode(true);
+	    this._PDD_.innerHTML = '';
+	    return firstNode;
 	  };
 	})( false ? window.ntils = {} : exports);
 
@@ -3115,16 +3120,14 @@
 	
 	  //保存类选项
 	  ComponentClass.$options = classOpts;
-	  ComponentClass.$template = utils.parseDom(classOpts.template)[0];
-	  if (ComponentClass.$template && ComponentClass.$template.normalize) {
-	    ComponentClass.$template.normalize();
-	  }
+	  ComponentClass.$template = utils.parseDom(classOpts.template);
 	
 	  //向 ComponentClass.prototype 上拷贝成员
 	  utils.copy(classOpts, ComponentClass.prototype);
 	  utils.copy(classOpts.methods, ComponentClass.prototype);
 	
-	  //使 ComponentClass instanceof Component === true
+	  //使 ComponentClass instanceof Component === true 
+	  //IE9/10 下为 false，并且动态为 Component.prototype 添加的成员不会在 ComponentClass 上生效
 	  utils.setPrototypeOf(ComponentClass, Component.prototype);
 	
 	  return ComponentClass;
