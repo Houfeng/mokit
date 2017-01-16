@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.2-beta4"
+		"version": "3.0.3"
 	};
 
 /***/ },
@@ -1506,7 +1506,7 @@
 	        handler: handler,
 	        node: node,
 	        attribute: attribute,
-	        expression: directiveOptions.literal ? attribute.value : new Expression(attribute.value),
+	        expression: directiveOptions.literal ? attribute.value : new Expression(attribute.value, directiveOptions.mixed),
 	        decorates: attrInfo.decorates
 	      }));
 	    }, this);
@@ -1957,6 +1957,10 @@
 	var utils = __webpack_require__(3);
 	
 	var Scope = function Scope(parent, props) {
+	  //新的 scope 因为「继承」了 _observer_ 
+	  //所以在新 scope 上进行双向绑定时，将将值成功回写
+	  //如果有天不须用 utils.cteate 继承法，需要注意 _observer_ 
+	  //或在新 scope 上 defineProperty 代理 parentScope
 	  var scope = utils.create(parent);
 	  utils.copy(props, scope);
 	  return scope;
@@ -2699,23 +2703,25 @@
 	  classOpts = classOpts || {};
 	
 	  //处理「继承」，目前的机制，只能用「合并类选项」
-	  var mixObjects = classOpts.mixs;
-	  delete classOpts.mixs;
-	  if (mixObjects && !utils.isArray(mixObjects)) {
-	    mixObjects = [mixObjects];
+	  var mixes = classOpts.mixes;
+	  delete classOpts.mixes;
+	  if (mixes && !utils.isArray(mixes)) {
+	    mixes = [mixes];
 	  } else {
-	    mixObjects = [];
+	    mixes = [];
 	  }
 	  var extendComponent = classOpts.extend || Component;
 	  delete classOpts.extend;
-	  mixObjects.push(extendComponent);
-	  mixObjects.push(classOpts);
+	  //extend 会覆盖 mixes 中的同名成员
+	  mixes.push(extendComponent);
+	  //classOpts 会覆盖 extend 或 mixes 中的同名成员
+	  mixes.push(classOpts);
 	  var mixedClassOpts = {};
-	  mixObjects.forEach(function (mixObject) {
-	    if (mixObject instanceof Component || mixObject == Component) {
-	      mixObject = mixObject.$options || {};
+	  mixes.forEach(function (mixItem) {
+	    if (mixItem instanceof Component || mixItem == Component) {
+	      mixItem = mixItem.$options || {};
 	    }
-	    utils.mix(mixedClassOpts, mixObject);
+	    utils.mix(mixedClassOpts, mixItem);
 	  });
 	  classOpts = mixedClassOpts;
 	  /**
