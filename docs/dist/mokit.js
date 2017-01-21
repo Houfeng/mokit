@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.3"
+		"version": "3.0.5"
 	};
 
 /***/ },
@@ -2037,8 +2037,10 @@
 	module.exports = new Directive({
 	  update: function /*istanbul ignore next*/update(value) {
 	    var target = this.node.$target || this.node;
-	    if (target && target.setAttribute) {
+	    if (target.setAttribute) {
 	      target.setAttribute(this.decorates[0], value);
+	    } else {
+	      target[this.decorates[0]] = value;
 	    }
 	  }
 	});
@@ -2519,19 +2521,29 @@
 	  },
 	
 	  execute: function /*istanbul ignore next*/execute(scope) {
+	    var target = this.node.$target || this.node;
 	    var newComputedName = this.nameExpr.execute(scope);
 	    if (this.computedName !== newComputedName) {
-	      this.node.removeAttribute(this.computedName);
+	      //移除旧名称
+	      if (target.removeAttribute) {
+	        target.removeAttribute(this.computedName);
+	      }
+	      //设置新名称
 	      this.computedName = newComputedName;
 	      if (!this.utils.isNull(this.computedName) && this.computedName.length > 0) {
-	        this.node.setAttribute(this.computedName, '');
+	        if (target.setAttribute) {
+	          target.setAttribute(this.computedName, this.computedValue || '');
+	        }
 	      }
 	    }
 	    var newComputeValue = this.valueExpr.execute(scope);
-	    newComputeValue = this.utils.isNull(newComputeValue) ? '' : newComputeValue;
 	    if (this.computedValue !== newComputeValue) {
 	      this.computedValue = newComputeValue;
-	      this.node.setAttribute(this.computedName, this.computedValue);
+	      if (target.setAttribute) {
+	        target.setAttribute(this.computedName, this.computedValue || '');
+	      } else {
+	        target[this.computedName] = this.computedValue;
+	      }
 	    }
 	  }
 	
@@ -3185,9 +3197,6 @@
 	 */
 	function ComponentDirective(options) {
 	
-	  var Component = options.component;
-	  var parent = options.parent;
-	
 	  return new Directive({
 	    type: Directive.TE,
 	    literal: true,
@@ -3195,16 +3204,16 @@
 	    level: Directive.LE,
 	
 	    bind: function /*istanbul ignore next*/bind() {
-	      this.component = new Component({
+	      this.component = new options.component({
 	        deferReady: true,
 	        parent: options.parent || this.scope
 	      });
+	      this.handleAttrs();
 	      this.node.$target = this.component;
 	      this.handler = this.compiler.compile(this.node, {
 	        element: false,
 	        children: false
 	      });
-	      this.handleAttrs();
 	      this.handleContents();
 	      this.component.$mount(this.node);
 	      if (this.node.parentNode) {
@@ -3212,26 +3221,14 @@
 	      }
 	    },
 	
-	    handleId: function /*istanbul ignore next*/handleId() {
-	      if (!parent) return;
-	      var idAttr = this.prefix + ':id';
-	      var id = this.node.getAttribute(idAttr);
-	      if (id in parent) throw new Error('Conflicting component id `' + id + '`');
-	      parent[id] = this.component;
-	      this.node.removeAttribute(idAttr);
-	    },
-	
 	    handleAttrs: function /*istanbul ignore next*/handleAttrs() {
-	      this.propExprs = {};
 	      this.attrs = [].slice.call(this.node.attributes);
 	      var directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
 	      this.attrs.forEach(function (attr) {
 	        if (directiveRegexp.test(attr.name)) return;
-	        if (attr.name in this.component.$properties) {
-	          this.component[attr.name] = attr.value;
-	        } else {
-	          this.component.$element.setAttribute(attr.name, attr.value);
-	        }
+	        if (attr.name in this.component.$properties) return;
+	        this.component.$element.setAttribute(attr.name, attr.value);
+	        this.node.removeAttribute(attr.name);
 	      }, this);
 	    },
 	
@@ -3260,8 +3257,8 @@
 	
 	    execute: function /*istanbul ignore next*/execute(scope) {
 	      this.handler(scope);
-	      if (!this._ready) {
-	        this._ready = true;
+	      if (!this._ready_) {
+	        this._ready_ = true;
 	        this.component.$callHook('onReady');
 	      }
 	      this.placeHandlers.forEach(function (handler) {
