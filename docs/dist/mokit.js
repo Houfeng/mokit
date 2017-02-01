@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.5"
+		"version": "3.0.6"
 	};
 
 /***/ },
@@ -785,9 +785,12 @@
 	        if (this._super_called_) return this._super_ret_;
 	        this._super_called_ = true;
 	        if (utils.isFunction(options.$extends)) {
-	          var proto = utils.getPrototypeOf(this);
 	          this._super_ret_ = options.$extends.apply(this, arguments);
-	          utils.setPrototypeOf(proto, this._super_ret_);
+	          //这几行确保可继承于数组
+	          if (this._super_ret_) {
+	            var proto = utils.getPrototypeOf(this);
+	            utils.setPrototypeOf(proto, this._super_ret_);
+	          }
 	        } else {
 	          this._super_ret_ = options.$extends;
 	        }
@@ -2736,6 +2739,7 @@
 	    utils.mix(mixedClassOpts, mixItem);
 	  });
 	  classOpts = mixedClassOpts;
+	
 	  /**
 	   * 定义组件类
 	   * 可以通过 new ComponentClass() 创建组件实例
@@ -2749,9 +2753,16 @@
 	     * @returns {void} 无返回
 	     */
 	    constructor: function /*istanbul ignore next*/constructor(instanceOpts) {
+	      /*istanbul ignore next*/var _this = this;
+	
 	      if (this == window) return new this.$class(instanceOpts);
 	      EventEmitter.call(this);
 	      instanceOpts = instanceOpts || {};
+	      //创建组件实例时可以给实例添加成员
+	      utils.each(instanceOpts, function (key, value) {
+	        if (key in /*istanbul ignore next*/_this) return;
+	        /*istanbul ignore next*/_this[key] = value;
+	      });
 	      this._onTemplateUpdate_ = this._onTemplateUpdate_.bind(this);
 	      this._createdData_(classOpts.data);
 	      this._createProperties_(classOpts.properties || classOpts.props);
@@ -2760,7 +2771,9 @@
 	      this._importDirectives_(classOpts.directives);
 	      this.$components = this.$components || {};
 	      this._importComponents_(__webpack_require__(38));
-	      this._importComponents_({ 'self': ComponentClass });
+	      this._importComponents_({
+	        'self': ComponentClass
+	      });
 	      this._importComponents_(classOpts.components);
 	      utils.defineFreezeProp(this, '$children', []);
 	      if (instanceOpts.parent) this.$setParent(instanceOpts.parent);
@@ -2897,9 +2910,13 @@
 	      this.$properties = {};
 	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
-	          descriptor = { get: descriptor };
+	          descriptor = {
+	            get: descriptor
+	          };
 	        } else if (!utils.isObject(descriptor)) {
-	          descriptor = { value: descriptor };
+	          descriptor = {
+	            value: descriptor
+	          };
 	        } else {
 	          //不能直接用 descriptor，
 	          //因为为会导到多个组件实例间的影响
@@ -2933,7 +2950,10 @@
 	            }
 	            descriptor.set.call(this, value);
 	            if (this._observer_) {
-	              this._observer_.emitChange({ path: name, value: value });
+	              this._observer_.emitChange({
+	                path: name,
+	                value: value
+	              });
 	            }
 	          }
 	        });
