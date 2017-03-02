@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
@@ -14,7 +14,11 @@
     "test": "./scripts/test.sh",
     "prepublish": "./scripts/prepublish.sh"
   },
-  "author": "",
+  "author": "Houfeng",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Houfeng/mokit.git"
+  },
   "license": "Apache License",
   "devDependencies": {
     "babel": "^6.5.2",
