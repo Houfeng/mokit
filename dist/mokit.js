@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.5"
+		"version": "3.0.6"
 	};
 
 /***/ },
@@ -2764,7 +2764,7 @@
 	      this._importComponents_(classOpts.components);
 	      utils.defineFreezeProp(this, '$children', []);
 	      if (instanceOpts.parent) this.$setParent(instanceOpts.parent);
-	      this.$callHook('onInit');
+	      this.$callHook('onInit', [instanceOpts]);
 	      Observer.observe(this);
 	      if (classOpts.element) {
 	        this.$mount();
@@ -3020,8 +3020,7 @@
 	      this._compiled_ = true;
 	      this._createElement_();
 	      utils.defineFreezeProp(this, '_template_', new Template(this.$element, {
-	        directives: this.$directives,
-	        root: true
+	        directives: this.$directives
 	      }));
 	      this._template_.bind(this);
 	      this._template_.on('update', this._onTemplateUpdate_);
