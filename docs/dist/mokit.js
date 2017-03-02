@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.7"
+		"version": "3.0.9"
 	};
 
 /***/ },
@@ -933,7 +933,7 @@
 	    if (observer) {
 	      utils.copy(options, observer.options);
 	      if (observer.options.root) {
-	        observer.parents.length = 0;
+	        //observer.parents.length = 0;
 	      }
 	      observer.apply();
 	      return observer;
@@ -2024,6 +2024,12 @@
 	    var target = this.node.$target || this.node;
 	    target[this.decorates[0]] = value;
 	  }
+	  // execute: function (scope) {
+	  //   this.scope = scope;
+	  //   let newValue = this.expression.execute(scope);
+	  //   let target = this.node.$target || this.node;
+	  //   target[this.decorates[0]] = newValue;
+	  // }
 	});
 
 /***/ },
@@ -2736,6 +2742,7 @@
 	    utils.mix(mixedClassOpts, mixItem);
 	  });
 	  classOpts = mixedClassOpts;
+	
 	  /**
 	   * 定义组件类
 	   * 可以通过 new ComponentClass() 创建组件实例
@@ -2749,9 +2756,16 @@
 	     * @returns {void} 无返回
 	     */
 	    constructor: function /*istanbul ignore next*/constructor(instanceOpts) {
+	      /*istanbul ignore next*/var _this = this;
+	
 	      if (this == window) return new this.$class(instanceOpts);
 	      EventEmitter.call(this);
 	      instanceOpts = instanceOpts || {};
+	      //创建组件实例时可以给实例添加成员
+	      utils.each(instanceOpts, function (key, value) {
+	        if (key in /*istanbul ignore next*/_this) return;
+	        /*istanbul ignore next*/_this[key] = value;
+	      });
 	      this._onTemplateUpdate_ = this._onTemplateUpdate_.bind(this);
 	      this._createdData_(classOpts.data);
 	      this._createProperties_(classOpts.properties || classOpts.props);
@@ -2760,7 +2774,9 @@
 	      this._importDirectives_(classOpts.directives);
 	      this.$components = this.$components || {};
 	      this._importComponents_(__webpack_require__(38));
-	      this._importComponents_({ 'self': ComponentClass });
+	      this._importComponents_({
+	        'self': ComponentClass
+	      });
 	      this._importComponents_(classOpts.components);
 	      utils.defineFreezeProp(this, '$children', []);
 	      if (instanceOpts.parent) this.$setParent(instanceOpts.parent);
@@ -2897,9 +2913,13 @@
 	      this.$properties = {};
 	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
-	          descriptor = { get: descriptor };
+	          descriptor = {
+	            get: descriptor
+	          };
 	        } else if (!utils.isObject(descriptor)) {
-	          descriptor = { value: descriptor };
+	          descriptor = {
+	            value: descriptor
+	          };
 	        } else {
 	          //不能直接用 descriptor，
 	          //因为为会导到多个组件实例间的影响
@@ -2933,7 +2953,10 @@
 	            }
 	            descriptor.set.call(this, value);
 	            if (this._observer_) {
-	              this._observer_.emitChange({ path: name, value: value });
+	              this._observer_.emitChange({
+	                path: name,
+	                value: value
+	              });
 	            }
 	          }
 	        });
@@ -3020,7 +3043,8 @@
 	      this._compiled_ = true;
 	      this._createElement_();
 	      utils.defineFreezeProp(this, '_template_', new Template(this.$element, {
-	        directives: this.$directives
+	        directives: this.$directives,
+	        root: true
 	      }));
 	      this._template_.bind(this);
 	      this._template_.on('update', this._onTemplateUpdate_);
