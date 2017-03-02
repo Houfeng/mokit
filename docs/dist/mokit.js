@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.9"
+		"version": "3.0.10"
 	};
 
 /***/ },
@@ -932,9 +932,9 @@
 	    var observer = target[OBSERVER_PROP_NAME];
 	    if (observer) {
 	      utils.copy(options, observer.options);
-	      if (observer.options.root) {
-	        //observer.parents.length = 0;
-	      }
+	      // if (observer.options.root) {
+	      //   observer.parents.length = 0;
+	      // }
 	      observer.apply();
 	      return observer;
 	    }
