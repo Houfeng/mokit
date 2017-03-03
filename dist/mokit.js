@@ -68,7 +68,11 @@
 	
 	module.exports = {
 		"name": "mokit",
+<<<<<<< HEAD
 		"version": "3.0.6"
+=======
+		"version": "3.0.10"
+>>>>>>> fac54acccd22584467d83ecf09127c6b9f7a3991
 	};
 
 /***/ },
@@ -935,9 +939,9 @@
 	    var observer = target[OBSERVER_PROP_NAME];
 	    if (observer) {
 	      utils.copy(options, observer.options);
-	      if (observer.options.root) {
-	        observer.parents.length = 0;
-	      }
+	      // if (observer.options.root) {
+	      //   observer.parents.length = 0;
+	      // }
 	      observer.apply();
 	      return observer;
 	    }
@@ -2027,6 +2031,12 @@
 	    var target = this.node.$target || this.node;
 	    target[this.decorates[0]] = value;
 	  }
+	  // execute: function (scope) {
+	  //   this.scope = scope;
+	  //   let newValue = this.expression.execute(scope);
+	  //   let target = this.node.$target || this.node;
+	  //   target[this.decorates[0]] = newValue;
+	  // }
 	});
 
 /***/ },
@@ -2777,7 +2787,7 @@
 	      this._importComponents_(classOpts.components);
 	      utils.defineFreezeProp(this, '$children', []);
 	      if (instanceOpts.parent) this.$setParent(instanceOpts.parent);
-	      this.$callHook('onInit');
+	      this.$callHook('onInit', [instanceOpts]);
 	      Observer.observe(this);
 	      if (classOpts.element) {
 	        this.$mount();
