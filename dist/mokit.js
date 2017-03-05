@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.11"
+		"version": "3.0.12"
 	};
 
 /***/ },
@@ -1198,7 +1198,7 @@
 	    if (emitter) return emitter;
 	    utils.defineFreezeProp(this, '_target_', target);
 	    utils.defineFreezeProp(target, '_emitter_', this);
-	    this._isElement_ = utils.isElement(this._target_);
+	    this._isNative_ = utils.isElement(this._target_) || this._target_ instanceof Window;
 	    this._listeners_ = this._listeners_ || {};
 	    this.on = this.$on = this.$addListener = this.addListener;
 	    this.off = this.$off = this.$removeListener = this.removeListener;
@@ -1213,8 +1213,8 @@
 	   * @returns {void} 无返回
 	   */
 	  addListener: function /*istanbul ignore next*/addListener(name, listener, capture) {
-	    if (this._isElement_) {
-	      this._addElementEventListener(name, listener, capture);
+	    if (this._isNative_) {
+	      this._addNativeEventListener(name, listener, capture);
 	    }
 	    this._listeners_[name] = this._listeners_[name] || [];
 	    this._listeners_[name].push(listener);
@@ -1232,14 +1232,14 @@
 	   */
 	  removeListener: function /*istanbul ignore next*/removeListener(name, listener, capture) {
 	    if (name && listener) {
-	      if (this._isElement_) {
-	        this._removeElementEventListener(name, listener, capture);
+	      if (this._isNative_) {
+	        this._removeNativeEventListener(name, listener, capture);
 	      }
 	      if (!this._listeners_[name]) return;
 	      var index = this._listeners_[name].indexOf(listener);
 	      this._listeners_[name].splice(index, 1);
 	    } else if (name) {
-	      if (this._isElement_ && this._listeners_[name]) {
+	      if (this._isNative_ && this._listeners_[name]) {
 	        this._listeners_[name].forEach(function (_listener) {
 	          this.removeListener(name, _listener, capture);
 	        }, this);
@@ -1262,8 +1262,8 @@
 	   * @returns {void} 无返回
 	   */
 	  emit: function /*istanbul ignore next*/emit(name, data, canBubble, cancelAble) {
-	    if (this._isElement_) {
-	      return this._emitElementEvent(name, data, canBubble, cancelAble);
+	    if (this._isNative_) {
+	      return this._emitNativeEvent(name, data, canBubble, cancelAble);
 	    }
 	    if (!this._listeners_[name]) return;
 	    var stopPropagation = false;
@@ -1281,7 +1281,7 @@
 	   * @param {capture} capture 是否是捕获阶段事件
 	   * @returns {void} 无返回
 	   */
-	  _addElementEventListener: function /*istanbul ignore next*/_addElementEventListener(name, listener, capture) {
+	  _addNativeEventListener: function /*istanbul ignore next*/_addNativeEventListener(name, listener, capture) {
 	    this._target_.addEventListener(name, listener, capture);
 	    //如果存在已注册的自定义 “组合事件”
 	    var descriptor = EventEmitter._events[name];
@@ -1298,7 +1298,7 @@
 	   * @param {capture} capture 是否是捕获阶段事件
 	   * @returns {void} 无返回
 	   */
-	  _removeElementEventListener: function /*istanbul ignore next*/_removeElementEventListener(name, listener, capture) {
+	  _removeNativeEventListener: function /*istanbul ignore next*/_removeNativeEventListener(name, listener, capture) {
 	    this._target_.removeEventListener(name, listener, capture);
 	    //如果存在已注册的自定义 “组合事件”
 	    var descriptor = EventEmitter._events[name];
@@ -1316,7 +1316,7 @@
 	   * @param {object} cancelAble 能否取消
 	   * @returns {void} 无返回
 	   */
-	  _emitElementEvent: function /*istanbul ignore next*/_emitElementEvent(name, data, canBubble, cancelAble) {
+	  _emitNativeEvent: function /*istanbul ignore next*/_emitNativeEvent(name, data, canBubble, cancelAble) {
 	    var event = document.createEvent('HTMLEvents');
 	    event.initEvent(name, canBubble, cancelAble);
 	    utils.copy(data, event, ['data']);
@@ -3202,7 +3202,7 @@
 	  if (!this.$options || !this.$options.element) {
 	    throw new Error('Start method cannot be called');
 	  }
-	  this.create(instanceOpts);
+	  return this.create(instanceOpts);
 	};
 	
 	module.exports = Component;
