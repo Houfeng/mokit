@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.12"
+		"version": "3.0.13"
 	};
 
 /***/ },
@@ -785,12 +785,9 @@
 	        if (this._super_called_) return this._super_ret_;
 	        this._super_called_ = true;
 	        if (utils.isFunction(options.$extends)) {
+	          var proto = utils.getPrototypeOf(this);
 	          this._super_ret_ = options.$extends.apply(this, arguments);
-	          //这几行确保可继承于数组
-	          if (this._super_ret_) {
-	            var proto = utils.getPrototypeOf(this);
-	            utils.setPrototypeOf(proto, this._super_ret_);
-	          }
+	          utils.setPrototypeOf(proto, this._super_ret_);
 	        } else {
 	          this._super_ret_ = options.$extends;
 	        }
@@ -935,6 +932,8 @@
 	    var observer = target[OBSERVER_PROP_NAME];
 	    if (observer) {
 	      utils.copy(options, observer.options);
+	      //当时一个组件 A 的为组件 B 的 prop 时，A 更新不会触发 B 更新
+	      //所在暂注释这里，另一种方法是更新 prop 指令，重写 excute 方法，而不是现在的 update 方法
 	      // if (observer.options.root) {
 	      //   observer.parents.length = 0;
 	      // }
@@ -1198,11 +1197,20 @@
 	    if (emitter) return emitter;
 	    utils.defineFreezeProp(this, '_target_', target);
 	    utils.defineFreezeProp(target, '_emitter_', this);
-	    this._isNative_ = utils.isElement(this._target_) || this._target_ instanceof Window;
+	    this._isNative_ = this._isNativeObject(this._target_);
 	    this._listeners_ = this._listeners_ || {};
 	    this.on = this.$on = this.$addListener = this.addListener;
 	    this.off = this.$off = this.$removeListener = this.removeListener;
 	    this.$emit = this.emit;
+	  },
+	
+	  /**
+	   * 检查是否原生支持事件
+	   * @param {object} obj 对象
+	   * @returns {void} 检查结果
+	   */
+	  _isNativeObject: function /*istanbul ignore next*/_isNativeObject(obj) {
+	    return obj.addEventListener && obj.removeEventListener && obj.dispatchEvent;
 	  },
 	
 	  /**

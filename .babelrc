@@ -1,9 +1,10 @@
 {
   "presets": [
-    "es2015"
-    //"stage-3"
+    "es2015",
+    "stage-3"
   ],
   "plugins": [
+    //启动后编译通过，运行报错
     //"transform-runtime"
   ],
   "auxiliaryCommentBefore": "istanbul ignore next"
