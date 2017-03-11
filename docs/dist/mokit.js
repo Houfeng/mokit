@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.13"
+		"version": "3.0.14"
 	};
 
 /***/ },
@@ -785,9 +785,12 @@
 	        if (this._super_called_) return this._super_ret_;
 	        this._super_called_ = true;
 	        if (utils.isFunction(options.$extends)) {
-	          var proto = utils.getPrototypeOf(this);
 	          this._super_ret_ = options.$extends.apply(this, arguments);
-	          utils.setPrototypeOf(proto, this._super_ret_);
+	          //这几行确保可继承于数组
+	          if (this._super_ret_) {
+	            var proto = utils.getPrototypeOf(this);
+	            utils.setPrototypeOf(proto, this._super_ret_);
+	          }
 	        } else {
 	          this._super_ret_ = options.$extends;
 	        }
@@ -2857,6 +2860,7 @@
 	     */
 	    _importComponents_: function /*istanbul ignore next*/_importComponents_(components) {
 	      utils.each(components, function (name, component) {
+	        if (!component) return;
 	        this.$components[name] = component;
 	        this.$directives[name] = new ComponentDirective({
 	          name: name,
@@ -2873,6 +2877,7 @@
 	     */
 	    _importDirectives_: function /*istanbul ignore next*/_importDirectives_(directives) {
 	      utils.each(directives, function (name, directive) {
+	        if (!directive) return;
 	        this.$directives[name] = directive;
 	      }, this);
 	    },
