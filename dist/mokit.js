@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.0.15"
+		"version": "3.1.0"
 	};
 
 /***/ },
@@ -740,8 +740,14 @@
 	   */
 	  ntils.firstUpper = function (str) {
 	    if (this.isNull(str)) return;
-	    str[0] = str[0].toLowerCase();
-	    return str;
+	    return str.substring(0, 1).toUpperCase() + str.substring(1);
+	  };
+	
+	  /**
+	   * 编码正则字符串
+	   */
+	  ntils.escapeRegExp = function (str) {
+	    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 	  };
 	
 	  /**
@@ -2798,7 +2804,7 @@
 	      this._importComponents_(classOpts.components);
 	      utils.defineFreezeProp(this, '$children', []);
 	      if (instanceOpts.parent) this.$setParent(instanceOpts.parent);
-	      this.$callHook('onInit', [instanceOpts]);
+	      this.$callHook('init', [instanceOpts]);
 	      Observer.observe(this);
 	      if (classOpts.element) {
 	        this.$mount();
@@ -2893,8 +2899,10 @@
 	     * @returns {void} 无反回
 	     */
 	    $callHook: function /*istanbul ignore next*/$callHook(name, args) {
-	      if (!utils.isFunction(this[name])) return;
-	      this[name].apply(this, args || []);
+	      var hook = this[/*istanbul ignore next*/'on' + utils.firstUpper(name)];
+	      if (!utils.isFunction(hook)) return;
+	      hook.apply(this, args || []);
+	      this.$emit( /*istanbul ignore next*/'$' + name, args);
 	    },
 	
 	    /**
@@ -3046,12 +3054,12 @@
 	    _createElement_: function /*istanbul ignore next*/_createElement_() {
 	      if (this._created_) return;
 	      this._created_ = true;
-	      this.$callHook('onCreate');
+	      this.$callHook('create');
 	      utils.defineFreezeProp(this, '$element', this.element || ComponentClass.$template.cloneNode(true));
 	      if (!this.$element || this.$element.nodeName === '#text') {
 	        throw new Error('Invalid component template');
 	      }
-	      this.$callHook('onCreated');
+	      this.$callHook('created');
 	    },
 	
 	    /**
@@ -3069,7 +3077,7 @@
 	      this._template_.bind(this);
 	      this._template_.on('update', this._onTemplateUpdate_);
 	      this._template_.on('bind', function () {
-	        if (!this.deferReady) this.$callHook('onReady');
+	        if (!this.deferReady) this.$callHook('ready');
 	      }.bind(this));
 	    },
 	
@@ -3082,7 +3090,7 @@
 	    $mount: function /*istanbul ignore next*/$mount(mountNode, append) {
 	      if (this._mounted_) return;
 	      this.$compile();
-	      this.$callHook('onMount');
+	      this.$callHook('mount');
 	      if (mountNode) {
 	        mountNode.$substitute = this.$element;
 	        this.$element._mountNode = mountNode;
@@ -3094,7 +3102,7 @@
 	      }
 	      this._mounted_ = true;
 	      this._removed_ = false;
-	      this.$callHook('onMounted');
+	      this.$callHook('mounted');
 	    },
 	
 	    /**
@@ -3112,13 +3120,13 @@
 	     */
 	    $remove: function /*istanbul ignore next*/$remove() {
 	      if (this._removed_ || !this._mounted_) return;
-	      this.$callHook('onRemove');
+	      this.$callHook('remove');
 	      if (this.$element.parentNode) {
 	        this.$element.parentNode.removeChild(this.$element);
 	      }
 	      this._removed_ = true;
 	      this._mounted_ = false;
-	      this.$callHook('onRemoved');
+	      this.$callHook('removed');
 	    },
 	
 	    /**
@@ -3163,11 +3171,11 @@
 	        var index = this.$parent.$children.indexOf(this);
 	        this.$parent.$children.splice(index, 1);
 	      }
-	      this.$callHook('onDispose');
+	      this.$callHook('dispose');
 	      if (this._compiled_) {
 	        this._template_.unbind();
 	      }
-	      this.$callHook('onDisposed');
+	      this.$callHook('disposed');
 	      for (var key in this) {
 	        delete this[key];
 	      }

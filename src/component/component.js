@@ -76,7 +76,7 @@ function Component(classOpts) {
       this._importComponents_(classOpts.components);
       utils.defineFreezeProp(this, '$children', []);
       if (instanceOpts.parent) this.$setParent(instanceOpts.parent);
-      this.$callHook('onInit', [instanceOpts]);
+      this.$callHook('init', [instanceOpts]);
       Observer.observe(this);
       if (classOpts.element) {
         this.$mount();
@@ -171,8 +171,10 @@ function Component(classOpts) {
      * @returns {void} 无反回
      */
     $callHook: function (name, args) {
-      if (!utils.isFunction(this[name])) return;
-      this[name].apply(this, args || []);
+      let hook = this[`on${utils.firstUpper(name)}`];
+      if (!utils.isFunction(hook)) return;
+      hook.apply(this, args || []);
+      this.$emit(`$${name}`, args);
     },
 
     /**
@@ -322,13 +324,13 @@ function Component(classOpts) {
     _createElement_: function () {
       if (this._created_) return;
       this._created_ = true;
-      this.$callHook('onCreate');
+      this.$callHook('create');
       utils.defineFreezeProp(this, '$element',
         this.element || ComponentClass.$template.cloneNode(true));
       if (!this.$element || this.$element.nodeName === '#text') {
         throw new Error('Invalid component template');
       }
-      this.$callHook('onCreated');
+      this.$callHook('created');
     },
 
     /**
@@ -346,7 +348,7 @@ function Component(classOpts) {
       this._template_.bind(this);
       this._template_.on('update', this._onTemplateUpdate_);
       this._template_.on('bind', function () {
-        if (!this.deferReady) this.$callHook('onReady');
+        if (!this.deferReady) this.$callHook('ready');
       }.bind(this));
     },
 
@@ -359,7 +361,7 @@ function Component(classOpts) {
     $mount: function (mountNode, append) {
       if (this._mounted_) return;
       this.$compile();
-      this.$callHook('onMount');
+      this.$callHook('mount');
       if (mountNode) {
         mountNode.$substitute = this.$element;
         this.$element._mountNode = mountNode;
@@ -371,7 +373,7 @@ function Component(classOpts) {
       }
       this._mounted_ = true;
       this._removed_ = false;
-      this.$callHook('onMounted');
+      this.$callHook('mounted');
     },
 
     /**
@@ -389,13 +391,13 @@ function Component(classOpts) {
      */
     $remove: function () {
       if (this._removed_ || !this._mounted_) return;
-      this.$callHook('onRemove');
+      this.$callHook('remove');
       if (this.$element.parentNode) {
         this.$element.parentNode.removeChild(this.$element);
       }
       this._removed_ = true;
       this._mounted_ = false;
-      this.$callHook('onRemoved');
+      this.$callHook('removed');
     },
 
     /**
@@ -440,11 +442,11 @@ function Component(classOpts) {
         let index = this.$parent.$children.indexOf(this);
         this.$parent.$children.splice(index, 1);
       }
-      this.$callHook('onDispose');
+      this.$callHook('dispose');
       if (this._compiled_) {
         this._template_.unbind();
       }
-      this.$callHook('onDisposed');
+      this.$callHook('disposed');
       for (let key in this) {
         delete this[key];
       }
