@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "3.0.15",
+  "version": "3.1.0",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "stop": "./scripts/stop.sh",
     "restart": "./scripts/restart.sh",
     "clear": "./scripts/clear.sh",
-    "lint": "eslint ./lib",
+    "lint": "eslint ./src",
     "build": "./scripts/build.sh",
     "watch": "./scripts/watch.sh",
     "test": "./scripts/test.sh",
@@ -22,6 +22,7 @@
   "license": "Apache License",
   "devDependencies": {
     "babel": "^6.5.2",
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.21.0",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.10",

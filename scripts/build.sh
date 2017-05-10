@@ -6,6 +6,8 @@ npm run clear
 npm run lint
 node ./scripts/info.js 
 
+babel src --out-dir lib 
+
 export NODE_ENV=dev 
 webpack --display-error-details
 export NODE_ENV=prod 
