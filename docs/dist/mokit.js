@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.1.1"
+		"version": "3.1.2"
 	};
 
 /***/ },
@@ -3310,7 +3310,7 @@
 	      this.handler(scope);
 	      if (!this._ready_) {
 	        this._ready_ = true;
-	        this.component.$callHook('onReady');
+	        this.component.$callHook('ready');
 	      }
 	      this.placeHandlers.forEach(function (handler) {
 	        handler(scope);

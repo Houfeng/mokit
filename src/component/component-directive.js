@@ -72,7 +72,7 @@ function ComponentDirective(options) {
       this.handler(scope);
       if (!this._ready_) {
         this._ready_ = true;
-        this.component.$callHook('onReady');
+        this.component.$callHook('ready');
       }
       this.placeHandlers.forEach(function (handler) {
         handler(scope);
