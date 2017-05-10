@@ -1,4 +1,4 @@
-const info = require('./info.json');
+const info = require('../info.json');
 const utils = require('ntils');
 const Class = require('cify');
 const Watcher = require('./watcher');

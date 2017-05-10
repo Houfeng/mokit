@@ -1,4 +1,4 @@
-const info = require('./info.json');
+const info = require('../info.json');
 const entry = require('./index');
 
 /* eslint-disable */
