@@ -27,20 +27,48 @@ const Compiler = new Class({
   },
 
   /**
+  * 将字符串转成「驼峰」式
+  * @param {string} str 原始字符串
+  * @param {number} mode 1 大驼峰，0 小驼峰
+  * @return {string} 转换后的字符串
+  */
+  toCamelCase: function (str, mode) {
+    if (str) {
+      str = str.replace(/\-[a-z0-9]/g, $1 => ($1.slice(1).toUpperCase()));
+      str = str.replace(/^[a-z]/i, $1 => {
+        return mode ? $1.toUpperCase() : $1.toLowerCase();
+      });
+    }
+    return str;
+  },
+
+  /**
+   * 将字符串转成分隔形式
+   * @param {string} str 原始字符串
+   * @return {string} 转换后的字符串
+   */
+  toSplitCase: function (str) {
+    if (str) {
+      str = str.replace(/([A-Z])/g, '-$1');
+      if (str[0] == '-') str = str.slice(1);
+    }
+    return str;
+  },
+
+  /**
    * 添加指令
    * @param {Object} directives 指令集 
    * @returns {void} 无返回
    */
   registerDirectives: function (directives) {
     utils.each(directives, function (name, directive) {
-      name = name.replace(/([A-Z])/g, '-$1');
-      if (name[0] == '-') name = name.slice(1);
+      name = this.toSplitCase(name);
       let fullName = directive.options.prefix === false ?
         name : `${this.prefix}:${name}`;
       if (directive.options.type == Directive.TE) {
         this.elementDirectives[fullName.toUpperCase()] = directive;
       } else {
-        this.attributeDirectives[fullName] = directive;
+        this.attributeDirectives[fullName.toLowerCase()] = directive;
       }
     }, this);
   },
@@ -55,7 +83,7 @@ const Compiler = new Class({
     let info = {};
     if (parts.length > 1) {
       info.name = `${parts[0]}:${parts[1]}`;
-      info.decorates = parts.slice(2);
+      info.decorates = parts.slice(2).map(item => this.toCamelCase(item));
     } else {
       info.name = parts[0];
       info.decorates = [];

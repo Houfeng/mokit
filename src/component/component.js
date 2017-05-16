@@ -212,22 +212,22 @@ function Component(classOpts) {
     _createProperties_: function (properties) {
       this.$properties = {};
       utils.each(properties, function (name, descriptor) {
-        if (utils.isFunction(descriptor)) {
+        if (utils.isFunction(descriptor)) {//get 简化写法
           descriptor = {
             get: descriptor
           };
-        } else if (!utils.isObject(descriptor)) {
+        } else if (!utils.isObject(descriptor)) { //基本类型
           descriptor = {
             value: descriptor
           };
-        } else {
+        } else { //通过 descriptor 定义 get/set/value
           //不能直接用 descriptor，
           //因为为会导到多个组件实例间的影响
           descriptor = utils.copy(descriptor);
         }
+        //如果 get/set 都没有，则自动生成
         let hasGetterOrSetter = !!descriptor.get || !!descriptor.set;
         if (!hasGetterOrSetter) {
-          descriptor.value = descriptor.value || null;
           descriptor.get = function () {
             return descriptor.value;
           };
@@ -235,6 +235,7 @@ function Component(classOpts) {
             descriptor.value = value;
           };
         }
+        //定义为属性
         Object.defineProperty(this, name, {
           configurable: true,
           enumerable: true,
@@ -451,9 +452,9 @@ function Component(classOpts) {
         delete this[key];
       }
       ['_observer_', '$element', '$children', '$parent', '_template_']
-      .forEach(function (key) {
-        delete this[key];
-      }, this);
+        .forEach(function (key) {
+          delete this[key];
+        }, this);
       utils.setPrototypeOf(this, null);
     }
 

@@ -68,7 +68,7 @@
 	
 	module.exports = {
 		"name": "mokit",
-		"version": "3.1.2"
+		"version": "3.1.3"
 	};
 
 /***/ },
@@ -83,7 +83,7 @@
 	var Watcher = __webpack_require__(5);
 	var Observer = __webpack_require__(6);
 	var Template = __webpack_require__(8);
-	var Component = __webpack_require__(35);
+	var Component = __webpack_require__(36);
 	var EventEmitter = __webpack_require__(7);
 	
 	//持载模板相关对象
@@ -1373,7 +1373,7 @@
 	var Compiler = __webpack_require__(9);
 	var Directive = __webpack_require__(10);
 	var Expression = __webpack_require__(11);
-	var Template = __webpack_require__(34);
+	var Template = __webpack_require__(35);
 	var directives = __webpack_require__(12);
 	
 	Template.Template = Template;
@@ -1419,19 +1419,49 @@
 	  },
 	
 	  /**
+	  * 将字符串转成「驼峰」式
+	  * @param {string} str 原始字符串
+	  * @param {number} mode 1 大驼峰，0 小驼峰
+	  * @return {string} 转换后的字符串
+	  */
+	  toCamelCase: function /*istanbul ignore next*/toCamelCase(str, mode) {
+	    if (str) {
+	      str = str.replace(/\-[a-z0-9]/g, function ($1) /*istanbul ignore next*/{
+	        return $1.slice(1).toUpperCase();
+	      });
+	      str = str.replace(/^[a-z]/i, function ($1) {
+	        return mode ? $1.toUpperCase() : $1.toLowerCase();
+	      });
+	    }
+	    return str;
+	  },
+	
+	  /**
+	   * 将字符串转成分隔形式
+	   * @param {string} str 原始字符串
+	   * @return {string} 转换后的字符串
+	   */
+	  toSplitCase: function /*istanbul ignore next*/toSplitCase(str) {
+	    if (str) {
+	      str = str.replace(/([A-Z])/g, '-$1');
+	      if (str[0] == '-') str = str.slice(1);
+	    }
+	    return str;
+	  },
+	
+	  /**
 	   * 添加指令
 	   * @param {Object} directives 指令集 
 	   * @returns {void} 无返回
 	   */
 	  registerDirectives: function /*istanbul ignore next*/registerDirectives(directives) {
 	    utils.each(directives, function (name, directive) {
-	      name = name.replace(/([A-Z])/g, '-$1');
-	      if (name[0] == '-') name = name.slice(1);
+	      name = this.toSplitCase(name);
 	      var fullName = directive.options.prefix === false ? name : /*istanbul ignore next*/this.prefix + ':' + name;
 	      if (directive.options.type == Directive.TE) {
 	        this.elementDirectives[fullName.toUpperCase()] = directive;
 	      } else {
-	        this.attributeDirectives[fullName] = directive;
+	        this.attributeDirectives[fullName.toLowerCase()] = directive;
 	      }
 	    }, this);
 	  },
@@ -1442,11 +1472,16 @@
 	   * @returns {Object} 解析后的对象
 	   */
 	  _parseAttrInfo: function /*istanbul ignore next*/_parseAttrInfo(attrName) {
+	    /*istanbul ignore next*/var _this = this;
+	
 	    var parts = attrName.toLowerCase().split(':');
 	    var info = {};
 	    if (parts.length > 1) {
 	      info.name = /*istanbul ignore next*/parts[0] + ':' + parts[1];
-	      info.decorates = parts.slice(2);
+	      info.decorates = parts.slice(2).map(function (item) /*istanbul ignore next*/{
+	        return (/*istanbul ignore next*/_this.toCamelCase(item)
+	        );
+	      });
 	    } else {
 	      info.name = parts[0];
 	      info.decorates = [];
@@ -1826,7 +1861,8 @@
 	  'cloak': __webpack_require__(24),
 	  'show': __webpack_require__(25),
 	  'model': __webpack_require__(26),
-	  '*': __webpack_require__(33) //处理所有未知 attr
+	  'focus': __webpack_require__(33),
+	  '*': __webpack_require__(34) //处理所有未知 attr
 	};
 
 /***/ },
@@ -2526,6 +2562,25 @@
 	
 	var Directive = __webpack_require__(10);
 	
+	module.exports = new Directive({
+	  execute: function /*istanbul ignore next*/execute(scope) {
+	    /*istanbul ignore next*/var _this = this;
+	
+	    var state = this.expression.execute(scope);
+	    setTimeout(function () {
+	      if (state) /*istanbul ignore next*/_this.node.focus();else /*istanbul ignore next*/_this.node.blur();
+	    }, 0);
+	  }
+	});
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Directive = __webpack_require__(10);
+	
 	/**
 	 * 通用的 attribute 指令
 	 * 用于所有 attribute 的处理
@@ -2580,7 +2635,7 @@
 	});
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2695,13 +2750,13 @@
 	module.exports = Template;
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(36);
-	var components = __webpack_require__(38);
+	var Component = __webpack_require__(37);
+	var components = __webpack_require__(39);
 	var directives = __webpack_require__(8).directives;
 	
 	Component.components = components;
@@ -2720,7 +2775,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -2731,7 +2786,7 @@
 	var utils = __webpack_require__(3);
 	var EventEmitter = __webpack_require__(7);
 	var Observer = __webpack_require__(6);
-	var ComponentDirective = __webpack_require__(37);
+	var ComponentDirective = __webpack_require__(38);
 	
 	/**
 	 * 组件类
@@ -2797,7 +2852,7 @@
 	      this.$directives = this.$directives || {};
 	      this._importDirectives_(classOpts.directives);
 	      this.$components = this.$components || {};
-	      this._importComponents_(__webpack_require__(38));
+	      this._importComponents_(__webpack_require__(39));
 	      this._importComponents_({
 	        'self': ComponentClass
 	      });
@@ -2941,21 +2996,24 @@
 	      this.$properties = {};
 	      utils.each(properties, function (name, descriptor) {
 	        if (utils.isFunction(descriptor)) {
+	          //get 简化写法
 	          descriptor = {
 	            get: descriptor
 	          };
 	        } else if (!utils.isObject(descriptor)) {
+	          //基本类型
 	          descriptor = {
 	            value: descriptor
 	          };
 	        } else {
+	          //通过 descriptor 定义 get/set/value
 	          //不能直接用 descriptor，
 	          //因为为会导到多个组件实例间的影响
 	          descriptor = utils.copy(descriptor);
 	        }
+	        //如果 get/set 都没有，则自动生成
 	        var hasGetterOrSetter = !!descriptor.get || !!descriptor.set;
 	        if (!hasGetterOrSetter) {
-	          descriptor.value = descriptor.value || null;
 	          descriptor.get = function () {
 	            return descriptor.value;
 	          };
@@ -2963,6 +3021,7 @@
 	            descriptor.value = value;
 	          };
 	        }
+	        //定义为属性
 	        Object.defineProperty(this, name, {
 	          configurable: true,
 	          enumerable: true,
@@ -3233,7 +3292,7 @@
 	module.exports = Component;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
@@ -3323,22 +3382,22 @@
 	module.exports = ComponentDirective;
 
 /***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*istanbul ignore next*/'use strict';
-	
-	module.exports = {
-	  View: __webpack_require__(39)
-	};
-
-/***/ },
 /* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
-	var Component = __webpack_require__(36);
+	module.exports = {
+	  View: __webpack_require__(40)
+	};
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*istanbul ignore next*/'use strict';
+	
+	var Component = __webpack_require__(37);
 	var utils = __webpack_require__(3);
 	
 	/**

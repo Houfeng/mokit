@@ -6,23 +6,18 @@
     template: '<ul>\
       <li m:each="item of list" class="{{item.editing&&!item.done?\'editing\':\'\'}}">\
         <input type="checkbox" m:model="item.done"/>\
-        <span m:if="!item.editing||item.done" m:on:click="edit(item,true,$event)" class="{{item.done?\'done\':\'\'}}">\
+        <span m:if="!item.editing||item.done" m:on:click="edit(item,true)" class="{{item.done?\'done\':\'\'}}">\
           {{item.text}}\
         </span>\
-        <input m:on:change="edit(item,false,$event)" m:on:blur="edit(item,false,$event)" type="text" m:if="item.editing&&!item.done" m:model="item.text"/>\
+        <input m:on:change="edit(item,false)" m:on:blur="edit(item,false)" m:focus="item.editing" type="text" m:if="item.editing&&!item.done" m:model="item.text"/>\
         <a m:on:click="del(item)">DEL</a>\
       </li>\
     </ul>',
     properties: {
       list: null
     },
-    edit: function (item, state, event) {
-      var itemEl = event.target.parentNode;
+    edit: function (item, state) {
       item.editing = state;
-      setTimeout(function () {
-        var box = itemEl.querySelector('input[type="text"]');
-        box && box.focus();
-      }, 10);
       this.$emit('edit', item);
     },
     del: function (item) {
