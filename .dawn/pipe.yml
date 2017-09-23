@@ -11,7 +11,7 @@ dev:
   - name: server
     port: 8008
     public: ./dist
-  #- name: browser-sync
+  - name: browser-sync
 
 build:
   - name: clean
