@@ -3,45 +3,14 @@
   "version": "3.1.3",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
-  "scripts": {
-    "start": "./scripts/start.sh",
-    "stop": "./scripts/stop.sh",
-    "restart": "./scripts/restart.sh",
-    "clear": "./scripts/clear.sh",
-    "lint": "eslint ./src",
-    "build": "./scripts/build.sh",
-    "watch": "./scripts/watch.sh",
-    "test": "./scripts/test.sh",
-    "prepublish": "./scripts/prepublish.sh"
-  },
+  "scripts": {},
   "author": "Houfeng",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Houfeng/mokit.git"
   },
   "license": "Apache License",
-  "devDependencies": {
-    "babel": "^6.5.2",
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.21.0",
-    "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.2.10",
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-polyfill": "^6.20.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-stage-3": "^6.17.0",
-    "babel-runtime": "^6.20.0",
-    "clean-webpack-plugin": "^0.1.14",
-    "eslint": "^3.13.0",
-    "exorcist": "^0.4.0",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "html-webpack-plugin": "^2.26.0",
-    "json-loader": "^0.5.4",
-    "nokit-filter-proxy": "0.0.8",
-    "nokitjs": "^1.26.3",
-    "selenium-webdriver": "^3.0.1",
-    "webpack": "^1.14.0"
-  },
+  "devDependencies": {},
   "dependencies": {
     "cify": "^2.1.10",
     "ntils": "^2.1.0"

@@ -1,0 +1,26 @@
+dev:
+  - name: clean
+    target: ./dist
+  - name: webpack
+    output: dist
+    entry: ./example/index.js
+    template: ./example/assets/index.html
+    common:
+      disabled: true
+    watch: true
+  - name: server
+    port: 8008
+    public: ./dist
+  #- name: browser-sync
+
+build:
+  - name: clean
+    target: ./dist
+  - name: webpack
+    output: dist
+    folders:
+      js: '.'
+    entry: 
+      mokit: ./src/index.js
+    common:
+      disabled: true

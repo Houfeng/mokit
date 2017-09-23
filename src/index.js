@@ -1,11 +1,11 @@
-const info = require('../info.json');
-const utils = require('ntils');
-const Class = require('cify');
-const Watcher = require('./watcher');
-const Observer = require('./observer');
-const Template = require('./template');
-const Component = require('./component');
-const EventEmitter = require('./events');
+import info from '$info';
+import utils from 'ntils';
+import Class from 'cify';
+import Watcher from './watcher';
+import Observer from './observer';
+import Template from './template';
+import Component from './component';
+import EventEmitter from './events';
 
 //持载模板相关对象
 utils.copy(Template, Component);

@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*istanbul ignore next*/'use strict';
 	
@@ -60,20 +60,17 @@
 	window[info.name] = entry;
 	/* eslint-enable */
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/*istanbul ignore next*/"use strict";
 	
-	module.exports = {
-		"name": "mokit",
-		"version": "3.1.3"
-	};
+	module.exports = { "name": "mokit", "version": "3.1.3" };
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -111,9 +108,9 @@
 	
 	module.exports = Component;
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/"use strict";
 	
@@ -496,7 +493,7 @@
 	   * @param {Array} igonres 忽略的属性名,
 	   * @param {Number} mode 模式
 	   */
-	  ntils.mix = function (dst, src, igonres, mode) {
+	  ntils.mix = function (dst, src, igonres, mode, igonreNull) {
 	    //根据模式来判断，默认是Obj to Obj的  
 	    if (mode) {
 	      switch (mode) {
@@ -521,8 +518,9 @@
 	    dst = dst || (this.isArray(src) ? [] : {});
 	    this.keys(src).forEach(function (key) {
 	      if (this.contains(igonres, key)) return;
+	      if (igonreNull && this.isNull(src[key])) return;
 	      if (this.isObject(src[key]) && (src[key].constructor == Object || src[key].constructor == Array || src[key].constructor == null)) {
-	        dst[key] = ntils.mix(dst[key], src[key], igonres, 0);
+	        dst[key] = ntils.mix(dst[key], src[key], igonres, 0, igonreNull);
 	      } else {
 	        dst[key] = src[key];
 	      }
@@ -767,9 +765,9 @@
 	  };
 	})( false ? window.ntils = {} : exports);
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -845,9 +843,9 @@
 	ClassFactory.Class = ClassFactory;
 	module.exports = ClassFactory;
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -893,9 +891,9 @@
 	
 	module.exports = Watcher;
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1179,9 +1177,9 @@
 	
 	module.exports = Observer;
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1364,9 +1362,9 @@
 	
 	module.exports = EventEmitter;
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1384,9 +1382,9 @@
 	
 	module.exports = Template;
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1631,9 +1629,9 @@
 	
 	module.exports = Compiler;
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1701,9 +1699,9 @@
 	
 	module.exports = Directive;
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1841,9 +1839,9 @@
 	
 	module.exports = Expression;
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1865,9 +1863,9 @@
 	  '*': __webpack_require__(34) //处理所有未知 attr
 	};
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -1897,9 +1895,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2003,9 +2001,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2028,9 +2026,9 @@
 	
 	module.exports = Scope;
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2071,9 +2069,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2092,9 +2090,9 @@
 	  // }
 	});
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2111,9 +2109,9 @@
 	  }
 	});
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2154,9 +2152,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2168,9 +2166,9 @@
 	  }
 	});
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2182,9 +2180,9 @@
 	  }
 	});
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2195,9 +2193,9 @@
 	  final: true
 	});
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2215,9 +2213,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2234,9 +2232,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 25 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2248,9 +2246,9 @@
 	  }
 	});
 
-/***/ },
+/***/ }),
 /* 26 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2293,9 +2291,9 @@
 	
 	module.exports = Directive;
 
-/***/ },
+/***/ }),
 /* 27 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2343,9 +2341,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 28 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2383,9 +2381,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 29 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2423,9 +2421,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 30 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2461,9 +2459,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 31 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2512,9 +2510,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 32 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2554,9 +2552,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 33 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2573,9 +2571,9 @@
 	  }
 	});
 
-/***/ },
+/***/ }),
 /* 34 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2634,9 +2632,9 @@
 	
 	});
 
-/***/ },
+/***/ }),
 /* 35 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2749,9 +2747,9 @@
 	
 	module.exports = Template;
 
-/***/ },
+/***/ }),
 /* 36 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -2774,9 +2772,9 @@
 	
 	module.exports = Component;
 
-/***/ },
+/***/ }),
 /* 37 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -3291,9 +3289,9 @@
 	
 	module.exports = Component;
 
-/***/ },
+/***/ }),
 /* 38 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -3381,9 +3379,9 @@
 	
 	module.exports = ComponentDirective;
 
-/***/ },
+/***/ }),
 /* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -3391,9 +3389,9 @@
 	  View: __webpack_require__(40)
 	};
 
-/***/ },
+/***/ }),
 /* 40 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/*istanbul ignore next*/'use strict';
 	
@@ -3535,6 +3533,6 @@
 	
 	module.exports = View;
 
-/***/ }
+/***/ })
 /******/ ]);
 //# sourceMappingURL=mokit.js.map
