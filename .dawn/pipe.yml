@@ -3,8 +3,8 @@ dev:
     target: ./dist
   - name: webpack
     output: dist
-    entry: ./example/index.js
-    template: ./example/assets/index.html
+    entry: ./example/component.js
+    template: ./example/assets/*.html
     common:
       disabled: true
     watch: true

@@ -1,15 +1,18 @@
-const Directive = require('../../directive');
-const EventEmitter = require('../../../events');
-const Scope = require('../../scope');
+import Directive from '../../directive';
+import EventEmitter from '../../../events';
+import Scope from '../../scope';
+import { meta } from 'decorators';
 
-module.exports = new Directive({
-  final: true,
+@meta({
+  final: true
+})
+export default class SelectModelDirective extends Directive {
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
+  bind() {
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.node.removeAttribute(this.attribute.name);
     this._handler = this.compiler.compile(this.node);
@@ -26,13 +29,13 @@ module.exports = new Directive({
         _value_: value
       }));
     }.bind(this), false);
-  },
+  }
 
-  unbind: function () {
+  unbind() {
     this.emiter.removeListener();
-  },
+  }
 
-  execute: function (scope) {
+  execute(scope) {
     this.scope = scope;
     this._handler(scope);
     let value = this.expression.execute(scope);
@@ -42,4 +45,4 @@ module.exports = new Directive({
     }, this);
   }
 
-});
+}

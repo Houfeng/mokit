@@ -1,14 +1,14 @@
-const Directive = require('../../directive');
-const EventEmitter = require('../../../events');
-const Scope = require('../../scope');
+import Directive from '../../directive';
+import EventEmitter from '../../../events';
+import Scope from '../../scope';
 
-module.exports = new Directive({
+export default class InputModelDirective extends Directive {
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
+  bind() {
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.emiter = new EventEmitter(this.node);
     this.emiter.addListener('input', function () {
@@ -17,17 +17,17 @@ module.exports = new Directive({
         _value_: this.node.value
       }));
     }.bind(this), false);
-  },
+  }
 
-  unbind: function () {
+  unbind() {
     this.emiter.removeListener();
-  },
+  }
 
-  execute: function (scope) {
+  execute(scope) {
     let value = this.expression.execute(scope);
     if (this.node.value !== value) {
       this.node.value = value;
     }
   }
 
-});
+}

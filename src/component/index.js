@@ -1,8 +1,9 @@
-const Component = require('./component');
-const components = require('./components');
-const directives = require('../template').directives;
+import Component from './component';
+import components from './components';
+import { directives } from '../template';
 
 Component.components = components;
+Component.meta.components = components;
 Component.Component = Component;
 
 Component.component = function (name, component) {
@@ -15,4 +16,4 @@ Component.directive = function (name, directive) {
   directives[name] = directive;
 };
 
-module.exports = Component;
+export default Component;

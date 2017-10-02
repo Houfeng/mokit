@@ -1,11 +1,11 @@
 import info from '$info';
 import utils from 'ntils';
-import Class from 'cify';
 import Watcher from './watcher';
 import Observer from './observer';
 import Template from './template';
 import Component from './component';
 import EventEmitter from './events';
+import decorators from './decorators';
 
 //持载模板相关对象
 utils.copy(Template, Component);
@@ -15,19 +15,7 @@ Component.Template = Template;
 Component.Watcher = Watcher;
 Component.Observer = Observer;
 Component.EventEmitter = EventEmitter;
+Component.decorators = decorators;
 Component.utils = utils;
-Component.Class = Class;
-
-//定义安装插件的方法
-Component.use = function (plugin) {
-  let install = plugin.install || plugin;
-  if (!utils.isFunction(install)) {
-    throw new Error('Invalid Plugin');
-  }
-  return install.call(plugin, this);
-};
-
-//安装内置的路由插件
-//Component.use(Router);
 
 module.exports = Component;

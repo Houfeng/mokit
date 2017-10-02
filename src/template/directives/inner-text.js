@@ -1,7 +1,7 @@
-const Directive = require('../directive');
+import Directive from '../directive';
 
-module.exports = new Directive({
-  update: function (newValue) {
+export default class InnerTextDirective extends Directive {
+  update(newValue) {
     this.node.innerText = newValue;
   }
-});
+}

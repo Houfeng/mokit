@@ -1,8 +1,8 @@
 import mokit from 'mokit';
-import List from './list';
+import List from '../list';
 
 export default new mokit.Component({
-  template: require('./app.html'),
+  template: require('./index.html'),
   components: { List },
   data: function () {
     return {

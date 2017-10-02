@@ -1,3 +1,3 @@
-module.exports = {
-  View: require('./view')
-};
+import View from './view';
+
+export default { View };

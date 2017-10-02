@@ -1,6 +1,9 @@
-const Directive = require('../directive');
+import Directive from '../directive';
+import { meta } from 'decorators';
 
-module.exports = new Directive({
-  level: Directive.LP,
+@meta({
+  level: Directive.levels.PREVENT,
   final: true
-});
+})
+export default class PreventDirective extends Directive {
+}

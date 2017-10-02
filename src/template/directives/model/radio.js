@@ -1,13 +1,14 @@
-const Directive = require('../../directive');
-const EventEmitter = require('../../../events');
-const Scope = require('../../scope');
+import Directive from '../../directive';
+import EventEmitter from '../../../events';
+import Scope from '../../scope';
 
-module.exports = new Directive({
+export default class RadioModelDirective extends Directive {
+
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
+  bind() {
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.emiter = new EventEmitter(this.node);
     this.emiter.addListener('change', function () {
@@ -16,16 +17,16 @@ module.exports = new Directive({
         _value_: this.node.value
       }));
     }.bind(this), false);
-  },
+  }
 
-  unbind: function () {
+  unbind() {
     this.emiter.removeListener();
-  },
+  }
 
-  execute: function (scope) {
+  execute(scope) {
     this.scope = scope;
     let value = this.expression.execute(scope);
     this.node.checked = value == this.node.value;
   }
 
-});
+}

@@ -1,7 +1,7 @@
-const Directive = require('../directive');
+import Directive from '../directive';
 
-module.exports = new Directive({
-  update: function (value) {
+export default class ShowDirective extends Directive {
+  update(value) {
     this.node.style.display = value ? '' : 'none';
   }
-});
+}

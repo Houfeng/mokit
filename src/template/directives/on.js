@@ -1,15 +1,18 @@
-const Directive = require('../directive');
-const EventEmitter = require('../../events');
-const Scope = require('../scope');
+import Directive from '../directive';
+import EventEmitter from '../../events';
+import Scope from '../scope';
+import { meta } from 'decorators';
 
-module.exports = new Directive({
-  literal: true,
+@meta({
+  literal: true
+})
+export default class OnDirective extends Directive {
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
+  bind() {
     let attrValue = this.attribute.value || '';
     if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
       attrValue += '($event)';
@@ -23,14 +26,14 @@ module.exports = new Directive({
         $event: event
       }));
     }.bind(this), false);
-  },
+  }
 
-  unbind: function () {
+  unbind() {
     this.emiter.removeListener();
-  },
+  }
 
-  execute: function (scope) {
+  execute(scope) {
     this.scope = scope;
   }
 
-});
+}

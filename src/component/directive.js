@@ -1,24 +1,34 @@
-const Template = require('../template');
+import Template from '../template';
+import { meta } from 'decorators';
+
 const Directive = Template.Directive;
 
-/**
- * 创建一个组件指令
- * @param {object} options 选项
- * @returns {object} 组件指令
- */
-function ComponentDirective(options) {
+export default function (options) {
 
-  return new Directive({
-    type: Directive.TE,
+  /**
+   * 创建一个组件指令
+   * @param {object} options 选项
+   * @returns {object} 组件指令
+   */
+  @meta({
+    ...options,
+    type: Directive.types.ELEMENT,
     literal: true,
     final: true,
-    level: Directive.LE,
+    level: Directive.levels.ELEMENT
+  })
+  class ComponentDirective extends Directive {
 
-    bind: function () {
-      this.component = new options.component({
+    constructor(options) {
+      super(options);
+      let meta = this.meta;
+      this.component = meta.component({
         deferReady: true,
-        parent: options.parent || this.scope
+        parent: meta.parent || meta.scope
       });
+    }
+
+    bind() {
       this.handleAttrs();
       this.node.$target = this.component;
       this.handler = this.compiler.compile(this.node, {
@@ -30,9 +40,9 @@ function ComponentDirective(options) {
       if (this.node.parentNode) {
         this.node.parentNode.removeChild(this.node);
       }
-    },
+    }
 
-    handleAttrs: function () {
+    handleAttrs() {
       this.attrs = [].slice.call(this.node.attributes);
       let directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
       this.attrs.forEach(function (attr) {
@@ -41,9 +51,9 @@ function ComponentDirective(options) {
         this.component.$element.setAttribute(attr.name, attr.value);
         this.node.removeAttribute(attr.name);
       }, this);
-    },
+    }
 
-    handleContents: function () {
+    handleContents() {
       this.placeHandlers = [];
       let places = [].slice.call(
         this.component.$element.querySelectorAll('[' + this.prefix + '\\:content]')
@@ -66,20 +76,19 @@ function ComponentDirective(options) {
         let handler = this.compiler.compile(place);
         this.placeHandlers.push(handler);
       }, this);
-    },
+    }
 
-    execute: function (scope) {
+    execute(scope) {
       this.handler(scope);
       if (!this._ready_) {
         this._ready_ = true;
-        this.component.$callHook('ready');
+        this.component.$emit('ready');
       }
       this.placeHandlers.forEach(function (handler) {
         handler(scope);
       }, this);
     }
 
-  });
+  }
+  return ComponentDirective;
 }
-
-module.exports = ComponentDirective;

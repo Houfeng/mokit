@@ -1,64 +1,62 @@
-const Class = require('cify');
-const utils = require('ntils');
-const Expression = require('./expression');
+import utils from 'ntils';
+import Class from 'cify';
+import Expression from './expression';
+import { meta } from '../decorators';
+
+//指令类型
+const types = {
+  ATTRIBUTE: 'A',
+  ELEMENT: 'E'
+};
+
+//指令层级
+const levels = {
+  PREVENT: 3000,      //prevent
+  STATEMENT: 2000,    //statement
+  ELEMENT: 1000,      //element
+  GENERAL: 0,         //general
+  ATTRIBUTE: -1000,   //any attribute
+  CLOAK: -2000        //cloak
+};
 
 /**
  * 指令定义工场函数
- * @param {Object} classOptions 选项
- * @returns {Directive} 指令类
  */
-function Directive(classOptions) {
+@meta({
+  type: types.ATTRIBUTE,
+  level: levels.GENERAL
+})
+export default class Directive {
+
+  static types = types;
+  static levels = levels;
+
+  //挂载指令常用的类型
+  utils = utils;
+  Expression = Expression;
+
+  //指令构建函数
+  constructor(options) {
+    utils.copy(options, this);
+  }
+
   //处理指令选项
-  classOptions = classOptions || {};
-  classOptions.type = classOptions.type || Directive.TA;
-  classOptions.level = classOptions.level || Directive.LG;
+  bind() { }
+  update() { }
+  unbind() { }
 
-  //生成指令类
-  const DirectiveClass = new Class({
+  //挂载实例核心方法
+  execute(scope) {
+    this.scope = scope;
+    if (this.meta.type === types.ELEMENT) {
+      return this.update();
+    }
+    let newValue = this.meta.literal ?
+      this.attribute.value : this.expression.execute(scope);
+    if (!utils.deepEqual(this._value_, newValue)) {
+      this.update(newValue, this._value_);
+      this._value_ = newValue;
+    }
+  }
 
-    $extends: classOptions,
-    //指令构建函数
-    constructor: function (instanceOptions) {
-      utils.copy(instanceOptions, this);
-    },
-    //挂载实例上的 options
-    options: classOptions,
-    //挂载实例核心方法
-    bind: classOptions.bind || utils.noop,
-    execute: classOptions.execute || function (scope) {
-      this.scope = scope;
-      if (this.options.type === Directive.TE) {
-        return this.update();
-      }
-      let newValue = this.options.literal ?
-        this.attribute.value : this.expression.execute(scope);
-      if (!utils.deepEqual(this._value_, newValue)) {
-        this.update(newValue, this._value_);
-        this._value_ = newValue;
-      }
-    },
-    update: classOptions.update || utils.noop,
-    unbind: classOptions.unbind || utils.noop,
-    //挂载指令常用的类型
-    utils: utils,
-    Expression: Expression
-  });
-  //向指令类添加「指令定义信息」
-  DirectiveClass.options = classOptions;
-  utils.setPrototypeOf(DirectiveClass, classOptions);
-  return DirectiveClass;
 }
-
-//指令类型
-Directive.TA = 'A';
-Directive.TE = 'E';
-
-//指令级别
-Directive.LP = 3000;  //prevent
-Directive.LS = 2000;  //statement
-Directive.LE = 1000;  //eleemtn
-Directive.LG = 0;     //general
-Directive.LA = -1000; //any attribute
-Directive.LC = -2000; //cloak
-
-module.exports = Directive;

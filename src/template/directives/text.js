@@ -1,21 +1,27 @@
-const Directive = require('../directive');
-const Expression = require('../expression');
+import Directive from '../directive';
+import Expression from '../expression';
+import utils from 'ntils';
+import { meta } from 'decorators';
 
-
-module.exports = new Directive({
-  type: Directive.TE,
-  prefix: false,
+@meta({
+  type: Directive.types.ELEMENT,
+  prefix: false
+})
+export default class TextDirective extends Directive {
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
-    this.expr = new Expression(this.node.nodeValue, true);
+  bind() {
+    let nodeValue = utils.trim(this.node.nodeValue);
+    if (!nodeValue) return;
     this.node.nodeValue = '';
-  },
+    this.expr = new Expression(nodeValue, true);
+  }
 
-  execute: function (scope) {
+  execute(scope) {
+    if (!this.expr) return;
     this.scope = scope;
     let newValue = this.expr.execute(scope);
     if (this.node.nodeValue !== newValue) {
@@ -23,4 +29,4 @@ module.exports = new Directive({
     }
   }
 
-});
+}

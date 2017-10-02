@@ -1,13 +1,13 @@
-const Directive = require('../../directive');
-const Scope = require('../../scope');
+import Directive from '../../directive';
+import Scope from '../../scope';
 
-module.exports = new Directive({
+export default class PropModelDirective extends Directive {
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
+  bind() {
     this.target = this.node.$target;
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.bindProp = this.decorates[0];
@@ -20,14 +20,14 @@ module.exports = new Directive({
         _value_: value
       }));
     });
-  },
+  }
 
-  unbind: function () {
+  unbind() {
     this.target.$unWatch(this.watcher);
-  },
+  }
 
-  update: function (value) {
+  update(value) {
     this.target[this.bindProp] = value;
   }
 
-});
+}

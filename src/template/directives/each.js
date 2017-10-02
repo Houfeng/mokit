@@ -1,17 +1,20 @@
-const Directive = require('../directive');
-const utils = require('ntils');
-const Scope = require('../scope');
+import Directive from '../directive';
+import utils from 'ntils';
+import Scope from '../scope';
+import { meta } from 'decorators';
 
-module.exports = new Directive({
-  level: Directive.LS + 1, //比 if 要高一个权重
+@meta({
+  level: Directive.levels.STATEMENT + 1, //比 if 要高一个权重
   final: true,
   literal: true,
+})
+export default class EachDirective extends Directive {
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
+  bind() {
     this.mountNode = document.createTextNode('');
     this.node.parentNode.insertBefore(this.mountNode, this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
@@ -20,13 +23,15 @@ module.exports = new Directive({
     this.node.parentNode.removeChild(this.node);
     this.parseExpr();
     this.eachItems = {};
-  },
+  }
 
-  parseExpr: function () {
+  parseExpr() {
     this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
     let tokens = this.attribute.value.split(' ' + this.eachType + ' ');
-    let fnText = `with(scope){utils.each(${tokens[1]},fn.bind(this,${tokens[1]}))}`;
-    this.each = new Function('utils', 'scope', 'fn', fnText).bind(null, this.utils);
+    let fnText =
+      `with(scope){utils.each(${tokens[1]},fn.bind(this,${tokens[1]}))}`;
+    this.each = new Function('utils', 'scope', 'fn', fnText)
+      .bind(null, this.utils);
     let names = tokens[0].split(',').map(function (name) {
       return name.trim();
     });
@@ -37,9 +42,9 @@ module.exports = new Directive({
       this.keyName = names[1];
       this.valueName = names[0];
     }
-  },
+  }
 
-  execute: function (scope) {
+  execute(scope) {
     let currentEachKeys = [];
     let itemsFragment = document.createDocumentFragment();
     let self = this;
@@ -86,4 +91,4 @@ module.exports = new Directive({
     }
   }
 
-});
+}

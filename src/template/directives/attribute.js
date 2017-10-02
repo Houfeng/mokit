@@ -1,4 +1,5 @@
-const Directive = require('../directive');
+import Directive from '../directive';
+import { meta } from 'decorators';
 
 /**
  * 通用的 attribute 指令
@@ -7,24 +8,26 @@ const Directive = require('../directive');
  *  <div attr1="{{expr1}}" {{expr2}} {{attr3}}="{{expr3}}">
  *  </div>
  */
-module.exports = new Directive({
-  level: Directive.LA,
+@meta({
+  level: Directive.levels.ATTRIBUTE,
   prefix: false,
   literal: true,
-  remove: false,
+  remove: false
+})
+export default class AttributeDirective extends Directive {
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  bind: function () {
+  bind() {
     this.computedName = this.attribute.name;
     this.computedValue = this.attribute.value;
     this.nameExpr = new this.Expression(this.attribute.name, true);
     this.valueExpr = new this.Expression(this.attribute.value, true);
-  },
+  }
 
-  execute: function (scope) {
+  execute(scope) {
     let target = this.node.$target || this.node;
     let newComputedName = this.nameExpr.execute(scope);
     if (this.computedName !== newComputedName) {
@@ -51,4 +54,4 @@ module.exports = new Directive({
     }
   }
 
-});
+}

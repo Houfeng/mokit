@@ -1,7 +1,7 @@
-const Directive = require('../directive');
+import Directive from '../directive';
 
-module.exports = new Directive({
-  update: function (value) {
+export default class AttrDirective extends Directive {
+  update(value) {
     let target = this.node.$target || this.node;
     if (target.setAttribute) {
       target.setAttribute(this.decorates[0], value);
@@ -9,4 +9,4 @@ module.exports = new Directive({
       target[this.decorates[0]] = value;
     }
   }
-});
+}

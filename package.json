@@ -12,7 +12,6 @@
   "license": "Apache License",
   "devDependencies": {},
   "dependencies": {
-    "cify": "^2.1.10",
     "ntils": "^2.1.0"
   }
 }

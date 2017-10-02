@@ -1,8 +1,8 @@
-const Compiler = require('./compiler');
-const Directive = require('./directive');
-const Expression = require('./expression');
-const Template = require('./template');
-const directives = require('./directives/');
+import Compiler from './compiler';
+import Directive from './directive';
+import Expression from './expression';
+import Template from './template';
+import directives from './directives/';
 
 Template.Template = Template;
 Template.Compiler = Compiler;
@@ -10,4 +10,4 @@ Template.Directive = Directive;
 Template.directives = directives;
 Template.Expression = Expression;
 
-module.exports = Template;
+export default Template;

@@ -1,6 +1,5 @@
-const Class = require('cify');
-const utils = require('ntils');
-const EventEmitter = require('../events');
+import utils from 'ntils';
+import EventEmitter from '../events';
 
 const OBSERVER_PROP_NAME = '_observer_';
 const CHANGE_EVENT_NAME = 'change';
@@ -23,8 +22,7 @@ const IGNORE_REGEXPS = [/^\_(.*)\_$/i, /^\_\_/i];
  *   给构造函数添加一个 deep 属性，只有 deep 的 ob 对象，才放入到全局数组中，检查时逻辑同方案二
  *   但是因为要检查的对象会少很多，效率会更高一点。
  */
-const Observer = new Class({
-  $extends: EventEmitter,
+class Observer extends EventEmitter {
 
   /**
    * 通过目标对象构造一个观察对象
@@ -32,7 +30,8 @@ const Observer = new Class({
    * @param {Object} options 选项
    * @returns {void} 无返回
    */
-  constructor: function (target, options) {
+  constructor(target, options) {
+    super();
     if (utils.isNull(target)) {
       throw new Error('Invalid target');
     }
@@ -55,7 +54,7 @@ const Observer = new Class({
     utils.defineFreezeProp(this, 'parents', []);
     utils.defineFreezeProp(target, OBSERVER_PROP_NAME, this);
     this.apply();
-  },
+  }
 
   /**
    * 添加一个属性，动态添中的属性，无法被观察，
@@ -64,15 +63,15 @@ const Observer = new Class({
    * @param {Object} value 值
    * @returns {void} 无返回
    */
-  set: function (name, value) {
+  set(name, value) {
     if (utils.isFunction(value) || Observer.isIgnore(name)) {
       return;
     }
     Object.defineProperty(this.target, name, {
-      get: function () {
+      get() {
         return this[OBSERVER_PROP_NAME].shadow[name];
       },
-      set: function (value) {
+      set(value) {
         let observer = this[OBSERVER_PROP_NAME];
         let oldValue = observer.shadow[name];
         if (oldValue === value) return;
@@ -92,13 +91,13 @@ const Observer = new Class({
       enumerable: true
     });
     this.target[name] = value;
-  },
+  }
 
   /**
    * 自动应用所有动态添加的属性
    * @returns {void} 无返回
    */
-  apply: function () {
+  apply() {
     if (utils.isArray(this.target)) {
       this._wrapArray(this.target);
     }
@@ -108,19 +107,19 @@ const Observer = new Class({
       if (!('value' in desc)) return;
       this.set(name, this.target[name]);
     }, this);
-  },
+  }
 
   /**
    * 清除所有父子引用
    * @returns {void} 无返回
    */
-  clearReference: function () {
+  clearReference() {
     utils.each(this.target, function (name, value) {
       if (utils.isNull(value)) return;
       let child = value[OBSERVER_PROP_NAME];
       if (child) this.removeChild(child);
     }, this);
-  },
+  }
 
   /**
    * 派发一个事件，事件会向父级对象冒泡
@@ -128,7 +127,7 @@ const Observer = new Class({
    * @param {Object} event 事件对象
    * @returns {void} 无返回
    */
-  dispatch: function (eventName, event) {
+  dispatch(eventName, event) {
     if (event._src_ === this) return;
     event._src_ = event._src_ || this;
     event._layer_ = event._layer_ || 0;
@@ -143,7 +142,7 @@ const Observer = new Class({
       parentEvent.path = item.name + '.' + event.path;
       item.parent.dispatch(eventName, parentEvent);
     }, this);
-  },
+  }
 
   /**
    * 添子观察者对象
@@ -151,13 +150,13 @@ const Observer = new Class({
    * @param {String} name 属性名
    * @returns {void} 无返回
    */
-  addChild: function (child, name) {
+  addChild(child, name) {
     if (utils.isNull(child) || utils.isNull(name)) {
       throw new Error('Invalid paramaters');
     }
     if (child.options.root) return;
     child.parents.push({ parent: this, name: name });
-  },
+  }
 
   /**
    * 移除子对象
@@ -165,7 +164,7 @@ const Observer = new Class({
    * @param {String} name 属性名
    * @returns {void} 无返回
    */
-  removeChild: function (child, name) {
+  removeChild(child, name) {
     if (utils.isNull(child)) {
       throw new Error('Invalid paramaters');
     }
@@ -178,22 +177,22 @@ const Observer = new Class({
     if (foundIndex > -1) {
       child.parents.splice(foundIndex, 1);
     }
-  },
+  }
 
   /**
    * 触发 change 事件
    * @param {Object} event 事件对象
    * @returns {void} 无返回
    */
-  emitChange: function (event) {
+  emitChange(event) {
     this.dispatch(CHANGE_EVENT_NAME, event);
-  },
+  }
 
   /**
    * 获取所有成员名称列表
    * @returns {Array} 所有成员名称列表
    */
-  _getPropertyNames: function () {
+  _getPropertyNames() {
     let names = utils.isArray(this.target) ?
       this.target.map(function (item, index) {
         return index;
@@ -201,14 +200,14 @@ const Observer = new Class({
     return names.filter(function (name) {
       return name !== OBSERVER_PROP_NAME;
     });
-  },
+  }
 
   /**
    * 包裹数组
    * @param {array} array 源数组
    * @returns {array} 处理后的数组
    */
-  _wrapArray: function (array) {
+  _wrapArray(array) {
     utils.defineFreezeProp(array, 'push', function () {
       let items = [].slice.call(arguments);
       items.forEach(function (item) {
@@ -257,7 +256,7 @@ const Observer = new Class({
     });
   }
 
-});
+}
 
 /**
  * 观察一个对象
@@ -277,4 +276,4 @@ Observer.isIgnore = function (word) {
   return IGNORE_REGEXPS.some(re => re.test(word));
 };
 
-module.exports = Observer;
+export default Observer;

@@ -1,15 +1,13 @@
-const Class = require('cify');
-const Observer = require('../observer');
-const EventEmitter = require('../events');
-const Compiler = require('./compiler');
+import Class from 'cify';
+import Observer from '../observer';
+import EventEmitter from '../events';
+import Compiler from './compiler';
 
 /**
  * 模板类
  * 可能通过 element 作为参数，创建一个模板实例
  */
-const Template = new Class({
-
-  $extends: EventEmitter,
+export default class Template extends EventEmitter {
 
   /**
    * 构建一个模板板实例
@@ -17,9 +15,9 @@ const Template = new Class({
    * @param {Object} options 选项
    * @returns {void} 无返回
    */
-  constructor: function (element, options) {
+  constructor(element, options) {
+    super();
     options = options || {};
-    EventEmitter.call(this);
     this.options = options;
     this.element = element;
     this.compiler = options.compiler || new Compiler(options);
@@ -27,40 +25,40 @@ const Template = new Class({
     this.update = this.update.bind(this);
     this._update = this._update.bind(this);
     this._updateTimer = 0;
-  },
+  }
 
   /**
    * 更新当前模板 (会过滤不必要的更新)
    * @returns {void} 无返回
    */
-  update: function () {
+  update() {
     if (this._updateTimer) {
       clearTimeout(this._updateTimer);
       this._updateTimer = null;
     }
     this._updateTimer = setTimeout(this._update, 0);
-  },
+  }
 
   /**
    * 更新当前模板内部方法 
    * @returns {void} 无返回
    */
-  _update: function () {
+  _update() {
     if (!this._updateTimer || !this.observer) return;
     this.emit('update', this);
     this.render(this.observer.target);
     this._onBind();
-  },
+  }
 
   /**
    * 在绑定成功时
    * @returns {void} 无返回
    */
-  _onBind: function () {
+  _onBind() {
     if (this._bound) return;
     this._bound = true;
     this.emit('bind', this);
-  },
+  }
 
   /**
    * 将模板绑定到一个 scope
@@ -68,7 +66,7 @@ const Template = new Class({
    * @param {boolean} disableFirst 是否禁用第一次的自动渲染
    * @returns {void} 无返回
    */
-  bind: function (scope, disableFirst) {
+  bind(scope, disableFirst) {
     if (!scope) return;
     this.unbind();
     this.observer = new Observer(scope, {
@@ -81,28 +79,26 @@ const Template = new Class({
     } else {
       this.update();
     }
-  },
+  }
 
   /**
    * 解绑定
    * @returns {void} 无返回
    */
-  unbind: function () {
+  unbind() {
     if (!this.observer) return;
     this.observer.removeListener('change', this.update);
     this.observer.clearReference();
     this.observer = null;
-  },
+  }
 
   /**
    * 释放
    * @returns {void} 无返回
    */
-  dispose: function () {
+  dispose() {
     this.unbind();
     this.render.dispose();
   }
 
-});
-
-module.exports = Template;
+}

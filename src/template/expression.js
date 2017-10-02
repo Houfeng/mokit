@@ -1,10 +1,9 @@
-const Class = require('cify');
-const utils = require('ntils');
+import utils from 'ntils';
 
 /**
  * 表达式类型，将字符串构析为可执行表达式实例
  */
-const Expression = new Class({
+export default class Expression {
 
   /**
    * 通过字符串构造一个表达式实例
@@ -12,49 +11,50 @@ const Expression = new Class({
    * @param {boolean} mix 是否是混合代码
    * @returns {void} 无返回
    */
-  constructor: function (code, mix) {
+  constructor(code, mix) {
     this.func = mix ?
       this._compileMixedCode(code) :
       this._compileCode(code);
-  },
+  }
 
   /**
    * 编译普通表达式代码
    * @param {string} code 代码字符串
    * @returns {function} 编辑后的函数
    */
-  _compileCode: function (code) {
+  _compileCode(code) {
     code = this._escapeEOL(this._wrapCode(code));
     return this._createFunction(code);
-  },
+  }
 
   /**
    * 编辑混合的表达式代码
    * @param {string} code 代码字符串
    * @returns {function} 编辑后的函数
    */
-  _compileMixedCode: function (code) {
+  _compileMixedCode(code) {
     let statements = this._parseMixedCode(code);
     code = this._escapeEOL(statements.join('+'));
     return this._createFunction(code);
-  },
+  }
 
   /**
    * 通过符串代码创建一个可执行函数
    * @param {string} code 代码字符串
    * @returns {function} 创建的函数
    */
-  _createFunction: function (code) {
-    let func = new Function('utils', 'scope', 'with(scope){return ' + code + '}');
+  _createFunction(code) {
+    let func = new Function('utils', 'scope',
+      'with(scope){return(' + code + ')}');
     return func.bind(null, utils);
-  },
+  }
 
   /**
    * 解析混合代码字符串
    * @param {string} code 混合代码字符串
    * @returns {Array} 解析后的「token」列表
    */
-  _parseMixedCode: function (code) {
+  _parseMixedCode(code) {
     let index = 0, length = code.length;
     let token = '', isExpr = false, tokens = [];
     while (index <= length) {
@@ -85,25 +85,27 @@ const Expression = new Class({
       }
     }
     return tokens;
-  },
+  }
 
   /**
    * 转义处理代码字符串
    * @param {string} code 源字符串
    * @returns {string} 处理后的字符串
    */
-  _escapeCode: function (code) {
-    return code.replace(/"/, '\\"').replace('\r\n', '\\r\\n').replace('\n', '\\n');
-  },
+  _escapeCode(code) {
+    return code.replace(/"/, '\\"')
+      .replace('\r\n', '\\r\\n')
+      .replace('\n', '\\n');
+  }
 
   /**
    * 转义换行符
    * @param {string} code 源字符串
    * @returns {string} 处理后的字符串
    */
-  _escapeEOL: function (code) {
+  _escapeEOL(code) {
     return code.replace(/\n/gm, '\\\n');
-  },
+  }
 
   /**
    * 通过闭包和 try/cache 包裹代码
@@ -111,22 +113,20 @@ const Expression = new Class({
    * @param {string} code 源字符串
    * @returns {string} 处理后的字符串
    */
-  _wrapCode: function (code) {
-    return '((function(){try{return (' + code + ')}catch(err){console.error(err);return err;}})())';
-  },
+  _wrapCode(code) {
+    return `((function(){try{return(${code})}catch(err){console.error(err);return err}})())`;
+  }
 
   /**
    * 通过 scope 对象执行表达式
    * @param {Object} scope 上下文对象
    * @returns {Object} 执行结果
    */
-  execute: function (scope) {
+  execute(scope) {
     if (utils.isNull(scope)) {
       scope = {};
     }
     return this.func.call(scope, scope);
   }
 
-});
-
-module.exports = Expression;
+}

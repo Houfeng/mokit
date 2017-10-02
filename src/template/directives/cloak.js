@@ -1,12 +1,13 @@
-const Directive = require('../directive');
+import Directive from '../directive';
+import { meta } from 'decorators';
 
-module.exports = new Directive({
-  level: Directive.LC,
+@meta({
+  level: Directive.levels.CLOAK,
   literal: true,
   prefix: false,
-
-  bind: function () {
+})
+export default class CloakDirective extends Directive {
+  bind() {
     this.node.removeAttribute(this.attribute.name);
   }
-
-});
+}

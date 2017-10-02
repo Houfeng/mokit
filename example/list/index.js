@@ -1,7 +1,7 @@
 import mokit from 'mokit';
 
 export default new mokit.Component({
-  template: require('./list.html'),
+  template: require('./index.html'),
   properties: {
     list: null
   },
