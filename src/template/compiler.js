@@ -2,6 +2,7 @@ import Directive from './directive';
 import utils from 'ntils';
 import Expression from './expression';
 import commonDirectives from './directives';
+import Error from 'common/error';
 
 const DEFAULT_PREFIX = 'm';
 
@@ -21,8 +22,10 @@ export default class Compiler {
     this.prefix = options.prefix || DEFAULT_PREFIX;
     this.elementDirectives = {};
     this.attributeDirectives = {};
-    this.registerDirectives(commonDirectives);
-    this.registerDirectives(options.directives);
+    this.registerDirectives({
+      ...commonDirectives,
+      ...options.directives
+    });
   }
 
   /**
@@ -119,7 +122,7 @@ export default class Compiler {
       directive.bind();
       boundDirectives.push(directive);
       //移除完成绑定的指令对应的 attribute
-      if (directive.remove !== false && directive.attribute) {
+      if (directive.meta.remove !== false && directive.attribute) {
         directive.node.removeAttribute(directive.attribute.name);
       }
       //如果遇到一个「终态」指令，停止向下初始化
@@ -157,13 +160,13 @@ export default class Compiler {
       let AttrDirective = this.attributeDirectives[attrInfo.name] ||
         this.attributeDirectives['*'];
       if (!AttrDirective) return;
-      let directiveMeta = AttrDirective.meta;
+      let meta = AttrDirective.meta;
       handler.directives.push(this._createDirectiveInstance(AttrDirective, {
         handler: handler,
         node: node,
         attribute: attribute,
-        expression: directiveMeta.literal ?
-          attribute.value : new Expression(attribute.value, directiveMeta.mixed),
+        expression: meta.literal ?
+          attribute.value : new Expression(attribute.value, meta.mixed),
         decorates: attrInfo.decorates
       }));
     }, this);

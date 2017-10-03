@@ -1,4 +1,5 @@
 import utils from 'ntils';
+import Error from 'common/error';
 
 /**
  * Watcher 类

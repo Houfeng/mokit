@@ -5,6 +5,7 @@ import InputDirective from './input';
 import RadioDirective from './radio';
 import CheckboxDirective from './checkbox';
 import PropDirective from './prop';
+import Error from 'common/error';
 
 function DirectiveFactary(options) {
   let node = options.node;

@@ -8,6 +8,6 @@ export default function (target, prop) {
       model: function () {
         return this[prop]();
       }
-    })(target);
+    })(target.constructor);
   }
 }

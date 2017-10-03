@@ -1,11 +1,24 @@
 {
   "presets": [
-    "es2015",
+    [
+      "es2015",
+      {
+        "modules": false
+      }
+    ],
     "stage-3"
   ],
   "plugins": [
-    //启动后编译通过，运行报错
-    //"transform-runtime"
-  ],
-  "auxiliaryCommentBefore": "istanbul ignore next"
+    "external-helpers",
+    "transform-decorators-legacy",
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ],
+        "decorators": "./decorators/index.js"
+      }
+    ]
+  ]
 }

@@ -1,5 +1,6 @@
 import utils from 'ntils';
 import EventEmitter from '../events';
+import Error from 'common/error';
 
 const OBSERVER_PROP_NAME = '_observer_';
 const CHANGE_EVENT_NAME = 'change';

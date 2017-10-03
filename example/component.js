@@ -1,25 +1,21 @@
-import { Component, decorators } from 'mokit';
+import { bootstrap, Component, decorators } from 'mokit';
 
-const { element, event, model, watch } = decorators;
+const { template, on, watch } = decorators;
 
-@element(document.body)
+@template(`
+<div>{{name}}-{{demo}}</div>
+`)
 class App extends Component {
 
-  @event('init')
-  init() {
+  demo = true;
+  name = "test";
+
+  @on('init') init() {
     this.age = 100;
     console.log('init');
   }
 
-  @model
-  data() {
-    return {
-      name: 'test'
-    };
-  }
-
-  @watch('name')
-  printName() {
+  @watch('name') printName() {
     console.log('printName', this.name);
   }
 
@@ -33,5 +29,4 @@ class App extends Component {
 
 }
 
-window.app = new App();
-window.mokit = Component;
+window.app = bootstrap(App, document.body);

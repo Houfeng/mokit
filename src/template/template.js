@@ -1,4 +1,3 @@
-import Class from 'cify';
 import Observer from '../observer';
 import EventEmitter from '../events';
 import Compiler from './compiler';

@@ -1,4 +1,5 @@
 import utils from 'ntils';
+import Error from 'common/error';
 
 /**
  * 事件触发器基类

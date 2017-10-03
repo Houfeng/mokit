@@ -3,7 +3,7 @@ import meta from './meta';
 
 export default function (name) {
   return function (target, handler) {
-    meta()(target);
+    meta()(target.constructor);
     target.meta.events = target.meta.events || {};
     target.meta.events[name] = target.meta.events[name] || [];
     target.meta.events[name].push(handler);

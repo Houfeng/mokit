@@ -1,9 +1,6 @@
 import mokit from 'mokit';
 import App from './app';
 
-import './assets/index.less';
+import './assets/todo.less';
 
-mokit({
-  element: document.body,
-  components: { App },
-}).start();
+mokit(App, document.body);

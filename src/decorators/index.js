@@ -5,9 +5,8 @@ import event from './event';
 import model from './model';
 import template from './template';
 import watch from './watch';
-import element from './element';
 
 export default {
-  meta, event, model, watch,
-  element, template, components, directives
+  meta, event, on: event, model, watch,
+  template, components, directives
 };

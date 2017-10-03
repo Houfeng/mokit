@@ -1,5 +1,5 @@
 import utils from 'ntils';
-import Class from 'cify';
+import Entity from '../common/entity';
 import Expression from './expression';
 import { meta } from '../decorators';
 
@@ -26,7 +26,7 @@ const levels = {
   type: types.ATTRIBUTE,
   level: levels.GENERAL
 })
-export default class Directive {
+export default class Directive extends Entity {
 
   static types = types;
   static levels = levels;
@@ -37,6 +37,7 @@ export default class Directive {
 
   //指令构建函数
   constructor(options) {
+    super();
     utils.copy(options, this);
   }
 

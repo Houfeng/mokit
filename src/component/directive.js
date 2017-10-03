@@ -22,7 +22,7 @@ export default function (options) {
     constructor(options) {
       super(options);
       let meta = this.meta;
-      this.component = meta.component({
+      this.component = new meta.component({
         deferReady: true,
         parent: meta.parent || meta.scope
       });
@@ -35,8 +35,8 @@ export default function (options) {
         element: false,
         children: false
       });
-      this.handleContents();
       this.component.$mount(this.node);
+      this.handleContents();
       if (this.node.parentNode) {
         this.node.parentNode.removeChild(this.node);
       }
@@ -47,7 +47,7 @@ export default function (options) {
       let directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
       this.attrs.forEach(function (attr) {
         if (directiveRegexp.test(attr.name)) return;
-        if (attr.name in this.component.$properties) return;
+        if (attr.name in this.component) return;
         this.component.$element.setAttribute(attr.name, attr.value);
         this.node.removeAttribute(attr.name);
       }, this);

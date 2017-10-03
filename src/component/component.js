@@ -1,7 +1,8 @@
 import Template from '../template';
 import Watcher from '../watcher';
 import utils from 'ntils';
-import EventEmitter from '../events';
+import Entity from '../common/entity';
+import Error from '../common/error';
 import createDirective from './directive';
 import { meta } from 'decorators';
 
@@ -13,8 +14,10 @@ const { directives } = Template;
  * @param {Object} classOpts 类选项
  * @returns {Component} 组件类
  */
-@meta()
-export default class Component extends EventEmitter {
+@meta({
+  template: '<span>Invaild template</span>'
+})
+export default class Component extends Entity {
 
   /**
    * 组件类构造函数
@@ -30,13 +33,15 @@ export default class Component extends EventEmitter {
     this.$setModel(meta.model);
     this._bindWatches_(meta.watches);
     this._bindDirectives_(meta.directives);
-    this._bindComponents_(meta.components);
-    this._bindComponents_({ 'self': this.constructor });
+    this._bindComponents_({
+      ...Component.components,
+      ...meta.components,
+      'self': this.constructor
+    });
     this._bindEvents_(meta.events);
     utils.defineFreezeProp(this, '$children', []);
     if (options.parent) this.$setParent(options.parent);
-    this.$emit('init');
-    meta.element ? this.$mount() : this.$compile();
+    this.$emit('beforeInit');
   }
 
   /**
@@ -95,7 +100,9 @@ export default class Component extends EventEmitter {
    * @returns {void} 无返回
    */
   _bindComponents_(components) {
+    if (!components) return;
     this.$components = this.$components || {};
+    this.$directives = this.$directives || {};
     utils.each(components, (name, component) => {
       if (!component) return;
       this.$components[name] = component;
@@ -112,6 +119,7 @@ export default class Component extends EventEmitter {
    * @returns {void} 无返回
    */
   _bindDirectives_(directives) {
+    if (!directives) return;
     this.$directives = this.$directives || {};
     utils.each(directives, (name, directive) => {
       if (!directive) return;
@@ -169,6 +177,7 @@ export default class Component extends EventEmitter {
    * @returns {void} 无返回
    */
   _bindWatches_(watches) {
+    if (!watches) return;
     watches.forEach(item => {
       this.$watch(item.calcer, item.handler);
     });
@@ -215,7 +224,7 @@ export default class Component extends EventEmitter {
 
   _processMeta_() {
     let meta = this.meta;
-    if (!meta.element && utils.isString(meta.template)) {
+    if (utils.isString(meta.template)) {
       meta.template = utils.parseDom(meta.template);
     }
   }
@@ -229,7 +238,7 @@ export default class Component extends EventEmitter {
     this._created_ = true;
     let meta = this.meta;
     this.$emit('create');
-    let element = meta.element || meta.template.cloneNode(true);
+    let element = meta.template.cloneNode(true);
     utils.defineFreezeProp(this, '$element', element);
     if (!this.$element || this.$element.nodeName === '#text') {
       throw new Error('Invalid component template');
@@ -244,6 +253,7 @@ export default class Component extends EventEmitter {
   $compile() {
     if (this._compiled_) return;
     this._compiled_ = true;
+    this.$emit('init');
     this._createElement_();
     let template = new Template(this.$element, {
       directives: this.$directives,

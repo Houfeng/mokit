@@ -3,7 +3,7 @@ dev:
     target: ./dist
   - name: webpack
     output: dist
-    entry: ./example/component.js
+    entry: ./example/*.js
     template: ./example/assets/*.html
     common:
       disabled: true
@@ -24,3 +24,10 @@ build:
       mokit: ./src/index.js
     common:
       disabled: true
+    umd:
+      library: '[name]'
+      libraryTarget: 'umd'
+      umdNamedDefine: true
+      
+rollup:
+  - name: ./rollup.js

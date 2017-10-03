@@ -1,5 +1,5 @@
 import Directive from '../directive';
-import { meta } from 'decorators';
+import { meta } from '../../decorators';
 
 @meta({
   level: Directive.levels.STATEMENT,

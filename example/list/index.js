@@ -1,17 +1,17 @@
 import mokit from 'mokit';
 
-export default new mokit.Component({
-  template: require('./index.html'),
-  properties: {
-    list: null
-  },
-  edit: function (item, state) {
+const { template } = mokit;
+
+@template(require('./index.html'))
+export default class List extends mokit.Component {
+  list = [];
+
+  edit(item, state) {
     item.editing = state;
     this.$emit('edit', item);
-  },
-  del: function (item) {
-    this.$emit('del', item);
-  },
-  onReady: function () {
   }
-});
+
+  del(item) {
+    this.$emit('del', item);
+  }
+}
