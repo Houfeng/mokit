@@ -8,5 +8,5 @@ import watch from './watch';
 
 export default {
   meta, event, on: event, model, watch,
-  template, components, directives
+  template, components, dependencies: components, directives
 };

@@ -1,6 +1,4 @@
-import mokit from 'mokit';
-
-const { template } = mokit;
+import mokit, { template } from 'mokit';
 
 @template(require('./index.html'))
 export default class List extends mokit.Component {

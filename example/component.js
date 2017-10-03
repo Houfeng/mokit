@@ -1,6 +1,4 @@
-import { bootstrap, Component, decorators } from 'mokit';
-
-const { template, on, watch } = decorators;
+import { bootstrap, Component, template, on, watch } from 'mokit';
 
 @template(`
 <div>{{name}}-{{demo}}</div>

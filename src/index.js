@@ -27,13 +27,13 @@ bootstrap.bootstrap = bootstrap;
 bootstrap.common = common;
 
 bootstrap.component = function (name, component) {
-  if (!component) return this.components[name];
-  this.components[name] = component;
+  if (!component) return Component.components[name];
+  Component.components[name] = component;
 };
 
 bootstrap.directive = function (name, directive) {
-  if (!directive) return this.directives[name];
-  this.directives[name] = directive;
+  if (!directive) return Template.directives[name];
+  Template.directives[name] = directive;
 };
 
 export default bootstrap;

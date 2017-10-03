@@ -1,10 +1,9 @@
-import mokit from 'mokit';
+import mokit, { on, watch, template, dependencies } from 'mokit';
 import List from '../list';
 
-const { on, watch, template, components } = mokit.decorators;
 
 @template(require('./index.html'))
-@components({ List })
+@dependencies({ List })
 export default class App extends mokit.Component {
 
   type = 'all';
