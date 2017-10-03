@@ -1,7 +1,7 @@
 import Component from '../component';
 import utils from 'ntils';
 import { template } from 'decorators';
-import Error from 'common/error';
+import { Error } from 'common';
 
 /**
  * 内置视图组件

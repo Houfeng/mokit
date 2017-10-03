@@ -7,7 +7,6 @@ import html from './inner-html';
 import text from './inner-text';
 import prevent from './prevent';
 import id from './id';
-import cloak from './cloak';
 import show from './show';
 import model from './model';
 import focus from './focus';
@@ -19,5 +18,5 @@ export default {
   '*': anyAttribute,
   'if': ifDirective,
   each, prop, attr, on, html, text,
-  prevent, id, cloak, show, model, focus
+  prevent, id, show, model, focus
 };

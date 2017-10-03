@@ -1,6 +1,6 @@
 import Directive from '../directive';
 import { meta } from 'decorators';
-import Error from 'common/error';
+import { Error } from 'common';
 
 @meta({
   literal: true

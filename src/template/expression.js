@@ -45,7 +45,7 @@ export default class Expression {
    */
   _createFunction(code) {
     let func = new Function('utils', 'scope',
-      'with(scope){return(' + code + ')}');
+      'with(scope){return ' + code + '}');
     return func.bind(null, utils);
   }
 
@@ -114,7 +114,7 @@ export default class Expression {
    * @returns {string} 处理后的字符串
    */
   _wrapCode(code) {
-    return `((function(){try{return(${code})}catch(err){console.error(err);return err}})())`;
+    return `((function(){try{return ${code}}catch(err){console.error(err);return err}})())`;
   }
 
   /**

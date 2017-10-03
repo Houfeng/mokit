@@ -1,5 +1,5 @@
 import utils from 'ntils';
-import Error from 'common/error';
+import { Error } from 'common';
 
 /**
  * 事件触发器基类

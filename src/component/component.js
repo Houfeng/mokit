@@ -1,8 +1,7 @@
 import Template from '../template';
 import Watcher from '../watcher';
 import utils from 'ntils';
-import Entity from '../common/entity';
-import Error from '../common/error';
+import { Error, Entity } from 'common';
 import createDirective from './directive';
 import { meta } from 'decorators';
 

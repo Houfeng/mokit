@@ -1,5 +1,5 @@
 import utils from 'ntils';
-import Entity from '../common/entity';
+import { Entity } from 'common';
 import Expression from './expression';
 import { meta } from '../decorators';
 

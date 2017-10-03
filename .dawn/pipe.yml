@@ -8,6 +8,7 @@ dev:
     common:
       disabled: true
     watch: true
+    transform: false
   - name: server
     port: 8008
     public: ./dist
@@ -24,10 +25,8 @@ build:
       mokit: ./src/index.js
     common:
       disabled: true
-    umd:
-      library: '[name]'
-      libraryTarget: 'umd'
-      umdNamedDefine: true
-      
-rollup:
-  - name: ./rollup.js
+    # umd:
+    #   library: '[name]'
+    #   libraryTarget: 'umd'
+    #   umdNamedDefine: true
+    transform: false

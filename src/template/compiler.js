@@ -2,7 +2,7 @@ import Directive from './directive';
 import utils from 'ntils';
 import Expression from './expression';
 import commonDirectives from './directives';
-import Error from 'common/error';
+import { Error } from 'common';
 
 const DEFAULT_PREFIX = 'm';
 

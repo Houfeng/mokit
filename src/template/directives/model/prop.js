@@ -1,6 +1,6 @@
 import Directive from '../../directive';
 import Scope from '../../scope';
-import Error from 'common/error';
+import { Error } from 'common';
 
 export default class PropModelDirective extends Directive {
 

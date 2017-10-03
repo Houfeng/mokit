@@ -10,6 +10,7 @@ module.exports = function (webpackConf, webpack) {
   webpackConf.resolve.alias = webpackConf.resolve.alias || {};
   Object.assign(webpackConf.resolve.alias, {
     [pkg.name]: require.resolve('./src'),
+    ntils: require.resolve('ntils/src'),
     common: require.resolve('./src/common'),
     component: require.resolve('./src/component'),
     decorators: require.resolve('./src/decorators'),
