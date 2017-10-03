@@ -3,4 +3,6 @@ import App from './app';
 
 import './assets/todo.less';
 
-mokit(App, document.body);
+class MyApp extends App { }
+
+window.todo = mokit(MyApp, document.body);

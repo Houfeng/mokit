@@ -1,7 +1,6 @@
 import mokit, { on, watch, template, dependencies } from 'mokit';
 import List from '../list';
 
-
 @template(require('./index.html'))
 @dependencies({ List })
 export default class App extends mokit.Component {
