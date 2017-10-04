@@ -1,5 +1,7 @@
-import mokit, { on, watch, template, dependencies } from 'mokit';
+import mokit from 'mokit';
 import List from '../list';
+
+const { on, watch, template, dependencies } = mokit;
 
 @template(require('./index.html'))
 @dependencies({ List })

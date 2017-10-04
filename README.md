@@ -6,7 +6,7 @@
 
 ## 特性
 - 面向移动设备，内置支持常用「手势事件」并可以轻松添加自定义事件。  
-- 极其轻量仅 **12k** (uglify+gzip)  
+- 极其轻量仅 **16k** (uglify+gzip)  
 - 提供类似 WebCompoents 的支持，并支持「组件继承」 
 - 支持 Chrome/firefox/safari/opera/IE9+ 等主流浏览器
 

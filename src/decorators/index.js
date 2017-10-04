@@ -6,7 +6,10 @@ import model from './model';
 import template from './template';
 import watch from './watch';
 
+const on = event;
+const dependencies = components;
+
 export default {
-  meta, event, on: event, model, watch,
-  template, components, dependencies: components, directives
+  meta, event, on, model, watch,
+  template, components, dependencies, directives
 };

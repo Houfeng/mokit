@@ -8,7 +8,12 @@ dev:
     common:
       disabled: true
     watch: true
-    modules: false
+    #modules: true
+    transform:
+      helpers: false
+      polyfill: false
+      regenerator: false
+      useBuiltIns: true
   - name: server
     port: 8008
     public: ./dist
@@ -30,7 +35,14 @@ build:
       libraryTarget: 'umd'
       umdNamedDefine: true
     compress: false
-    modules: false
+    #modules: false
+    presetDebug: false
+    optimizationBailout: false
+    transform:
+      helpers: false
+      polyfill: false
+      regenerator: false
+      useBuiltIns: true
   - name: webpack
     output: dist
     folders:
@@ -39,7 +51,12 @@ build:
       mokit.min: ./src/index.js
     common:
       disabled: true
-    modules: false
+    #modules: false
+    transform:
+      helpers: false
+      polyfill: false
+      regenerator: false
+      useBuiltIns: true
     umd:
       library: '[name]'
       libraryTarget: 'umd'
