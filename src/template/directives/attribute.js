@@ -1,5 +1,6 @@
 import Directive from '../directive';
 import { meta } from 'decorators';
+import { isNull } from 'ntils';
 
 /**
  * 通用的 attribute 指令
@@ -37,7 +38,7 @@ export default class AttributeDirective extends Directive {
       }
       //设置新名称
       this.computedName = newComputedName;
-      if (!this.utils.isNull(this.computedName) && this.computedName.length > 0) {
+      if (!isNull(this.computedName) && this.computedName.length > 0) {
         if (target.setAttribute) {
           target.setAttribute(this.computedName, this.computedValue || '');
         }

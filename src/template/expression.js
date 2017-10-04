@@ -1,4 +1,5 @@
-import utils from 'ntils';
+import { isNull } from 'ntils';
+
 
 /**
  * 表达式类型，将字符串构析为可执行表达式实例
@@ -44,9 +45,8 @@ export default class Expression {
    * @returns {function} 创建的函数
    */
   _createFunction(code) {
-    let func = new Function('utils', 'scope',
+    return new Function('scope',
       'with(scope){return ' + code + '}');
-    return func.bind(null, utils);
   }
 
   /**
@@ -60,7 +60,7 @@ export default class Expression {
     while (index <= length) {
       let char = code[index++];
       let nextChar = code[index];
-      if (utils.isNull(char)) {
+      if (isNull(char)) {
         if (token.length > 0) {
           tokens.push('"' + this._escapeCode(token) + '"');
         }
@@ -123,7 +123,7 @@ export default class Expression {
    * @returns {Object} 执行结果
    */
   execute(scope) {
-    if (utils.isNull(scope)) {
+    if (isNull(scope)) {
       scope = {};
     }
     return this.func.call(scope, scope);

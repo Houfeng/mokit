@@ -1,6 +1,7 @@
 import Directive from '../../directive';
 import Scope from '../../scope';
 import { Error } from 'common';
+import { isNull } from 'ntils';
 
 export default class PropModelDirective extends Directive {
 
@@ -16,7 +17,7 @@ export default class PropModelDirective extends Directive {
       throw new Error(`Directive \`model:${this.bindProp}\` cannot be used on \`${this.node.tagName}\``);
     }
     this.watcher = this.target.$watch(this.bindProp, (value) => {
-      if (this.utils.isNull(this.scope)) return;
+      if (isNull(this.scope)) return;
       this.backExpr.execute(new Scope(this.scope, {
         _value_: value
       }));

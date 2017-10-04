@@ -1,4 +1,6 @@
-import utils from 'ntils';
+import {
+  isArray, isFunction, isNull, isObject, copy, defineFreezeProp
+} from 'ntils';
 import EventEmitter from '../events';
 import { Error } from 'common';
 
@@ -33,13 +35,13 @@ class Observer extends EventEmitter {
    */
   constructor(target, options) {
     super();
-    if (utils.isNull(target)) {
+    if (isNull(target)) {
       throw new Error('Invalid target');
     }
     options = options || {};
     let observer = target[OBSERVER_PROP_NAME];
     if (observer) {
-      utils.copy(options, observer.options);
+      copy(options, observer.options);
       //当时一个组件 A 的为组件 B 的 prop 时，A 更新不会触发 B 更新
       //所在暂注释这里，另一种方法是更新 prop 指令，重写 excute 方法，而不是现在的 update 方法
       // if (observer.options.root) {
@@ -49,11 +51,11 @@ class Observer extends EventEmitter {
       return observer;
     }
     EventEmitter.call(this);
-    utils.defineFreezeProp(this, 'options', options);
-    utils.defineFreezeProp(this, 'shadow', {});
-    utils.defineFreezeProp(this, 'target', target);
-    utils.defineFreezeProp(this, 'parents', []);
-    utils.defineFreezeProp(target, OBSERVER_PROP_NAME, this);
+    defineFreezeProp(this, 'options', options);
+    defineFreezeProp(this, 'shadow', {});
+    defineFreezeProp(this, 'target', target);
+    defineFreezeProp(this, 'parents', []);
+    defineFreezeProp(target, OBSERVER_PROP_NAME, this);
     this.apply();
   }
 
@@ -65,7 +67,7 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   set(name, value) {
-    if (utils.isFunction(value) || Observer.isIgnore(name)) {
+    if (isFunction(value) || Observer.isIgnore(name)) {
       return;
     }
     Object.defineProperty(this.target, name, {
@@ -76,7 +78,7 @@ class Observer extends EventEmitter {
         let observer = this[OBSERVER_PROP_NAME];
         let oldValue = observer.shadow[name];
         if (oldValue === value) return;
-        if (utils.isObject(value)) {
+        if (isObject(value)) {
           let childObserver = new Observer(value);
           observer.addChild(childObserver, name);
         }
@@ -99,7 +101,7 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   apply() {
-    if (utils.isArray(this.target)) {
+    if (isArray(this.target)) {
       this._wrapArray(this.target);
     }
     let names = this._getPropertyNames(this.target);
@@ -115,8 +117,8 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   clearReference() {
-    utils.each(this.target, function (name, value) {
-      if (utils.isNull(value)) return;
+    each(this.target, function (name, value) {
+      if (isNull(value)) return;
       let child = value[OBSERVER_PROP_NAME];
       if (child) this.removeChild(child);
     }, this);
@@ -139,7 +141,7 @@ class Observer extends EventEmitter {
       if (!(item.name in item.parent.target)) {
         return item.parent.removeChild(this);
       }
-      let parentEvent = utils.copy(event);
+      let parentEvent = copy(event);
       parentEvent.path = item.name + '.' + event.path;
       item.parent.dispatch(eventName, parentEvent);
     }, this);
@@ -152,7 +154,7 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   addChild(child, name) {
-    if (utils.isNull(child) || utils.isNull(name)) {
+    if (isNull(child) || isNull(name)) {
       throw new Error('Invalid paramaters');
     }
     if (child.options.root) return;
@@ -166,7 +168,7 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   removeChild(child, name) {
-    if (utils.isNull(child)) {
+    if (isNull(child)) {
       throw new Error('Invalid paramaters');
     }
     let foundIndex = -1;
@@ -194,7 +196,7 @@ class Observer extends EventEmitter {
    * @returns {Array} 所有成员名称列表
    */
   _getPropertyNames() {
-    let names = utils.isArray(this.target) ?
+    let names = isArray(this.target) ?
       this.target.map(function (item, index) {
         return index;
       }) : Object.keys(this.target);
@@ -209,7 +211,7 @@ class Observer extends EventEmitter {
    * @returns {array} 处理后的数组
    */
   _wrapArray(array) {
-    utils.defineFreezeProp(array, 'push', function () {
+    defineFreezeProp(array, 'push', function () {
       let items = [].slice.call(arguments);
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
@@ -217,13 +219,13 @@ class Observer extends EventEmitter {
       }, this);
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
-    utils.defineFreezeProp(array, 'pop', function () {
+    defineFreezeProp(array, 'pop', function () {
       let item = [].pop.apply(this, arguments);
       this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
-    utils.defineFreezeProp(array, 'unshift', function () {
+    defineFreezeProp(array, 'unshift', function () {
       let items = [].slice.call(arguments);
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
@@ -231,15 +233,15 @@ class Observer extends EventEmitter {
       }, this);
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
-    utils.defineFreezeProp(array, 'shift', function () {
+    defineFreezeProp(array, 'shift', function () {
       let item = [].shift.apply(this, arguments);
       this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
-    utils.defineFreezeProp(array, 'splice', function () {
+    defineFreezeProp(array, 'splice', function () {
       let startIndex = arguments[0];
-      let endIndex = utils.isNull(arguments[1])
+      let endIndex = isNull(arguments[1])
         ? startIndex + arguments[1]
         : this.length - 1;
       let items = [].splice.apply(this, arguments);
@@ -249,7 +251,7 @@ class Observer extends EventEmitter {
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return items;
     });
-    utils.defineFreezeProp(array, 'set', function (index, value) {
+    defineFreezeProp(array, 'set', function (index, value) {
       if (index >= this.length) {
         this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       }

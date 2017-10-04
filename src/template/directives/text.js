@@ -1,6 +1,6 @@
 import Directive from '../directive';
 import Expression from '../expression';
-import utils from 'ntils';
+import { trim } from 'ntils';
 import { meta } from 'decorators';
 
 @meta({
@@ -14,7 +14,7 @@ export default class TextDirective extends Directive {
    * @returns {void} 无返回
    */
   bind() {
-    let nodeValue = utils.trim(this.node.nodeValue);
+    let nodeValue = trim(this.node.nodeValue);
     if (!nodeValue) return;
     this.node.nodeValue = '';
     this.expr = new Expression(nodeValue, true);

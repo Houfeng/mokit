@@ -1,6 +1,9 @@
 import Template from '../template';
 import Watcher from '../watcher';
-import utils from 'ntils';
+import {
+  isFunction, isString, copy, create, each,
+  defineFreezeProp, getByPath, parseDom
+} from 'ntils';
 import { Error, Entity } from 'common';
 import createDirective from './directive';
 import { meta } from 'decorators';
@@ -25,8 +28,8 @@ export default class Component extends Entity {
    */
   constructor(options) {
     super();
-    options = options || utils.create(null);
-    utils.copy(options, this);
+    options = options || create(null);
+    copy(options, this);
     this._processMeta_();
     let meta = this.meta;
     this.$setModel(meta.model);
@@ -38,7 +41,7 @@ export default class Component extends Entity {
       'self': this.constructor
     });
     this._bindEvents_(meta.events);
-    utils.defineFreezeProp(this, '$children', []);
+    defineFreezeProp(this, '$children', []);
     if (options.parent) this.$setParent(options.parent);
     this.$emit('beforeInit');
   }
@@ -66,8 +69,8 @@ export default class Component extends Entity {
   $addChild(child) {
     if (!(child instanceof Component)) return;
     this.$children.push(child);
-    utils.defineFreezeProp(child, '$parent', this);
-    utils.defineFreezeProp(child, '$root', this.$root || this);
+    defineFreezeProp(child, '$parent', this);
+    defineFreezeProp(child, '$root', this.$root || this);
   }
 
   /**
@@ -78,8 +81,8 @@ export default class Component extends Entity {
   $removeChild(child) {
     let index = this.$children.indexOf(child);
     this.$children.splice(index, 1);
-    utils.defineFreezeProp(child, '$parent', null);
-    //utils.defineFreezeProp(child, '$root', null);
+    defineFreezeProp(child, '$parent', null);
+    //defineFreezeProp(child, '$root', null);
   }
 
   /**
@@ -102,7 +105,7 @@ export default class Component extends Entity {
     if (!components) return;
     this.$components = this.$components || {};
     this.$directives = this.$directives || {};
-    utils.each(components, (name, component) => {
+    each(components, (name, component) => {
       if (!component) return;
       this.$components[name] = component;
       this.$directives[name] = createDirective({
@@ -120,7 +123,7 @@ export default class Component extends Entity {
   _bindDirectives_(directives) {
     if (!directives) return;
     this.$directives = this.$directives || {};
-    utils.each(directives, (name, directive) => {
+    each(directives, (name, directive) => {
       if (!directive) return;
       this.$directives[name] = directive;
     });
@@ -132,9 +135,9 @@ export default class Component extends Entity {
    * @returns {void} 无反回
    */
   _bindEvents_(events) {
-    utils.each(events, (name, handlers) => {
+    each(events, (name, handlers) => {
       handlers.forEach(handler => {
-        handler = utils.isFunction(handler) ?
+        handler = isFunction(handler) ?
           handler : this[handler];
         this.$on(name, handler.bind(this));
       });
@@ -147,12 +150,12 @@ export default class Component extends Entity {
    * @returns {void} 无返回
    */
   $setModel(model) {
-    if (utils.isFunction(model)) {
+    if (isFunction(model)) {
       this.$model = model.call(this);
     } else {
       this.$model = model || {};
     }
-    utils.each(this.$model, function (name) {
+    each(this.$model, function (name) {
       Object.defineProperty(this, name, {
         configurable: true,
         enumerable: true,
@@ -201,11 +204,11 @@ export default class Component extends Entity {
    */
   $watch(calcer, handler) {
     this.$watchers = this.$watchers || [];
-    let calcerFunc = utils.isFunction(calcer) ? calcer : () => {
-      return utils.getByPath(this, calcer);
+    let calcerFunc = isFunction(calcer) ? calcer : () => {
+      return getByPath(this, calcer);
     };
-    let handlerFunc = utils.isFunction(handler) ? handler :
-      utils.getByPath(this, handler);
+    let handlerFunc = isFunction(handler) ? handler :
+      getByPath(this, handler);
     let watcher = new Watcher(calcerFunc, handlerFunc.bind(this));
     this.$watchers.push(watcher);
     return watcher;
@@ -223,8 +226,8 @@ export default class Component extends Entity {
 
   _processMeta_() {
     let meta = this.meta;
-    if (utils.isString(meta.template)) {
-      meta.template = utils.parseDom(meta.template);
+    if (isString(meta.template)) {
+      meta.template = parseDom(meta.template);
     }
   }
 
@@ -238,7 +241,7 @@ export default class Component extends Entity {
     let meta = this.meta;
     this.$emit('create');
     let element = meta.template.cloneNode(true);
-    utils.defineFreezeProp(this, '$element', element);
+    defineFreezeProp(this, '$element', element);
     if (!this.$element || this.$element.nodeName === '#text') {
       throw new Error('Invalid component template');
     }
@@ -258,7 +261,7 @@ export default class Component extends Entity {
       directives: this.$directives,
       root: true
     });
-    utils.defineFreezeProp(this, '$template', template);
+    defineFreezeProp(this, '$template', template);
     this.$template.bind(this);
     this.$template.on('update', this._onTemplateUpdate_.bind(this));
     this.$template.on('bind', () => {
@@ -368,7 +371,7 @@ export default class Component extends Entity {
       .forEach(function (key) {
         delete this[key];
       }, this);
-    utils.setPrototypeOf(this, null);
+    setPrototypeOf(this, null);
   }
 
 }

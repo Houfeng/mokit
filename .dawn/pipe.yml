@@ -8,7 +8,7 @@ dev:
     common:
       disabled: true
     watch: true
-    transform: false
+    modules: false
   - name: server
     port: 8008
     public: ./dist
@@ -25,8 +25,22 @@ build:
       mokit: ./src/index.js
     common:
       disabled: true
-    # umd:
-    #   library: '[name]'
-    #   libraryTarget: 'umd'
-    #   umdNamedDefine: true
-    transform: false
+    umd:
+      library: '[name]'
+      libraryTarget: 'umd'
+      umdNamedDefine: true
+    compress: false
+    modules: false
+  - name: webpack
+    output: dist
+    folders:
+      js: '.'
+    entry: 
+      mokit.min: ./src/index.js
+    common:
+      disabled: true
+    modules: false
+    umd:
+      library: '[name]'
+      libraryTarget: 'umd'
+      umdNamedDefine: true

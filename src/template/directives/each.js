@@ -1,5 +1,5 @@
 import Directive from '../directive';
-import utils from 'ntils';
+import { each } from 'ntils';
 import Scope from '../scope';
 import { meta } from 'decorators';
 
@@ -29,9 +29,9 @@ export default class EachDirective extends Directive {
     this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
     let tokens = this.attribute.value.split(' ' + this.eachType + ' ');
     let fnText =
-      `with(scope){utils.each(${tokens[1]},fn.bind(this,${tokens[1]}))}`;
-    this.each = new Function('utils', 'scope', 'fn', fnText)
-      .bind(null, this.utils);
+      `with(scope){each(${tokens[1]},fn.bind(this,${tokens[1]}))}`;
+    this.each = new Function('each', 'scope', 'fn', fnText)
+      .bind(null, each);
     let names = tokens[0].split(',').map(function (name) {
       return name.trim();
     });
@@ -79,7 +79,7 @@ export default class EachDirective extends Directive {
       }
       currentEachKeys.push(key);
     }.bind(this));
-    utils.each(this.eachItems, (key, item) => {
+    each(this.eachItems, (key, item) => {
       if (currentEachKeys.some(k => k == key)) return;
       if (item.node.parentNode) {
         item.node.parentNode.removeChild(item.node);

@@ -1,6 +1,7 @@
 import Directive from '../../directive';
 import EventEmitter from '../../../events';
 import Scope from '../../scope';
+import { isNull, isArray } from 'ntils';
 
 export default class CheckBoxModelDirective extends Directive {
 
@@ -12,11 +13,11 @@ export default class CheckBoxModelDirective extends Directive {
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.emiter = new EventEmitter(this.node);
     this.emiter.addListener('change', function () {
-      if (this.utils.isNull(this.scope)) return;
+      if (isNull(this.scope)) return;
       let value = this.expression.execute(this.scope);
-      if (this.utils.isArray(value) && this.node.checked) {
+      if (isArray(value) && this.node.checked) {
         value.push(this.node.value);
-      } else if (this.utils.isArray(value) && !this.node.checked) {
+      } else if (isArray(value) && !this.node.checked) {
         let index = value.indexOf(this.node.value);
         value.splice(index, 1);
       } else {
@@ -34,7 +35,7 @@ export default class CheckBoxModelDirective extends Directive {
   execute(scope) {
     this.scope = scope;
     let value = this.expression.execute(scope);
-    if (this.utils.isArray(value)) {
+    if (isArray(value)) {
       this.node.checked = value.indexOf(this.node.value) > -1;
     } else {
       this.node.checked = value;

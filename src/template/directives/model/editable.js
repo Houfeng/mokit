@@ -1,6 +1,7 @@
 import Directive from '../../directive';
 import EventEmitter from '../../../events';
 import Scope from '../../scope';
+import { isNull } from 'ntils';
 
 export default class EditableModelDirective extends Directive {
 
@@ -12,7 +13,7 @@ export default class EditableModelDirective extends Directive {
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.emiter = new EventEmitter(this.node);
     this.emiter.addListener('input', function () {
-      if (this.utils.isNull(this.scope)) return;
+      if (isNull(this.scope)) return;
       this.backExpr.execute(new Scope(this.scope, {
         _value_: this.node.innerHTML
       }));

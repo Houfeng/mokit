@@ -2,6 +2,7 @@ import Directive from '../../directive';
 import EventEmitter from '../../../events';
 import Scope from '../../scope';
 import { meta } from 'decorators';
+import { isArray, isNull } from 'ntils';
 
 @meta({
   final: true
@@ -18,7 +19,7 @@ export default class SelectModelDirective extends Directive {
     this._handler = this.compiler.compile(this.node);
     this.emiter = new EventEmitter(this.node);
     this.emiter.addListener('change', function () {
-      if (this.utils.isNull(this.scope)) return;
+      if (isNull(this.scope)) return;
       let selectedOptions = this.node.selectedOptions;
       let value = this.node.multiple
         ? [].slice.call(selectedOptions).map(function (option) {
@@ -39,7 +40,7 @@ export default class SelectModelDirective extends Directive {
     this.scope = scope;
     this._handler(scope);
     let value = this.expression.execute(scope);
-    if (!this.utils.isArray(value)) value = [value];
+    if (!isArray(value)) value = [value];
     [].slice.call(this.node.options).forEach(function (option) {
       option.selected = value.indexOf(option.value) > -1;
     }, this);

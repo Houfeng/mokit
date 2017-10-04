@@ -1,5 +1,5 @@
 import Directive from './directive';
-import utils from 'ntils';
+import { each, isNull, toArray } from 'ntils';
 import Expression from './expression';
 import commonDirectives from './directives';
 import { Error } from 'common';
@@ -63,7 +63,7 @@ export default class Compiler {
    * @returns {void} 无返回
    */
   registerDirectives(directives) {
-    utils.each(directives, function (name, directive) {
+    each(directives, (name, directive) => {
       name = this.toSplitCase(name);
       let fullName = directive.meta.prefix === false ?
         name : `${this.prefix}:${name}`;
@@ -72,7 +72,7 @@ export default class Compiler {
       } else {
         this.attributeDirectives[fullName.toLowerCase()] = directive;
       }
-    }, this);
+    });
   }
 
   /**
@@ -117,7 +117,7 @@ export default class Compiler {
     });
     //初始化 directives
     let boundDirectives = [];
-    utils.each(handler.directives, function (index, directive) {
+    each(handler.directives, (index, directive) => {
       directive.index = index;
       directive.bind();
       boundDirectives.push(directive);
@@ -129,7 +129,7 @@ export default class Compiler {
       if (directive.meta.final) {
         return handler.final = true;
       }
-    }, this);
+    });
     handler.directives = boundDirectives;
   }
 
@@ -155,7 +155,7 @@ export default class Compiler {
    * @returns {void} 无返回
    */
   _compileAttributes(handler, node) {
-    utils.toArray(node.attributes).forEach(function (attribute) {
+    toArray(node.attributes).forEach(function (attribute) {
       let attrInfo = this._parseAttrInfo(attribute.name);
       let AttrDirective = this.attributeDirectives[attrInfo.name] ||
         this.attributeDirectives['*'];
@@ -180,7 +180,7 @@ export default class Compiler {
    */
   _compileChildren(handler, node) {
     if (handler.final) return;
-    utils.toArray(node.childNodes).forEach(function (childNode) {
+    toArray(node.childNodes).forEach(function (childNode) {
       if (childNode._compiled_) return;
       let childHandler = this.compile(childNode);
       childHandler.parent = this;
@@ -202,7 +202,7 @@ export default class Compiler {
     options = options || {};
     //定义编译结果函数
     let handler = function (scope) {
-      if (utils.isNull(scope)) scope = {};
+      if (isNull(scope)) scope = {};
       handler.directives.forEach(function (directive) {
         directive.scope = scope;
         directive.execute(scope);

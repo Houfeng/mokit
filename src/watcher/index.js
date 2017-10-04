@@ -1,4 +1,4 @@
-import utils from 'ntils';
+import { isFunction, deepEqual, clone } from 'ntils';
 import { Error } from 'common';
 
 /**
@@ -15,7 +15,7 @@ export default class Watcher {
    * @returns {void} 无返回
    */
   constructor(calcor, handler, first) {
-    if (!utils.isFunction(calcor) || !utils.isFunction(handler)) {
+    if (!isFunction(calcor) || !isFunction(handler)) {
       throw new Error('Invalid parameters');
     }
     this.calcor = calcor;
@@ -30,10 +30,10 @@ export default class Watcher {
    */
   calc(force) {
     let newValue = this.calcor();
-    if (force || !utils.deepEqual(newValue, this.value)) {
+    if (force || !deepEqual(newValue, this.value)) {
       this.handler(newValue, this.value);
     }
-    this.value = utils.clone(newValue);
+    this.value = clone(newValue);
   }
 
 }

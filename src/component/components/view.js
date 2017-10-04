@@ -1,5 +1,5 @@
 import Component from '../component';
-import utils from 'ntils';
+import { isString, isFunction } from 'ntils';
 import { template } from 'decorators';
 import { Error } from 'common';
 
@@ -39,7 +39,7 @@ export default class View extends Component {
     if (this._transitioning) return;
     this._transitioning = true;
     //如果 value 是字符串则尝试从 $parent.components 中获取组件类 
-    if (utils.isString(component)) {
+    if (isString(component)) {
       if (this.$parent && this.$parent.$components) {
         this.component = this.$parent.$components[component];
       } else {
@@ -51,7 +51,7 @@ export default class View extends Component {
     let newComponentInstance = null;
     let oldComponentInstance = this.componentInstance;
     //创建新组件实例
-    if (utils.isFunction(component)) {
+    if (isFunction(component)) {
       newComponentInstance = new component({
         parent: this
       });
@@ -89,13 +89,13 @@ export default class View extends Component {
   set transition(transition) {
     if (this._transitioning) return;
     if (!transition || (
-      utils.isFunction(transition.prep) &&
-      utils.isFunction(transition.go)
+      isFunction(transition.prep) &&
+      isFunction(transition.go)
     )) {
-      if (this._transition && utils.isFunction(this._transition.clean)) {
+      if (this._transition && isFunction(this._transition.clean)) {
         this._transition.clean(this);
       }
-      if (transition && utils.isFunction(transition.init)) {
+      if (transition && isFunction(transition.init)) {
         transition.init(this);
       }
       this._transition = transition;

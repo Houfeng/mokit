@@ -1,4 +1,4 @@
-import utils from 'ntils';
+import { defineFreezeProp, isArray, copy, each } from 'ntils';
 import { Error } from 'common';
 
 /**
@@ -15,8 +15,8 @@ class EventEmitter {
     target = target || this;
     let emitter = target._emitter_;
     if (emitter) return emitter;
-    utils.defineFreezeProp(this, '_target_', target);
-    utils.defineFreezeProp(target, '_emitter_', this);
+    defineFreezeProp(this, '_target_', target);
+    defineFreezeProp(target, '_emitter_', this);
     this._isNative_ = this._isNativeObject(this._target_);
     this._listeners_ = this._listeners_ || {};
     this.on = this.$on = this.$addListener = this.addListener;
@@ -74,7 +74,7 @@ class EventEmitter {
       }
       delete this._listeners_[name];
     } else {
-      utils.each(this._listeners_, function (name) {
+      each(this._listeners_, function (name) {
         this.removeListener(name, null, capture);
       }, this);
       this._listeners_ = {};
@@ -147,7 +147,7 @@ class EventEmitter {
   _emitNativeEvent(name, data, canBubble, cancelAble) {
     let event = document.createEvent('HTMLEvents');
     event.initEvent(name, canBubble, cancelAble);
-    utils.copy(data, event, ['data']);
+    copy(data, event, ['data']);
     event.data = data;
     return this._target_.dispatchEvent(event);
   }
@@ -168,7 +168,7 @@ EventEmitter._events = [];
 EventEmitter.register = function (descriptor) {
   let names = descriptor.name;
   if (!names) return;
-  if (!utils.isArray(names)) names = names.split(',');
+  if (!isArray(names)) names = names.split(',');
   names.forEach(function (name) {
     this._events[name] = descriptor;
   }, this);

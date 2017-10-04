@@ -1,4 +1,3 @@
-import utils from 'ntils';
 import meta from './meta';
 
 export default function (name) {

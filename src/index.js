@@ -1,5 +1,5 @@
 import info from '$info';
-import utils from 'ntils';
+import { copy } from 'ntils';
 import bootstrap from './bootstrap';
 import Watcher from './watcher';
 import Observer from './observer';
@@ -10,11 +10,11 @@ import decorators from './decorators';
 import common from 'common';
 
 //持载模板相关对象
-utils.copy(Template, bootstrap);
-utils.copy(Component, bootstrap);
-utils.copy(common, bootstrap);
-utils.copy(decorators, bootstrap);
-utils.copy(info, bootstrap);
+copy(Template, bootstrap);
+copy(Component, bootstrap);
+copy(common, bootstrap);
+copy(decorators, bootstrap);
+copy(info, bootstrap);
 
 bootstrap.Template = Template;
 bootstrap.Component = Component;
@@ -22,7 +22,6 @@ bootstrap.Watcher = Watcher;
 bootstrap.Observer = Observer;
 bootstrap.EventEmitter = EventEmitter;
 bootstrap.decorators = decorators;
-bootstrap.utils = utils;
 bootstrap.bootstrap = bootstrap;
 bootstrap.common = common;
 

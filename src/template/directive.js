@@ -1,4 +1,4 @@
-import utils from 'ntils';
+import { copy, deepEqual } from 'ntils';
 import { Entity } from 'common';
 import Expression from './expression';
 import { meta } from '../decorators';
@@ -32,13 +32,12 @@ export default class Directive extends Entity {
   static levels = levels;
 
   //挂载指令常用的类型
-  utils = utils;
   Expression = Expression;
 
   //指令构建函数
   constructor(options) {
     super();
-    utils.copy(options, this);
+    copy(options, this);
   }
 
   //处理指令选项
@@ -54,7 +53,7 @@ export default class Directive extends Entity {
     }
     let newValue = this.meta.literal ?
       this.attribute.value : this.expression.execute(scope);
-    if (!utils.deepEqual(this._value_, newValue)) {
+    if (!deepEqual(this._value_, newValue)) {
       this.update(newValue, this._value_);
       this._value_ = newValue;
     }
