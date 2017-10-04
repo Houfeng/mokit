@@ -10,7 +10,7 @@ dev:
     watch: true
     #modules: true
     transform:
-      helpers: false
+      helpers: true
       polyfill: false
       regenerator: false
       useBuiltIns: true
@@ -39,7 +39,7 @@ build:
     presetDebug: false
     optimizationBailout: false
     transform:
-      helpers: false
+      helpers: true
       polyfill: false
       regenerator: false
       useBuiltIns: true
@@ -53,7 +53,7 @@ build:
       disabled: true
     #modules: false
     transform:
-      helpers: false
+      helpers: true
       polyfill: false
       regenerator: false
       useBuiltIns: true
