@@ -14,4 +14,16 @@ export default class Entity extends EventEmitter {
   get meta() {
     return this.constructor && this.constructor.meta;
   }
+
+  static extend = function (options, superClass) {
+    superClass = this;
+    class NewEntity extends superClass {
+      constructor(...args) {
+        super(...args);
+      }
+    }
+    copy(options, NewEntity);
+    return NewEntity;
+  };
+
 }

@@ -9,6 +9,11 @@ import watch from './watch';
 const on = event;
 const dependencies = components;
 
+export {
+  meta, event, on, model, watch,
+  template, components, dependencies, directives
+};
+
 export default {
   meta, event, on, model, watch,
   template, components, dependencies, directives

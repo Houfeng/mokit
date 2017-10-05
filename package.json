@@ -1,6 +1,6 @@
 {
   "name": "mokit",
-  "version": "4.0.0-alpha2",
+  "version": "4.0.0-alpha3",
   "description": "A minimal mvvm framework",
   "main": "./lib/index.js",
   "scripts": {},
@@ -13,7 +13,7 @@
   "devDependencies": {
     "rollup-plugin-alias": "^1.3.1",
     "babel-preset-latest": "^6.24.1",
-    "ntils": "^3.0.2",
+    "ntils": "^3.0.6",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-node-resolve": "^3.0.0"
   }

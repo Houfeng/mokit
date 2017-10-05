@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 62);
+/******/ 	return __webpack_require__(__webpack_require__.s = 46);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -97,7 +97,7 @@ exports.default = function (instance, Constructor) {
 
 exports.__esModule = true;
 
-var _typeof2 = __webpack_require__(36);
+var _typeof2 = __webpack_require__(28);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -120,15 +120,15 @@ exports.default = function (self, call) {
 
 exports.__esModule = true;
 
-var _setPrototypeOf = __webpack_require__(98);
+var _setPrototypeOf = __webpack_require__(81);
 
 var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 
-var _create = __webpack_require__(102);
+var _create = __webpack_require__(85);
 
 var _create2 = _interopRequireDefault(_create);
 
-var _typeof2 = __webpack_require__(36);
+var _typeof2 = __webpack_require__(28);
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
@@ -152,67 +152,773 @@ exports.default = function (subClass, superClass) {
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+var core = module.exports = { version: '2.5.1' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(12);
+var IE8_DOM_DEFINE = __webpack_require__(36);
+var toPrimitive = __webpack_require__(20);
+var dP = Object.defineProperty;
+
+exports.f = __webpack_require__(6) ? Object.defineProperty : function defineProperty(O, P, Attributes) {
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if (IE8_DOM_DEFINE) try {
+    return dP(O, P, Attributes);
+  } catch (e) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
+  if ('value' in Attributes) O[P] = Attributes.value;
+  return O;
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// Thank's IE8 for his funny defineProperty
+module.exports = !__webpack_require__(14)(function () {
+  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+});
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var core = __webpack_require__(4);
+var ctx = __webpack_require__(35);
+var hide = __webpack_require__(9);
+var PROTOTYPE = 'prototype';
+
+var $export = function (type, name, source) {
+  var IS_FORCED = type & $export.F;
+  var IS_GLOBAL = type & $export.G;
+  var IS_STATIC = type & $export.S;
+  var IS_PROTO = type & $export.P;
+  var IS_BIND = type & $export.B;
+  var IS_WRAP = type & $export.W;
+  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
+  var expProto = exports[PROTOTYPE];
+  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
+  var key, own, out;
+  if (IS_GLOBAL) source = name;
+  for (key in source) {
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if (own && key in exports) continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function (C) {
+      var F = function (a, b, c) {
+        if (this instanceof C) {
+          switch (arguments.length) {
+            case 0: return new C();
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if (IS_PROTO) {
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library`
+module.exports = $export;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP = __webpack_require__(5);
+var createDesc = __webpack_require__(15);
+module.exports = __webpack_require__(6) ? function (object, key, value) {
+  return dP.f(object, key, createDesc(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = __webpack_require__(39);
+var defined = __webpack_require__(21);
+module.exports = function (it) {
+  return IObject(defined(it));
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var store = __webpack_require__(24)('wks');
+var uid = __webpack_require__(17);
+var Symbol = __webpack_require__(3).Symbol;
+var USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function (name) {
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(13);
+module.exports = function (it) {
+  if (!isObject(it)) throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = function (it) {
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (e) {
+    return true;
+  }
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys = __webpack_require__(38);
+var enumBugKeys = __webpack_require__(25);
+
+module.exports = Object.keys || function keys(O) {
+  return $keys(O, enumBugKeys);
+};
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+var id = 0;
+var px = Math.random();
+module.exports = function (key) {
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+exports.f = {}.propertyIsEnumerable;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _assign = __webpack_require__(48);
+
+var _assign2 = _interopRequireDefault(_assign);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _assign2.default || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = __webpack_require__(13);
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (it, S) {
+  if (!isObject(it)) return it;
+  var fn, val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+// 7.1.4 ToInteger
+var ceil = Math.ceil;
+var floor = Math.floor;
+module.exports = function (it) {
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var shared = __webpack_require__(24)('keys');
+var uid = __webpack_require__(17);
+module.exports = function (key) {
+  return shared[key] || (shared[key] = uid(key));
+};
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || (global[SHARED] = {});
+module.exports = function (key) {
+  return store[key] || (store[key] = {});
+};
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
+
+// IE 8- don't enum bug keys
+module.exports = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+exports.f = Object.getOwnPropertySymbols;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _defineProperty = __webpack_require__(56);
+
+var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _iterator = __webpack_require__(59);
+
+var _iterator2 = _interopRequireDefault(_iterator);
+
+var _symbol = __webpack_require__(71);
+
+var _symbol2 = _interopRequireDefault(_symbol);
+
+var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
+} : function (obj) {
+  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+};
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+module.exports = true;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+module.exports = {};
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var anObject = __webpack_require__(12);
+var dPs = __webpack_require__(64);
+var enumBugKeys = __webpack_require__(25);
+var IE_PROTO = __webpack_require__(23)('IE_PROTO');
+var Empty = function () { /* empty */ };
+var PROTOTYPE = 'prototype';
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function () {
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = __webpack_require__(37)('iframe');
+  var i = enumBugKeys.length;
+  var lt = '<';
+  var gt = '>';
+  var iframeDocument;
+  iframe.style.display = 'none';
+  __webpack_require__(65).appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
+  return createDict();
+};
+
+module.exports = Object.create || function create(O, Properties) {
+  var result;
+  if (O !== null) {
+    Empty[PROTOTYPE] = anObject(O);
+    result = new Empty();
+    Empty[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : dPs(result, Properties);
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var def = __webpack_require__(5).f;
+var has = __webpack_require__(7);
+var TAG = __webpack_require__(11)('toStringTag');
+
+module.exports = function (it, tag, stat) {
+  if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
+};
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports.f = __webpack_require__(11);
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(3);
+var core = __webpack_require__(4);
+var LIBRARY = __webpack_require__(29);
+var wksExt = __webpack_require__(33);
+var defineProperty = __webpack_require__(5).f;
+module.exports = function (name) {
+  var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
+  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: wksExt.f(name) });
+};
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// optional / simple context binding
+var aFunction = __webpack_require__(51);
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = !__webpack_require__(6) && !__webpack_require__(14)(function () {
+  return Object.defineProperty(__webpack_require__(37)('div'), 'a', { get: function () { return 7; } }).a != 7;
+});
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(13);
+var document = __webpack_require__(3).document;
+// typeof document.createElement is 'object' in old IE
+var is = isObject(document) && isObject(document.createElement);
+module.exports = function (it) {
+  return is ? document.createElement(it) : {};
+};
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var has = __webpack_require__(7);
+var toIObject = __webpack_require__(10);
+var arrayIndexOf = __webpack_require__(53)(false);
+var IE_PROTO = __webpack_require__(23)('IE_PROTO');
+
+module.exports = function (object, names) {
+  var O = toIObject(object);
+  var i = 0;
+  var result = [];
+  var key;
+  for (key in O) if (key != IE_PROTO) has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while (names.length > i) if (has(O, key = names[i++])) {
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = __webpack_require__(40);
+// eslint-disable-next-line no-prototype-builtins
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = function (it) {
+  return toString.call(it).slice(8, -1);
+};
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.13 ToObject(argument)
+var defined = __webpack_require__(21);
+module.exports = function (it) {
+  return Object(defined(it));
+};
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var LIBRARY = __webpack_require__(29);
+var $export = __webpack_require__(8);
+var redefine = __webpack_require__(43);
+var hide = __webpack_require__(9);
+var has = __webpack_require__(7);
+var Iterators = __webpack_require__(30);
+var $iterCreate = __webpack_require__(63);
+var setToStringTag = __webpack_require__(32);
+var getPrototypeOf = __webpack_require__(66);
+var ITERATOR = __webpack_require__(11)('iterator');
+var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
+var FF_ITERATOR = '@@iterator';
+var KEYS = 'keys';
+var VALUES = 'values';
+
+var returnThis = function () { return this; };
+
+module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
+  $iterCreate(Constructor, NAME, next);
+  var getMethod = function (kind) {
+    if (!BUGGY && kind in proto) return proto[kind];
+    switch (kind) {
+      case KEYS: return function keys() { return new Constructor(this, kind); };
+      case VALUES: return function values() { return new Constructor(this, kind); };
+    } return function entries() { return new Constructor(this, kind); };
+  };
+  var TAG = NAME + ' Iterator';
+  var DEF_VALUES = DEFAULT == VALUES;
+  var VALUES_BUG = false;
+  var proto = Base.prototype;
+  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
+  var $default = $native || getMethod(DEFAULT);
+  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
+  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
+  var methods, key, IteratorPrototype;
+  // Fix native
+  if ($anyNative) {
+    IteratorPrototype = getPrototypeOf($anyNative.call(new Base()));
+    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
+      // Set @@toStringTag to native iterators
+      setToStringTag(IteratorPrototype, TAG, true);
+      // fix for some old engines
+      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
+    }
+  }
+  // fix Array#{values, @@iterator}.name in V8 / FF
+  if (DEF_VALUES && $native && $native.name !== VALUES) {
+    VALUES_BUG = true;
+    $default = function values() { return $native.call(this); };
+  }
+  // Define iterator
+  if ((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+    hide(proto, ITERATOR, $default);
+  }
+  // Plug for library
+  Iterators[NAME] = $default;
+  Iterators[TAG] = returnThis;
+  if (DEFAULT) {
+    methods = {
+      values: DEF_VALUES ? $default : getMethod(VALUES),
+      keys: IS_SET ? $default : getMethod(KEYS),
+      entries: $entries
+    };
+    if (FORCED) for (key in methods) {
+      if (!(key in proto)) redefine(proto, key, methods[key]);
+    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+  }
+  return methods;
+};
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(9);
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
+var $keys = __webpack_require__(38);
+var hiddenKeys = __webpack_require__(25).concat('length', 'prototype');
+
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+  return $keys(O, hiddenKeys);
+};
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pIE = __webpack_require__(18);
+var createDesc = __webpack_require__(15);
+var toIObject = __webpack_require__(10);
+var toPrimitive = __webpack_require__(20);
+var has = __webpack_require__(7);
+var IE8_DOM_DEFINE = __webpack_require__(36);
+var gOPD = Object.getOwnPropertyDescriptor;
+
+exports.f = __webpack_require__(6) ? gOPD : function getOwnPropertyDescriptor(O, P) {
+  O = toIObject(O);
+  P = toPrimitive(P, true);
+  if (IE8_DOM_DEFINE) try {
+    return gOPD(O, P);
+  } catch (e) { /* empty */ }
+  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
+};
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(47);
+
+
+/***/ }),
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["noop"] = noop;
-/* harmony export (immutable) */ __webpack_exports__["toString"] = toString;
-/* harmony export (immutable) */ __webpack_exports__["getType"] = getType;
-/* harmony export (immutable) */ __webpack_exports__["isNull"] = isNull;
-/* harmony export (immutable) */ __webpack_exports__["trim"] = trim;
-/* harmony export (immutable) */ __webpack_exports__["replace"] = replace;
-/* harmony export (immutable) */ __webpack_exports__["startWith"] = startWith;
-/* harmony export (immutable) */ __webpack_exports__["contains"] = contains;
-/* harmony export (immutable) */ __webpack_exports__["endWith"] = endWith;
-/* harmony export (immutable) */ __webpack_exports__["has"] = has;
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasProperty", function() { return hasProperty; });
-/* harmony export (immutable) */ __webpack_exports__["isFunction"] = isFunction;
-/* harmony export (immutable) */ __webpack_exports__["isString"] = isString;
-/* harmony export (immutable) */ __webpack_exports__["isNumber"] = isNumber;
-/* harmony export (immutable) */ __webpack_exports__["isBoolean"] = isBoolean;
-/* harmony export (immutable) */ __webpack_exports__["isElement"] = isElement;
-/* harmony export (immutable) */ __webpack_exports__["isText"] = isText;
-/* harmony export (immutable) */ __webpack_exports__["isObject"] = isObject;
-/* harmony export (immutable) */ __webpack_exports__["isArray"] = isArray;
-/* harmony export (immutable) */ __webpack_exports__["isDate"] = isDate;
-/* harmony export (immutable) */ __webpack_exports__["isRegexp"] = isRegexp;
-/* harmony export (immutable) */ __webpack_exports__["toArray"] = toArray;
-/* harmony export (immutable) */ __webpack_exports__["toDate"] = toDate;
-/* harmony export (immutable) */ __webpack_exports__["each"] = each;
-/* harmony export (immutable) */ __webpack_exports__["formatDate"] = formatDate;
-/* harmony export (immutable) */ __webpack_exports__["copy"] = copy;
-/* harmony export (immutable) */ __webpack_exports__["clone"] = clone;
-/* harmony export (immutable) */ __webpack_exports__["mix"] = mix;
-/* harmony export (immutable) */ __webpack_exports__["defineFreezeProp"] = defineFreezeProp;
-/* harmony export (immutable) */ __webpack_exports__["keys"] = keys;
-/* harmony export (immutable) */ __webpack_exports__["create"] = create;
-/* harmony export (immutable) */ __webpack_exports__["setPrototypeOf"] = setPrototypeOf;
-/* harmony export (immutable) */ __webpack_exports__["getPrototypeOf"] = getPrototypeOf;
-/* harmony export (immutable) */ __webpack_exports__["deepEqual"] = deepEqual;
-/* harmony export (immutable) */ __webpack_exports__["fromTo"] = fromTo;
-/* harmony export (immutable) */ __webpack_exports__["newGuid"] = newGuid;
-/* harmony export (immutable) */ __webpack_exports__["map"] = map;
-/* harmony export (immutable) */ __webpack_exports__["setByPath"] = setByPath;
-/* harmony export (immutable) */ __webpack_exports__["getByPath"] = getByPath;
-/* harmony export (immutable) */ __webpack_exports__["unique"] = unique;
-/* harmony export (immutable) */ __webpack_exports__["getFunctionArgumentNames"] = getFunctionArgumentNames;
-/* harmony export (immutable) */ __webpack_exports__["short"] = short;
-/* harmony export (immutable) */ __webpack_exports__["firstUpper"] = firstUpper;
-/* harmony export (immutable) */ __webpack_exports__["escapeRegExp"] = escapeRegExp;
-/* harmony export (immutable) */ __webpack_exports__["parseDom"] = parseDom;
+
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-6800e988-0675-580d-7be2-6d2098ce28c5.js
+/* harmony default export */ var $info_6800e988_0675_580d_7be2_6d2098ce28c5 = ({ "name": "mokit", "version": "4.0.0-alpha2" });
+// CONCATENATED MODULE: ./node_modules/_ntils@3.0.6@ntils/src/utils.js
 
 /**
  * 空函数
  */
 function noop() { };
 
-function toString(obj) {
+function utils_toString(obj) {
   return Object.prototype.toString.call(obj);
 }
 
 function getType(obj) {
-  var str = toString(obj);
+  var str = utils_toString(obj);
   return (/^\[object (.+)\]$/i.exec(str))[1];
 }
 
@@ -480,7 +1186,7 @@ function toDate(val) {
  * @return {void}                   无返回值
  * @static
  */
-function each(list, handler, scope) {
+function utils_each(list, handler, scope) {
   if (isNull(list) || isNull(handler)) return;
   if (isArray(list)) {
     var listLength = list.length;
@@ -545,7 +1251,7 @@ function formatDate(date, format, dict) {
  */
 function copy(src, dst, igonres) {
   dst = dst || (isArray(src) ? [] : {});
-  each(src, function (key) {
+  utils_each(src, function (key) {
     if (igonres && igonres.indexOf(key) > -1) return;
     delete dst[key];
     if (Object.getOwnPropertyDescriptor) {
@@ -581,7 +1287,7 @@ function clone(src, igonres) {
   try {
     objClone = new src.constructor();
   } catch (ex) { }
-  each(src, function (key, value) {
+  utils_each(src, function (key, value) {
     if (objClone[key] != value && !contains(igonres, key)) {
       if (isObject(value)) {
         objClone[key] = clone(value, igonres);
@@ -606,33 +1312,33 @@ function clone(src, igonres) {
  * @param {Array} igonres 忽略的属性名,
  * @param {Number} mode 模式
  */
-function mix(dst, src, igonres, mode, igonreNull) {
+function utils_mix(dst, src, igonres, mode, igonreNull) {
   //根据模式来判断，默认是Obj to Obj的  
   if (mode) {
     switch (mode) {
       case 1: // proto to proto  
-        return mix(dst.prototype, src.prototype, igonres, 0);
+        return utils_mix(dst.prototype, src.prototype, igonres, 0);
       case 2: // object to object and proto to proto  
-        mix(dst.prototype, src.prototype, igonres, 0);
+        utils_mix(dst.prototype, src.prototype, igonres, 0);
         break; // pass through  
       case 3: // proto to static  
-        return mix(dst, src.prototype, igonres, 0);
+        return utils_mix(dst, src.prototype, igonres, 0);
       case 4: // static to proto  
-        return mix(dst.prototype, src, igonres, 0);
+        return utils_mix(dst.prototype, src, igonres, 0);
       default: // object to object is what happens below  
     }
   }
   //---
   src = src || {};
   dst = dst || (isArray(src) ? [] : {});
-  keys(src).forEach(function (key) {
+  utils_keys(src).forEach(function (key) {
     if (contains(igonres, key)) return;
     if (igonreNull && isNull(src[key])) return;
     if (isObject(src[key]) &&
       (src[key].constructor == Object ||
         src[key].constructor == Array ||
         src[key].constructor == null)) {
-      dst[key] = mix(dst[key], src[key], igonres, 0, igonreNull);
+      dst[key] = utils_mix(dst[key], src[key], igonres, 0, igonreNull);
     } else {
       dst[key] = src[key];
     }
@@ -659,10 +1365,10 @@ function defineFreezeProp(obj, name, value) {
 /**
  * 获取所有 key 
  */
-function keys(obj) {
+function utils_keys(obj) {
   if (Object.keys) return Object.keys(obj);
   var keys = [];
-  each(obj, function (key) {
+  utils_each(obj, function (key) {
     keys.push(key);
   });
   return keys;
@@ -685,7 +1391,7 @@ function create(proto, props) {
  * 在不支持 setPrototypeOf 也不支持 __proto__ 的浏览器
  * 中，会采用 copy 方式
  */
-function setPrototypeOf(obj, proto) {
+function utils_setPrototypeOf(obj, proto) {
   if (Object.setPrototypeOf) {
     return Object.setPrototypeOf(obj, proto || create(null));
   } else {
@@ -709,13 +1415,13 @@ function getPrototypeOf(obj) {
 function deepEqual(a, b) {
   if (a === b) return true;
   if (!isObject(a) || !isObject(b)) return false;
-  var aKeys = keys(a);
-  var bKeys = keys(b);
+  var aKeys = utils_keys(a);
+  var bKeys = utils_keys(b);
   if (aKeys.length !== bKeys.length) return false;
   var allKeys = aKeys.concat(bKeys);
   var checkedMap = create(null);
   var result = true;
-  each(allKeys, function (i, key) {
+  utils_each(allKeys, function (i, key) {
     if (checkedMap[key]) return;
     if (!deepEqual(a[key], b[key])) result = false;
     checkedMap[key] = true;
@@ -760,7 +1466,7 @@ function newGuid() {
  **/
 function map(list, fn) {
   var buffer = isArray(list) ? [] : {};
-  each(list, function (name, value) {
+  utils_each(list, function (name, value) {
     buffer[name] = fn(name, value);
   });
   return buffer;
@@ -776,7 +1482,7 @@ function setByPath(obj, path, value) {
   if (!isArray(path)) {
     path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
   }
-  each(path, function (index, name) {
+  utils_each(path, function (index, name) {
     if (isNull(name) || name.length < 1) return;
     if (index === path.length - 1) {
       obj[name] = value;
@@ -797,7 +1503,7 @@ function getByPath(obj, path) {
   if (!isArray(path)) {
     path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
   }
-  each(path, function (index, name) {
+  utils_each(path, function (index, name) {
     if (isNull(name) || name.length < 1) return;
     if (!isNull(obj)) obj = obj[name];
   }, this);
@@ -810,7 +1516,7 @@ function getByPath(obj, path) {
 function unique(array) {
   if (isNull(array)) return array;
   var newArray = [];
-  each(array, function (i, value) {
+  utils_each(array, function (i, value) {
     if (newArray.indexOf(value) > -1) return;
     newArray.push(value);
   });
@@ -834,7 +1540,7 @@ function getFunctionArgumentNames(fn) {
 /**
  * 缩短字符串
  */
-function short(str, maxLength) {
+function utils_short(str, maxLength) {
   if (!str) return str;
   maxLength = maxLength || 40;
   var strLength = str.length;
@@ -875,193 +1581,36 @@ function parseDom(str) {
   window._NTILS_PARSE_DOM_.innerHTML = '';
   return firstNode;
 };
+// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/extends.js
+var helpers_extends = __webpack_require__(19);
+var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
 
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/classCallCheck.js
+var classCallCheck = __webpack_require__(0);
+var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
 
-exports.__esModule = true;
-exports.default = undefined;
+// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/createClass.js
+var createClass = __webpack_require__(27);
+var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
 
-var _classCallCheck2 = __webpack_require__(0);
+// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/possibleConstructorReturn.js
+var possibleConstructorReturn = __webpack_require__(1);
+var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possibleConstructorReturn);
 
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/inherits.js
+var inherits = __webpack_require__(2);
+var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
 
-var _possibleConstructorReturn2 = __webpack_require__(1);
+// CONCATENATED MODULE: ./src/events/index.js
 
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
-var _inherits2 = __webpack_require__(2);
 
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class, _class2, _temp;
-
-var _ntils = __webpack_require__(3);
-
-var _common = __webpack_require__(5);
-
-var _expression = __webpack_require__(26);
-
-var _expression2 = _interopRequireDefault(_expression);
-
-var _decorators = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-//指令类型
-var types = {
-  ATTRIBUTE: 'A',
-  ELEMENT: 'E'
-};
-
-//指令层级
-var levels = {
-  PREVENT: 3000, //prevent
-  STATEMENT: 2000, //statement
-  ELEMENT: 1000, //element
-  GENERAL: 0, //general
-  ATTRIBUTE: -1000, //any attribute
-  CLOAK: -2000 //cloak
-};
-
-/**
- * 指令定义工场函数
- */
-var Directive = (_dec = (0, _decorators.meta)({
-  type: types.ATTRIBUTE,
-  level: levels.GENERAL
-}), _dec(_class = (_temp = _class2 = function (_Entity) {
-  (0, _inherits3.default)(Directive, _Entity);
-
-  //指令构建函数
-  function Directive(options) {
-    (0, _classCallCheck3.default)(this, Directive);
-
-    var _this = (0, _possibleConstructorReturn3.default)(this, _Entity.call(this));
-
-    _this.Expression = _expression2.default;
-
-    (0, _ntils.copy)(options, _this);
-    return _this;
-  }
-
-  //处理指令选项
-
-
-  //挂载指令常用的类型
-
-
-  Directive.prototype.bind = function bind() {};
-
-  Directive.prototype.update = function update() {};
-
-  Directive.prototype.unbind = function unbind() {};
-
-  //挂载实例核心方法
-
-
-  Directive.prototype.execute = function execute(scope) {
-    this.scope = scope;
-    if (this.meta.type === types.ELEMENT) {
-      return this.update();
-    }
-    var newValue = this.meta.literal ? this.attribute.value : this.expression.execute(scope);
-    if (!(0, _ntils.deepEqual)(this._value_, newValue)) {
-      this.update(newValue, this._value_);
-      this._value_ = newValue;
-    }
-  };
-
-  return Directive;
-}(_common.Entity), _class2.types = types, _class2.levels = levels, _temp)) || _class);
-exports.default = Directive;
-module.exports = exports['default'];
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _entity = __webpack_require__(105);
-
-var _entity2 = _interopRequireDefault(_entity);
-
-var _error = __webpack_require__(106);
-
-var _error2 = _interopRequireDefault(_error);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = { Entity: _entity2.default, Error: _error2.default };
-module.exports = exports['default'];
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _meta = __webpack_require__(14);
-
-var _meta2 = _interopRequireDefault(_meta);
-
-var _components = __webpack_require__(107);
-
-var _components2 = _interopRequireDefault(_components);
-
-var _directives = __webpack_require__(108);
-
-var _directives2 = _interopRequireDefault(_directives);
-
-var _event = __webpack_require__(109);
-
-var _event2 = _interopRequireDefault(_event);
-
-var _model = __webpack_require__(110);
-
-var _model2 = _interopRequireDefault(_model);
-
-var _template = __webpack_require__(111);
-
-var _template2 = _interopRequireDefault(_template);
-
-var _watch = __webpack_require__(112);
-
-var _watch2 = _interopRequireDefault(_watch);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var on = _event2.default;
-var dependencies = _components2.default;
-
-exports.default = {
-  meta: _meta2.default, event: _event2.default, on: on, model: _model2.default, watch: _watch2.default,
-  template: _template2.default, components: _components2.default, dependencies: dependencies, directives: _directives2.default
-};
-module.exports = exports['default'];
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _ntils = __webpack_require__(3);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * 事件触发器基类
  */
-var EventEmitter = function () {
+
+var events_EventEmitter = function () {
 
   /**
    * 构建一个一个事修的触发器对象
@@ -1069,13 +1618,13 @@ var EventEmitter = function () {
    * @returns {void} 无返回
    */
   function EventEmitter(target) {
-    (0, _classCallCheck3.default)(this, EventEmitter);
+    classCallCheck_default()(this, EventEmitter);
 
     target = target || this;
     var emitter = target._emitter_;
     if (emitter) return emitter;
-    (0, _ntils.defineFreezeProp)(this, '_target_', target);
-    (0, _ntils.defineFreezeProp)(target, '_emitter_', this);
+    defineFreezeProp(this, '_target_', target);
+    defineFreezeProp(target, '_emitter_', this);
     this._isNative_ = this._isNativeObject(this._target_);
     this._listeners_ = this._listeners_ || {};
     this.on = this.$on = this.$addListener = this.addListener;
@@ -1110,7 +1659,7 @@ var EventEmitter = function () {
     this._listeners_[name] = this._listeners_[name] || [];
     this._listeners_[name].push(listener);
     if (this._listeners_[name].length > EventEmitter._maxListeners) {
-      throw new _common.Error('The `' + name + '` event listener is not more than 10');
+      throw new error_LibError('The `' + name + '` event listener is not more than 10');
     }
   };
 
@@ -1139,7 +1688,7 @@ var EventEmitter = function () {
       }
       delete this._listeners_[name];
     } else {
-      (0, _ntils.each)(this._listeners_, function (name) {
+      utils_each(this._listeners_, function (name) {
         this.removeListener(name, null, capture);
       }, this);
       this._listeners_ = {};
@@ -1220,7 +1769,7 @@ var EventEmitter = function () {
   EventEmitter.prototype._emitNativeEvent = function _emitNativeEvent(name, data, canBubble, cancelAble) {
     var event = document.createEvent('HTMLEvents');
     event.initEvent(name, canBubble, cancelAble);
-    (0, _ntils.copy)(data, event, ['data']);
+    copy(data, event, ['data']);
     event.data = data;
     return this._target_.dispatchEvent(event);
   };
@@ -1231,341 +1780,121 @@ var EventEmitter = function () {
 //最多添加多少个 listener
 
 
-EventEmitter._maxListeners = 100;
+events_EventEmitter._maxListeners = 100;
 
 //所有自定义事件
-EventEmitter._events = [];
+events_EventEmitter._events = [];
 
 /**
  * 注册自定义事件(只在代理 dom 对象时有效)
  * @param {object} descriptor 事件定义
  * @returns {void} 无返回
  */
-EventEmitter.register = function (descriptor) {
+events_EventEmitter.register = function (descriptor) {
   var names = descriptor.name;
   if (!names) return;
-  if (!(0, _ntils.isArray)(names)) names = names.split(',');
+  if (!isArray(names)) names = names.split(',');
   names.forEach(function (name) {
     this._events[name] = descriptor;
   }, this);
 };
 
-exports.default = EventEmitter;
-module.exports = exports['default'];
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self
-  // eslint-disable-next-line no-new-func
-  : Function('return this')();
-if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+/* harmony default export */ var src_events = (events_EventEmitter);
+// CONCATENATED MODULE: ./src/common/entity.js
 
 
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = Scope;
-
-var _ntils = __webpack_require__(3);
-
-function Scope(parent, props) {
-  //新的 scope 因为「继承」了 _observer_ 
-  //所以在新 scope 上进行双向绑定时，将将值成功回写
-  //如果有天不须用 cteate 继承法，需要注意 _observer_ 
-  //或在新 scope 上 defineProperty 代理 parentScope
-  var scope = (0, _ntils.create)(parent);
-  (0, _ntils.copy)(props, scope);
-  //将 func 绑定到原 scope 上;
-  (0, _ntils.each)(parent, function (key, value) {
-    if (!(0, _ntils.isFunction)(value)) return;
-    scope[key] = value.bind(parent);
-  });
-  return scope;
-}
-module.exports = exports['default'];
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-var core = module.exports = { version: '2.5.1' };
-if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
 
-var anObject = __webpack_require__(19);
-var IE8_DOM_DEFINE = __webpack_require__(48);
-var toPrimitive = __webpack_require__(28);
-var dP = Object.defineProperty;
-
-exports.f = __webpack_require__(12) ? Object.defineProperty : function defineProperty(O, P, Attributes) {
-  anObject(O);
-  P = toPrimitive(P, true);
-  anObject(Attributes);
-  if (IE8_DOM_DEFINE) try {
-    return dP(O, P, Attributes);
-  } catch (e) { /* empty */ }
-  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
-  if ('value' in Attributes) O[P] = Attributes.value;
-  return O;
-};
+var entity__class, _temp;
 
 
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// Thank's IE8 for his funny defineProperty
-module.exports = !__webpack_require__(21)(function () {
-  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
-});
 
 
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
+var entity_Entity = (_temp = entity__class = function (_EventEmitter) {
+  inherits_default()(Entity, _EventEmitter);
 
-var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function (it, key) {
-  return hasOwnProperty.call(it, key);
-};
+  function Entity() {
+    classCallCheck_default()(this, Entity);
 
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-exports.default = function (options) {
-  return function (target) {
-    if (!target || !target.setMeta) {
-      throw new _common.Error('Invaild Entity');
-    }
-    target.setMeta(options);
-  };
-};
-
-var _common = __webpack_require__(5);
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global = __webpack_require__(8);
-var core = __webpack_require__(10);
-var ctx = __webpack_require__(47);
-var hide = __webpack_require__(16);
-var PROTOTYPE = 'prototype';
-
-var $export = function (type, name, source) {
-  var IS_FORCED = type & $export.F;
-  var IS_GLOBAL = type & $export.G;
-  var IS_STATIC = type & $export.S;
-  var IS_PROTO = type & $export.P;
-  var IS_BIND = type & $export.B;
-  var IS_WRAP = type & $export.W;
-  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
-  var expProto = exports[PROTOTYPE];
-  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
-  var key, own, out;
-  if (IS_GLOBAL) source = name;
-  for (key in source) {
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && key in exports) continue;
-    // export native or passed
-    out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
-    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function (C) {
-      var F = function (a, b, c) {
-        if (this instanceof C) {
-          switch (arguments.length) {
-            case 0: return new C();
-            case 1: return new C(a);
-            case 2: return new C(a, b);
-          } return new C(a, b, c);
-        } return C.apply(this, arguments);
-      };
-      F[PROTOTYPE] = C[PROTOTYPE];
-      return F;
-    // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if (IS_PROTO) {
-      (exports.virtual || (exports.virtual = {}))[key] = out;
-      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
-    }
+    return possibleConstructorReturn_default()(this, _EventEmitter.apply(this, arguments));
   }
-};
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library`
-module.exports = $export;
 
+  createClass_default()(Entity, [{
+    key: 'meta',
+    get: function get() {
+      return this.constructor && this.constructor.meta;
+    }
+  }]);
 
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var dP = __webpack_require__(11);
-var createDesc = __webpack_require__(22);
-module.exports = __webpack_require__(12) ? function (object, key, value) {
-  return dP.f(object, key, createDesc(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
-};
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(51);
-var defined = __webpack_require__(29);
-module.exports = function (it) {
-  return IObject(defined(it));
-};
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var store = __webpack_require__(32)('wks');
-var uid = __webpack_require__(24);
-var Symbol = __webpack_require__(8).Symbol;
-var USE_SYMBOL = typeof Symbol == 'function';
-
-var $exports = module.exports = function (name) {
-  return store[name] || (store[name] =
-    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
-};
-
-$exports.store = store;
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(20);
-module.exports = function (it) {
-  if (!isObject(it)) throw TypeError(it + ' is not an object!');
-  return it;
-};
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = function (it) {
-  return typeof it === 'object' ? it !== null : typeof it === 'function';
-};
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-module.exports = function (exec) {
-  try {
-    return !!exec();
-  } catch (e) {
-    return true;
+  return Entity;
+}(src_events), entity__class.setMeta = function (options) {
+  if (Object.getOwnPropertyNames(this).indexOf('meta') < 0) {
+    var meta = create(this.meta || null);
+    defineFreezeProp(this, 'meta', meta);
   }
-};
+  if (options) copy(options, this.meta);
+}, entity__class.extend = function (options, superClass) {
+  superClass = this;
+
+  var NewEntity = function (_superClass) {
+    inherits_default()(NewEntity, _superClass);
+
+    function NewEntity() {
+      classCallCheck_default()(this, NewEntity);
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return possibleConstructorReturn_default()(this, _superClass.call.apply(_superClass, [this].concat(args)));
+    }
+
+    return NewEntity;
+  }(superClass);
+
+  copy(options, NewEntity);
+  return NewEntity;
+}, _temp);
+
+// CONCATENATED MODULE: ./src/common/error.js
 
 
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-module.exports = function (bitmap, value) {
-  return {
-    enumerable: !(bitmap & 1),
-    configurable: !(bitmap & 2),
-    writable: !(bitmap & 4),
-    value: value
-  };
-};
 
 
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
 
-// 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys = __webpack_require__(50);
-var enumBugKeys = __webpack_require__(33);
+var error_LibError = function (_Error) {
+  inherits_default()(LibError, _Error);
 
-module.exports = Object.keys || function keys(O) {
-  return $keys(O, enumBugKeys);
-};
+  function LibError(message) {
+    classCallCheck_default()(this, LibError);
 
+    for (var _len = arguments.length, other = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      other[_key - 1] = arguments[_key];
+    }
 
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_6800e988_0675_580d_7be2_6d2098ce28c5.name + ']: ' + message].concat(other)));
+  }
 
-var id = 0;
-var px = Math.random();
-module.exports = function (key) {
-  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
-};
+  return LibError;
+}(Error);
 
 
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
-exports.f = {}.propertyIsEnumerable;
+// CONCATENATED MODULE: ./src/common/index.js
 
 
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
 
-exports.__esModule = true;
-exports.default = undefined;
 
-var _classCallCheck2 = __webpack_require__(0);
+/* harmony default export */ var common = ({ Entity: entity_Entity, Error: error_LibError });
+// CONCATENATED MODULE: ./src/template/expression.js
 
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * 表达式类型，将字符串构析为可执行表达式实例
  */
-var Expression = function () {
+
+var expression_Expression = function () {
 
   /**
    * 通过字符串构造一个表达式实例
@@ -1574,7 +1903,7 @@ var Expression = function () {
    * @returns {void} 无返回
    */
   function Expression(code, mix) {
-    (0, _classCallCheck3.default)(this, Expression);
+    classCallCheck_default()(this, Expression);
 
     this.func = mix ? this._compileMixedCode(code) : this._compileCode(code);
   }
@@ -1631,7 +1960,7 @@ var Expression = function () {
     while (index <= length) {
       var char = code[index++];
       var nextChar = code[index];
-      if ((0, _ntils.isNull)(char)) {
+      if (isNull(char)) {
         if (token.length > 0) {
           tokens.push('"' + this._escapeCode(token) + '"');
         }
@@ -1700,7 +2029,7 @@ var Expression = function () {
 
 
   Expression.prototype.execute = function execute(scope) {
-    if ((0, _ntils.isNull)(scope)) {
+    if (isNull(scope)) {
       scope = {};
     }
     return this.func.call(scope, scope);
@@ -1709,391 +2038,2089 @@ var Expression = function () {
   return Expression;
 }();
 
-exports.default = Expression;
-module.exports = exports['default'];
 
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
+// CONCATENATED MODULE: ./src/decorators/meta.js
 
 
-exports.__esModule = true;
+/* harmony default export */ var decorators_meta = (function (options) {
+  return function (target) {
+    if (!target || !target.setMeta) {
+      throw new error_LibError('Invaild Entity');
+    }
+    target.setMeta(options);
+  };
+});
+// CONCATENATED MODULE: ./src/decorators/components.js
 
-var _assign = __webpack_require__(65);
 
-var _assign2 = _interopRequireDefault(_assign);
+/* harmony default export */ var decorators_components = (function (components) {
+  return decorators_meta({ components: components });
+});
+// CONCATENATED MODULE: ./src/decorators/directives.js
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _assign2.default || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
+/* harmony default export */ var decorators_directives = (function (directives) {
+  return decorators_meta({ directives: directives });
+});
+// CONCATENATED MODULE: ./src/decorators/event.js
 
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
+
+/* harmony default export */ var decorators_event = (function (name) {
+  return function (target, handler) {
+    decorators_meta()(target.constructor);
+    target.meta.events = target.meta.events || {};
+    target.meta.events[name] = target.meta.events[name] || [];
+    target.meta.events[name].push(handler);
+  };
+});
+// CONCATENATED MODULE: ./src/decorators/model.js
+
+
+/* harmony default export */ var decorators_model = (function (target, prop) {
+  if (!prop) {
+    return decorators_meta({ model: target });
+  } else {
+    return decorators_meta({
+      model: function model() {
+        return this[prop]();
+      }
+    })(target.constructor);
+  }
+});
+// CONCATENATED MODULE: ./src/decorators/template.js
+
+
+/* harmony default export */ var decorators_template = (function (template) {
+  return decorators_meta({ template: template });
+});
+// CONCATENATED MODULE: ./src/decorators/watch.js
+
+
+/* harmony default export */ var watch = (function (calcer) {
+  return function (target, handler) {
+    decorators_meta()(target.constructor);
+    target.meta.watches = target.meta.watches || [];
+    target.meta.watches.push({ calcer: calcer, handler: handler });
+  };
+});
+// CONCATENATED MODULE: ./src/decorators/index.js
+
+
+
+
+
+
+
+
+var on = decorators_event;
+var dependencies = decorators_components;
+
+
+
+/* harmony default export */ var decorators = ({
+  meta: decorators_meta, event: decorators_event, on: on, model: decorators_model, watch: watch,
+  template: decorators_template, components: decorators_components, dependencies: dependencies, directives: decorators_directives
+});
+// CONCATENATED MODULE: ./src/template/directive.js
+
+
+
+
+var directive__dec, directive__class, _class2, directive__temp;
+
+
+
+
+
+
+//指令类型
+var types = {
+  ATTRIBUTE: 'A',
+  ELEMENT: 'E'
+};
+
+//指令层级
+var levels = {
+  PREVENT: 3000, //prevent
+  STATEMENT: 2000, //statement
+  ELEMENT: 1000, //element
+  GENERAL: 0, //general
+  ATTRIBUTE: -1000, //any attribute
+  CLOAK: -2000 //cloak
+};
+
+/**
+ * 指令定义工场函数
+ */
+var directive_Directive = (directive__dec = decorators_meta({
+  type: types.ATTRIBUTE,
+  level: levels.GENERAL
+}), directive__dec(directive__class = (directive__temp = _class2 = function (_Entity) {
+  inherits_default()(Directive, _Entity);
+
+  //指令构建函数
+  function Directive(options) {
+    classCallCheck_default()(this, Directive);
+
+    var _this = possibleConstructorReturn_default()(this, _Entity.call(this));
+
+    _this.Expression = expression_Expression;
+
+    copy(options, _this);
+    return _this;
+  }
+
+  //处理指令选项
+
+
+  //挂载指令常用的类型
+
+
+  Directive.prototype.bind = function bind() {};
+
+  Directive.prototype.update = function update() {};
+
+  Directive.prototype.unbind = function unbind() {};
+
+  //挂载实例核心方法
+
+
+  Directive.prototype.execute = function execute(scope) {
+    this.scope = scope;
+    if (this.meta.type === types.ELEMENT) {
+      return this.update();
+    }
+    var newValue = this.meta.literal ? this.attribute.value : this.expression.execute(scope);
+    if (!deepEqual(this._value_, newValue)) {
+      this.update(newValue, this._value_);
+      this._value_ = newValue;
+    }
+  };
+
+  return Directive;
+}(entity_Entity), _class2.types = types, _class2.levels = levels, directive__temp)) || directive__class);
+
+// CONCATENATED MODULE: ./src/template/scope.js
+
+
+function Scope(parent, props) {
+  //新的 scope 因为「继承」了 _observer_ 
+  //所以在新 scope 上进行双向绑定时，将将值成功回写
+  //如果有天不须用 cteate 继承法，需要注意 _observer_ 
+  //或在新 scope 上 defineProperty 代理 parentScope
+  var scope = create(parent);
+  copy(props, scope);
+  //将 func 绑定到原 scope 上;
+  utils_each(parent, function (key, value) {
+    if (!isFunction(value)) return;
+    scope[key] = value.bind(parent);
+  });
+  return scope;
+}
+// CONCATENATED MODULE: ./src/template/directives/each.js
+
+
+
+
+var each__dec, each__class;
+
+
+
+
+
+
+var each_EachDirective = (each__dec = decorators_meta({
+  level: directive_Directive.levels.STATEMENT + 1, //比 if 要高一个权重
+  final: true,
+  literal: true
+}), each__dec(each__class = function (_Directive) {
+  inherits_default()(EachDirective, _Directive);
+
+  function EachDirective() {
+    classCallCheck_default()(this, EachDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  EachDirective.prototype.bind = function bind() {
+    this.mountNode = document.createTextNode('');
+    this.node.parentNode.insertBefore(this.mountNode, this.node);
+    //虽然，bind 完成后，也会进行 attribute 的移除，
+    //但 each 指令必须先移除，否再进行 item 编译时 each 还会生效
+    this.node.removeAttribute(this.attribute.name);
+    this.node.parentNode.removeChild(this.node);
+    this.parseExpr();
+    this.eachItems = {};
+  };
+
+  EachDirective.prototype.parseExpr = function parseExpr() {
+    this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
+    var tokens = this.attribute.value.split(' ' + this.eachType + ' ');
+    var fnText = 'with(scope){each(' + tokens[1] + ',fn.bind(this,' + tokens[1] + '))}';
+    this.each = new Function('each', 'scope', 'fn', fnText).bind(null, utils_each);
+    var names = tokens[0].split(',').map(function (name) {
+      return name.trim();
+    });
+    if (this.eachType == 'in') {
+      this.keyName = names[0];
+      this.valueName = names[1];
+    } else {
+      this.keyName = names[1];
+      this.valueName = names[0];
+    }
+  };
+
+  EachDirective.prototype.execute = function execute(scope) {
+    var _this2 = this;
+
+    var currentEachKeys = [];
+    var itemsFragment = document.createDocumentFragment();
+    var self = this;
+    this.each(scope, function (eachTarget, key) {
+      //创建新 scope，必须选创建再设置 prototype 或采用定义「属性」的方式
+      //因为指令参数指定的名称有可能和 scope 原有变量冲突
+      //将导致针对 watch 变量的赋值，从引用发循环
+      var newScope = new Scope(this.scope);
+      if (self.keyName) {
+        Object.defineProperty(newScope, self.keyName, {
+          get: function get() {
+            return key;
+          }
+        });
+      }
+      //value 采用「属性」进行代理，否则将会使「双向」绑定无把回设值
+      if (self.valueName) {
+        Object.defineProperty(newScope, self.valueName, {
+          get: function get() {
+            return eachTarget[key];
+          },
+          set: function set(value) {
+            eachTarget[key] = value;
+          }
+        });
+      }
+      var oldItem = this.eachItems[key];
+      if (oldItem) {
+        oldItem.handler(newScope);
+      } else {
+        var newItem = {};
+        //创建新元素
+        newItem.node = this.node.cloneNode(true);
+        itemsFragment.appendChild(newItem.node);
+        newItem.handler = this.compiler.compile(newItem.node);
+        newItem.handler(newScope);
+        this.eachItems[key] = newItem;
+      }
+      currentEachKeys.push(key);
+    }.bind(this));
+    utils_each(this.eachItems, function (key, item) {
+      if (currentEachKeys.some(function (k) {
+        return k == key;
+      })) return;
+      if (item.node.parentNode) {
+        item.node.parentNode.removeChild(item.node);
+      }
+      delete _this2.eachItems[key];
+    }, this);
+    if (itemsFragment.childNodes.length > 0) {
+      this.mountNode.parentNode.insertBefore(itemsFragment, this.mountNode);
+    }
+  };
+
+  return EachDirective;
+}(directive_Directive)) || each__class);
+
+// CONCATENATED MODULE: ./src/template/directives/if.js
+
+
+
+
+var if__dec, if__class;
+
+
+
+
+var if_IfDirective = (if__dec = decorators_meta({
+  level: directive_Directive.levels.STATEMENT,
+  final: true
+}), if__dec(if__class = function (_Directive) {
+  inherits_default()(IfDirective, _Directive);
+
+  function IfDirective() {
+    classCallCheck_default()(this, IfDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  IfDirective.prototype.bind = function bind() {
+    this.mountNode = document.createTextNode('');
+    this.node.parentNode.insertBefore(this.mountNode, this.node);
+    //虽然，bind 完成后，也会进行 attribute 的移除，
+    //但 if 指令必须先移除，否再进行 item 编译时 if 还会生效
+    this.node.removeAttribute(this.attribute.name);
+    this.node.parentNode.removeChild(this.node);
+  };
+
+  IfDirective.prototype.execute = function execute(scope) {
+    var newValue = this.expression.execute(scope);
+    if (newValue) {
+      //如果新计算的结果为 true 才执行 
+      this._handler = this._handler || this.compiler.compile(this.node);
+      this._handler(scope);
+      var node = this.node.$substitute || this.node;
+      if (!node.parentNode) {
+        this.mountNode.parentNode.insertBefore(node, this.mountNode);
+      }
+    } else {
+      var _node = this.node.$substitute || this.node;
+      if (_node.parentNode) _node.parentNode.removeChild(_node);
+    }
+  };
+
+  return IfDirective;
+}(directive_Directive)) || if__class);
+
+// CONCATENATED MODULE: ./src/template/directives/prop.js
+
+
+
+
+
+var prop_PropDirective = function (_Directive) {
+  inherits_default()(PropDirective, _Directive);
+
+  function PropDirective() {
+    classCallCheck_default()(this, PropDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  PropDirective.prototype.update = function update(value) {
+    var target = this.node.$target || this.node;
+    target[this.decorates[0]] = value;
+  };
+  // execute (scope) {
+  //   this.scope = scope;
+  //   let newValue = this.expression.execute(scope);
+  //   let target = this.node.$target || this.node;
+  //   target[this.decorates[0]] = newValue;
+  // }
+
+
+  return PropDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/attr.js
+
+
+
+
+
+var attr_AttrDirective = function (_Directive) {
+  inherits_default()(AttrDirective, _Directive);
+
+  function AttrDirective() {
+    classCallCheck_default()(this, AttrDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  AttrDirective.prototype.update = function update(value) {
+    var target = this.node.$target || this.node;
+    if (target.setAttribute) {
+      target.setAttribute(this.decorates[0], value);
+    } else {
+      target[this.decorates[0]] = value;
+    }
+  };
+
+  return AttrDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/on.js
+
+
+
+
+var on__dec, on__class;
+
+
+
+
+
+
+
+var on_OnDirective = (on__dec = decorators_meta({
+  literal: true
+}), on__dec(on__class = function (_Directive) {
+  inherits_default()(OnDirective, _Directive);
+
+  function OnDirective() {
+    classCallCheck_default()(this, OnDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  OnDirective.prototype.bind = function bind() {
+    var attrValue = this.attribute.value || '';
+    if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
+      attrValue += '($event)';
+    }
+    this.expr = new this.Expression(attrValue);
+    var eventTarget = this.node.$target || this.node;
+    this.emiter = new src_events(eventTarget);
+    this.emiter.addListener(this.decorates[0], function (event) {
+      if (isNull(this.scope)) return;
+      this.expr.execute(new Scope(this.scope, {
+        $event: event
+      }));
+    }.bind(this), false);
+  };
+
+  OnDirective.prototype.unbind = function unbind() {
+    this.emiter.removeListener();
+  };
+
+  OnDirective.prototype.execute = function execute(scope) {
+    this.scope = scope;
+  };
+
+  return OnDirective;
+}(directive_Directive)) || on__class);
+
+// CONCATENATED MODULE: ./src/template/directives/inner-html.js
+
+
+
+
+
+var inner_html_InnerHtmlDirective = function (_Directive) {
+  inherits_default()(InnerHtmlDirective, _Directive);
+
+  function InnerHtmlDirective() {
+    classCallCheck_default()(this, InnerHtmlDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  InnerHtmlDirective.prototype.update = function update(newValue) {
+    this.node.innerHTML = newValue;
+  };
+
+  return InnerHtmlDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/inner-text.js
+
+
+
+
+
+var inner_text_InnerTextDirective = function (_Directive) {
+  inherits_default()(InnerTextDirective, _Directive);
+
+  function InnerTextDirective() {
+    classCallCheck_default()(this, InnerTextDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  InnerTextDirective.prototype.update = function update(newValue) {
+    this.node.innerText = newValue;
+  };
+
+  return InnerTextDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/prevent.js
+
+
+
+
+var prevent__dec, prevent__class;
+
+
+
+
+var prevent_PreventDirective = (prevent__dec = decorators_meta({
+  level: directive_Directive.levels.PREVENT,
+  final: true
+}), prevent__dec(prevent__class = function (_Directive) {
+  inherits_default()(PreventDirective, _Directive);
+
+  function PreventDirective() {
+    classCallCheck_default()(this, PreventDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  return PreventDirective;
+}(directive_Directive)) || prevent__class);
+
+// CONCATENATED MODULE: ./src/template/directives/id.js
+
+
+
+
+var id__dec, id__class;
+
+
+
+
+
+var id_IdDirective = (id__dec = decorators_meta({
+  literal: true
+}), id__dec(id__class = function (_Directive) {
+  inherits_default()(IdDirective, _Directive);
+
+  function IdDirective() {
+    classCallCheck_default()(this, IdDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  IdDirective.prototype.update = function update(id) {
+    if (id in this.scope) {
+      throw new error_LibError('Conflicting component id `' + id + '`');
+    }
+    this.scope[id] = this.node.$target || this.node;
+  };
+
+  return IdDirective;
+}(directive_Directive)) || id__class);
+
+// CONCATENATED MODULE: ./src/template/directives/show.js
+
+
+
+
+
+var show_ShowDirective = function (_Directive) {
+  inherits_default()(ShowDirective, _Directive);
+
+  function ShowDirective() {
+    classCallCheck_default()(this, ShowDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  ShowDirective.prototype.update = function update(value) {
+    this.node.style.display = value ? '' : 'none';
+  };
+
+  return ShowDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/model/select.js
+
+
+
+
+var select__dec, select__class;
+
+
+
+
+
+
+
+var select_SelectModelDirective = (select__dec = decorators_meta({
+  final: true
+}), select__dec(select__class = function (_Directive) {
+  inherits_default()(SelectModelDirective, _Directive);
+
+  function SelectModelDirective() {
+    classCallCheck_default()(this, SelectModelDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  SelectModelDirective.prototype.bind = function bind() {
+    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.node.removeAttribute(this.attribute.name);
+    this._handler = this.compiler.compile(this.node);
+    this.emiter = new src_events(this.node);
+    this.emiter.addListener('change', function () {
+      if (isNull(this.scope)) return;
+      var selectedOptions = this.node.selectedOptions;
+      var value = this.node.multiple ? [].slice.call(selectedOptions).map(function (option) {
+        return option.value;
+      }, this) : selectedOptions[0].value;
+      this.backExpr.execute(new Scope(this.scope, {
+        _value_: value
+      }));
+    }.bind(this), false);
+  };
+
+  SelectModelDirective.prototype.unbind = function unbind() {
+    this.emiter.removeListener();
+  };
+
+  SelectModelDirective.prototype.execute = function execute(scope) {
+    this.scope = scope;
+    this._handler(scope);
+    var value = this.expression.execute(scope);
+    if (!isArray(value)) value = [value];
+    [].slice.call(this.node.options).forEach(function (option) {
+      option.selected = value.indexOf(option.value) > -1;
+    }, this);
+  };
+
+  return SelectModelDirective;
+}(directive_Directive)) || select__class);
+
+// CONCATENATED MODULE: ./src/template/directives/model/editable.js
+
+
+
+
+
+
+
+
+var editable_EditableModelDirective = function (_Directive) {
+  inherits_default()(EditableModelDirective, _Directive);
+
+  function EditableModelDirective() {
+    classCallCheck_default()(this, EditableModelDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  EditableModelDirective.prototype.bind = function bind() {
+    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.emiter = new src_events(this.node);
+    this.emiter.addListener('input', function () {
+      if (isNull(this.scope)) return;
+      this.backExpr.execute(new Scope(this.scope, {
+        _value_: this.node.innerHTML
+      }));
+    }.bind(this), false);
+  };
+
+  EditableModelDirective.prototype.unbind = function unbind() {
+    this.emiter.removeListener();
+  };
+
+  EditableModelDirective.prototype.execute = function execute(scope) {
+    var value = this.expression.execute(scope);
+    if (this.node.innerHTML !== value) {
+      this.node.innerHTML = value;
+    }
+  };
+
+  return EditableModelDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/model/input.js
+
+
+
+
+
+
+
+
+var input_InputModelDirective = function (_Directive) {
+  inherits_default()(InputModelDirective, _Directive);
+
+  function InputModelDirective() {
+    classCallCheck_default()(this, InputModelDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  InputModelDirective.prototype.bind = function bind() {
+    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.emiter = new src_events(this.node);
+    this.emiter.addListener('input', function () {
+      if (isNull(this.scope)) return;
+      this.backExpr.execute(new Scope(this.scope, {
+        _value_: this.node.value
+      }));
+    }.bind(this), false);
+  };
+
+  InputModelDirective.prototype.unbind = function unbind() {
+    this.emiter.removeListener();
+  };
+
+  InputModelDirective.prototype.execute = function execute(scope) {
+    var value = this.expression.execute(scope);
+    if (this.node.value !== value) {
+      this.node.value = value;
+    }
+  };
+
+  return InputModelDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/model/radio.js
+
+
+
+
+
+
+
+
+var radio_RadioModelDirective = function (_Directive) {
+  inherits_default()(RadioModelDirective, _Directive);
+
+  function RadioModelDirective() {
+    classCallCheck_default()(this, RadioModelDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  RadioModelDirective.prototype.bind = function bind() {
+    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.emiter = new src_events(this.node);
+    this.emiter.addListener('change', function () {
+      if (isNull(this.scope)) return;
+      this.backExpr.execute(new Scope(this.scope, {
+        _value_: this.node.value
+      }));
+    }.bind(this), false);
+  };
+
+  RadioModelDirective.prototype.unbind = function unbind() {
+    this.emiter.removeListener();
+  };
+
+  RadioModelDirective.prototype.execute = function execute(scope) {
+    this.scope = scope;
+    var value = this.expression.execute(scope);
+    this.node.checked = value == this.node.value;
+  };
+
+  return RadioModelDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/model/checkbox.js
+
+
+
+
+
+
+
+
+var checkbox_CheckBoxModelDirective = function (_Directive) {
+  inherits_default()(CheckBoxModelDirective, _Directive);
+
+  function CheckBoxModelDirective() {
+    classCallCheck_default()(this, CheckBoxModelDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  CheckBoxModelDirective.prototype.bind = function bind() {
+    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.emiter = new src_events(this.node);
+    this.emiter.addListener('change', function () {
+      if (isNull(this.scope)) return;
+      var value = this.expression.execute(this.scope);
+      if (isArray(value) && this.node.checked) {
+        value.push(this.node.value);
+      } else if (isArray(value) && !this.node.checked) {
+        var index = value.indexOf(this.node.value);
+        value.splice(index, 1);
+      } else {
+        this.backExpr.execute(new Scope(this.scope, {
+          _value_: this.node.checked
+        }));
+      }
+    }.bind(this), false);
+  };
+
+  CheckBoxModelDirective.prototype.unbind = function unbind() {
+    this.emiter.removeListener();
+  };
+
+  CheckBoxModelDirective.prototype.execute = function execute(scope) {
+    this.scope = scope;
+    var value = this.expression.execute(scope);
+    if (isArray(value)) {
+      this.node.checked = value.indexOf(this.node.value) > -1;
+    } else {
+      this.node.checked = value;
+    }
+  };
+
+  return CheckBoxModelDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/model/prop.js
+
+
+
+
+
+
+
+
+var prop_PropModelDirective = function (_Directive) {
+  inherits_default()(PropModelDirective, _Directive);
+
+  function PropModelDirective() {
+    classCallCheck_default()(this, PropModelDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  PropModelDirective.prototype.bind = function bind() {
+    var _this2 = this;
+
+    this.target = this.node.$target;
+    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.bindProp = this.decorates[0];
+    if (!this.target) {
+      throw new error_LibError('Directive `model:' + this.bindProp + '` cannot be used on `' + this.node.tagName + '`');
+    }
+    this.watcher = this.target.$watch(this.bindProp, function (value) {
+      if (isNull(_this2.scope)) return;
+      _this2.backExpr.execute(new Scope(_this2.scope, {
+        _value_: value
+      }));
+    });
+  };
+
+  PropModelDirective.prototype.unbind = function unbind() {
+    this.target.$unWatch(this.watcher);
+  };
+
+  PropModelDirective.prototype.update = function update(value) {
+    this.target[this.bindProp] = value;
+  };
+
+  return PropModelDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/model/index.js
+
+
+
+
+
+
+
+
+
+function DirectiveFactary(options) {
+  var node = options.node;
+  var tagName = node.tagName;
+  if (options.decorates[0]) {
+    return new prop_PropModelDirective(options);
+  } else if (tagName == 'INPUT') {
+    var type = node.getAttribute('type');
+    if (type == 'radio') {
+      return new radio_RadioModelDirective(options);
+    } else if (type == 'checkbox') {
+      return new checkbox_CheckBoxModelDirective(options);
+    } else {
+      return new input_InputModelDirective(options);
+    }
+  } else if (tagName == 'TEXTAREA') {
+    return new input_InputModelDirective(options);
+  } else if (tagName == 'SELECT') {
+    return new select_SelectModelDirective(options);
+  } else if (node.isContentEditable) {
+    return new editable_EditableModelDirective(options);
+  } else {
+    throw new error_LibError('Directive `model` cannot be used on `' + tagName + '`');
+  }
+};
+
+//手动添加 meta 信息
+DirectiveFactary.meta = {
+  level: directive_Directive.levels.ATTRIBUTE
+};
+
+/* harmony default export */ var directives_model = (DirectiveFactary);
+// CONCATENATED MODULE: ./src/template/directives/focus.js
+
+
+
+
+
+var focus_FocusDirective = function (_Directive) {
+  inherits_default()(FocusDirective, _Directive);
+
+  function FocusDirective() {
+    classCallCheck_default()(this, FocusDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  FocusDirective.prototype.execute = function execute(scope) {
+    var _this2 = this;
+
+    var state = this.expression.execute(scope);
+    setTimeout(function () {
+      if (state) _this2.node.focus();else _this2.node.blur();
+    }, 0);
+  };
+
+  return FocusDirective;
+}(directive_Directive);
+
+
+// CONCATENATED MODULE: ./src/template/directives/attribute.js
+
+
+
+
+var attribute__dec, attribute__class;
+
+
+
+
+
+/**
+ * 通用的 attribute 指令
+ * 用于所有 attribute 的处理
+ * 例如:
+ *  <div attr1="{{expr1}}" {{expr2}} {{attr3}}="{{expr3}}">
+ *  </div>
+ */
+var attribute_AttributeDirective = (attribute__dec = decorators_meta({
+  level: directive_Directive.levels.ATTRIBUTE,
+  prefix: false,
+  literal: true,
+  remove: false
+}), attribute__dec(attribute__class = function (_Directive) {
+  inherits_default()(AttributeDirective, _Directive);
+
+  function AttributeDirective() {
+    classCallCheck_default()(this, AttributeDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  AttributeDirective.prototype.bind = function bind() {
+    this.computedName = this.attribute.name;
+    this.computedValue = this.attribute.value;
+    this.nameExpr = new this.Expression(this.attribute.name, true);
+    this.valueExpr = new this.Expression(this.attribute.value, true);
+  };
+
+  AttributeDirective.prototype.execute = function execute(scope) {
+    var target = this.node.$target || this.node;
+    var newComputedName = this.nameExpr.execute(scope);
+    if (this.computedName !== newComputedName) {
+      //移除旧名称
+      if (target.removeAttribute) {
+        target.removeAttribute(this.computedName);
+      }
+      //设置新名称
+      this.computedName = newComputedName;
+      if (!isNull(this.computedName) && this.computedName.length > 0) {
+        if (target.setAttribute) {
+          target.setAttribute(this.computedName, this.computedValue || '');
+        }
       }
     }
-  }
-
-  return target;
-};
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 7.1.1 ToPrimitive(input [, PreferredType])
-var isObject = __webpack_require__(20);
-// instead of the ES6 spec version, we didn't implement @@toPrimitive case
-// and the second argument - flag - preferred type is a string
-module.exports = function (it, S) {
-  if (!isObject(it)) return it;
-  var fn, val;
-  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
-  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
-  throw TypeError("Can't convert object to primitive value");
-};
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-// 7.2.1 RequireObjectCoercible(argument)
-module.exports = function (it) {
-  if (it == undefined) throw TypeError("Can't call method on  " + it);
-  return it;
-};
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports) {
-
-// 7.1.4 ToInteger
-var ceil = Math.ceil;
-var floor = Math.floor;
-module.exports = function (it) {
-  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
-};
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var shared = __webpack_require__(32)('keys');
-var uid = __webpack_require__(24);
-module.exports = function (key) {
-  return shared[key] || (shared[key] = uid(key));
-};
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global = __webpack_require__(8);
-var SHARED = '__core-js_shared__';
-var store = global[SHARED] || (global[SHARED] = {});
-module.exports = function (key) {
-  return store[key] || (store[key] = {});
-};
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports) {
-
-// IE 8- don't enum bug keys
-module.exports = (
-  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
-).split(',');
-
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports) {
-
-exports.f = Object.getOwnPropertySymbols;
-
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _defineProperty = __webpack_require__(73);
-
-var _defineProperty2 = _interopRequireDefault(_defineProperty);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
+    var newComputeValue = this.valueExpr.execute(scope);
+    if (this.computedValue !== newComputeValue) {
+      this.computedValue = newComputeValue;
+      if (target.setAttribute) {
+        target.setAttribute(this.computedName, this.computedValue || '');
+      } else {
+        target[this.computedName] = this.computedValue;
+      }
     }
+  };
+
+  return AttributeDirective;
+}(directive_Directive)) || attribute__class);
+
+// CONCATENATED MODULE: ./src/template/directives/text.js
+
+
+
+
+var text__dec, text__class;
+
+
+
+
+
+
+var text_TextDirective = (text__dec = decorators_meta({
+  type: directive_Directive.types.ELEMENT,
+  prefix: false
+}), text__dec(text__class = function (_Directive) {
+  inherits_default()(TextDirective, _Directive);
+
+  function TextDirective() {
+    classCallCheck_default()(this, TextDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
   }
 
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
+  /**
+   * 初始化指令
+   * @returns {void} 无返回
+   */
+  TextDirective.prototype.bind = function bind() {
+    var nodeValue = trim(this.node.nodeValue);
+    if (!nodeValue) return;
+    this.node.nodeValue = '';
+    this.expr = new expression_Expression(nodeValue, true);
   };
+
+  TextDirective.prototype.execute = function execute(scope) {
+    if (!this.expr) return;
+    this.scope = scope;
+    var newValue = this.expr.execute(scope);
+    if (this.node.nodeValue !== newValue) {
+      this.node.nodeValue = newValue;
+    }
+  };
+
+  return TextDirective;
+}(directive_Directive)) || text__class);
+
+// CONCATENATED MODULE: ./src/template/directives/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+ //处理所有未知 attr
+
+
+/* harmony default export */ var template_directives = ({
+  '#text': text_TextDirective,
+  '*': attribute_AttributeDirective,
+  'if': if_IfDirective,
+  each: each_EachDirective, prop: prop_PropDirective, attr: attr_AttrDirective, on: on_OnDirective, html: inner_html_InnerHtmlDirective, text: inner_text_InnerTextDirective,
+  prevent: prevent_PreventDirective, id: id_IdDirective, show: show_ShowDirective, model: directives_model, focus: focus_FocusDirective
+});
+// CONCATENATED MODULE: ./src/template/compiler.js
+
+
+
+
+
+
+
+
+var DEFAULT_PREFIX = 'm';
+
+/**
+ * 模板编译器
+ * 可以通过指定「前缀」或「指令集」构建实例
+ */
+
+var compiler_Compiler = function () {
+
+  /**
+   * 构造一个编译器
+   * @param {Object} options 选项
+   * @returns {void} 无返回
+   */
+  function Compiler(options) {
+    classCallCheck_default()(this, Compiler);
+
+    options = options || {};
+    this.prefix = options.prefix || DEFAULT_PREFIX;
+    this.elementDirectives = {};
+    this.attributeDirectives = {};
+    this.registerDirectives(extends_default()({}, template_directives, options.directives));
+  }
+
+  /**
+  * 将字符串转成「驼峰」式
+  * @param {string} str 原始字符串
+  * @param {number} mode 1 大驼峰，0 小驼峰
+  * @return {string} 转换后的字符串
+  */
+
+
+  Compiler.prototype.toCamelCase = function toCamelCase(str, mode) {
+    if (str) {
+      str = str.replace(/\-[a-z0-9]/g, function ($1) {
+        return $1.slice(1).toUpperCase();
+      });
+      str = str.replace(/^[a-z]/i, function ($1) {
+        return mode ? $1.toUpperCase() : $1.toLowerCase();
+      });
+    }
+    return str;
+  };
+
+  /**
+   * 将字符串转成分隔形式
+   * @param {string} str 原始字符串
+   * @return {string} 转换后的字符串
+   */
+
+
+  Compiler.prototype.toSplitCase = function toSplitCase(str) {
+    if (str) {
+      str = str.replace(/([A-Z])/g, '-$1');
+      if (str[0] == '-') str = str.slice(1);
+    }
+    return str;
+  };
+
+  /**
+   * 添加指令
+   * @param {Object} directives 指令集 
+   * @returns {void} 无返回
+   */
+
+
+  Compiler.prototype.registerDirectives = function registerDirectives(directives) {
+    var _this = this;
+
+    utils_each(directives, function (name, directive) {
+      name = _this.toSplitCase(name);
+      var fullName = directive.meta.prefix === false ? name : _this.prefix + ':' + name;
+      if (directive.meta.type == directive_Directive.types.ELEMENT) {
+        _this.elementDirectives[fullName.toUpperCase()] = directive;
+      } else {
+        _this.attributeDirectives[fullName.toLowerCase()] = directive;
+      }
+    });
+  };
+
+  /**
+   * 解析要 attr 指令信息
+   * @param {string} attrName 要解析的名称字符串
+   * @returns {Object} 解析后的对象
+   */
+
+
+  Compiler.prototype._parseAttrInfo = function _parseAttrInfo(attrName) {
+    var _this2 = this;
+
+    var parts = attrName.toLowerCase().split(':');
+    var info = {};
+    if (parts.length > 1) {
+      info.name = parts[0] + ':' + parts[1];
+      info.decorates = parts.slice(2).map(function (item) {
+        return _this2.toCamelCase(item);
+      });
+    } else {
+      info.name = parts[0];
+      info.decorates = [];
+    }
+    return info;
+  };
+
+  /**
+   * 创建一个指令实例
+   * @param {Directive} Directive 指令类
+   * @param {Object} options 指令构建选项
+   * @returns {Directive} 指令实例
+   */
+
+
+  Compiler.prototype._createDirectiveInstance = function _createDirectiveInstance(Directive, options) {
+    options.compiler = this;
+    options.prefix = this.prefix;
+    return new Directive(options);
+  };
+
+  /**
+   * 初始化一个编译完成的 handler
+   * @param {function} handler 编译后的的模板函数
+   * @returns {void} 无返回
+   */
+
+
+  Compiler.prototype._bindHandler = function _bindHandler(handler) {
+    //排序 directives
+    handler.directives = handler.directives.sort(function (a, b) {
+      return b.meta.level - a.meta.level;
+    });
+    //初始化 directives
+    var boundDirectives = [];
+    utils_each(handler.directives, function (index, directive) {
+      directive.index = index;
+      directive.bind();
+      boundDirectives.push(directive);
+      //移除完成绑定的指令对应的 attribute
+      if (directive.meta.remove !== false && directive.attribute) {
+        directive.node.removeAttribute(directive.attribute.name);
+      }
+      //如果遇到一个「终态」指令，停止向下初始化
+      if (directive.meta.final) {
+        return handler.final = true;
+      }
+    });
+    handler.directives = boundDirectives;
+  };
+
+  /**
+   * 编译一个元素本身
+   * @param {function} handler 当前模板函数
+   * @param {HTMLNode} node 当前 HTML 结点
+   * @returns {void} 无返回
+   */
+
+
+  Compiler.prototype._compileElement = function _compileElement(handler, node) {
+    var ElementDirective = this.elementDirectives[node.nodeName.toUpperCase()];
+    if (!ElementDirective) return;
+    handler.directives.push(this._createDirectiveInstance(ElementDirective, {
+      handler: handler,
+      node: node
+    }));
+  };
+
+  /**
+   * 编译一个元素所有 attributes 
+   * @param {function} handler 当前模板函数
+   * @param {HTMLNode} node 当前 HTML 结点
+   * @returns {void} 无返回
+   */
+
+
+  Compiler.prototype._compileAttributes = function _compileAttributes(handler, node) {
+    toArray(node.attributes).forEach(function (attribute) {
+      var attrInfo = this._parseAttrInfo(attribute.name);
+      var AttrDirective = this.attributeDirectives[attrInfo.name] || this.attributeDirectives['*'];
+      if (!AttrDirective) return;
+      var meta = AttrDirective.meta;
+      handler.directives.push(this._createDirectiveInstance(AttrDirective, {
+        handler: handler,
+        node: node,
+        attribute: attribute,
+        expression: meta.literal ? attribute.value : new expression_Expression(attribute.value, meta.mixed),
+        decorates: attrInfo.decorates
+      }));
+    }, this);
+  };
+
+  /**
+   * 编译所有子结点
+   * @param {function} handler 当前模板函数
+   * @param {HTMLNode} node 当前 HTML 结点
+   * @returns {void} 无返回
+   */
+
+
+  Compiler.prototype._compileChildren = function _compileChildren(handler, node) {
+    if (handler.final) return;
+    toArray(node.childNodes).forEach(function (childNode) {
+      if (childNode._compiled_) return;
+      var childHandler = this.compile(childNode);
+      childHandler.parent = this;
+      handler.children.push(childHandler);
+    }, this);
+  };
+
+  /**
+   * 编译一个模板
+   * @param {HTMLNode} node 模板根元素
+   * @param {Object} options 选项
+   * @returns {function} 模板函数
+   */
+
+
+  Compiler.prototype.compile = function compile(node, options) {
+    if (!node) {
+      throw new error_LibError('Invalid node for compile');
+    }
+    node._compiled_ = true;
+    options = options || {};
+    //定义编译结果函数
+    var handler = function handler(scope) {
+      if (isNull(scope)) scope = {};
+      handler.directives.forEach(function (directive) {
+        directive.scope = scope;
+        directive.execute(scope);
+      }, this);
+      handler.children.forEach(function (childHandler) {
+        childHandler(scope);
+      }, this);
+    };
+    //--
+    handler.dispose = function () {
+      handler.directives.forEach(function (directive) {
+        directive.unbind();
+      }, this);
+      handler.children.forEach(function (childHandler) {
+        childHandler.dispose();
+      }, this);
+    };
+    handler.node = node;
+    //定义 children & directives 
+    handler.directives = [];
+    handler.children = [];
+    //编译相关指令
+    if (options.element !== false) this._compileElement(handler, node);
+    if (options.attribute !== false) this._compileAttributes(handler, node);
+    this._bindHandler(handler);
+    if (options.children !== false) this._compileChildren(handler, node);
+    //返回编译后函数
+    return handler;
+  };
+
+  return Compiler;
 }();
 
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/typeof.js
+var helpers_typeof = __webpack_require__(28);
+var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
+
+// CONCATENATED MODULE: ./src/observer/index.js
 
 
-exports.__esModule = true;
 
-var _iterator = __webpack_require__(76);
 
-var _iterator2 = _interopRequireDefault(_iterator);
 
-var _symbol = __webpack_require__(88);
 
-var _symbol2 = _interopRequireDefault(_symbol);
 
-var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
+var OBSERVER_PROP_NAME = '_observer_';
+var CHANGE_EVENT_NAME = 'change';
+var EVENT_MAX_DISPATCH_LAYER = 10;
+var IGNORE_REGEXPS = [/^\_(.*)\_$/i, /^\_\_/i];
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+/**
+ * 对象观察类，可以监控对象变化
+ * 目前方案问题:
+ *   对于父子关系和事件冒泡，目前方案如果用 delete 删除一个属性，无关真实删除关系，
+ *   即便调用 clearReference 也无法再清除关系，子对象的 parents 中会一直有一个引用，当前方案最高效
+ * 其它方法一:
+ *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件中 filter 出来，
+ *   基本和目前方法类似，但是关系在外部存领教，所以 clearReference 可清除。
+ * 其它方案二: 
+ *   构造时添加到全局数组，每一个 observer change 时都让放到全局的 observer 遍历自身的，
+ *   检果事件源是不是自已的子对象，如果是则触发自身 change 事件，这样 ob 对象本身没有相关引用
+ *   clearReference 时只从全局清除掉就行了，并且 delete 操作也不会影响，但效率稍差。
+ * 其它方案三: 
+ *   给构造函数添加一个 deep 属性，只有 deep 的 ob 对象，才放入到全局数组中，检查时逻辑同方案二
+ *   但是因为要检查的对象会少很多，效率会更高一点。
+ */
 
-exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
-  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
-} : function (obj) {
-  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+var observer_Observer = function (_EventEmitter) {
+  inherits_default()(Observer, _EventEmitter);
+
+  /**
+   * 通过目标对象构造一个观察对象
+   * @param {Object} target 目标对象
+   * @param {Object} options 选项
+   * @returns {void} 无返回
+   */
+  function Observer(target, options) {
+    classCallCheck_default()(this, Observer);
+
+    var _this = possibleConstructorReturn_default()(this, _EventEmitter.call(this));
+
+    if (isNull(target)) {
+      throw new error_LibError('Invalid target');
+    }
+    options = options || {};
+    var observer = target[OBSERVER_PROP_NAME];
+    if (observer) {
+      var _ret;
+
+      copy(options, observer.options);
+      //当时一个组件 A 的为组件 B 的 prop 时，A 更新不会触发 B 更新
+      //所在暂注释这里，另一种方法是更新 prop 指令，重写 excute 方法，而不是现在的 update 方法
+      // if (observer.options.root) {
+      //   observer.parents.length = 0;
+      // }
+      observer.apply();
+      return _ret = observer, possibleConstructorReturn_default()(_this, _ret);
+    }
+    src_events.call(_this);
+    defineFreezeProp(_this, 'options', options);
+    defineFreezeProp(_this, 'shadow', {});
+    defineFreezeProp(_this, 'target', target);
+    defineFreezeProp(_this, 'parents', []);
+    defineFreezeProp(target, OBSERVER_PROP_NAME, _this);
+    _this.apply();
+    return _this;
+  }
+
+  /**
+   * 添加一个属性，动态添中的属性，无法被观察，
+   * 但是通过 set 方法添加的属性可能被观察。
+   * @param {string} name 名称
+   * @param {Object} value 值
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.set = function set(name, value) {
+    if (isFunction(value) || Observer.isIgnore(name)) {
+      return;
+    }
+    Object.defineProperty(this.target, name, {
+      get: function get() {
+        return this[OBSERVER_PROP_NAME].shadow[name];
+      },
+      set: function set(value) {
+        var observer = this[OBSERVER_PROP_NAME];
+        var oldValue = observer.shadow[name];
+        if (oldValue === value) return;
+        if (isObject(value)) {
+          var childObserver = new Observer(value);
+          observer.addChild(childObserver, name);
+        }
+        //移除旧值的父引用
+        //如果用 delete 删除属性将无法移除父子引用
+        if (oldValue && oldValue[OBSERVER_PROP_NAME]) {
+          observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
+        }
+        observer.shadow[name] = value;
+        observer.emitChange({ path: name, value: value });
+      },
+
+      configurable: true,
+      enumerable: true
+    });
+    this.target[name] = value;
+  };
+
+  /**
+   * 自动应用所有动态添加的属性
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.apply = function apply() {
+    if (isArray(this.target)) {
+      this._wrapArray(this.target);
+    }
+    var names = this._getPropertyNames(this.target);
+    names.forEach(function (name) {
+      var desc = Object.getOwnPropertyDescriptor(this.target, name);
+      if (!('value' in desc)) return;
+      this.set(name, this.target[name]);
+    }, this);
+  };
+
+  /**
+   * 清除所有父子引用
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.clearReference = function clearReference() {
+    each(this.target, function (name, value) {
+      if (isNull(value)) return;
+      var child = value[OBSERVER_PROP_NAME];
+      if (child) this.removeChild(child);
+    }, this);
+  };
+
+  /**
+   * 派发一个事件，事件会向父级对象冒泡
+   * @param {string} eventName 事件名称
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.dispatch = function dispatch(eventName, event) {
+    if (event._src_ === this) return;
+    event._src_ = event._src_ || this;
+    event._layer_ = event._layer_ || 0;
+    if (event._layer_++ >= EVENT_MAX_DISPATCH_LAYER) return;
+    this.emit(eventName, event);
+    if (!this.parents || this.parents.length < 1) return;
+    this.parents.forEach(function (item) {
+      if (!(item.name in item.parent.target)) {
+        return item.parent.removeChild(this);
+      }
+      var parentEvent = copy(event);
+      parentEvent.path = item.name + '.' + event.path;
+      item.parent.dispatch(eventName, parentEvent);
+    }, this);
+  };
+
+  /**
+   * 添子观察者对象
+   * @param {Object} child 父对象
+   * @param {String} name 属性名
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.addChild = function addChild(child, name) {
+    if (isNull(child) || isNull(name)) {
+      throw new error_LibError('Invalid paramaters');
+    }
+    if (child.options.root) return;
+    child.parents.push({ parent: this, name: name });
+  };
+
+  /**
+   * 移除子对象
+   * @param {Object} child 父对象
+   * @param {String} name 属性名
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.removeChild = function removeChild(child, name) {
+    if (isNull(child)) {
+      throw new error_LibError('Invalid paramaters');
+    }
+    var foundIndex = -1;
+    child.parents.forEach(function (item, index) {
+      if (item.parent === this && item.name === name) {
+        foundIndex = index;
+      }
+    }, this);
+    if (foundIndex > -1) {
+      child.parents.splice(foundIndex, 1);
+    }
+  };
+
+  /**
+   * 触发 change 事件
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.emitChange = function emitChange(event) {
+    this.dispatch(CHANGE_EVENT_NAME, event);
+  };
+
+  /**
+   * 获取所有成员名称列表
+   * @returns {Array} 所有成员名称列表
+   */
+
+
+  Observer.prototype._getPropertyNames = function _getPropertyNames() {
+    var names = isArray(this.target) ? this.target.map(function (item, index) {
+      return index;
+    }) : Object.keys(this.target);
+    return names.filter(function (name) {
+      return name !== OBSERVER_PROP_NAME;
+    });
+  };
+
+  /**
+   * 包裹数组
+   * @param {array} array 源数组
+   * @returns {array} 处理后的数组
+   */
+
+
+  Observer.prototype._wrapArray = function _wrapArray(array) {
+    defineFreezeProp(array, 'push', function () {
+      var items = [].slice.call(arguments);
+      items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
+        this[OBSERVER_PROP_NAME].set(array.length, item);
+      }, this);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+    });
+    defineFreezeProp(array, 'pop', function () {
+      var item = [].pop.apply(this, arguments);
+      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return item;
+    });
+    defineFreezeProp(array, 'unshift', function () {
+      var items = [].slice.call(arguments);
+      items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
+        this[OBSERVER_PROP_NAME].set(0, item);
+      }, this);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+    });
+    defineFreezeProp(array, 'shift', function () {
+      var item = [].shift.apply(this, arguments);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return item;
+    });
+    defineFreezeProp(array, 'splice', function () {
+      var startIndex = arguments[0];
+      var endIndex = isNull(arguments[1]) ? startIndex + arguments[1] : this.length - 1;
+      var items = [].splice.apply(this, arguments);
+      for (var i = startIndex; i <= endIndex; i++) {
+        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
+      }
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return items;
+    });
+    defineFreezeProp(array, 'set', function (index, value) {
+      if (index >= this.length) {
+        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      }
+      this[OBSERVER_PROP_NAME].set(index, value);
+    });
+  };
+
+  return Observer;
+}(src_events);
+
+/**
+ * 观察一个对象
+ * @param {Object} target 目标对象
+ * @return {Observer} 观察者对象
+ */
+
+
+observer_Observer.observe = function (target) {
+  return new observer_Observer(target);
 };
 
-/***/ }),
-/* 37 */
-/***/ (function(module, exports) {
-
-module.exports = true;
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports) {
-
-module.exports = {};
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject = __webpack_require__(19);
-var dPs = __webpack_require__(81);
-var enumBugKeys = __webpack_require__(33);
-var IE_PROTO = __webpack_require__(31)('IE_PROTO');
-var Empty = function () { /* empty */ };
-var PROTOTYPE = 'prototype';
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function () {
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = __webpack_require__(49)('iframe');
-  var i = enumBugKeys.length;
-  var lt = '<';
-  var gt = '>';
-  var iframeDocument;
-  iframe.style.display = 'none';
-  __webpack_require__(82).appendChild(iframe);
-  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
-  // createDict = iframe.contentWindow.Object;
-  // html.removeChild(iframe);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
-  iframeDocument.close();
-  createDict = iframeDocument.F;
-  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
-  return createDict();
+/**
+ * 检查是不是忽略的属性名
+ * @param {string} word 待检查的字符串
+ * @returns {void} 无返回
+ */
+observer_Observer.isIgnore = function (word) {
+  return IGNORE_REGEXPS.some(function (re) {
+    return re.test(word);
+  });
 };
 
-module.exports = Object.create || function create(O, Properties) {
-  var result;
-  if (O !== null) {
-    Empty[PROTOTYPE] = anObject(O);
-    result = new Empty();
-    Empty[PROTOTYPE] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO] = O;
-  } else result = createDict();
-  return Properties === undefined ? result : dPs(result, Properties);
-};
+/* harmony default export */ var src_observer = (observer_Observer);
+// CONCATENATED MODULE: ./src/template/template.js
 
 
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var def = __webpack_require__(11).f;
-var has = __webpack_require__(13);
-var TAG = __webpack_require__(18)('toStringTag');
-
-module.exports = function (it, tag, stat) {
-  if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
-};
 
 
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.f = __webpack_require__(18);
 
 
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global = __webpack_require__(8);
-var core = __webpack_require__(10);
-var LIBRARY = __webpack_require__(37);
-var wksExt = __webpack_require__(41);
-var defineProperty = __webpack_require__(11).f;
-module.exports = function (name) {
-  var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
-  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: wksExt.f(name) });
-};
 
 
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
+/**
+ * 模板类
+ * 可能通过 element 作为参数，创建一个模板实例
+ */
 
-exports.__esModule = true;
+var template_Template = function (_EventEmitter) {
+  inherits_default()(Template, _EventEmitter);
 
-var _compiler = __webpack_require__(58);
+  /**
+   * 构建一个模板板实例
+   * @param {HTMLNode} element HTML 元素
+   * @param {Object} options 选项
+   * @returns {void} 无返回
+   */
+  function Template(element, options) {
+    classCallCheck_default()(this, Template);
 
-var _compiler2 = _interopRequireDefault(_compiler);
+    var _this = possibleConstructorReturn_default()(this, _EventEmitter.call(this));
 
-var _directive = __webpack_require__(4);
+    options = options || {};
+    _this.options = options;
+    _this.element = element;
+    _this.compiler = options.compiler || new compiler_Compiler(options);
+    _this.render = _this.compiler.compile(_this.element);
+    _this.update = _this.update.bind(_this);
 
-var _directive2 = _interopRequireDefault(_directive);
+    if (!(typeof _this.update === 'function')) {
+      throw new TypeError('Value of "this.update" violates contract.\n\nExpected:\n() => any\n\nGot:\n' + _inspect(_this.update));
+    }
 
-var _expression = __webpack_require__(26);
+    _this._update = _this._update.bind(_this);
 
-var _expression2 = _interopRequireDefault(_expression);
+    if (!(typeof _this._update === 'function')) {
+      throw new TypeError('Value of "this._update" violates contract.\n\nExpected:\n() => any\n\nGot:\n' + _inspect(_this._update));
+    }
 
-var _template = __webpack_require__(133);
+    _this._updateTimer = 0;
+    return _this;
+  }
 
-var _template2 = _interopRequireDefault(_template);
+  /**
+   * 更新当前模板 (会过滤不必要的更新)
+   * @returns {void} 无返回
+   */
 
-var _directives = __webpack_require__(59);
 
-var _directives2 = _interopRequireDefault(_directives);
+  Template.prototype.update = function update() {
+    if (this._updateTimer) {
+      clearTimeout(this._updateTimer);
+      this._updateTimer = null;
+    }
+    this._updateTimer = setTimeout(this._update, 0);
+  };
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  /**
+   * 更新当前模板内部方法 
+   * @returns {void} 无返回
+   */
 
-_template2.default.Template = _template2.default;
-_template2.default.Compiler = _compiler2.default;
-_template2.default.Directive = _directive2.default;
-_template2.default.directives = _directives2.default;
-_template2.default.Expression = _expression2.default;
 
-exports.default = _template2.default;
-module.exports = exports['default'];
+  Template.prototype._update = function _update() {
+    if (!this._updateTimer || !this.observer) return;
+    this.emit('update', this);
+    this.render(this.observer.target);
+    this._onBind();
+  };
 
-/***/ }),
-/* 44 */
-/***/ (function(module, exports) {
+  /**
+   * 在绑定成功时
+   * @returns {void} 无返回
+   */
 
-exports.__esModule = true;
-exports.default = { "name": "mokit", "version": "4.0.0-alpha2" };
-module.exports = exports["default"];
 
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
+  Template.prototype._onBind = function _onBind() {
+    if (this._bound) return;
+    this._bound = true;
+    this.emit('bind', this);
+  };
 
-exports.__esModule = true;
+  /**
+   * 将模板绑定到一个 scope
+   * @param {Object} scope 绑定的上下文对象
+   * @param {boolean} disableFirst 是否禁用第一次的自动渲染
+   * @returns {void} 无返回
+   */
 
-var _component = __webpack_require__(46);
 
-var _component2 = _interopRequireDefault(_component);
+  Template.prototype.bind = function bind(scope, disableFirst) {
+    if (!scope) return;
+    this.unbind();
+    this.observer = new src_observer(scope, {
+      root: this.options.root
+    });
+    scope.$self = scope;
+    this.observer.on('change', this.update);
+    if (disableFirst) {
+      this._onBind();
+    } else {
+      this.update();
+    }
+  };
 
-var _components = __webpack_require__(135);
+  /**
+   * 解绑定
+   * @returns {void} 无返回
+   */
 
-var _components2 = _interopRequireDefault(_components);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  Template.prototype.unbind = function unbind() {
+    if (!this.observer) return;
+    this.observer.removeListener('change', this.update);
+    this.observer.clearReference();
+    this.observer = null;
+  };
 
-_component2.default.components = _components2.default;
+  /**
+   * 释放
+   * @returns {void} 无返回
+   */
 
-exports.default = _component2.default;
-module.exports = exports['default'];
 
-/***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
+  Template.prototype.dispose = function dispose() {
+    this.unbind();
+    this.render.dispose();
+  };
 
-exports.__esModule = true;
-exports.default = undefined;
+  return Template;
+}(src_events);
 
-var _extends2 = __webpack_require__(27);
 
-var _extends3 = _interopRequireDefault(_extends2);
 
-var _classCallCheck2 = __webpack_require__(0);
+function _inspect(input, depth) {
+  var maxDepth = 4;
+  var maxKeys = 15;
 
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+  if (depth === undefined) {
+    depth = 0;
+  }
 
-var _createClass2 = __webpack_require__(35);
+  depth += 1;
 
-var _createClass3 = _interopRequireDefault(_createClass2);
+  if (input === null) {
+    return 'null';
+  } else if (input === undefined) {
+    return 'void';
+  } else if (typeof input === 'string' || typeof input === 'number' || typeof input === 'boolean') {
+    return typeof input === 'undefined' ? 'undefined' : typeof_default()(input);
+  } else if (Array.isArray(input)) {
+    if (input.length > 0) {
+      if (depth > maxDepth) return '[...]';
 
-var _possibleConstructorReturn2 = __webpack_require__(1);
+      var first = _inspect(input[0], depth);
 
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+      if (input.every(function (item) {
+        return _inspect(item, depth) === first;
+      })) {
+        return first.trim() + '[]';
+      } else {
+        return '[' + input.slice(0, maxKeys).map(function (item) {
+          return _inspect(item, depth);
+        }).join(', ') + (input.length >= maxKeys ? ', ...' : '') + ']';
+      }
+    } else {
+      return 'Array';
+    }
+  } else {
+    var keys = Object.keys(input);
 
-var _inherits2 = __webpack_require__(2);
+    if (!keys.length) {
+      if (input.constructor && input.constructor.name && input.constructor.name !== 'Object') {
+        return input.constructor.name;
+      } else {
+        return 'Object';
+      }
+    }
 
-var _inherits3 = _interopRequireDefault(_inherits2);
+    if (depth > maxDepth) return '{...}';
+    var indent = '  '.repeat(depth - 1);
+    var entries = keys.slice(0, maxKeys).map(function (key) {
+      return (/^([A-Z_$][A-Z0-9_$]*)$/i.test(key) ? key : JSON.stringify(key)) + ': ' + _inspect(input[key], depth) + ';';
+    }).join('\n  ' + indent);
 
-var _dec, _class;
+    if (keys.length >= maxKeys) {
+      entries += '\n  ' + indent + '...';
+    }
 
-var _template = __webpack_require__(43);
+    if (input.constructor && input.constructor.name && input.constructor.name !== 'Object') {
+      return input.constructor.name + ' {\n  ' + indent + entries + '\n' + indent + '}';
+    } else {
+      return '{\n  ' + indent + entries + '\n' + indent + '}';
+    }
+  }
+}
+// CONCATENATED MODULE: ./src/template/index.js
 
-var _template2 = _interopRequireDefault(_template);
 
-var _watcher = __webpack_require__(61);
 
-var _watcher2 = _interopRequireDefault(_watcher);
 
-var _ntils = __webpack_require__(3);
 
-var _common = __webpack_require__(5);
 
-var _directive = __webpack_require__(134);
+directive_Directive.directives = template_directives;
 
-var _directive2 = _interopRequireDefault(_directive);
+template_Template.Template = template_Template;
+template_Template.Compiler = compiler_Compiler;
+template_Template.Directive = directive_Directive;
+template_Template.directives = template_directives;
+template_Template.Expression = expression_Expression;
 
-var _decorators = __webpack_require__(6);
+/* harmony default export */ var src_template = (template_Template);
+// CONCATENATED MODULE: ./src/watcher/index.js
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var directives = _template2.default.directives;
+
+
+/**
+ * Watcher 类
+ * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
+ */
+
+var watcher_Watcher = function () {
+
+  /**
+   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
+   * @param {function} calcor 计算函数
+   * @param {function} handler 处理函数
+   * @param {boolean} first 是否自动执行第一次
+   * @returns {void} 无返回
+   */
+  function Watcher(calcor, handler, first) {
+    classCallCheck_default()(this, Watcher);
+
+    if (!isFunction(calcor) || !isFunction(handler)) {
+      throw new error_LibError('Invalid parameters');
+    }
+    this.calcor = calcor;
+    this.handler = handler;
+    if (first) this.calc(true);
+  }
+
+  /**
+   * 执行计算
+   * @param {boolean} force 是否强制触发「计算函数」
+   * @returns {Object} 计算后的值
+   */
+
+
+  Watcher.prototype.calc = function calc(force) {
+    var newValue = this.calcor();
+    if (force || !deepEqual(newValue, this.value)) {
+      this.handler(newValue, this.value);
+    }
+    this.value = clone(newValue);
+  };
+
+  return Watcher;
+}();
+
+
+// CONCATENATED MODULE: ./src/component/directive.js
+
+
+
+
+
+
+
+var component_directive_Directive = src_template.Directive;
+
+/* harmony default export */ var component_directive = (function (options) {
+  var _dec, _class;
+
+  var ComponentDirective = (_dec = decorators_meta(extends_default()({}, options, {
+    type: component_directive_Directive.types.ELEMENT,
+    literal: true,
+    final: true,
+    level: component_directive_Directive.levels.ELEMENT
+  })), _dec(_class = function (_Directive) {
+    inherits_default()(ComponentDirective, _Directive);
+
+    function ComponentDirective(options) {
+      classCallCheck_default()(this, ComponentDirective);
+
+      var _this = possibleConstructorReturn_default()(this, _Directive.call(this, options));
+
+      var meta = _this.meta;
+      _this.component = new meta.component({
+        deferReady: true,
+        parent: meta.parent || meta.scope
+      });
+      return _this;
+    }
+
+    ComponentDirective.prototype.bind = function bind() {
+      this.handleAttrs();
+      this.node.$target = this.component;
+      this.handler = this.compiler.compile(this.node, {
+        element: false,
+        children: false
+      });
+      this.component.$mount(this.node);
+      this.handleContents();
+      if (this.node.parentNode) {
+        this.node.parentNode.removeChild(this.node);
+      }
+    };
+
+    ComponentDirective.prototype.handleAttrs = function handleAttrs() {
+      this.attrs = [].slice.call(this.node.attributes);
+      var directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
+      this.attrs.forEach(function (attr) {
+        if (directiveRegexp.test(attr.name)) return;
+        if (attr.name in this.component) return;
+        this.component.$element.setAttribute(attr.name, attr.value);
+        this.node.removeAttribute(attr.name);
+      }, this);
+    };
+
+    ComponentDirective.prototype.handleContents = function handleContents() {
+      this.placeHandlers = [];
+      var places = [].slice.call(this.component.$element.querySelectorAll('[' + this.prefix + '\\:content]'));
+      places.forEach(function (place) {
+        //将内容插入到指定的「位置」
+        var contents = null;
+        var selector = place.getAttribute(this.prefix + ':content');
+        if (!selector) {
+          contents = [].slice.call(this.node.childNodes);
+        } else {
+          contents = [].slice.call(this.node.querySelectorAll(selector));
+        }
+        if (!contents || contents.length < 1) return;
+        place.innerHTML = '';
+        contents.forEach(function (content) {
+          place.appendChild(content.cloneNode(true));
+        }, this);
+        //编译插入后的子「内容模板」
+        var handler = this.compiler.compile(place);
+        this.placeHandlers.push(handler);
+      }, this);
+    };
+
+    ComponentDirective.prototype.execute = function execute(scope) {
+      this.handler(scope);
+      if (!this._ready_) {
+        this._ready_ = true;
+        this.component.$emit('ready');
+      }
+      this.placeHandlers.forEach(function (handler) {
+        handler(scope);
+      }, this);
+    };
+
+    return ComponentDirective;
+  }(component_directive_Directive)) || _class);
+
+  return ComponentDirective;
+});
+// CONCATENATED MODULE: ./src/component/component.js
+
+
+
+
+
+
+var component__dec, component__class;
+
+
+
+
+
+
+
+
+var component_directives = src_template.directives;
 
 /**
  * 组件类
@@ -2102,10 +4129,10 @@ var directives = _template2.default.directives;
  * @returns {Component} 组件类
  */
 
-var Component = (_dec = (0, _decorators.meta)({
+var component_Component = (component__dec = decorators_meta({
   template: '<span>Invaild template</span>'
-}), _dec(_class = function (_Entity) {
-  (0, _inherits3.default)(Component, _Entity);
+}), component__dec(component__class = function (_Entity) {
+  inherits_default()(Component, _Entity);
 
   /**
    * 组件类构造函数
@@ -2113,22 +4140,22 @@ var Component = (_dec = (0, _decorators.meta)({
    * @returns {void} 无返回
    */
   function Component(options) {
-    (0, _classCallCheck3.default)(this, Component);
+    classCallCheck_default()(this, Component);
 
-    var _this = (0, _possibleConstructorReturn3.default)(this, _Entity.call(this));
+    var _this = possibleConstructorReturn_default()(this, _Entity.call(this));
 
-    options = options || (0, _ntils.create)(null);
-    (0, _ntils.copy)(options, _this);
+    options = options || create(null);
+    copy(options, _this);
     _this._processMeta_();
     var meta = _this.meta;
     _this.$setModel(meta.model);
     _this._bindWatches_(meta.watches);
     _this._bindDirectives_(meta.directives);
-    _this._bindComponents_((0, _extends3.default)({}, Component.components, meta.components, {
+    _this._bindComponents_(extends_default()({}, Component.components, meta.components, {
       'self': _this.constructor
     }));
     _this._bindEvents_(meta.events);
-    (0, _ntils.defineFreezeProp)(_this, '$children', []);
+    defineFreezeProp(_this, '$children', []);
     if (options.parent) _this.$setParent(options.parent);
     _this.$emit('beforeInit');
     return _this;
@@ -2161,8 +4188,8 @@ var Component = (_dec = (0, _decorators.meta)({
   Component.prototype.$addChild = function $addChild(child) {
     if (!(child instanceof Component)) return;
     this.$children.push(child);
-    (0, _ntils.defineFreezeProp)(child, '$parent', this);
-    (0, _ntils.defineFreezeProp)(child, '$root', this.$root || this);
+    defineFreezeProp(child, '$parent', this);
+    defineFreezeProp(child, '$root', this.$root || this);
   };
 
   /**
@@ -2175,7 +4202,7 @@ var Component = (_dec = (0, _decorators.meta)({
   Component.prototype.$removeChild = function $removeChild(child) {
     var index = this.$children.indexOf(child);
     this.$children.splice(index, 1);
-    (0, _ntils.defineFreezeProp)(child, '$parent', null);
+    defineFreezeProp(child, '$parent', null);
     //defineFreezeProp(child, '$root', null);
   };
 
@@ -2195,10 +4222,10 @@ var Component = (_dec = (0, _decorators.meta)({
     if (!components) return;
     this.$components = this.$components || {};
     this.$directives = this.$directives || {};
-    (0, _ntils.each)(components, function (name, component) {
+    utils_each(components, function (name, component) {
       if (!component) return;
       _this2.$components[name] = component;
-      _this2.$directives[name] = (0, _directive2.default)({
+      _this2.$directives[name] = component_directive({
         component: component,
         parent: _this2
       });
@@ -2217,7 +4244,7 @@ var Component = (_dec = (0, _decorators.meta)({
 
     if (!directives) return;
     this.$directives = this.$directives || {};
-    (0, _ntils.each)(directives, function (name, directive) {
+    utils_each(directives, function (name, directive) {
       if (!directive) return;
       _this3.$directives[name] = directive;
     });
@@ -2233,9 +4260,9 @@ var Component = (_dec = (0, _decorators.meta)({
   Component.prototype._bindEvents_ = function _bindEvents_(events) {
     var _this4 = this;
 
-    (0, _ntils.each)(events, function (name, handlers) {
+    utils_each(events, function (name, handlers) {
       handlers.forEach(function (handler) {
-        handler = (0, _ntils.isFunction)(handler) ? handler : _this4[handler];
+        handler = isFunction(handler) ? handler : _this4[handler];
         _this4.$on(name, handler.bind(_this4));
       });
     });
@@ -2249,12 +4276,12 @@ var Component = (_dec = (0, _decorators.meta)({
 
 
   Component.prototype.$setModel = function $setModel(model) {
-    if ((0, _ntils.isFunction)(model)) {
+    if (isFunction(model)) {
       this.$model = model.call(this);
     } else {
       this.$model = model || {};
     }
-    (0, _ntils.each)(this.$model, function (name) {
+    utils_each(this.$model, function (name) {
       Object.defineProperty(this, name, {
         configurable: true,
         enumerable: true,
@@ -2313,11 +4340,11 @@ var Component = (_dec = (0, _decorators.meta)({
     var _this6 = this;
 
     this.$watchers = this.$watchers || [];
-    var calcerFunc = (0, _ntils.isFunction)(calcer) ? calcer : function () {
-      return (0, _ntils.getByPath)(_this6, calcer);
+    var calcerFunc = isFunction(calcer) ? calcer : function () {
+      return getByPath(_this6, calcer);
     };
-    var handlerFunc = (0, _ntils.isFunction)(handler) ? handler : (0, _ntils.getByPath)(this, handler);
-    var watcher = new _watcher2.default(calcerFunc, handlerFunc.bind(this));
+    var handlerFunc = isFunction(handler) ? handler : getByPath(this, handler);
+    var watcher = new watcher_Watcher(calcerFunc, handlerFunc.bind(this));
     this.$watchers.push(watcher);
     return watcher;
   };
@@ -2338,8 +4365,8 @@ var Component = (_dec = (0, _decorators.meta)({
 
   Component.prototype._processMeta_ = function _processMeta_() {
     var meta = this.meta;
-    if ((0, _ntils.isString)(meta.template)) {
-      meta.template = (0, _ntils.parseDom)(meta.template);
+    if (isString(meta.template)) {
+      meta.template = parseDom(meta.template);
     }
   };
 
@@ -2355,9 +4382,9 @@ var Component = (_dec = (0, _decorators.meta)({
     var meta = this.meta;
     this.$emit('create');
     var element = meta.template.cloneNode(true);
-    (0, _ntils.defineFreezeProp)(this, '$element', element);
+    defineFreezeProp(this, '$element', element);
     if (!this.$element || this.$element.nodeName === '#text') {
-      throw new _common.Error('Invalid component template');
+      throw new error_LibError('Invalid component template');
     }
     this.$emit('created');
   };
@@ -2375,11 +4402,11 @@ var Component = (_dec = (0, _decorators.meta)({
     this._compiled_ = true;
     this.$emit('init');
     this._createElement_();
-    var template = new _template2.default(this.$element, {
+    var template = new src_template(this.$element, {
       directives: this.$directives,
       root: true
     });
-    (0, _ntils.defineFreezeProp)(this, '$template', template);
+    defineFreezeProp(this, '$template', template);
     this.$template.bind(this);
     this.$template.on('update', this._onTemplateUpdate_.bind(this));
     this.$template.on('bind', function () {
@@ -2503,7 +4530,7 @@ var Component = (_dec = (0, _decorators.meta)({
     setPrototypeOf(this, null);
   };
 
-  (0, _createClass3.default)(Component, [{
+  createClass_default()(Component, [{
     key: '$root',
     get: function get() {
       if (this.$parent) {
@@ -2513,1138 +4540,271 @@ var Component = (_dec = (0, _decorators.meta)({
       }
     }
   }]);
+
   return Component;
-}(_common.Entity)) || _class);
-exports.default = Component;
-module.exports = exports['default'];
+}(entity_Entity)) || component__class);
 
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
+// CONCATENATED MODULE: ./src/component/components/view.js
 
-// optional / simple context binding
-var aFunction = __webpack_require__(68);
-module.exports = function (fn, that, length) {
-  aFunction(fn);
-  if (that === undefined) return fn;
-  switch (length) {
-    case 1: return function (a) {
-      return fn.call(that, a);
-    };
-    case 2: return function (a, b) {
-      return fn.call(that, a, b);
-    };
-    case 3: return function (a, b, c) {
-      return fn.call(that, a, b, c);
-    };
+
+
+
+
+var view__dec, view__class, view__class2, view__temp;
+
+
+
+
+
+
+/**
+ * 内置视图组件
+ * 可以加载并显示其它组件，并可以指定「转场效果」
+ */
+var view_View = (view__dec = decorators_template('<div></div>'), view__dec(view__class = (view__temp = view__class2 = function (_Component) {
+  inherits_default()(View, _Component);
+
+  function View() {
+    classCallCheck_default()(this, View);
+
+    return possibleConstructorReturn_default()(this, _Component.apply(this, arguments));
   }
-  return function (/* ...args */) {
-    return fn.apply(that, arguments);
+
+  /**
+   * 切换到指定的组件
+   * @param {Component} component 组件
+   * @param {transition} transition 转场控制组件
+   * @returns {void} 无返回
+   */
+  View.prototype.switchTo = function switchTo(component, transition) {
+    if (transition) {
+      this.transition = transition;
+    }
+    this.component = component;
   };
+
+  createClass_default()(View, [{
+    key: 'component',
+    set: function set(component) {
+      if (this._transitioning) return;
+      this._transitioning = true;
+      //如果 value 是字符串则尝试从 $parent.components 中获取组件类 
+      if (isString(component)) {
+        if (this.$parent && this.$parent.$components) {
+          this.component = this.$parent.$components[component];
+        } else {
+          this.component = null;
+        }
+        return;
+      }
+      //声明新旧组件变量
+      var newComponentInstance = null;
+      var oldComponentInstance = this.componentInstance;
+      //创建新组件实例
+      if (isFunction(component)) {
+        newComponentInstance = new component({
+          parent: this
+        });
+      } else {
+        component.$setParent(this);
+        newComponentInstance = component;
+      }
+      //通过转场控制器进行转场准备
+      this.transition.prep(newComponentInstance, oldComponentInstance);
+      //挂载新组件实例
+      newComponentInstance.$appendTo(this.$element);
+      //通过转场控制器进行转场
+      this.transition.go(newComponentInstance, oldComponentInstance, function () {
+        //触发相关事件
+        this.$emit('enter', newComponentInstance);
+        this.$emit('leave', oldComponentInstance);
+        //销毁旧组件实例
+        if (oldComponentInstance) {
+          oldComponentInstance.$dispose();
+        }
+        this._transitioning = false;
+      }.bind(this));
+      //暂存当前组件实例
+      this.componentInstance = newComponentInstance;
+    },
+    get: function get() {
+      return this._Component;
+    }
+  }, {
+    key: 'transition',
+    get: function get() {
+      return this._transition || View.transition;
+    },
+    set: function set(transition) {
+      if (this._transitioning) return;
+      if (!transition || isFunction(transition.prep) && isFunction(transition.go)) {
+        if (this._transition && isFunction(this._transition.clean)) {
+          this._transition.clean(this);
+        }
+        if (transition && isFunction(transition.init)) {
+          transition.init(this);
+        }
+        this._transition = transition;
+      } else {
+        throw new error_LibError('Invalid transition');
+      }
+    }
+  }]);
+
+  return View;
+}(component_Component), view__class2.transition = {
+  //init: function () { },
+  //clean: function () { },
+  /**
+   * 转场开始前的准备
+   * @param {Component} newComponent 新组件
+   * @param {Component} oldComponent 旧组件
+   * @returns {void} 无返回
+   */
+  prep: function prep(newComponent, oldComponent) {
+    if (oldComponent) oldComponent.$element.style.display = 'none';
+  },
+
+  /**
+   * 执行转场动画
+   * @param {Component} newComponent 新组件
+   * @param {Component} oldComponent 旧组件
+   * @param {Function} done 完成后的回调
+   * @returns {void} 无返回
+   */
+  go: function go(newComponent, oldComponent, done) {
+    done();
+  }
+}, view__temp)) || view__class);
+
+// CONCATENATED MODULE: ./src/component/components/index.js
+
+
+/* harmony default export */ var component_components = ({ View: view_View });
+// CONCATENATED MODULE: ./src/component/index.js
+
+
+
+component_Component.components = component_components;
+
+/* harmony default export */ var src_component = (component_Component);
+// CONCATENATED MODULE: ./src/bootstrap.js
+
+
+
+
+function bootstrap(component, mountNode, options) {
+  if (!component || !component.meta) {
+    throw new error_LibError('Involid Component');
+  }
+  options = options || create(null);
+  if (isNull(options.append)) options.append = true;
+  if (isFunction(component)) {
+    component = new component();
+  }
+  component.$mount(mountNode, options.append);
+  return component;
+};
+// CONCATENATED MODULE: ./src/index.js
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Directive", function() { return src_Directive; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "meta", function() { return decorators_meta; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "event", function() { return decorators_event; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "on", function() { return on; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "model", function() { return decorators_model; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "watch", function() { return watch; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "template", function() { return decorators_template; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "components", function() { return decorators_components; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "dependencies", function() { return dependencies; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "directives", function() { return decorators_directives; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Entity", function() { return entity_Entity; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Error", function() { return error_LibError; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Template", function() { return src_template; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Component", function() { return src_component; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Watcher", function() { return watcher_Watcher; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Observer", function() { return src_observer; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return src_events; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "bootstrap", function() { return bootstrap; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "common", function() { return common; });
+
+
+
+
+
+
+
+
+
+
+
+var src_Directive = src_template.Directive;
+
+//持载模板相关对象
+copy(src_template, bootstrap);
+copy(src_component, bootstrap);
+copy(common, bootstrap);
+copy(decorators, bootstrap);
+copy($info_6800e988_0675_580d_7be2_6d2098ce28c5, bootstrap);
+
+bootstrap.Template = src_template;
+bootstrap.Component = src_component;
+bootstrap.Watcher = watcher_Watcher;
+bootstrap.Observer = src_observer;
+bootstrap.EventEmitter = src_events;
+bootstrap.decorators = decorators;
+bootstrap.bootstrap = bootstrap;
+bootstrap.common = common;
+
+bootstrap.registerComponent = function (name, component) {
+  if (!component) return src_component.components[name];
+  src_component.components[name] = isFunction(component) ? component : this.component(component);
 };
 
+bootstrap.registerDirective = function (name, directive) {
+  if (!directive) return src_template.directives[name];
+  src_Directive.directives[name] = isFunction(directive) ? directive : this.directive(directive);
+};
+
+bootstrap.component = function () {
+  return src_component.extend.apply(src_component, arguments);
+};
+
+bootstrap.directive = function () {
+  return src_Directive.extend.apply(src_Directive, arguments);
+};
+
+
+
+
+
+window.mokit = bootstrap;
+/* harmony default export */ var src = __webpack_exports__["default"] = (bootstrap);
 
 /***/ }),
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = !__webpack_require__(12) && !__webpack_require__(21)(function () {
-  return Object.defineProperty(__webpack_require__(49)('div'), 'a', { get: function () { return 7; } }).a != 7;
-});
-
+module.exports = { "default": __webpack_require__(49), __esModule: true };
 
 /***/ }),
 /* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(20);
-var document = __webpack_require__(8).document;
-// typeof document.createElement is 'object' in old IE
-var is = isObject(document) && isObject(document.createElement);
-module.exports = function (it) {
-  return is ? document.createElement(it) : {};
-};
+__webpack_require__(50);
+module.exports = __webpack_require__(4).Object.assign;
 
 
 /***/ }),
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var has = __webpack_require__(13);
-var toIObject = __webpack_require__(17);
-var arrayIndexOf = __webpack_require__(70)(false);
-var IE_PROTO = __webpack_require__(31)('IE_PROTO');
+// 19.1.3.1 Object.assign(target, source)
+var $export = __webpack_require__(8);
 
-module.exports = function (object, names) {
-  var O = toIObject(object);
-  var i = 0;
-  var result = [];
-  var key;
-  for (key in O) if (key != IE_PROTO) has(O, key) && result.push(key);
-  // Don't enum bug & hidden keys
-  while (names.length > i) if (has(O, key = names[i++])) {
-    ~arrayIndexOf(result, key) || result.push(key);
-  }
-  return result;
-};
+$export($export.S + $export.F, 'Object', { assign: __webpack_require__(52) });
 
 
 /***/ }),
 /* 51 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// fallback for non-array-like ES3 and non-enumerable old V8 strings
-var cof = __webpack_require__(52);
-// eslint-disable-next-line no-prototype-builtins
-module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
-  return cof(it) == 'String' ? it.split('') : Object(it);
-};
-
-
-/***/ }),
-/* 52 */
-/***/ (function(module, exports) {
-
-var toString = {}.toString;
-
-module.exports = function (it) {
-  return toString.call(it).slice(8, -1);
-};
-
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 7.1.13 ToObject(argument)
-var defined = __webpack_require__(29);
-module.exports = function (it) {
-  return Object(defined(it));
-};
-
-
-/***/ }),
-/* 54 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var LIBRARY = __webpack_require__(37);
-var $export = __webpack_require__(15);
-var redefine = __webpack_require__(55);
-var hide = __webpack_require__(16);
-var has = __webpack_require__(13);
-var Iterators = __webpack_require__(38);
-var $iterCreate = __webpack_require__(80);
-var setToStringTag = __webpack_require__(40);
-var getPrototypeOf = __webpack_require__(83);
-var ITERATOR = __webpack_require__(18)('iterator');
-var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
-var FF_ITERATOR = '@@iterator';
-var KEYS = 'keys';
-var VALUES = 'values';
-
-var returnThis = function () { return this; };
-
-module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
-  $iterCreate(Constructor, NAME, next);
-  var getMethod = function (kind) {
-    if (!BUGGY && kind in proto) return proto[kind];
-    switch (kind) {
-      case KEYS: return function keys() { return new Constructor(this, kind); };
-      case VALUES: return function values() { return new Constructor(this, kind); };
-    } return function entries() { return new Constructor(this, kind); };
-  };
-  var TAG = NAME + ' Iterator';
-  var DEF_VALUES = DEFAULT == VALUES;
-  var VALUES_BUG = false;
-  var proto = Base.prototype;
-  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = $native || getMethod(DEFAULT);
-  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
-  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
-  var methods, key, IteratorPrototype;
-  // Fix native
-  if ($anyNative) {
-    IteratorPrototype = getPrototypeOf($anyNative.call(new Base()));
-    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
-      // Set @@toStringTag to native iterators
-      setToStringTag(IteratorPrototype, TAG, true);
-      // fix for some old engines
-      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
-    }
-  }
-  // fix Array#{values, @@iterator}.name in V8 / FF
-  if (DEF_VALUES && $native && $native.name !== VALUES) {
-    VALUES_BUG = true;
-    $default = function values() { return $native.call(this); };
-  }
-  // Define iterator
-  if ((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
-    hide(proto, ITERATOR, $default);
-  }
-  // Plug for library
-  Iterators[NAME] = $default;
-  Iterators[TAG] = returnThis;
-  if (DEFAULT) {
-    methods = {
-      values: DEF_VALUES ? $default : getMethod(VALUES),
-      keys: IS_SET ? $default : getMethod(KEYS),
-      entries: $entries
-    };
-    if (FORCED) for (key in methods) {
-      if (!(key in proto)) redefine(proto, key, methods[key]);
-    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
-  }
-  return methods;
-};
-
-
-/***/ }),
-/* 55 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(16);
-
-
-/***/ }),
-/* 56 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
-var $keys = __webpack_require__(50);
-var hiddenKeys = __webpack_require__(33).concat('length', 'prototype');
-
-exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-  return $keys(O, hiddenKeys);
-};
-
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var pIE = __webpack_require__(25);
-var createDesc = __webpack_require__(22);
-var toIObject = __webpack_require__(17);
-var toPrimitive = __webpack_require__(28);
-var has = __webpack_require__(13);
-var IE8_DOM_DEFINE = __webpack_require__(48);
-var gOPD = Object.getOwnPropertyDescriptor;
-
-exports.f = __webpack_require__(12) ? gOPD : function getOwnPropertyDescriptor(O, P) {
-  O = toIObject(O);
-  P = toPrimitive(P, true);
-  if (IE8_DOM_DEFINE) try {
-    return gOPD(O, P);
-  } catch (e) { /* empty */ }
-  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
-};
-
-
-/***/ }),
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _extends2 = __webpack_require__(27);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _ntils = __webpack_require__(3);
-
-var _expression = __webpack_require__(26);
-
-var _expression2 = _interopRequireDefault(_expression);
-
-var _directives = __webpack_require__(59);
-
-var _directives2 = _interopRequireDefault(_directives);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var DEFAULT_PREFIX = 'm';
-
-/**
- * 模板编译器
- * 可以通过指定「前缀」或「指令集」构建实例
- */
-
-var Compiler = function () {
-
-  /**
-   * 构造一个编译器
-   * @param {Object} options 选项
-   * @returns {void} 无返回
-   */
-  function Compiler(options) {
-    (0, _classCallCheck3.default)(this, Compiler);
-
-    options = options || {};
-    this.prefix = options.prefix || DEFAULT_PREFIX;
-    this.elementDirectives = {};
-    this.attributeDirectives = {};
-    this.registerDirectives((0, _extends3.default)({}, _directives2.default, options.directives));
-  }
-
-  /**
-  * 将字符串转成「驼峰」式
-  * @param {string} str 原始字符串
-  * @param {number} mode 1 大驼峰，0 小驼峰
-  * @return {string} 转换后的字符串
-  */
-
-
-  Compiler.prototype.toCamelCase = function toCamelCase(str, mode) {
-    if (str) {
-      str = str.replace(/\-[a-z0-9]/g, function ($1) {
-        return $1.slice(1).toUpperCase();
-      });
-      str = str.replace(/^[a-z]/i, function ($1) {
-        return mode ? $1.toUpperCase() : $1.toLowerCase();
-      });
-    }
-    return str;
-  };
-
-  /**
-   * 将字符串转成分隔形式
-   * @param {string} str 原始字符串
-   * @return {string} 转换后的字符串
-   */
-
-
-  Compiler.prototype.toSplitCase = function toSplitCase(str) {
-    if (str) {
-      str = str.replace(/([A-Z])/g, '-$1');
-      if (str[0] == '-') str = str.slice(1);
-    }
-    return str;
-  };
-
-  /**
-   * 添加指令
-   * @param {Object} directives 指令集 
-   * @returns {void} 无返回
-   */
-
-
-  Compiler.prototype.registerDirectives = function registerDirectives(directives) {
-    var _this = this;
-
-    (0, _ntils.each)(directives, function (name, directive) {
-      name = _this.toSplitCase(name);
-      var fullName = directive.meta.prefix === false ? name : _this.prefix + ':' + name;
-      if (directive.meta.type == _directive2.default.types.ELEMENT) {
-        _this.elementDirectives[fullName.toUpperCase()] = directive;
-      } else {
-        _this.attributeDirectives[fullName.toLowerCase()] = directive;
-      }
-    });
-  };
-
-  /**
-   * 解析要 attr 指令信息
-   * @param {string} attrName 要解析的名称字符串
-   * @returns {Object} 解析后的对象
-   */
-
-
-  Compiler.prototype._parseAttrInfo = function _parseAttrInfo(attrName) {
-    var _this2 = this;
-
-    var parts = attrName.toLowerCase().split(':');
-    var info = {};
-    if (parts.length > 1) {
-      info.name = parts[0] + ':' + parts[1];
-      info.decorates = parts.slice(2).map(function (item) {
-        return _this2.toCamelCase(item);
-      });
-    } else {
-      info.name = parts[0];
-      info.decorates = [];
-    }
-    return info;
-  };
-
-  /**
-   * 创建一个指令实例
-   * @param {Directive} Directive 指令类
-   * @param {Object} options 指令构建选项
-   * @returns {Directive} 指令实例
-   */
-
-
-  Compiler.prototype._createDirectiveInstance = function _createDirectiveInstance(Directive, options) {
-    options.compiler = this;
-    options.prefix = this.prefix;
-    return new Directive(options);
-  };
-
-  /**
-   * 初始化一个编译完成的 handler
-   * @param {function} handler 编译后的的模板函数
-   * @returns {void} 无返回
-   */
-
-
-  Compiler.prototype._bindHandler = function _bindHandler(handler) {
-    //排序 directives
-    handler.directives = handler.directives.sort(function (a, b) {
-      return b.meta.level - a.meta.level;
-    });
-    //初始化 directives
-    var boundDirectives = [];
-    (0, _ntils.each)(handler.directives, function (index, directive) {
-      directive.index = index;
-      directive.bind();
-      boundDirectives.push(directive);
-      //移除完成绑定的指令对应的 attribute
-      if (directive.meta.remove !== false && directive.attribute) {
-        directive.node.removeAttribute(directive.attribute.name);
-      }
-      //如果遇到一个「终态」指令，停止向下初始化
-      if (directive.meta.final) {
-        return handler.final = true;
-      }
-    });
-    handler.directives = boundDirectives;
-  };
-
-  /**
-   * 编译一个元素本身
-   * @param {function} handler 当前模板函数
-   * @param {HTMLNode} node 当前 HTML 结点
-   * @returns {void} 无返回
-   */
-
-
-  Compiler.prototype._compileElement = function _compileElement(handler, node) {
-    var ElementDirective = this.elementDirectives[node.nodeName.toUpperCase()];
-    if (!ElementDirective) return;
-    handler.directives.push(this._createDirectiveInstance(ElementDirective, {
-      handler: handler,
-      node: node
-    }));
-  };
-
-  /**
-   * 编译一个元素所有 attributes 
-   * @param {function} handler 当前模板函数
-   * @param {HTMLNode} node 当前 HTML 结点
-   * @returns {void} 无返回
-   */
-
-
-  Compiler.prototype._compileAttributes = function _compileAttributes(handler, node) {
-    (0, _ntils.toArray)(node.attributes).forEach(function (attribute) {
-      var attrInfo = this._parseAttrInfo(attribute.name);
-      var AttrDirective = this.attributeDirectives[attrInfo.name] || this.attributeDirectives['*'];
-      if (!AttrDirective) return;
-      var meta = AttrDirective.meta;
-      handler.directives.push(this._createDirectiveInstance(AttrDirective, {
-        handler: handler,
-        node: node,
-        attribute: attribute,
-        expression: meta.literal ? attribute.value : new _expression2.default(attribute.value, meta.mixed),
-        decorates: attrInfo.decorates
-      }));
-    }, this);
-  };
-
-  /**
-   * 编译所有子结点
-   * @param {function} handler 当前模板函数
-   * @param {HTMLNode} node 当前 HTML 结点
-   * @returns {void} 无返回
-   */
-
-
-  Compiler.prototype._compileChildren = function _compileChildren(handler, node) {
-    if (handler.final) return;
-    (0, _ntils.toArray)(node.childNodes).forEach(function (childNode) {
-      if (childNode._compiled_) return;
-      var childHandler = this.compile(childNode);
-      childHandler.parent = this;
-      handler.children.push(childHandler);
-    }, this);
-  };
-
-  /**
-   * 编译一个模板
-   * @param {HTMLNode} node 模板根元素
-   * @param {Object} options 选项
-   * @returns {function} 模板函数
-   */
-
-
-  Compiler.prototype.compile = function compile(node, options) {
-    if (!node) {
-      throw new _common.Error('Invalid node for compile');
-    }
-    node._compiled_ = true;
-    options = options || {};
-    //定义编译结果函数
-    var handler = function handler(scope) {
-      if ((0, _ntils.isNull)(scope)) scope = {};
-      handler.directives.forEach(function (directive) {
-        directive.scope = scope;
-        directive.execute(scope);
-      }, this);
-      handler.children.forEach(function (childHandler) {
-        childHandler(scope);
-      }, this);
-    };
-    //--
-    handler.dispose = function () {
-      handler.directives.forEach(function (directive) {
-        directive.unbind();
-      }, this);
-      handler.children.forEach(function (childHandler) {
-        childHandler.dispose();
-      }, this);
-    };
-    handler.node = node;
-    //定义 children & directives 
-    handler.directives = [];
-    handler.children = [];
-    //编译相关指令
-    if (options.element !== false) this._compileElement(handler, node);
-    if (options.attribute !== false) this._compileAttributes(handler, node);
-    this._bindHandler(handler);
-    if (options.children !== false) this._compileChildren(handler, node);
-    //返回编译后函数
-    return handler;
-  };
-
-  return Compiler;
-}();
-
-exports.default = Compiler;
-module.exports = exports['default'];
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _each = __webpack_require__(113);
-
-var _each2 = _interopRequireDefault(_each);
-
-var _if = __webpack_require__(114);
-
-var _if2 = _interopRequireDefault(_if);
-
-var _prop = __webpack_require__(115);
-
-var _prop2 = _interopRequireDefault(_prop);
-
-var _attr = __webpack_require__(116);
-
-var _attr2 = _interopRequireDefault(_attr);
-
-var _on = __webpack_require__(117);
-
-var _on2 = _interopRequireDefault(_on);
-
-var _innerHtml = __webpack_require__(118);
-
-var _innerHtml2 = _interopRequireDefault(_innerHtml);
-
-var _innerText = __webpack_require__(119);
-
-var _innerText2 = _interopRequireDefault(_innerText);
-
-var _prevent = __webpack_require__(120);
-
-var _prevent2 = _interopRequireDefault(_prevent);
-
-var _id = __webpack_require__(121);
-
-var _id2 = _interopRequireDefault(_id);
-
-var _show = __webpack_require__(122);
-
-var _show2 = _interopRequireDefault(_show);
-
-var _model = __webpack_require__(123);
-
-var _model2 = _interopRequireDefault(_model);
-
-var _focus = __webpack_require__(130);
-
-var _focus2 = _interopRequireDefault(_focus);
-
-var _attribute = __webpack_require__(131);
-
-var _attribute2 = _interopRequireDefault(_attribute);
-
-var _text = __webpack_require__(132);
-
-var _text2 = _interopRequireDefault(_text);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-  '#text': _text2.default,
-  '*': _attribute2.default,
-  'if': _if2.default,
-  each: _each2.default, prop: _prop2.default, attr: _attr2.default, on: _on2.default, html: _innerHtml2.default, text: _innerText2.default,
-  prevent: _prevent2.default, id: _id2.default, show: _show2.default, model: _model2.default, focus: _focus2.default
-}; //处理所有未知 attr
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 60 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _ntils = __webpack_require__(3);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var OBSERVER_PROP_NAME = '_observer_';
-var CHANGE_EVENT_NAME = 'change';
-var EVENT_MAX_DISPATCH_LAYER = 10;
-var IGNORE_REGEXPS = [/^\_(.*)\_$/i, /^\_\_/i];
-
-/**
- * 对象观察类，可以监控对象变化
- * 目前方案问题:
- *   对于父子关系和事件冒泡，目前方案如果用 delete 删除一个属性，无关真实删除关系，
- *   即便调用 clearReference 也无法再清除关系，子对象的 parents 中会一直有一个引用，当前方案最高效
- * 其它方法一:
- *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件中 filter 出来，
- *   基本和目前方法类似，但是关系在外部存领教，所以 clearReference 可清除。
- * 其它方案二: 
- *   构造时添加到全局数组，每一个 observer change 时都让放到全局的 observer 遍历自身的，
- *   检果事件源是不是自已的子对象，如果是则触发自身 change 事件，这样 ob 对象本身没有相关引用
- *   clearReference 时只从全局清除掉就行了，并且 delete 操作也不会影响，但效率稍差。
- * 其它方案三: 
- *   给构造函数添加一个 deep 属性，只有 deep 的 ob 对象，才放入到全局数组中，检查时逻辑同方案二
- *   但是因为要检查的对象会少很多，效率会更高一点。
- */
-
-var Observer = function (_EventEmitter) {
-  (0, _inherits3.default)(Observer, _EventEmitter);
-
-  /**
-   * 通过目标对象构造一个观察对象
-   * @param {Object} target 目标对象
-   * @param {Object} options 选项
-   * @returns {void} 无返回
-   */
-  function Observer(target, options) {
-    (0, _classCallCheck3.default)(this, Observer);
-
-    var _this = (0, _possibleConstructorReturn3.default)(this, _EventEmitter.call(this));
-
-    if ((0, _ntils.isNull)(target)) {
-      throw new _common.Error('Invalid target');
-    }
-    options = options || {};
-    var observer = target[OBSERVER_PROP_NAME];
-    if (observer) {
-      var _ret;
-
-      (0, _ntils.copy)(options, observer.options);
-      //当时一个组件 A 的为组件 B 的 prop 时，A 更新不会触发 B 更新
-      //所在暂注释这里，另一种方法是更新 prop 指令，重写 excute 方法，而不是现在的 update 方法
-      // if (observer.options.root) {
-      //   observer.parents.length = 0;
-      // }
-      observer.apply();
-      return _ret = observer, (0, _possibleConstructorReturn3.default)(_this, _ret);
-    }
-    _events2.default.call(_this);
-    (0, _ntils.defineFreezeProp)(_this, 'options', options);
-    (0, _ntils.defineFreezeProp)(_this, 'shadow', {});
-    (0, _ntils.defineFreezeProp)(_this, 'target', target);
-    (0, _ntils.defineFreezeProp)(_this, 'parents', []);
-    (0, _ntils.defineFreezeProp)(target, OBSERVER_PROP_NAME, _this);
-    _this.apply();
-    return _this;
-  }
-
-  /**
-   * 添加一个属性，动态添中的属性，无法被观察，
-   * 但是通过 set 方法添加的属性可能被观察。
-   * @param {string} name 名称
-   * @param {Object} value 值
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.set = function set(name, value) {
-    if ((0, _ntils.isFunction)(value) || Observer.isIgnore(name)) {
-      return;
-    }
-    Object.defineProperty(this.target, name, {
-      get: function get() {
-        return this[OBSERVER_PROP_NAME].shadow[name];
-      },
-      set: function set(value) {
-        var observer = this[OBSERVER_PROP_NAME];
-        var oldValue = observer.shadow[name];
-        if (oldValue === value) return;
-        if ((0, _ntils.isObject)(value)) {
-          var childObserver = new Observer(value);
-          observer.addChild(childObserver, name);
-        }
-        //移除旧值的父引用
-        //如果用 delete 删除属性将无法移除父子引用
-        if (oldValue && oldValue[OBSERVER_PROP_NAME]) {
-          observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
-        }
-        observer.shadow[name] = value;
-        observer.emitChange({ path: name, value: value });
-      },
-
-      configurable: true,
-      enumerable: true
-    });
-    this.target[name] = value;
-  };
-
-  /**
-   * 自动应用所有动态添加的属性
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.apply = function apply() {
-    if ((0, _ntils.isArray)(this.target)) {
-      this._wrapArray(this.target);
-    }
-    var names = this._getPropertyNames(this.target);
-    names.forEach(function (name) {
-      var desc = Object.getOwnPropertyDescriptor(this.target, name);
-      if (!('value' in desc)) return;
-      this.set(name, this.target[name]);
-    }, this);
-  };
-
-  /**
-   * 清除所有父子引用
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.clearReference = function clearReference() {
-    each(this.target, function (name, value) {
-      if ((0, _ntils.isNull)(value)) return;
-      var child = value[OBSERVER_PROP_NAME];
-      if (child) this.removeChild(child);
-    }, this);
-  };
-
-  /**
-   * 派发一个事件，事件会向父级对象冒泡
-   * @param {string} eventName 事件名称
-   * @param {Object} event 事件对象
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.dispatch = function dispatch(eventName, event) {
-    if (event._src_ === this) return;
-    event._src_ = event._src_ || this;
-    event._layer_ = event._layer_ || 0;
-    if (event._layer_++ >= EVENT_MAX_DISPATCH_LAYER) return;
-    this.emit(eventName, event);
-    if (!this.parents || this.parents.length < 1) return;
-    this.parents.forEach(function (item) {
-      if (!(item.name in item.parent.target)) {
-        return item.parent.removeChild(this);
-      }
-      var parentEvent = (0, _ntils.copy)(event);
-      parentEvent.path = item.name + '.' + event.path;
-      item.parent.dispatch(eventName, parentEvent);
-    }, this);
-  };
-
-  /**
-   * 添子观察者对象
-   * @param {Object} child 父对象
-   * @param {String} name 属性名
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.addChild = function addChild(child, name) {
-    if ((0, _ntils.isNull)(child) || (0, _ntils.isNull)(name)) {
-      throw new _common.Error('Invalid paramaters');
-    }
-    if (child.options.root) return;
-    child.parents.push({ parent: this, name: name });
-  };
-
-  /**
-   * 移除子对象
-   * @param {Object} child 父对象
-   * @param {String} name 属性名
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.removeChild = function removeChild(child, name) {
-    if ((0, _ntils.isNull)(child)) {
-      throw new _common.Error('Invalid paramaters');
-    }
-    var foundIndex = -1;
-    child.parents.forEach(function (item, index) {
-      if (item.parent === this && item.name === name) {
-        foundIndex = index;
-      }
-    }, this);
-    if (foundIndex > -1) {
-      child.parents.splice(foundIndex, 1);
-    }
-  };
-
-  /**
-   * 触发 change 事件
-   * @param {Object} event 事件对象
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.emitChange = function emitChange(event) {
-    this.dispatch(CHANGE_EVENT_NAME, event);
-  };
-
-  /**
-   * 获取所有成员名称列表
-   * @returns {Array} 所有成员名称列表
-   */
-
-
-  Observer.prototype._getPropertyNames = function _getPropertyNames() {
-    var names = (0, _ntils.isArray)(this.target) ? this.target.map(function (item, index) {
-      return index;
-    }) : Object.keys(this.target);
-    return names.filter(function (name) {
-      return name !== OBSERVER_PROP_NAME;
-    });
-  };
-
-  /**
-   * 包裹数组
-   * @param {array} array 源数组
-   * @returns {array} 处理后的数组
-   */
-
-
-  Observer.prototype._wrapArray = function _wrapArray(array) {
-    (0, _ntils.defineFreezeProp)(array, 'push', function () {
-      var items = [].slice.call(arguments);
-      items.forEach(function (item) {
-        //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(array.length, item);
-      }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-    });
-    (0, _ntils.defineFreezeProp)(array, 'pop', function () {
-      var item = [].pop.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      return item;
-    });
-    (0, _ntils.defineFreezeProp)(array, 'unshift', function () {
-      var items = [].slice.call(arguments);
-      items.forEach(function (item) {
-        //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(0, item);
-      }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-    });
-    (0, _ntils.defineFreezeProp)(array, 'shift', function () {
-      var item = [].shift.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      return item;
-    });
-    (0, _ntils.defineFreezeProp)(array, 'splice', function () {
-      var startIndex = arguments[0];
-      var endIndex = (0, _ntils.isNull)(arguments[1]) ? startIndex + arguments[1] : this.length - 1;
-      var items = [].splice.apply(this, arguments);
-      for (var i = startIndex; i <= endIndex; i++) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
-      }
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      return items;
-    });
-    (0, _ntils.defineFreezeProp)(array, 'set', function (index, value) {
-      if (index >= this.length) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      }
-      this[OBSERVER_PROP_NAME].set(index, value);
-    });
-  };
-
-  return Observer;
-}(_events2.default);
-
-/**
- * 观察一个对象
- * @param {Object} target 目标对象
- * @return {Observer} 观察者对象
- */
-
-
-Observer.observe = function (target) {
-  return new Observer(target);
-};
-
-/**
- * 检查是不是忽略的属性名
- * @param {string} word 待检查的字符串
- * @returns {void} 无返回
- */
-Observer.isIgnore = function (word) {
-  return IGNORE_REGEXPS.some(function (re) {
-    return re.test(word);
-  });
-};
-
-exports.default = Observer;
-module.exports = exports['default'];
-
-/***/ }),
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _ntils = __webpack_require__(3);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Watcher 类
- * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
- */
-var Watcher = function () {
-
-  /**
-   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
-   * @param {function} calcor 计算函数
-   * @param {function} handler 处理函数
-   * @param {boolean} first 是否自动执行第一次
-   * @returns {void} 无返回
-   */
-  function Watcher(calcor, handler, first) {
-    (0, _classCallCheck3.default)(this, Watcher);
-
-    if (!(0, _ntils.isFunction)(calcor) || !(0, _ntils.isFunction)(handler)) {
-      throw new _common.Error('Invalid parameters');
-    }
-    this.calcor = calcor;
-    this.handler = handler;
-    if (first) this.calc(true);
-  }
-
-  /**
-   * 执行计算
-   * @param {boolean} force 是否强制触发「计算函数」
-   * @returns {Object} 计算后的值
-   */
-
-
-  Watcher.prototype.calc = function calc(force) {
-    var newValue = this.calcor();
-    if (force || !(0, _ntils.deepEqual)(newValue, this.value)) {
-      this.handler(newValue, this.value);
-    }
-    this.value = (0, _ntils.clone)(newValue);
-  };
-
-  return Watcher;
-}();
-
-exports.default = Watcher;
-module.exports = exports['default'];
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(63);
-
-
-/***/ }),
-/* 63 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _$info = __webpack_require__(44);
-
-var _$info2 = _interopRequireDefault(_$info);
-
-var _ntils = __webpack_require__(3);
-
-var _bootstrap = __webpack_require__(64);
-
-var _bootstrap2 = _interopRequireDefault(_bootstrap);
-
-var _watcher = __webpack_require__(61);
-
-var _watcher2 = _interopRequireDefault(_watcher);
-
-var _observer = __webpack_require__(60);
-
-var _observer2 = _interopRequireDefault(_observer);
-
-var _template = __webpack_require__(43);
-
-var _template2 = _interopRequireDefault(_template);
-
-var _component = __webpack_require__(45);
-
-var _component2 = _interopRequireDefault(_component);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _decorators = __webpack_require__(6);
-
-var _decorators2 = _interopRequireDefault(_decorators);
-
-var _common = __webpack_require__(5);
-
-var _common2 = _interopRequireDefault(_common);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-//持载模板相关对象
-(0, _ntils.copy)(_template2.default, _bootstrap2.default);
-(0, _ntils.copy)(_component2.default, _bootstrap2.default);
-(0, _ntils.copy)(_common2.default, _bootstrap2.default);
-(0, _ntils.copy)(_decorators2.default, _bootstrap2.default);
-(0, _ntils.copy)(_$info2.default, _bootstrap2.default);
-
-_bootstrap2.default.Template = _template2.default;
-_bootstrap2.default.Component = _component2.default;
-_bootstrap2.default.Watcher = _watcher2.default;
-_bootstrap2.default.Observer = _observer2.default;
-_bootstrap2.default.EventEmitter = _events2.default;
-_bootstrap2.default.decorators = _decorators2.default;
-_bootstrap2.default.bootstrap = _bootstrap2.default;
-_bootstrap2.default.common = _common2.default;
-
-_bootstrap2.default.component = function (name, component) {
-  if (!component) return _component2.default.components[name];
-  _component2.default.components[name] = component;
-};
-
-_bootstrap2.default.directive = function (name, directive) {
-  if (!directive) return _template2.default.directives[name];
-  _template2.default.directives[name] = directive;
-};
-
-exports.default = _bootstrap2.default;
-module.exports = exports['default'];
-
-/***/ }),
-/* 64 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = bootstrap;
-
-var _component = __webpack_require__(45);
-
-var _component2 = _interopRequireDefault(_component);
-
-var _ntils = __webpack_require__(3);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function bootstrap(component, mountNode, options) {
-  if (!component || !component.meta) {
-    throw new _common.Error('Involid Component');
-  }
-  options = options || (0, _ntils.create)(null);
-  if ((0, _ntils.isNull)(options.append)) options.append = true;
-  if ((0, _ntils.isFunction)(component)) {
-    component = new component();
-  }
-  component.$mount(mountNode, options.append);
-  return component;
-};
-module.exports = exports['default'];
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(66), __esModule: true };
-
-/***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(67);
-module.exports = __webpack_require__(10).Object.assign;
-
-
-/***/ }),
-/* 67 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// 19.1.3.1 Object.assign(target, source)
-var $export = __webpack_require__(15);
-
-$export($export.S + $export.F, 'Object', { assign: __webpack_require__(69) });
-
-
-/***/ }),
-/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = function (it) {
@@ -3654,21 +4814,21 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 69 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // 19.1.2.1 Object.assign(target, source, ...)
-var getKeys = __webpack_require__(23);
-var gOPS = __webpack_require__(34);
-var pIE = __webpack_require__(25);
-var toObject = __webpack_require__(53);
-var IObject = __webpack_require__(51);
+var getKeys = __webpack_require__(16);
+var gOPS = __webpack_require__(26);
+var pIE = __webpack_require__(18);
+var toObject = __webpack_require__(41);
+var IObject = __webpack_require__(39);
 var $assign = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
-module.exports = !$assign || __webpack_require__(21)(function () {
+module.exports = !$assign || __webpack_require__(14)(function () {
   var A = {};
   var B = {};
   // eslint-disable-next-line no-undef
@@ -3695,14 +4855,14 @@ module.exports = !$assign || __webpack_require__(21)(function () {
 
 
 /***/ }),
-/* 70 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = __webpack_require__(17);
-var toLength = __webpack_require__(71);
-var toAbsoluteIndex = __webpack_require__(72);
+var toIObject = __webpack_require__(10);
+var toLength = __webpack_require__(54);
+var toAbsoluteIndex = __webpack_require__(55);
 module.exports = function (IS_INCLUDES) {
   return function ($this, el, fromIndex) {
     var O = toIObject($this);
@@ -3724,11 +4884,11 @@ module.exports = function (IS_INCLUDES) {
 
 
 /***/ }),
-/* 71 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
-var toInteger = __webpack_require__(30);
+var toInteger = __webpack_require__(22);
 var min = Math.min;
 module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
@@ -3736,10 +4896,10 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 72 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(30);
+var toInteger = __webpack_require__(22);
 var max = Math.max;
 var min = Math.min;
 module.exports = function (index, length) {
@@ -3749,56 +4909,56 @@ module.exports = function (index, length) {
 
 
 /***/ }),
-/* 73 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(74), __esModule: true };
+module.exports = { "default": __webpack_require__(57), __esModule: true };
 
 /***/ }),
-/* 74 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(75);
-var $Object = __webpack_require__(10).Object;
+__webpack_require__(58);
+var $Object = __webpack_require__(4).Object;
 module.exports = function defineProperty(it, key, desc) {
   return $Object.defineProperty(it, key, desc);
 };
 
 
 /***/ }),
-/* 75 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(15);
+var $export = __webpack_require__(8);
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
-$export($export.S + $export.F * !__webpack_require__(12), 'Object', { defineProperty: __webpack_require__(11).f });
+$export($export.S + $export.F * !__webpack_require__(6), 'Object', { defineProperty: __webpack_require__(5).f });
 
 
 /***/ }),
-/* 76 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(77), __esModule: true };
+module.exports = { "default": __webpack_require__(60), __esModule: true };
 
 /***/ }),
-/* 77 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(78);
-__webpack_require__(84);
-module.exports = __webpack_require__(41).f('iterator');
+__webpack_require__(61);
+__webpack_require__(67);
+module.exports = __webpack_require__(33).f('iterator');
 
 
 /***/ }),
-/* 78 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var $at = __webpack_require__(79)(true);
+var $at = __webpack_require__(62)(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
-__webpack_require__(54)(String, 'String', function (iterated) {
+__webpack_require__(42)(String, 'String', function (iterated) {
   this._t = String(iterated); // target
   this._i = 0;                // next index
 // 21.1.5.2.1 %StringIteratorPrototype%.next()
@@ -3814,11 +4974,11 @@ __webpack_require__(54)(String, 'String', function (iterated) {
 
 
 /***/ }),
-/* 79 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(30);
-var defined = __webpack_require__(29);
+var toInteger = __webpack_require__(22);
+var defined = __webpack_require__(21);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function (TO_STRING) {
@@ -3837,18 +4997,18 @@ module.exports = function (TO_STRING) {
 
 
 /***/ }),
-/* 80 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var create = __webpack_require__(39);
-var descriptor = __webpack_require__(22);
-var setToStringTag = __webpack_require__(40);
+var create = __webpack_require__(31);
+var descriptor = __webpack_require__(15);
+var setToStringTag = __webpack_require__(32);
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(16)(IteratorPrototype, __webpack_require__(18)('iterator'), function () { return this; });
+__webpack_require__(9)(IteratorPrototype, __webpack_require__(11)('iterator'), function () { return this; });
 
 module.exports = function (Constructor, NAME, next) {
   Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
@@ -3857,14 +5017,14 @@ module.exports = function (Constructor, NAME, next) {
 
 
 /***/ }),
-/* 81 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP = __webpack_require__(11);
-var anObject = __webpack_require__(19);
-var getKeys = __webpack_require__(23);
+var dP = __webpack_require__(5);
+var anObject = __webpack_require__(12);
+var getKeys = __webpack_require__(16);
 
-module.exports = __webpack_require__(12) ? Object.defineProperties : function defineProperties(O, Properties) {
+module.exports = __webpack_require__(6) ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
   var keys = getKeys(Properties);
   var length = keys.length;
@@ -3876,21 +5036,21 @@ module.exports = __webpack_require__(12) ? Object.defineProperties : function de
 
 
 /***/ }),
-/* 82 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var document = __webpack_require__(8).document;
+var document = __webpack_require__(3).document;
 module.exports = document && document.documentElement;
 
 
 /***/ }),
-/* 83 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has = __webpack_require__(13);
-var toObject = __webpack_require__(53);
-var IE_PROTO = __webpack_require__(31)('IE_PROTO');
+var has = __webpack_require__(7);
+var toObject = __webpack_require__(41);
+var IE_PROTO = __webpack_require__(23)('IE_PROTO');
 var ObjectProto = Object.prototype;
 
 module.exports = Object.getPrototypeOf || function (O) {
@@ -3903,14 +5063,14 @@ module.exports = Object.getPrototypeOf || function (O) {
 
 
 /***/ }),
-/* 84 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(85);
-var global = __webpack_require__(8);
-var hide = __webpack_require__(16);
-var Iterators = __webpack_require__(38);
-var TO_STRING_TAG = __webpack_require__(18)('toStringTag');
+__webpack_require__(68);
+var global = __webpack_require__(3);
+var hide = __webpack_require__(9);
+var Iterators = __webpack_require__(30);
+var TO_STRING_TAG = __webpack_require__(11)('toStringTag');
 
 var DOMIterables = ('CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,' +
   'DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,' +
@@ -3928,21 +5088,21 @@ for (var i = 0; i < DOMIterables.length; i++) {
 
 
 /***/ }),
-/* 85 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var addToUnscopables = __webpack_require__(86);
-var step = __webpack_require__(87);
-var Iterators = __webpack_require__(38);
-var toIObject = __webpack_require__(17);
+var addToUnscopables = __webpack_require__(69);
+var step = __webpack_require__(70);
+var Iterators = __webpack_require__(30);
+var toIObject = __webpack_require__(10);
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = __webpack_require__(54)(Array, 'Array', function (iterated, kind) {
+module.exports = __webpack_require__(42)(Array, 'Array', function (iterated, kind) {
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
@@ -3969,14 +5129,14 @@ addToUnscopables('entries');
 
 
 /***/ }),
-/* 86 */
+/* 69 */
 /***/ (function(module, exports) {
 
 module.exports = function () { /* empty */ };
 
 
 /***/ }),
-/* 87 */
+/* 70 */
 /***/ (function(module, exports) {
 
 module.exports = function (done, value) {
@@ -3985,53 +5145,53 @@ module.exports = function (done, value) {
 
 
 /***/ }),
-/* 88 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(89), __esModule: true };
+module.exports = { "default": __webpack_require__(72), __esModule: true };
 
 /***/ }),
-/* 89 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(90);
-__webpack_require__(95);
-__webpack_require__(96);
-__webpack_require__(97);
-module.exports = __webpack_require__(10).Symbol;
+__webpack_require__(73);
+__webpack_require__(78);
+__webpack_require__(79);
+__webpack_require__(80);
+module.exports = __webpack_require__(4).Symbol;
 
 
 /***/ }),
-/* 90 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // ECMAScript 6 symbols shim
-var global = __webpack_require__(8);
-var has = __webpack_require__(13);
-var DESCRIPTORS = __webpack_require__(12);
-var $export = __webpack_require__(15);
-var redefine = __webpack_require__(55);
-var META = __webpack_require__(91).KEY;
-var $fails = __webpack_require__(21);
-var shared = __webpack_require__(32);
-var setToStringTag = __webpack_require__(40);
-var uid = __webpack_require__(24);
-var wks = __webpack_require__(18);
-var wksExt = __webpack_require__(41);
-var wksDefine = __webpack_require__(42);
-var enumKeys = __webpack_require__(92);
-var isArray = __webpack_require__(93);
-var anObject = __webpack_require__(19);
-var toIObject = __webpack_require__(17);
-var toPrimitive = __webpack_require__(28);
-var createDesc = __webpack_require__(22);
-var _create = __webpack_require__(39);
-var gOPNExt = __webpack_require__(94);
-var $GOPD = __webpack_require__(57);
-var $DP = __webpack_require__(11);
-var $keys = __webpack_require__(23);
+var global = __webpack_require__(3);
+var has = __webpack_require__(7);
+var DESCRIPTORS = __webpack_require__(6);
+var $export = __webpack_require__(8);
+var redefine = __webpack_require__(43);
+var META = __webpack_require__(74).KEY;
+var $fails = __webpack_require__(14);
+var shared = __webpack_require__(24);
+var setToStringTag = __webpack_require__(32);
+var uid = __webpack_require__(17);
+var wks = __webpack_require__(11);
+var wksExt = __webpack_require__(33);
+var wksDefine = __webpack_require__(34);
+var enumKeys = __webpack_require__(75);
+var isArray = __webpack_require__(76);
+var anObject = __webpack_require__(12);
+var toIObject = __webpack_require__(10);
+var toPrimitive = __webpack_require__(20);
+var createDesc = __webpack_require__(15);
+var _create = __webpack_require__(31);
+var gOPNExt = __webpack_require__(77);
+var $GOPD = __webpack_require__(45);
+var $DP = __webpack_require__(5);
+var $keys = __webpack_require__(16);
 var gOPD = $GOPD.f;
 var dP = $DP.f;
 var gOPN = gOPNExt.f;
@@ -4154,11 +5314,11 @@ if (!USE_NATIVE) {
 
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f = $defineProperty;
-  __webpack_require__(56).f = gOPNExt.f = $getOwnPropertyNames;
-  __webpack_require__(25).f = $propertyIsEnumerable;
-  __webpack_require__(34).f = $getOwnPropertySymbols;
+  __webpack_require__(44).f = gOPNExt.f = $getOwnPropertyNames;
+  __webpack_require__(18).f = $propertyIsEnumerable;
+  __webpack_require__(26).f = $getOwnPropertySymbols;
 
-  if (DESCRIPTORS && !__webpack_require__(37)) {
+  if (DESCRIPTORS && !__webpack_require__(29)) {
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -4233,7 +5393,7 @@ $JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function () {
 });
 
 // 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
-$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(16)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(9)($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
 // 19.4.3.5 Symbol.prototype[@@toStringTag]
 setToStringTag($Symbol, 'Symbol');
 // 20.2.1.9 Math[@@toStringTag]
@@ -4243,18 +5403,18 @@ setToStringTag(global.JSON, 'JSON', true);
 
 
 /***/ }),
-/* 91 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var META = __webpack_require__(24)('meta');
-var isObject = __webpack_require__(20);
-var has = __webpack_require__(13);
-var setDesc = __webpack_require__(11).f;
+var META = __webpack_require__(17)('meta');
+var isObject = __webpack_require__(13);
+var has = __webpack_require__(7);
+var setDesc = __webpack_require__(5).f;
 var id = 0;
 var isExtensible = Object.isExtensible || function () {
   return true;
 };
-var FREEZE = !__webpack_require__(21)(function () {
+var FREEZE = !__webpack_require__(14)(function () {
   return isExtensible(Object.preventExtensions({}));
 });
 var setMeta = function (it) {
@@ -4302,13 +5462,13 @@ var meta = module.exports = {
 
 
 /***/ }),
-/* 92 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // all enumerable object keys, includes symbols
-var getKeys = __webpack_require__(23);
-var gOPS = __webpack_require__(34);
-var pIE = __webpack_require__(25);
+var getKeys = __webpack_require__(16);
+var gOPS = __webpack_require__(26);
+var pIE = __webpack_require__(18);
 module.exports = function (it) {
   var result = getKeys(it);
   var getSymbols = gOPS.f;
@@ -4323,23 +5483,23 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 93 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.2.2 IsArray(argument)
-var cof = __webpack_require__(52);
+var cof = __webpack_require__(40);
 module.exports = Array.isArray || function isArray(arg) {
   return cof(arg) == 'Array';
 };
 
 
 /***/ }),
-/* 94 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-var toIObject = __webpack_require__(17);
-var gOPN = __webpack_require__(56).f;
+var toIObject = __webpack_require__(10);
+var gOPN = __webpack_require__(44).f;
 var toString = {}.toString;
 
 var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
@@ -4359,56 +5519,56 @@ module.exports.f = function getOwnPropertyNames(it) {
 
 
 /***/ }),
-/* 95 */
+/* 78 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 96 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(42)('asyncIterator');
+__webpack_require__(34)('asyncIterator');
 
 
 /***/ }),
-/* 97 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(42)('observable');
+__webpack_require__(34)('observable');
 
 
 /***/ }),
-/* 98 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(99), __esModule: true };
+module.exports = { "default": __webpack_require__(82), __esModule: true };
 
 /***/ }),
-/* 99 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(100);
-module.exports = __webpack_require__(10).Object.setPrototypeOf;
+__webpack_require__(83);
+module.exports = __webpack_require__(4).Object.setPrototypeOf;
 
 
 /***/ }),
-/* 100 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
-var $export = __webpack_require__(15);
-$export($export.S, 'Object', { setPrototypeOf: __webpack_require__(101).set });
+var $export = __webpack_require__(8);
+$export($export.S, 'Object', { setPrototypeOf: __webpack_require__(84).set });
 
 
 /***/ }),
-/* 101 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
-var isObject = __webpack_require__(20);
-var anObject = __webpack_require__(19);
+var isObject = __webpack_require__(13);
+var anObject = __webpack_require__(12);
 var check = function (O, proto) {
   anObject(O);
   if (!isObject(proto) && proto !== null) throw TypeError(proto + ": can't set as prototype!");
@@ -4417,7 +5577,7 @@ module.exports = {
   set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
     function (test, buggy, set) {
       try {
-        set = __webpack_require__(47)(Function.call, __webpack_require__(57).f(Object.prototype, '__proto__').set, 2);
+        set = __webpack_require__(35)(Function.call, __webpack_require__(45).f(Object.prototype, '__proto__').set, 2);
         set(test, []);
         buggy = !(test instanceof Array);
       } catch (e) { buggy = true; }
@@ -4433,2166 +5593,30 @@ module.exports = {
 
 
 /***/ }),
-/* 102 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = { "default": __webpack_require__(103), __esModule: true };
+module.exports = { "default": __webpack_require__(86), __esModule: true };
 
 /***/ }),
-/* 103 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(104);
-var $Object = __webpack_require__(10).Object;
+__webpack_require__(87);
+var $Object = __webpack_require__(4).Object;
 module.exports = function create(P, D) {
   return $Object.create(P, D);
 };
 
 
 /***/ }),
-/* 104 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $export = __webpack_require__(15);
+var $export = __webpack_require__(8);
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', { create: __webpack_require__(39) });
+$export($export.S, 'Object', { create: __webpack_require__(31) });
 
-
-/***/ }),
-/* 105 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(35);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _class, _temp;
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Entity = (_temp = _class = function (_EventEmitter) {
-  (0, _inherits3.default)(Entity, _EventEmitter);
-
-  function Entity() {
-    (0, _classCallCheck3.default)(this, Entity);
-    return (0, _possibleConstructorReturn3.default)(this, _EventEmitter.apply(this, arguments));
-  }
-
-  (0, _createClass3.default)(Entity, [{
-    key: 'meta',
-    get: function get() {
-      return this.constructor && this.constructor.meta;
-    }
-  }]);
-  return Entity;
-}(_events2.default), _class.setMeta = function (options) {
-  if (Object.getOwnPropertyNames(this).indexOf('meta') < 0) {
-    var meta = (0, _ntils.create)(this.meta || null);
-    (0, _ntils.defineFreezeProp)(this, 'meta', meta);
-  }
-  if (options) (0, _ntils.copy)(options, this.meta);
-}, _temp);
-exports.default = Entity;
-module.exports = exports['default'];
-
-/***/ }),
-/* 106 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _$info = __webpack_require__(44);
-
-var _$info2 = _interopRequireDefault(_$info);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var LibError = function (_Error) {
-  (0, _inherits3.default)(LibError, _Error);
-
-  function LibError(message) {
-    (0, _classCallCheck3.default)(this, LibError);
-
-    for (var _len = arguments.length, other = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      other[_key - 1] = arguments[_key];
-    }
-
-    return (0, _possibleConstructorReturn3.default)(this, _Error.call.apply(_Error, [this, '[' + _$info2.default.name + ']: ' + message].concat(other)));
-  }
-
-  return LibError;
-}(Error);
-
-exports.default = LibError;
-module.exports = exports['default'];
-
-/***/ }),
-/* 107 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-exports.default = function (components) {
-  return (0, _meta2.default)({ components: components });
-};
-
-var _meta = __webpack_require__(14);
-
-var _meta2 = _interopRequireDefault(_meta);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 108 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-exports.default = function (directives) {
-  return (0, _meta2.default)({ directives: directives });
-};
-
-var _meta = __webpack_require__(14);
-
-var _meta2 = _interopRequireDefault(_meta);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 109 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-exports.default = function (name) {
-  return function (target, handler) {
-    (0, _meta2.default)()(target.constructor);
-    target.meta.events = target.meta.events || {};
-    target.meta.events[name] = target.meta.events[name] || [];
-    target.meta.events[name].push(handler);
-  };
-};
-
-var _meta = __webpack_require__(14);
-
-var _meta2 = _interopRequireDefault(_meta);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-exports.default = function (target, prop) {
-  if (!prop) {
-    return (0, _meta2.default)({ model: target });
-  } else {
-    return (0, _meta2.default)({
-      model: function model() {
-        return this[prop]();
-      }
-    })(target.constructor);
-  }
-};
-
-var _meta = __webpack_require__(14);
-
-var _meta2 = _interopRequireDefault(_meta);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 111 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-exports.default = function (template) {
-  return (0, _meta2.default)({ template: template });
-};
-
-var _meta = __webpack_require__(14);
-
-var _meta2 = _interopRequireDefault(_meta);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 112 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-exports.default = function (calcer) {
-  return function (target, handler) {
-    (0, _meta2.default)()(target.constructor);
-    target.meta.watches = target.meta.watches || [];
-    target.meta.watches.push({ calcer: calcer, handler: handler });
-  };
-};
-
-var _meta = __webpack_require__(14);
-
-var _meta2 = _interopRequireDefault(_meta);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 113 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _ntils = __webpack_require__(3);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _decorators = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EachDirective = (_dec = (0, _decorators.meta)({
-  level: _directive2.default.levels.STATEMENT + 1, //比 if 要高一个权重
-  final: true,
-  literal: true
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(EachDirective, _Directive);
-
-  function EachDirective() {
-    (0, _classCallCheck3.default)(this, EachDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  EachDirective.prototype.bind = function bind() {
-    this.mountNode = document.createTextNode('');
-    this.node.parentNode.insertBefore(this.mountNode, this.node);
-    //虽然，bind 完成后，也会进行 attribute 的移除，
-    //但 each 指令必须先移除，否再进行 item 编译时 each 还会生效
-    this.node.removeAttribute(this.attribute.name);
-    this.node.parentNode.removeChild(this.node);
-    this.parseExpr();
-    this.eachItems = {};
-  };
-
-  EachDirective.prototype.parseExpr = function parseExpr() {
-    this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
-    var tokens = this.attribute.value.split(' ' + this.eachType + ' ');
-    var fnText = 'with(scope){each(' + tokens[1] + ',fn.bind(this,' + tokens[1] + '))}';
-    this.each = new Function('each', 'scope', 'fn', fnText).bind(null, _ntils.each);
-    var names = tokens[0].split(',').map(function (name) {
-      return name.trim();
-    });
-    if (this.eachType == 'in') {
-      this.keyName = names[0];
-      this.valueName = names[1];
-    } else {
-      this.keyName = names[1];
-      this.valueName = names[0];
-    }
-  };
-
-  EachDirective.prototype.execute = function execute(scope) {
-    var _this2 = this;
-
-    var currentEachKeys = [];
-    var itemsFragment = document.createDocumentFragment();
-    var self = this;
-    this.each(scope, function (eachTarget, key) {
-      //创建新 scope，必须选创建再设置 prototype 或采用定义「属性」的方式
-      //因为指令参数指定的名称有可能和 scope 原有变量冲突
-      //将导致针对 watch 变量的赋值，从引用发循环
-      var newScope = new _scope2.default(this.scope);
-      if (self.keyName) {
-        Object.defineProperty(newScope, self.keyName, {
-          get: function get() {
-            return key;
-          }
-        });
-      }
-      //value 采用「属性」进行代理，否则将会使「双向」绑定无把回设值
-      if (self.valueName) {
-        Object.defineProperty(newScope, self.valueName, {
-          get: function get() {
-            return eachTarget[key];
-          },
-          set: function set(value) {
-            eachTarget[key] = value;
-          }
-        });
-      }
-      var oldItem = this.eachItems[key];
-      if (oldItem) {
-        oldItem.handler(newScope);
-      } else {
-        var newItem = {};
-        //创建新元素
-        newItem.node = this.node.cloneNode(true);
-        itemsFragment.appendChild(newItem.node);
-        newItem.handler = this.compiler.compile(newItem.node);
-        newItem.handler(newScope);
-        this.eachItems[key] = newItem;
-      }
-      currentEachKeys.push(key);
-    }.bind(this));
-    (0, _ntils.each)(this.eachItems, function (key, item) {
-      if (currentEachKeys.some(function (k) {
-        return k == key;
-      })) return;
-      if (item.node.parentNode) {
-        item.node.parentNode.removeChild(item.node);
-      }
-      delete _this2.eachItems[key];
-    }, this);
-    if (itemsFragment.childNodes.length > 0) {
-      this.mountNode.parentNode.insertBefore(itemsFragment, this.mountNode);
-    }
-  };
-
-  return EachDirective;
-}(_directive2.default)) || _class);
-exports.default = EachDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 114 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _decorators = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var IfDirective = (_dec = (0, _decorators.meta)({
-  level: _directive2.default.levels.STATEMENT,
-  final: true
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(IfDirective, _Directive);
-
-  function IfDirective() {
-    (0, _classCallCheck3.default)(this, IfDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  IfDirective.prototype.bind = function bind() {
-    this.mountNode = document.createTextNode('');
-    this.node.parentNode.insertBefore(this.mountNode, this.node);
-    //虽然，bind 完成后，也会进行 attribute 的移除，
-    //但 if 指令必须先移除，否再进行 item 编译时 if 还会生效
-    this.node.removeAttribute(this.attribute.name);
-    this.node.parentNode.removeChild(this.node);
-  };
-
-  IfDirective.prototype.execute = function execute(scope) {
-    var newValue = this.expression.execute(scope);
-    if (newValue) {
-      //如果新计算的结果为 true 才执行 
-      this._handler = this._handler || this.compiler.compile(this.node);
-      this._handler(scope);
-      var node = this.node.$substitute || this.node;
-      if (!node.parentNode) {
-        this.mountNode.parentNode.insertBefore(node, this.mountNode);
-      }
-    } else {
-      var _node = this.node.$substitute || this.node;
-      if (_node.parentNode) _node.parentNode.removeChild(_node);
-    }
-  };
-
-  return IfDirective;
-}(_directive2.default)) || _class);
-exports.default = IfDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 115 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var PropDirective = function (_Directive) {
-  (0, _inherits3.default)(PropDirective, _Directive);
-
-  function PropDirective() {
-    (0, _classCallCheck3.default)(this, PropDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  PropDirective.prototype.update = function update(value) {
-    var target = this.node.$target || this.node;
-    target[this.decorates[0]] = value;
-  };
-  // execute (scope) {
-  //   this.scope = scope;
-  //   let newValue = this.expression.execute(scope);
-  //   let target = this.node.$target || this.node;
-  //   target[this.decorates[0]] = newValue;
-  // }
-
-
-  return PropDirective;
-}(_directive2.default);
-
-exports.default = PropDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 116 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var AttrDirective = function (_Directive) {
-  (0, _inherits3.default)(AttrDirective, _Directive);
-
-  function AttrDirective() {
-    (0, _classCallCheck3.default)(this, AttrDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  AttrDirective.prototype.update = function update(value) {
-    var target = this.node.$target || this.node;
-    if (target.setAttribute) {
-      target.setAttribute(this.decorates[0], value);
-    } else {
-      target[this.decorates[0]] = value;
-    }
-  };
-
-  return AttrDirective;
-}(_directive2.default);
-
-exports.default = AttrDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _decorators = __webpack_require__(6);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var OnDirective = (_dec = (0, _decorators.meta)({
-  literal: true
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(OnDirective, _Directive);
-
-  function OnDirective() {
-    (0, _classCallCheck3.default)(this, OnDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  OnDirective.prototype.bind = function bind() {
-    var attrValue = this.attribute.value || '';
-    if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
-      attrValue += '($event)';
-    }
-    this.expr = new this.Expression(attrValue);
-    var eventTarget = this.node.$target || this.node;
-    this.emiter = new _events2.default(eventTarget);
-    this.emiter.addListener(this.decorates[0], function (event) {
-      if ((0, _ntils.isNull)(this.scope)) return;
-      this.expr.execute(new _scope2.default(this.scope, {
-        $event: event
-      }));
-    }.bind(this), false);
-  };
-
-  OnDirective.prototype.unbind = function unbind() {
-    this.emiter.removeListener();
-  };
-
-  OnDirective.prototype.execute = function execute(scope) {
-    this.scope = scope;
-  };
-
-  return OnDirective;
-}(_directive2.default)) || _class);
-exports.default = OnDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var InnerHtmlDirective = function (_Directive) {
-  (0, _inherits3.default)(InnerHtmlDirective, _Directive);
-
-  function InnerHtmlDirective() {
-    (0, _classCallCheck3.default)(this, InnerHtmlDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  InnerHtmlDirective.prototype.update = function update(newValue) {
-    this.node.innerHTML = newValue;
-  };
-
-  return InnerHtmlDirective;
-}(_directive2.default);
-
-exports.default = InnerHtmlDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var InnerTextDirective = function (_Directive) {
-  (0, _inherits3.default)(InnerTextDirective, _Directive);
-
-  function InnerTextDirective() {
-    (0, _classCallCheck3.default)(this, InnerTextDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  InnerTextDirective.prototype.update = function update(newValue) {
-    this.node.innerText = newValue;
-  };
-
-  return InnerTextDirective;
-}(_directive2.default);
-
-exports.default = InnerTextDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _decorators = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var PreventDirective = (_dec = (0, _decorators.meta)({
-  level: _directive2.default.levels.PREVENT,
-  final: true
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(PreventDirective, _Directive);
-
-  function PreventDirective() {
-    (0, _classCallCheck3.default)(this, PreventDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  return PreventDirective;
-}(_directive2.default)) || _class);
-exports.default = PreventDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _decorators = __webpack_require__(6);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var IdDirective = (_dec = (0, _decorators.meta)({
-  literal: true
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(IdDirective, _Directive);
-
-  function IdDirective() {
-    (0, _classCallCheck3.default)(this, IdDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  IdDirective.prototype.update = function update(id) {
-    if (id in this.scope) {
-      throw new _common.Error('Conflicting component id `' + id + '`');
-    }
-    this.scope[id] = this.node.$target || this.node;
-  };
-
-  return IdDirective;
-}(_directive2.default)) || _class);
-exports.default = IdDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var ShowDirective = function (_Directive) {
-  (0, _inherits3.default)(ShowDirective, _Directive);
-
-  function ShowDirective() {
-    (0, _classCallCheck3.default)(this, ShowDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  ShowDirective.prototype.update = function update(value) {
-    this.node.style.display = value ? '' : 'none';
-  };
-
-  return ShowDirective;
-}(_directive2.default);
-
-exports.default = ShowDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 123 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _select = __webpack_require__(124);
-
-var _select2 = _interopRequireDefault(_select);
-
-var _editable = __webpack_require__(125);
-
-var _editable2 = _interopRequireDefault(_editable);
-
-var _input = __webpack_require__(126);
-
-var _input2 = _interopRequireDefault(_input);
-
-var _radio = __webpack_require__(127);
-
-var _radio2 = _interopRequireDefault(_radio);
-
-var _checkbox = __webpack_require__(128);
-
-var _checkbox2 = _interopRequireDefault(_checkbox);
-
-var _prop = __webpack_require__(129);
-
-var _prop2 = _interopRequireDefault(_prop);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function DirectiveFactary(options) {
-  var node = options.node;
-  var tagName = node.tagName;
-  if (options.decorates[0]) {
-    return new _prop2.default(options);
-  } else if (tagName == 'INPUT') {
-    var type = node.getAttribute('type');
-    if (type == 'radio') {
-      return new _radio2.default(options);
-    } else if (type == 'checkbox') {
-      return new _checkbox2.default(options);
-    } else {
-      return new _input2.default(options);
-    }
-  } else if (tagName == 'TEXTAREA') {
-    return new _input2.default(options);
-  } else if (tagName == 'SELECT') {
-    return new _select2.default(options);
-  } else if (node.isContentEditable) {
-    return new _editable2.default(options);
-  } else {
-    throw new _common.Error('Directive `model` cannot be used on `' + tagName + '`');
-  }
-};
-
-//手动添加 meta 信息
-DirectiveFactary.meta = {
-  level: _directive2.default.levels.ATTRIBUTE
-};
-
-exports.default = DirectiveFactary;
-module.exports = exports['default'];
-
-/***/ }),
-/* 124 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _decorators = __webpack_require__(6);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var SelectModelDirective = (_dec = (0, _decorators.meta)({
-  final: true
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(SelectModelDirective, _Directive);
-
-  function SelectModelDirective() {
-    (0, _classCallCheck3.default)(this, SelectModelDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  SelectModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.node.removeAttribute(this.attribute.name);
-    this._handler = this.compiler.compile(this.node);
-    this.emiter = new _events2.default(this.node);
-    this.emiter.addListener('change', function () {
-      if ((0, _ntils.isNull)(this.scope)) return;
-      var selectedOptions = this.node.selectedOptions;
-      var value = this.node.multiple ? [].slice.call(selectedOptions).map(function (option) {
-        return option.value;
-      }, this) : selectedOptions[0].value;
-      this.backExpr.execute(new _scope2.default(this.scope, {
-        _value_: value
-      }));
-    }.bind(this), false);
-  };
-
-  SelectModelDirective.prototype.unbind = function unbind() {
-    this.emiter.removeListener();
-  };
-
-  SelectModelDirective.prototype.execute = function execute(scope) {
-    this.scope = scope;
-    this._handler(scope);
-    var value = this.expression.execute(scope);
-    if (!(0, _ntils.isArray)(value)) value = [value];
-    [].slice.call(this.node.options).forEach(function (option) {
-      option.selected = value.indexOf(option.value) > -1;
-    }, this);
-  };
-
-  return SelectModelDirective;
-}(_directive2.default)) || _class);
-exports.default = SelectModelDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 125 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EditableModelDirective = function (_Directive) {
-  (0, _inherits3.default)(EditableModelDirective, _Directive);
-
-  function EditableModelDirective() {
-    (0, _classCallCheck3.default)(this, EditableModelDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  EditableModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.emiter = new _events2.default(this.node);
-    this.emiter.addListener('input', function () {
-      if ((0, _ntils.isNull)(this.scope)) return;
-      this.backExpr.execute(new _scope2.default(this.scope, {
-        _value_: this.node.innerHTML
-      }));
-    }.bind(this), false);
-  };
-
-  EditableModelDirective.prototype.unbind = function unbind() {
-    this.emiter.removeListener();
-  };
-
-  EditableModelDirective.prototype.execute = function execute(scope) {
-    var value = this.expression.execute(scope);
-    if (this.node.innerHTML !== value) {
-      this.node.innerHTML = value;
-    }
-  };
-
-  return EditableModelDirective;
-}(_directive2.default);
-
-exports.default = EditableModelDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 126 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var InputModelDirective = function (_Directive) {
-  (0, _inherits3.default)(InputModelDirective, _Directive);
-
-  function InputModelDirective() {
-    (0, _classCallCheck3.default)(this, InputModelDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  InputModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.emiter = new _events2.default(this.node);
-    this.emiter.addListener('input', function () {
-      if ((0, _ntils.isNull)(this.scope)) return;
-      this.backExpr.execute(new _scope2.default(this.scope, {
-        _value_: this.node.value
-      }));
-    }.bind(this), false);
-  };
-
-  InputModelDirective.prototype.unbind = function unbind() {
-    this.emiter.removeListener();
-  };
-
-  InputModelDirective.prototype.execute = function execute(scope) {
-    var value = this.expression.execute(scope);
-    if (this.node.value !== value) {
-      this.node.value = value;
-    }
-  };
-
-  return InputModelDirective;
-}(_directive2.default);
-
-exports.default = InputModelDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 127 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var RadioModelDirective = function (_Directive) {
-  (0, _inherits3.default)(RadioModelDirective, _Directive);
-
-  function RadioModelDirective() {
-    (0, _classCallCheck3.default)(this, RadioModelDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  RadioModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.emiter = new _events2.default(this.node);
-    this.emiter.addListener('change', function () {
-      if ((0, _ntils.isNull)(this.scope)) return;
-      this.backExpr.execute(new _scope2.default(this.scope, {
-        _value_: this.node.value
-      }));
-    }.bind(this), false);
-  };
-
-  RadioModelDirective.prototype.unbind = function unbind() {
-    this.emiter.removeListener();
-  };
-
-  RadioModelDirective.prototype.execute = function execute(scope) {
-    this.scope = scope;
-    var value = this.expression.execute(scope);
-    this.node.checked = value == this.node.value;
-  };
-
-  return RadioModelDirective;
-}(_directive2.default);
-
-exports.default = RadioModelDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var CheckBoxModelDirective = function (_Directive) {
-  (0, _inherits3.default)(CheckBoxModelDirective, _Directive);
-
-  function CheckBoxModelDirective() {
-    (0, _classCallCheck3.default)(this, CheckBoxModelDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  CheckBoxModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.emiter = new _events2.default(this.node);
-    this.emiter.addListener('change', function () {
-      if ((0, _ntils.isNull)(this.scope)) return;
-      var value = this.expression.execute(this.scope);
-      if ((0, _ntils.isArray)(value) && this.node.checked) {
-        value.push(this.node.value);
-      } else if ((0, _ntils.isArray)(value) && !this.node.checked) {
-        var index = value.indexOf(this.node.value);
-        value.splice(index, 1);
-      } else {
-        this.backExpr.execute(new _scope2.default(this.scope, {
-          _value_: this.node.checked
-        }));
-      }
-    }.bind(this), false);
-  };
-
-  CheckBoxModelDirective.prototype.unbind = function unbind() {
-    this.emiter.removeListener();
-  };
-
-  CheckBoxModelDirective.prototype.execute = function execute(scope) {
-    this.scope = scope;
-    var value = this.expression.execute(scope);
-    if ((0, _ntils.isArray)(value)) {
-      this.node.checked = value.indexOf(this.node.value) > -1;
-    } else {
-      this.node.checked = value;
-    }
-  };
-
-  return CheckBoxModelDirective;
-}(_directive2.default);
-
-exports.default = CheckBoxModelDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _scope = __webpack_require__(9);
-
-var _scope2 = _interopRequireDefault(_scope);
-
-var _common = __webpack_require__(5);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var PropModelDirective = function (_Directive) {
-  (0, _inherits3.default)(PropModelDirective, _Directive);
-
-  function PropModelDirective() {
-    (0, _classCallCheck3.default)(this, PropModelDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  PropModelDirective.prototype.bind = function bind() {
-    var _this2 = this;
-
-    this.target = this.node.$target;
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.bindProp = this.decorates[0];
-    if (!this.target) {
-      throw new _common.Error('Directive `model:' + this.bindProp + '` cannot be used on `' + this.node.tagName + '`');
-    }
-    this.watcher = this.target.$watch(this.bindProp, function (value) {
-      if ((0, _ntils.isNull)(_this2.scope)) return;
-      _this2.backExpr.execute(new _scope2.default(_this2.scope, {
-        _value_: value
-      }));
-    });
-  };
-
-  PropModelDirective.prototype.unbind = function unbind() {
-    this.target.$unWatch(this.watcher);
-  };
-
-  PropModelDirective.prototype.update = function update(value) {
-    this.target[this.bindProp] = value;
-  };
-
-  return PropModelDirective;
-}(_directive2.default);
-
-exports.default = PropModelDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 130 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var FocusDirective = function (_Directive) {
-  (0, _inherits3.default)(FocusDirective, _Directive);
-
-  function FocusDirective() {
-    (0, _classCallCheck3.default)(this, FocusDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  FocusDirective.prototype.execute = function execute(scope) {
-    var _this2 = this;
-
-    var state = this.expression.execute(scope);
-    setTimeout(function () {
-      if (state) _this2.node.focus();else _this2.node.blur();
-    }, 0);
-  };
-
-  return FocusDirective;
-}(_directive2.default);
-
-exports.default = FocusDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 131 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _decorators = __webpack_require__(6);
-
-var _ntils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * 通用的 attribute 指令
- * 用于所有 attribute 的处理
- * 例如:
- *  <div attr1="{{expr1}}" {{expr2}} {{attr3}}="{{expr3}}">
- *  </div>
- */
-var AttributeDirective = (_dec = (0, _decorators.meta)({
-  level: _directive2.default.levels.ATTRIBUTE,
-  prefix: false,
-  literal: true,
-  remove: false
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(AttributeDirective, _Directive);
-
-  function AttributeDirective() {
-    (0, _classCallCheck3.default)(this, AttributeDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  AttributeDirective.prototype.bind = function bind() {
-    this.computedName = this.attribute.name;
-    this.computedValue = this.attribute.value;
-    this.nameExpr = new this.Expression(this.attribute.name, true);
-    this.valueExpr = new this.Expression(this.attribute.value, true);
-  };
-
-  AttributeDirective.prototype.execute = function execute(scope) {
-    var target = this.node.$target || this.node;
-    var newComputedName = this.nameExpr.execute(scope);
-    if (this.computedName !== newComputedName) {
-      //移除旧名称
-      if (target.removeAttribute) {
-        target.removeAttribute(this.computedName);
-      }
-      //设置新名称
-      this.computedName = newComputedName;
-      if (!(0, _ntils.isNull)(this.computedName) && this.computedName.length > 0) {
-        if (target.setAttribute) {
-          target.setAttribute(this.computedName, this.computedValue || '');
-        }
-      }
-    }
-    var newComputeValue = this.valueExpr.execute(scope);
-    if (this.computedValue !== newComputeValue) {
-      this.computedValue = newComputeValue;
-      if (target.setAttribute) {
-        target.setAttribute(this.computedName, this.computedValue || '');
-      } else {
-        target[this.computedName] = this.computedValue;
-      }
-    }
-  };
-
-  return AttributeDirective;
-}(_directive2.default)) || _class);
-exports.default = AttributeDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 132 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class;
-
-var _directive = __webpack_require__(4);
-
-var _directive2 = _interopRequireDefault(_directive);
-
-var _expression = __webpack_require__(26);
-
-var _expression2 = _interopRequireDefault(_expression);
-
-var _ntils = __webpack_require__(3);
-
-var _decorators = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var TextDirective = (_dec = (0, _decorators.meta)({
-  type: _directive2.default.types.ELEMENT,
-  prefix: false
-}), _dec(_class = function (_Directive) {
-  (0, _inherits3.default)(TextDirective, _Directive);
-
-  function TextDirective() {
-    (0, _classCallCheck3.default)(this, TextDirective);
-    return (0, _possibleConstructorReturn3.default)(this, _Directive.apply(this, arguments));
-  }
-
-  /**
-   * 初始化指令
-   * @returns {void} 无返回
-   */
-  TextDirective.prototype.bind = function bind() {
-    var nodeValue = (0, _ntils.trim)(this.node.nodeValue);
-    if (!nodeValue) return;
-    this.node.nodeValue = '';
-    this.expr = new _expression2.default(nodeValue, true);
-  };
-
-  TextDirective.prototype.execute = function execute(scope) {
-    if (!this.expr) return;
-    this.scope = scope;
-    var newValue = this.expr.execute(scope);
-    if (this.node.nodeValue !== newValue) {
-      this.node.nodeValue = newValue;
-    }
-  };
-
-  return TextDirective;
-}(_directive2.default)) || _class);
-exports.default = TextDirective;
-module.exports = exports['default'];
-
-/***/ }),
-/* 133 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _typeof2 = __webpack_require__(36);
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _observer = __webpack_require__(60);
-
-var _observer2 = _interopRequireDefault(_observer);
-
-var _events = __webpack_require__(7);
-
-var _events2 = _interopRequireDefault(_events);
-
-var _compiler = __webpack_require__(58);
-
-var _compiler2 = _interopRequireDefault(_compiler);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * 模板类
- * 可能通过 element 作为参数，创建一个模板实例
- */
-var Template = function (_EventEmitter) {
-  (0, _inherits3.default)(Template, _EventEmitter);
-
-  /**
-   * 构建一个模板板实例
-   * @param {HTMLNode} element HTML 元素
-   * @param {Object} options 选项
-   * @returns {void} 无返回
-   */
-  function Template(element, options) {
-    (0, _classCallCheck3.default)(this, Template);
-
-    var _this = (0, _possibleConstructorReturn3.default)(this, _EventEmitter.call(this));
-
-    options = options || {};
-    _this.options = options;
-    _this.element = element;
-    _this.compiler = options.compiler || new _compiler2.default(options);
-    _this.render = _this.compiler.compile(_this.element);
-    _this.update = _this.update.bind(_this);
-
-    if (!(typeof _this.update === 'function')) {
-      throw new TypeError('Value of "this.update" violates contract.\n\nExpected:\n() => any\n\nGot:\n' + _inspect(_this.update));
-    }
-
-    _this._update = _this._update.bind(_this);
-
-    if (!(typeof _this._update === 'function')) {
-      throw new TypeError('Value of "this._update" violates contract.\n\nExpected:\n() => any\n\nGot:\n' + _inspect(_this._update));
-    }
-
-    _this._updateTimer = 0;
-    return _this;
-  }
-
-  /**
-   * 更新当前模板 (会过滤不必要的更新)
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype.update = function update() {
-    if (this._updateTimer) {
-      clearTimeout(this._updateTimer);
-      this._updateTimer = null;
-    }
-    this._updateTimer = setTimeout(this._update, 0);
-  };
-
-  /**
-   * 更新当前模板内部方法 
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype._update = function _update() {
-    if (!this._updateTimer || !this.observer) return;
-    this.emit('update', this);
-    this.render(this.observer.target);
-    this._onBind();
-  };
-
-  /**
-   * 在绑定成功时
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype._onBind = function _onBind() {
-    if (this._bound) return;
-    this._bound = true;
-    this.emit('bind', this);
-  };
-
-  /**
-   * 将模板绑定到一个 scope
-   * @param {Object} scope 绑定的上下文对象
-   * @param {boolean} disableFirst 是否禁用第一次的自动渲染
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype.bind = function bind(scope, disableFirst) {
-    if (!scope) return;
-    this.unbind();
-    this.observer = new _observer2.default(scope, {
-      root: this.options.root
-    });
-    scope.$self = scope;
-    this.observer.on('change', this.update);
-    if (disableFirst) {
-      this._onBind();
-    } else {
-      this.update();
-    }
-  };
-
-  /**
-   * 解绑定
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype.unbind = function unbind() {
-    if (!this.observer) return;
-    this.observer.removeListener('change', this.update);
-    this.observer.clearReference();
-    this.observer = null;
-  };
-
-  /**
-   * 释放
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype.dispose = function dispose() {
-    this.unbind();
-    this.render.dispose();
-  };
-
-  return Template;
-}(_events2.default);
-
-exports.default = Template;
-
-function _inspect(input, depth) {
-  var maxDepth = 4;
-  var maxKeys = 15;
-
-  if (depth === undefined) {
-    depth = 0;
-  }
-
-  depth += 1;
-
-  if (input === null) {
-    return 'null';
-  } else if (input === undefined) {
-    return 'void';
-  } else if (typeof input === 'string' || typeof input === 'number' || typeof input === 'boolean') {
-    return typeof input === 'undefined' ? 'undefined' : (0, _typeof3.default)(input);
-  } else if (Array.isArray(input)) {
-    if (input.length > 0) {
-      if (depth > maxDepth) return '[...]';
-
-      var first = _inspect(input[0], depth);
-
-      if (input.every(function (item) {
-        return _inspect(item, depth) === first;
-      })) {
-        return first.trim() + '[]';
-      } else {
-        return '[' + input.slice(0, maxKeys).map(function (item) {
-          return _inspect(item, depth);
-        }).join(', ') + (input.length >= maxKeys ? ', ...' : '') + ']';
-      }
-    } else {
-      return 'Array';
-    }
-  } else {
-    var keys = Object.keys(input);
-
-    if (!keys.length) {
-      if (input.constructor && input.constructor.name && input.constructor.name !== 'Object') {
-        return input.constructor.name;
-      } else {
-        return 'Object';
-      }
-    }
-
-    if (depth > maxDepth) return '{...}';
-    var indent = '  '.repeat(depth - 1);
-    var entries = keys.slice(0, maxKeys).map(function (key) {
-      return (/^([A-Z_$][A-Z0-9_$]*)$/i.test(key) ? key : JSON.stringify(key)) + ': ' + _inspect(input[key], depth) + ';';
-    }).join('\n  ' + indent);
-
-    if (keys.length >= maxKeys) {
-      entries += '\n  ' + indent + '...';
-    }
-
-    if (input.constructor && input.constructor.name && input.constructor.name !== 'Object') {
-      return input.constructor.name + ' {\n  ' + indent + entries + '\n' + indent + '}';
-    } else {
-      return '{\n  ' + indent + entries + '\n' + indent + '}';
-    }
-  }
-}
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 134 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _extends2 = __webpack_require__(27);
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-exports.default = function (options) {
-  var _dec, _class;
-
-  var ComponentDirective = (_dec = (0, _decorators.meta)((0, _extends3.default)({}, options, {
-    type: Directive.types.ELEMENT,
-    literal: true,
-    final: true,
-    level: Directive.levels.ELEMENT
-  })), _dec(_class = function (_Directive) {
-    (0, _inherits3.default)(ComponentDirective, _Directive);
-
-    function ComponentDirective(options) {
-      (0, _classCallCheck3.default)(this, ComponentDirective);
-
-      var _this = (0, _possibleConstructorReturn3.default)(this, _Directive.call(this, options));
-
-      var meta = _this.meta;
-      _this.component = new meta.component({
-        deferReady: true,
-        parent: meta.parent || meta.scope
-      });
-      return _this;
-    }
-
-    ComponentDirective.prototype.bind = function bind() {
-      this.handleAttrs();
-      this.node.$target = this.component;
-      this.handler = this.compiler.compile(this.node, {
-        element: false,
-        children: false
-      });
-      this.component.$mount(this.node);
-      this.handleContents();
-      if (this.node.parentNode) {
-        this.node.parentNode.removeChild(this.node);
-      }
-    };
-
-    ComponentDirective.prototype.handleAttrs = function handleAttrs() {
-      this.attrs = [].slice.call(this.node.attributes);
-      var directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
-      this.attrs.forEach(function (attr) {
-        if (directiveRegexp.test(attr.name)) return;
-        if (attr.name in this.component) return;
-        this.component.$element.setAttribute(attr.name, attr.value);
-        this.node.removeAttribute(attr.name);
-      }, this);
-    };
-
-    ComponentDirective.prototype.handleContents = function handleContents() {
-      this.placeHandlers = [];
-      var places = [].slice.call(this.component.$element.querySelectorAll('[' + this.prefix + '\\:content]'));
-      places.forEach(function (place) {
-        //将内容插入到指定的「位置」
-        var contents = null;
-        var selector = place.getAttribute(this.prefix + ':content');
-        if (!selector) {
-          contents = [].slice.call(this.node.childNodes);
-        } else {
-          contents = [].slice.call(this.node.querySelectorAll(selector));
-        }
-        if (!contents || contents.length < 1) return;
-        place.innerHTML = '';
-        contents.forEach(function (content) {
-          place.appendChild(content.cloneNode(true));
-        }, this);
-        //编译插入后的子「内容模板」
-        var handler = this.compiler.compile(place);
-        this.placeHandlers.push(handler);
-      }, this);
-    };
-
-    ComponentDirective.prototype.execute = function execute(scope) {
-      this.handler(scope);
-      if (!this._ready_) {
-        this._ready_ = true;
-        this.component.$emit('ready');
-      }
-      this.placeHandlers.forEach(function (handler) {
-        handler(scope);
-      }, this);
-    };
-
-    return ComponentDirective;
-  }(Directive)) || _class);
-
-  return ComponentDirective;
-};
-
-var _template = __webpack_require__(43);
-
-var _template2 = _interopRequireDefault(_template);
-
-var _decorators = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Directive = _template2.default.Directive;
-
-module.exports = exports['default'];
-
-/***/ }),
-/* 135 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-
-var _view = __webpack_require__(136);
-
-var _view2 = _interopRequireDefault(_view);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = { View: _view2.default };
-module.exports = exports['default'];
-
-/***/ }),
-/* 136 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports.__esModule = true;
-exports.default = undefined;
-
-var _classCallCheck2 = __webpack_require__(0);
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(35);
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _possibleConstructorReturn2 = __webpack_require__(1);
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = __webpack_require__(2);
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _dec, _class, _class2, _temp;
-
-var _component = __webpack_require__(46);
-
-var _component2 = _interopRequireDefault(_component);
-
-var _ntils = __webpack_require__(3);
-
-var _decorators = __webpack_require__(6);
-
-var _common = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * 内置视图组件
- * 可以加载并显示其它组件，并可以指定「转场效果」
- */
-var View = (_dec = (0, _decorators.template)('<div></div>'), _dec(_class = (_temp = _class2 = function (_Component) {
-  (0, _inherits3.default)(View, _Component);
-
-  function View() {
-    (0, _classCallCheck3.default)(this, View);
-    return (0, _possibleConstructorReturn3.default)(this, _Component.apply(this, arguments));
-  }
-
-  /**
-   * 切换到指定的组件
-   * @param {Component} component 组件
-   * @param {transition} transition 转场控制组件
-   * @returns {void} 无返回
-   */
-  View.prototype.switchTo = function switchTo(component, transition) {
-    if (transition) {
-      this.transition = transition;
-    }
-    this.component = component;
-  };
-
-  (0, _createClass3.default)(View, [{
-    key: 'component',
-    set: function set(component) {
-      if (this._transitioning) return;
-      this._transitioning = true;
-      //如果 value 是字符串则尝试从 $parent.components 中获取组件类 
-      if ((0, _ntils.isString)(component)) {
-        if (this.$parent && this.$parent.$components) {
-          this.component = this.$parent.$components[component];
-        } else {
-          this.component = null;
-        }
-        return;
-      }
-      //声明新旧组件变量
-      var newComponentInstance = null;
-      var oldComponentInstance = this.componentInstance;
-      //创建新组件实例
-      if ((0, _ntils.isFunction)(component)) {
-        newComponentInstance = new component({
-          parent: this
-        });
-      } else {
-        component.$setParent(this);
-        newComponentInstance = component;
-      }
-      //通过转场控制器进行转场准备
-      this.transition.prep(newComponentInstance, oldComponentInstance);
-      //挂载新组件实例
-      newComponentInstance.$appendTo(this.$element);
-      //通过转场控制器进行转场
-      this.transition.go(newComponentInstance, oldComponentInstance, function () {
-        //触发相关事件
-        this.$emit('enter', newComponentInstance);
-        this.$emit('leave', oldComponentInstance);
-        //销毁旧组件实例
-        if (oldComponentInstance) {
-          oldComponentInstance.$dispose();
-        }
-        this._transitioning = false;
-      }.bind(this));
-      //暂存当前组件实例
-      this.componentInstance = newComponentInstance;
-    },
-    get: function get() {
-      return this._Component;
-    }
-  }, {
-    key: 'transition',
-    get: function get() {
-      return this._transition || View.transition;
-    },
-    set: function set(transition) {
-      if (this._transitioning) return;
-      if (!transition || (0, _ntils.isFunction)(transition.prep) && (0, _ntils.isFunction)(transition.go)) {
-        if (this._transition && (0, _ntils.isFunction)(this._transition.clean)) {
-          this._transition.clean(this);
-        }
-        if (transition && (0, _ntils.isFunction)(transition.init)) {
-          transition.init(this);
-        }
-        this._transition = transition;
-      } else {
-        throw new _common.Error('Invalid transition');
-      }
-    }
-  }]);
-  return View;
-}(_component2.default), _class2.transition = {
-  //init: function () { },
-  //clean: function () { },
-  /**
-   * 转场开始前的准备
-   * @param {Component} newComponent 新组件
-   * @param {Component} oldComponent 旧组件
-   * @returns {void} 无返回
-   */
-  prep: function prep(newComponent, oldComponent) {
-    if (oldComponent) oldComponent.$element.style.display = 'none';
-  },
-
-  /**
-   * 执行转场动画
-   * @param {Component} newComponent 新组件
-   * @param {Component} oldComponent 旧组件
-   * @param {Function} done 完成后的回调
-   * @returns {void} 无返回
-   */
-  go: function go(newComponent, oldComponent, done) {
-    done();
-  }
-}, _temp)) || _class);
-exports.default = View;
-module.exports = exports['default'];
 
 /***/ })
 /******/ ]);
