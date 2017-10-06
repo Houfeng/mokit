@@ -904,8 +904,8 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-6800e988-0675-580d-7be2-6d2098ce28c5.js
-/* harmony default export */ var $info_6800e988_0675_580d_7be2_6d2098ce28c5 = ({ "name": "mokit", "version": "4.0.0-alpha2" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-d7aba510-4dca-3bc4-1af9-393f049b5bbb.js
+/* harmony default export */ var $info_d7aba510_4dca_3bc4_1af9_393f049b5bbb = ({ "name": "mokit", "version": "4.0.0-alpha3" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.0.6@ntils/src/utils.js
 
 /**
@@ -1873,7 +1873,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_6800e988_0675_580d_7be2_6d2098ce28c5.name + ']: ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_d7aba510_4dca_3bc4_1af9_393f049b5bbb.name + ']: ' + message].concat(other)));
   }
 
   return LibError;
@@ -4743,7 +4743,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_6800e988_0675_580d_7be2_6d2098ce28c5, bootstrap);
+copy($info_d7aba510_4dca_3bc4_1af9_393f049b5bbb, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;

@@ -3,8 +3,13 @@ dev:
     target: ./dist
   - name: webpack
     output: dist
-    entry: ./example/*.js
+    entry: 
+      (1): ./example/*/index.js
     template: ./example/assets/*.html
+    folders:
+      html: examples
+      js: examples/js
+      css: examples/css
     common:
       disabled: true
     watch: true
