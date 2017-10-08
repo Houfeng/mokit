@@ -1,10 +1,10 @@
 <ul>
-  <li m:each="item of list" class="{{item.editing&&!item.done?'editing':''}}">
+  <li m:each="item of list" m:class="{editing:item.editing&&!item.done}">
     <input type="checkbox" m:model="item.done" />
-    <span m:if="!item.editing||item.done" m:on:click="edit(item,true)" class="{{item.done?'done':''}}">
+    <span m:if="!item.editing||item.done" m:on:click="edit(item,true)" m:class="{done:item.done}">
       {{item.text}}
     </span>
-    <input m:on:blur="edit(item,false)" m:focus="item.editing" type="text" m:if="item.editing&&!item.done"
+    <input m:on:change="edit(item,false)" m:on:blur="edit(item,false)" m:focus="item.editing" type="text" m:if="item.editing&&!item.done"
       m:model="item.text" />
     <a m:on:click="del(item)">DEL</a>
   </li>

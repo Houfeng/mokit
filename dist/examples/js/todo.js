@@ -886,8 +886,8 @@ exports.f = __webpack_require__(6) ? gOPD : function getOwnPropertyDescriptor(O,
 
 "use strict";
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-48f8ae66-b0d7-99b8-07e6-a9135b3136c4.js
-/* harmony default export */ var $info_48f8ae66_b0d7_99b8_07e6_a9135b3136c4 = ({ "name": "mokit", "version": "4.0.0-alpha3" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-cd8eb05a-0456-5bdc-68c0-3692d8b1b335.js
+/* harmony default export */ var $info_cd8eb05a_0456_5bdc_68c0_3692d8b1b335 = ({ "name": "mokit", "version": "4.0.0-alpha3" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.0.6@ntils/src/utils.js
 
 /**
@@ -1855,7 +1855,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_48f8ae66_b0d7_99b8_07e6_a9135b3136c4.name + ']: ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_cd8eb05a_0456_5bdc_68c0_3692d8b1b335.name + ']: ' + message].concat(other)));
   }
 
   return LibError;
@@ -2101,14 +2101,40 @@ var node_Node = function (_EventEmitter) {
 }(src_events);
 
 
+// CONCATENATED MODULE: ./src/common/cname.js
+
+
+function className(name, prefix) {
+  if (!name) {
+    return '';
+  } else if (isString(name) && name.indexOf(' ') > -1) {
+    return className(name.split(' '), prefix);
+  } else if (isString(name) && name.indexOf(',') > -1) {
+    return className(name.split(','), prefix);
+  } else if (isArray(name)) {
+    return name.map(function (item) {
+      return className(item, prefix);
+    }).join(' ').trim();
+  } else if (isObject(name)) {
+    return className(Object.keys(name).filter(function (key) {
+      return name[key];
+    }), prefix);
+  } else if (startWith(name, prefix)) {
+    return name;
+  } else {
+    var trimedName = name.trim().replace(/([A-Z])/g, '-$1').toLowerCase();
+    if (!trimedName) return '';
+    return prefix ? prefix + '-' + trimedName : trimedName;
+  }
+}
 // CONCATENATED MODULE: ./src/common/index.js
 
 
 
-//import cname from './cname'
 
 
-/* harmony default export */ var common = ({ Entity: entity_Entity, Error: error_LibError, Node: node_Node });
+
+/* harmony default export */ var common = ({ Entity: entity_Entity, Error: error_LibError, Node: node_Node, cname: className });
 // CONCATENATED MODULE: ./src/template/expression.js
 
 
@@ -3349,6 +3375,30 @@ var text_TextDirective = (text__dec = decorators_meta({
   return TextDirective;
 }(directive_Directive)) || text__class);
 
+// CONCATENATED MODULE: ./src/template/directives/class.js
+
+
+
+
+
+
+var class_ClassNameDirective = function (_Directive) {
+  inherits_default()(ClassNameDirective, _Directive);
+
+  function ClassNameDirective() {
+    classCallCheck_default()(this, ClassNameDirective);
+
+    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+  }
+
+  ClassNameDirective.prototype.update = function update(value) {
+    this.node.setAttribute('class', className(value));
+  };
+
+  return ClassNameDirective;
+}(directive_Directive);
+
+
 // CONCATENATED MODULE: ./src/template/directives/index.js
 
 
@@ -3364,13 +3414,13 @@ var text_TextDirective = (text__dec = decorators_meta({
 
  //处理所有未知 attr
  //处理所有 text 
-//import className from './class'; //处理 className
+ //处理 className
 
 /* harmony default export */ var template_directives = ({
   '#text': text_TextDirective,
   '*': attribute_AttributeDirective,
   'if': if_IfDirective,
-  //'class': className,
+  'class': class_ClassNameDirective,
   each: each_EachDirective, prop: prop_PropDirective, attr: attr_AttrDirective, on: on_OnDirective, html: inner_html_InnerHtmlDirective, text: inner_text_InnerTextDirective,
   prevent: prevent_PreventDirective, id: id_IdDirective, show: show_ShowDirective, model: directives_model, focus: focus_FocusDirective
 });
@@ -4938,6 +4988,8 @@ function bootstrap(component, mountNode, options) {
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, false, function() { return error_LibError; });
 /* unused concated harmony import null */
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, false, function() { return node_Node; });
+/* unused concated harmony import null */
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, false, function() { return className; });
 /* unused concated harmony import Template */
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, false, function() { return src_template; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "a", function() { return src_component; });
@@ -4968,7 +5020,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_48f8ae66_b0d7_99b8_07e6_a9135b3136c4, bootstrap);
+copy($info_cd8eb05a_0456_5bdc_68c0_3692d8b1b335, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;
@@ -5871,7 +5923,7 @@ var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possi
 var inherits = __webpack_require__(2);
 var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
 
-// EXTERNAL MODULE: ./src/index.js + 50 modules
+// EXTERNAL MODULE: ./src/index.js + 52 modules
 var src = __webpack_require__(46);
 
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/createClass.js
@@ -6060,7 +6112,7 @@ window.todo = Object(src["c" /* default */])(todo_MyApp, document.body);
 /* 91 */
 /***/ (function(module, exports) {
 
-module.exports = "<ul>\n  <li m:each=\"item of list\" class=\"{{item.editing&&!item.done?'editing':''}}\">\n    <input type=\"checkbox\" m:model=\"item.done\" />\n    <span m:if=\"!item.editing||item.done\" m:on:click=\"edit(item,true)\" class=\"{{item.done?'done':''}}\">\n      {{item.text}}\n    </span>\n    <input m:on:blur=\"edit(item,false)\" m:focus=\"item.editing\" type=\"text\" m:if=\"item.editing&&!item.done\"\n      m:model=\"item.text\" />\n    <a m:on:click=\"del(item)\">DEL</a>\n  </li>\n</ul>"
+module.exports = "<ul>\n  <li m:each=\"item of list\" m:class=\"{editing:item.editing&&!item.done}\">\n    <input type=\"checkbox\" m:model=\"item.done\" />\n    <span m:if=\"!item.editing||item.done\" m:on:click=\"edit(item,true)\" m:class=\"{done:item.done}\">\n      {{item.text}}\n    </span>\n    <input m:on:change=\"edit(item,false)\" m:on:blur=\"edit(item,false)\" m:focus=\"item.editing\" type=\"text\" m:if=\"item.editing&&!item.done\"\n      m:model=\"item.text\" />\n    <a m:on:click=\"del(item)\">DEL</a>\n  </li>\n</ul>"
 
 /***/ }),
 /* 92 */
