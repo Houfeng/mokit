@@ -10,13 +10,15 @@ export default class PropModelDirective extends Directive {
    * @returns {void} 无返回
    */
   bind() {
-    this.target = this.node.$target;
+    this.component = this.node.component;
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.bindProp = this.decorates[0];
-    if (!this.target) {
-      throw new Error(`Directive \`model:${this.bindProp}\` cannot be used on \`${this.node.tagName}\``);
+    if (!this.component) {
+      throw new Error(
+        `Directive \`model:${this.bindProp}\` cannot be used on \`${this.node.tagName}\``
+      );
     }
-    this.watcher = this.target.$watch(this.bindProp, (value) => {
+    this.watcher = this.component.$watch(this.bindProp, (value) => {
       if (isNull(this.scope)) return;
       this.backExpr.execute(new Scope(this.scope, {
         _value_: value
@@ -25,11 +27,11 @@ export default class PropModelDirective extends Directive {
   }
 
   unbind() {
-    this.target.$unWatch(this.watcher);
+    this.component.$unWatch(this.watcher);
   }
 
   update(value) {
-    this.target[this.bindProp] = value;
+    this.component[this.bindProp] = value;
   }
 
 }

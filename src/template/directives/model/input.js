@@ -1,5 +1,4 @@
 import Directive from '../../directive';
-import EventEmitter from '../../../events';
 import Scope from '../../scope';
 import { isNull } from 'ntils';
 
@@ -11,17 +10,16 @@ export default class InputModelDirective extends Directive {
    */
   bind() {
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
-    this.emiter = new EventEmitter(this.node);
-    this.emiter.addListener('input', function () {
+    this.node.emitter.addListener('input', () => {
       if (isNull(this.scope)) return;
       this.backExpr.execute(new Scope(this.scope, {
         _value_: this.node.value
       }));
-    }.bind(this), false);
+    }, false);
   }
 
   unbind() {
-    this.emiter.removeListener();
+    this.node.emitter.removeListener();
   }
 
   execute(scope) {

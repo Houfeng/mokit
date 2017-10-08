@@ -17,8 +17,7 @@ export default class SelectModelDirective extends Directive {
     this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
     this.node.removeAttribute(this.attribute.name);
     this._handler = this.compiler.compile(this.node);
-    this.emiter = new EventEmitter(this.node);
-    this.emiter.addListener('change', function () {
+    this.node.emitter.addListener('change', () => {
       if (isNull(this.scope)) return;
       let selectedOptions = this.node.selectedOptions;
       let value = this.node.multiple
@@ -29,11 +28,11 @@ export default class SelectModelDirective extends Directive {
       this.backExpr.execute(new Scope(this.scope, {
         _value_: value
       }));
-    }.bind(this), false);
+    }, false);
   }
 
   unbind() {
-    this.emiter.removeListener();
+    this.node.emitter.removeListener();
   }
 
   execute(scope) {

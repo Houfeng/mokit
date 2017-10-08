@@ -29,29 +29,20 @@ export default class AttributeDirective extends Directive {
   }
 
   execute(scope) {
-    let target = this.node.$target || this.node;
     let newComputedName = this.nameExpr.execute(scope);
     if (this.computedName !== newComputedName) {
       //移除旧名称
-      if (target.removeAttribute) {
-        target.removeAttribute(this.computedName);
-      }
+      this.node.removeAttribute(this.computedName);
       //设置新名称
       this.computedName = newComputedName;
       if (!isNull(this.computedName) && this.computedName.length > 0) {
-        if (target.setAttribute) {
-          target.setAttribute(this.computedName, this.computedValue || '');
-        }
+        this.node.setAttribute(this.computedName, this.computedValue || '');
       }
     }
     let newComputeValue = this.valueExpr.execute(scope);
     if (this.computedValue !== newComputeValue) {
       this.computedValue = newComputeValue;
-      if (target.setAttribute) {
-        target.setAttribute(this.computedName, this.computedValue || '');
-      } else {
-        target[this.computedName] = this.computedValue;
-      }
+      this.node.setAttribute(this.computedName, this.computedValue || '');
     }
   }
 

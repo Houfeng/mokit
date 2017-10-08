@@ -12,12 +12,22 @@ export default class IfDirective extends Directive {
    * @returns {void} 无返回
    */
   bind() {
-    this.mountNode = document.createTextNode('');
-    this.node.parentNode.insertBefore(this.mountNode, this.node);
+    //创建挂载点并插入到对应位置
+    this.mountNode = this.Node.create();
+    this.mountNode.insertTo(this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
     //但 if 指令必须先移除，否再进行 item 编译时 if 还会生效
     this.node.removeAttribute(this.attribute.name);
-    this.node.parentNode.removeChild(this.node);
+    //把 item 的 node 移除掉，还在内存中待用
+    this.node.remove();
+  }
+
+  get itemNode() {
+    if (this.node.component) {
+      return this.node.component.$node;
+    } else {
+      return this.node;
+    }
   }
 
   execute(scope) {
@@ -26,13 +36,12 @@ export default class IfDirective extends Directive {
       //如果新计算的结果为 true 才执行 
       this._handler = this._handler || this.compiler.compile(this.node);
       this._handler(scope);
-      let node = this.node.$substitute || this.node;
-      if (!node.parentNode) {
-        this.mountNode.parentNode.insertBefore(node, this.mountNode);
+      //通过 parentNode 判断没有还没有添加到 dom 中时，才添加，避免重复添加
+      if (!this.itemNode.parentNode) {
+        this.itemNode.insertTo(this.mountNode);
       }
     } else {
-      let node = this.node.$substitute || this.node;
-      if (node.parentNode) node.parentNode.removeChild(node);
+      this.itemNode.remove();
     }
   }
 

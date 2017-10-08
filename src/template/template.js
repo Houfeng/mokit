@@ -95,9 +95,9 @@ export default class Template extends EventEmitter {
    * 释放
    * @returns {void} 无返回
    */
-  dispose() {
+  destroy() {
     this.unbind();
-    this.render.dispose();
+    this.render.destroy();
   }
 
 }

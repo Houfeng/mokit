@@ -30,16 +30,14 @@ export default function (options) {
 
     bind() {
       this.handleAttrs();
-      this.node.$target = this.component;
+      this.node.component = this.component;
       this.handler = this.compiler.compile(this.node, {
         element: false,
         children: false
       });
       this.component.$mount(this.node);
       this.handleContents();
-      if (this.node.parentNode) {
-        this.node.parentNode.removeChild(this.node);
-      }
+      this.node.remove();
     }
 
     handleAttrs() {
@@ -55,25 +53,20 @@ export default function (options) {
 
     handleContents() {
       this.placeHandlers = [];
-      let places = [].slice.call(
-        this.component.$element.querySelectorAll('[' + this.prefix + '\\:content]')
-      );
-      places.forEach(function (place) {
+      let placeNodes = this.component.$node
+        .find('[' + this.prefix + '\\:content]');
+      placeNodes.forEach(function (placeNode) {
         //将内容插入到指定的「位置」
         let contents = null;
-        let selector = place.getAttribute(this.prefix + ':content');
-        if (!selector) {
-          contents = [].slice.call(this.node.childNodes);
-        } else {
-          contents = [].slice.call(this.node.querySelectorAll(selector));
-        }
+        let selector = placeNode.getAttribute(this.prefix + ':content');
+        contents = selector ? this.node.find(selector) : this.node.childNodes;
         if (!contents || contents.length < 1) return;
-        place.innerHTML = '';
+        placeNode.innerHTML = '';
         contents.forEach(function (content) {
-          place.appendChild(content.cloneNode(true));
+          placeNode.appendChild(content.cloneNode(true));
         }, this);
         //编译插入后的子「内容模板」
-        let handler = this.compiler.compile(place);
+        let handler = this.compiler.compile(placeNode);
         this.placeHandlers.push(handler);
       }, this);
     }

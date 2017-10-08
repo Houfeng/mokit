@@ -70,7 +70,7 @@ export default class View extends Component {
       this.$emit('leave', oldComponentInstance);
       //销毁旧组件实例
       if (oldComponentInstance) {
-        oldComponentInstance.$dispose();
+        oldComponentInstance.$destroy();
       }
       this._transitioning = false;
     }.bind(this));

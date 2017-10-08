@@ -4,7 +4,7 @@
     <span m:if="!item.editing||item.done" m:on:click="edit(item,true)" class="{{item.done?'done':''}}">
       {{item.text}}
     </span>
-    <input m:on:change="edit(item,false)" m:on:blur="edit(item,false)" m:focus="item.editing" type="text" m:if="item.editing&&!item.done"
+    <input m:on:blur="edit(item,false)" m:focus="item.editing" type="text" m:if="item.editing&&!item.done"
       m:model="item.text" />
     <a m:on:click="del(item)">DEL</a>
   </li>

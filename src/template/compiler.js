@@ -2,7 +2,7 @@ import Directive from './directive';
 import { each, isNull, toArray } from 'ntils';
 import Expression from './expression';
 import commonDirectives from './directives';
-import { Error } from 'common';
+import { Error, Node } from 'common';
 
 const DEFAULT_PREFIX = 'm';
 
@@ -181,7 +181,7 @@ export default class Compiler {
   _compileChildren(handler, node) {
     if (handler.final) return;
     toArray(node.childNodes).forEach(function (childNode) {
-      if (childNode._compiled_) return;
+      if (childNode.compiled) return;
       let childHandler = this.compile(childNode);
       childHandler.parent = this;
       handler.children.push(childHandler);
@@ -198,8 +198,10 @@ export default class Compiler {
     if (!node) {
       throw new Error('Invalid node for compile');
     }
-    node._compiled_ = true;
     options = options || {};
+    //--    
+    node = new Node(node);
+    node.compiled = true;
     //定义编译结果函数
     let handler = function (scope) {
       if (isNull(scope)) scope = {};
@@ -212,12 +214,12 @@ export default class Compiler {
       }, this);
     };
     //--
-    handler.dispose = function () {
+    handler.destroy = function () {
       handler.directives.forEach(function (directive) {
         directive.unbind();
       }, this);
       handler.children.forEach(function (childHandler) {
-        childHandler.dispose();
+        childHandler.destroy();
       }, this);
     };
     handler.node = node;

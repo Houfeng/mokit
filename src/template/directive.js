@@ -1,5 +1,5 @@
 import { copy, deepEqual } from 'ntils';
-import { Entity } from 'common';
+import { Entity, Node } from 'common';
 import Expression from './expression';
 import { meta } from '../decorators';
 
@@ -33,6 +33,7 @@ export default class Directive extends Entity {
 
   //挂载指令常用的类型
   Expression = Expression;
+  Node = Node;
 
   //指令构建函数
   constructor(options) {

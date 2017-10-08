@@ -4,7 +4,7 @@ import {
   isFunction, isString, copy, create, each,
   defineFreezeProp, getByPath, parseDom
 } from 'ntils';
-import { Error, Entity } from 'common';
+import { Error, Entity, Node } from 'common';
 import createDirective from './directive';
 import { meta } from 'decorators';
 
@@ -242,6 +242,7 @@ export default class Component extends Entity {
     this.$emit('create');
     let element = meta.template.cloneNode(true);
     defineFreezeProp(this, '$element', element);
+    defineFreezeProp(this, '$node', new Node(element));
     if (!this.$element || this.$element.nodeName === '#text') {
       throw new Error('Invalid component template');
     }
@@ -279,14 +280,10 @@ export default class Component extends Entity {
     if (this._mounted_) return;
     this.$compile();
     this.$emit('mount');
-    if (mountNode) {
-      mountNode.$substitute = this.$element;
-      this.$element._mountNode = mountNode;
-      if (append) {
-        mountNode.appendChild(this.$element);
-      } else if (mountNode.parentNode) {
-        mountNode.parentNode.insertBefore(this.$element, mountNode);
-      }
+    if (append) {
+      this.$node.appendTo(mountNode);
+    } else {
+      this.$node.insertTo(mountNode);
     }
     this._mounted_ = true;
     this._removed_ = false;
@@ -309,9 +306,7 @@ export default class Component extends Entity {
   $remove() {
     if (this._removed_ || !this._mounted_) return;
     this.$emit('remove');
-    if (this.$element.parentNode) {
-      this.$element.parentNode.removeChild(this.$element);
-    }
+    this.$node.remove();
     this._removed_ = true;
     this._mounted_ = false;
     this.$emit('removed');
@@ -349,21 +344,21 @@ export default class Component extends Entity {
    * 释放组件
    * @returns {void} 无返回
    */
-  $dispose() {
+  $destroy() {
     this.$remove();
     this._emitter_.off();
     this.$children.forEach(function (child) {
-      child.$dispose();
+      child.$destroy();
     }, this);
     if (this.$parent) {
       let index = this.$parent.$children.indexOf(this);
       this.$parent.$children.splice(index, 1);
     }
-    this.$emit('dispose');
+    this.$emit('destroy');
     if (this._compiled_) {
-      this.$template.unbind();
+      this.$template.destroy();
     }
-    this.$emit('disposed');
+    this.$emit('destroyed');
     for (let key in this) {
       delete this[key];
     }

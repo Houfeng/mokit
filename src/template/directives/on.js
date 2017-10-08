@@ -1,5 +1,4 @@
 import Directive from '../directive';
-import EventEmitter from '../../events';
 import Scope from '../scope';
 import { meta } from 'decorators';
 import { isNull } from 'ntils';
@@ -19,18 +18,16 @@ export default class OnDirective extends Directive {
       attrValue += '($event)';
     }
     this.expr = new this.Expression(attrValue);
-    let eventTarget = this.node.$target || this.node;
-    this.emiter = new EventEmitter(eventTarget);
-    this.emiter.addListener(this.decorates[0], function (event) {
+    this.node.emitter.addListener(this.decorates[0], event => {
       if (isNull(this.scope)) return;
       this.expr.execute(new Scope(this.scope, {
         $event: event
       }));
-    }.bind(this), false);
+    }, false);
   }
 
   unbind() {
-    this.emiter.removeListener();
+    this.node.emitter.removeListener();
   }
 
   execute(scope) {
