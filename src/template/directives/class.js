@@ -3,6 +3,11 @@ import { cname } from 'common';
 
 export default class ClassNameDirective extends Directive {
   update(value) {
-    this.node.setAttribute('class', cname(value));
+    let names = cname(value);
+    if (names) {
+      this.node.setAttribute('class', names);
+    } else {
+      this.node.removeAttribute('class');
+    }
   }
 }

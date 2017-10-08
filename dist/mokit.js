@@ -904,8 +904,8 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-c97d2d58-2375-74dc-fef1-076fcdad786a.js
-/* harmony default export */ var $info_c97d2d58_2375_74dc_fef1_076fcdad786a = ({ "name": "mokit", "version": "4.0.0-alpha4" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-68dfddad-542d-79ce-42da-6e7c2bdd2fc6.js
+/* harmony default export */ var $info_68dfddad_542d_79ce_42da_6e7c2bdd2fc6 = ({ "name": "mokit", "version": "4.0.0-alpha4" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.0.6@ntils/src/utils.js
 
 /**
@@ -1873,7 +1873,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_c97d2d58_2375_74dc_fef1_076fcdad786a.name + ']: ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_68dfddad_542d_79ce_42da_6e7c2bdd2fc6.name + '] ' + message].concat(other)));
   }
 
   return LibError;
@@ -2357,7 +2357,11 @@ var expression_Expression = function () {
 // CONCATENATED MODULE: ./src/decorators/template.js
 
 
+
 /* harmony default export */ var decorators_template = (function (template) {
+  if (!template) {
+    throw new error_LibError('Invalid template');
+  }
   return decorators_meta({ template: template });
 });
 // CONCATENATED MODULE: ./src/decorators/watch.js
@@ -3410,7 +3414,12 @@ var class_ClassNameDirective = function (_Directive) {
   }
 
   ClassNameDirective.prototype.update = function update(value) {
-    this.node.setAttribute('class', className(value));
+    var names = className(value);
+    if (names) {
+      this.node.setAttribute('class', names);
+    } else {
+      this.node.removeAttribute('class');
+    }
   };
 
   return ClassNameDirective;
@@ -4412,9 +4421,7 @@ var component_directives = src_template.directives;
  * @returns {Component} 组件类
  */
 
-var component_Component = (component__dec = decorators_meta({
-  template: '<span>Invaild template</span>'
-}), component__dec(component__class = function (_Entity) {
+var component_Component = (component__dec = decorators_template('<span>Error: Invaild template</span>'), component__dec(component__class = function (_Entity) {
   inherits_default()(Component, _Entity);
 
   /**
@@ -5023,7 +5030,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_c97d2d58_2375_74dc_fef1_076fcdad786a, bootstrap);
+copy($info_68dfddad_542d_79ce_42da_6e7c2bdd2fc6, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;

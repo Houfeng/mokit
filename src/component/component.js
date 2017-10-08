@@ -6,7 +6,7 @@ import {
 } from 'ntils';
 import { Error, Entity, Node } from 'common';
 import createDirective from './directive';
-import { meta } from 'decorators';
+import { template } from 'decorators';
 
 const { directives } = Template;
 
@@ -16,9 +16,7 @@ const { directives } = Template;
  * @param {Object} classOpts 类选项
  * @returns {Component} 组件类
  */
-@meta({
-  template: '<span>Invaild template</span>'
-})
+@template(`<span>Error: Invaild template</span>`)
 export default class Component extends Entity {
 
   /**
