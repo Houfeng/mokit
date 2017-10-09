@@ -904,8 +904,8 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-1633e02c-ca8d-7af6-40b8-a4c26102bfe8.js
-/* harmony default export */ var $info_1633e02c_ca8d_7af6_40b8_a4c26102bfe8 = ({ "name": "mokit", "version": "4.0.0-alpha5" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-79821b44-c0bc-ffd8-5e91-7d249c25068b.js
+/* harmony default export */ var $info_79821b44_c0bc_ffd8_5e91_7d249c25068b = ({ "name": "mokit", "version": "4.0.0-alpha5" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.0.8@ntils/src/utils.js
 
 /**
@@ -1904,7 +1904,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_1633e02c_ca8d_7af6_40b8_a4c26102bfe8.name + '] ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_79821b44_c0bc_ffd8_5e91_7d249c25068b.name + '] ' + message].concat(other)));
   }
 
   return LibError;
@@ -4031,8 +4031,8 @@ observer_Observer.isIgnore = function (word) {
 };
 
 /* harmony default export */ var src_observer = (observer_Observer);
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$config-9bee77c7-77ce-0ebd-d758-9b06cdda442e.js
-/* harmony default export */ var $config_9bee77c7_77ce_0ebd_d758_9b06cdda442e = ({});
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$config-cf9b7283-16e9-13ac-16c4-dbd3c70401d2.js
+/* harmony default export */ var $config_cf9b7283_16e9_13ac_16c4_dbd3c70401d2 = ({});
 // CONCATENATED MODULE: ./src/template/template.js
 
 
@@ -4086,7 +4086,7 @@ var template_Template = function (_EventEmitter) {
   Template.prototype.requestUpdate = function requestUpdate() {
     var _this2 = this;
 
-    if ($config_9bee77c7_77ce_0ebd_d758_9b06cdda442e.debug || this.sync) {
+    if ($config_cf9b7283_16e9_13ac_16c4_dbd3c70401d2.debug || this.sync) {
       return this.update();
     }
     if (this._updateTimer) {
@@ -4993,7 +4993,7 @@ function bootstrap(component, mountNode, options) {
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return src_events; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "bootstrap", function() { return bootstrap; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "common", function() { return common; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return $config_9bee77c7_77ce_0ebd_d758_9b06cdda442e; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return $config_cf9b7283_16e9_13ac_16c4_dbd3c70401d2; });
 
 
 
@@ -5013,7 +5013,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_1633e02c_ca8d_7af6_40b8_a4c26102bfe8, bootstrap);
+copy($info_79821b44_c0bc_ffd8_5e91_7d249c25068b, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;
@@ -5023,7 +5023,7 @@ bootstrap.EventEmitter = src_events;
 bootstrap.decorators = decorators;
 bootstrap.bootstrap = bootstrap;
 bootstrap.common = common;
-bootstrap.config = $config_9bee77c7_77ce_0ebd_d758_9b06cdda442e;
+bootstrap.config = $config_cf9b7283_16e9_13ac_16c4_dbd3c70401d2;
 
 bootstrap.component = function (name, component) {
   name = toSplitCase(name);
