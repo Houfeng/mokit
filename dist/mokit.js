@@ -904,8 +904,8 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-73825e5a-e6f7-bc6e-6b02-f20e0a7e6703.js
-/* harmony default export */ var $info_73825e5a_e6f7_bc6e_6b02_f20e0a7e6703 = ({ "name": "mokit", "version": "4.0.0-alpha4" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-1633e02c-ca8d-7af6-40b8-a4c26102bfe8.js
+/* harmony default export */ var $info_1633e02c_ca8d_7af6_40b8_a4c26102bfe8 = ({ "name": "mokit", "version": "4.0.0-alpha5" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.0.8@ntils/src/utils.js
 
 /**
@@ -1904,7 +1904,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_73825e5a_e6f7_bc6e_6b02_f20e0a7e6703.name + '] ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_1633e02c_ca8d_7af6_40b8_a4c26102bfe8.name + '] ' + message].concat(other)));
   }
 
   return LibError;
@@ -4031,8 +4031,8 @@ observer_Observer.isIgnore = function (word) {
 };
 
 /* harmony default export */ var src_observer = (observer_Observer);
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$config-f6ed6098-8dba-33a1-348d-56716d0653e8.js
-/* harmony default export */ var $config_f6ed6098_8dba_33a1_348d_56716d0653e8 = ({});
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$config-9bee77c7-77ce-0ebd-d758-9b06cdda442e.js
+/* harmony default export */ var $config_9bee77c7_77ce_0ebd_d758_9b06cdda442e = ({});
 // CONCATENATED MODULE: ./src/template/template.js
 
 
@@ -4086,7 +4086,7 @@ var template_Template = function (_EventEmitter) {
   Template.prototype.requestUpdate = function requestUpdate() {
     var _this2 = this;
 
-    if ($config_f6ed6098_8dba_33a1_348d_56716d0653e8.debug || this.sync) {
+    if ($config_9bee77c7_77ce_0ebd_d758_9b06cdda442e.debug || this.sync) {
       return this.update();
     }
     if (this._updateTimer) {
@@ -4993,7 +4993,7 @@ function bootstrap(component, mountNode, options) {
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return src_events; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "bootstrap", function() { return bootstrap; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "common", function() { return common; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return $config_f6ed6098_8dba_33a1_348d_56716d0653e8; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return $config_9bee77c7_77ce_0ebd_d758_9b06cdda442e; });
 
 
 
@@ -5013,7 +5013,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_73825e5a_e6f7_bc6e_6b02_f20e0a7e6703, bootstrap);
+copy($info_1633e02c_ca8d_7af6_40b8_a4c26102bfe8, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;
@@ -5023,7 +5023,7 @@ bootstrap.EventEmitter = src_events;
 bootstrap.decorators = decorators;
 bootstrap.bootstrap = bootstrap;
 bootstrap.common = common;
-bootstrap.config = $config_f6ed6098_8dba_33a1_348d_56716d0653e8;
+bootstrap.config = $config_9bee77c7_77ce_0ebd_d758_9b06cdda442e;
 
 bootstrap.component = function (name, component) {
   name = toSplitCase(name);
