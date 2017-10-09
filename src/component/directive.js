@@ -23,7 +23,6 @@ export default function (options) {
       super(options);
       let meta = this.meta;
       this.component = new meta.component({
-        deferReady: true,
         parent: meta.parent || meta.scope
       });
     }
@@ -36,6 +35,7 @@ export default function (options) {
         children: false
       });
       this.component.$mount(this.node);
+      this.component.$template.sync = true;
       this.handleContents();
       this.node.remove();
     }
@@ -73,13 +73,9 @@ export default function (options) {
 
     execute(scope) {
       this.handler(scope);
-      if (!this._ready_) {
-        this._ready_ = true;
-        this.component.$emit('ready');
-      }
-      this.placeHandlers.forEach(function (handler) {
-        handler(scope);
-      }, this);
+      this.placeHandlers
+        .forEach(placeHandle => placeHandle(scope));
+      this.component.$template.sync = false;
     }
 
   }

@@ -11,7 +11,7 @@ export default class App extends mokit.Component {
   text = '';
   list = [];
 
-  @on('init') onReady() {
+  @on('init') onInit() {
     var list = localStorage.getItem('todo://list');
     if (list) this.list = JSON.parse(list);
     var type = localStorage.getItem('todo://type');

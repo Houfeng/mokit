@@ -36,7 +36,7 @@ export default class IfDirective extends Directive {
       //如果新计算的结果为 true 才执行 
       this._handler = this._handler || this.compiler.compile(this.node);
       this._handler(scope);
-      //通过 parentNode 判断没有还没有添加到 dom 中时，才添加，避免重复添加
+      //通过 parentNode 判断有没有添加，未添加到 dom 中时才添加，避免重复添加
       if (!this.itemNode.parentNode) {
         this.itemNode.insertTo(this.mountNode);
       }

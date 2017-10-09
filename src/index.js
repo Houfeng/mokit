@@ -1,5 +1,5 @@
 import info from '$info';
-import { copy, isFunction } from 'ntils';
+import { copy, isFunction, toSplitCase } from 'ntils';
 import bootstrap from './bootstrap';
 import Watcher from './watcher';
 import Observer from './observer';
@@ -8,6 +8,7 @@ import Component from './component';
 import EventEmitter from './events';
 import decorators from './decorators';
 import common from 'common';
+import config from '$config';
 
 const Directive = Template.Directive;
 
@@ -26,24 +27,31 @@ bootstrap.EventEmitter = EventEmitter;
 bootstrap.decorators = decorators;
 bootstrap.bootstrap = bootstrap;
 bootstrap.common = common;
+bootstrap.config = config;
 
-bootstrap.registerComponent = function (name, component) {
+bootstrap.component = function (name, component) {
+  name = toSplitCase(name);
   if (!component) return Component.components[name];
-  Component.components[name] = isFunction(component) ?
+  component = isFunction(component) ?
     component : this.component(component);
+  Component.components[name] = component;
+  return component;
 };
 
-bootstrap.registerDirective = function (name, directive) {
+bootstrap.directive = function (name, directive) {
+  name = toSplitCase(name);
   if (!directive) return Template.directives[name];
-  Directive.directives[name] = isFunction(directive) ?
+  directive = isFunction(directive) ?
     directive : this.directive(directive);
+  Directive.directives[name] = directive;
+  return directive;
 };
 
-bootstrap.component = function (...args) {
+bootstrap.defineComponent = function (...args) {
   return Component.extend(...args);
 };
 
-bootstrap.directive = function (...args) {
+bootstrap.defineDirective = function (...args) {
   return Directive.extend(...args);
 };
 
@@ -52,7 +60,7 @@ export * from './common';
 
 export {
   Template, Component, Directive, Watcher, Observer, EventEmitter,
-  bootstrap, common
+  bootstrap, common, config
 }
 window.mokit = bootstrap;
 export default bootstrap;

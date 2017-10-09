@@ -7,7 +7,7 @@ import { Error } from 'common';
 const OBSERVER_PROP_NAME = '_observer_';
 const CHANGE_EVENT_NAME = 'change';
 const EVENT_MAX_DISPATCH_LAYER = 10;
-const IGNORE_REGEXPS = [/^\_(.*)\_$/i, /^\_\_/i];
+const IGNORE_REGEXPS = [/^\_(.*)\_$/, /^\_\_/, /^\$/];
 
 /**
  * 对象观察类，可以监控对象变化

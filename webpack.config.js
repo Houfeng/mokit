@@ -9,6 +9,11 @@ module.exports = function (webpackConf, webpack) {
     type: 'js',
     content: `export default ${info}`
   }));
+  webpackConf.plugins.push(new VModule({
+    name: '$config',
+    type: 'js',
+    content: `export default {}`
+  }));
   webpackConf.resolve = webpackConf.resolve || {};
   webpackConf.resolve.alias = webpackConf.resolve.alias || {};
   Object.assign(webpackConf.resolve.alias, alias);

@@ -26,8 +26,7 @@ export default class Component extends Entity {
    */
   constructor(options) {
     super();
-    options = options || create(null);
-    copy(options, this);
+    options = options || {};
     this._processMeta_();
     let meta = this.meta;
     this.$setModel(meta.model);
@@ -40,7 +39,9 @@ export default class Component extends Entity {
     });
     this._bindEvents_(meta.events);
     defineFreezeProp(this, '$children', []);
-    if (options.parent) this.$setParent(options.parent);
+    if (options.parent) {
+      this.$setParent(options.parent);
+    }
     this.$emit('beforeInit');
   }
 
@@ -171,8 +172,6 @@ export default class Component extends Entity {
 
   /**
    * 创建监控
-   * 为什么用 watches 而不是 watchers 或其它？
-   * 因为，这里仅是「监控配置」并且是「复数」
    * @param {Object} watches 监控定义对象
    * @returns {void} 无返回
    */
@@ -184,10 +183,10 @@ export default class Component extends Entity {
   }
 
   /**
-   * 在模板发生更新时
+   * 在模板发生更新时计算所有 watcher
    * @returns {void} 无返回
    */
-  _onTemplateUpdate_() {
+  _calcWatchers_() {
     if (!this.$watchers) return;
     this.$watchers.forEach(watcher => {
       watcher.calc();
@@ -239,11 +238,11 @@ export default class Component extends Entity {
     let meta = this.meta;
     this.$emit('create');
     let element = meta.template.cloneNode(true);
-    defineFreezeProp(this, '$element', element);
-    defineFreezeProp(this, '$node', new Node(element));
-    if (!this.$element || this.$element.nodeName === '#text') {
+    if (!element || element.nodeName === '#text') {
       throw new Error('Invalid component template');
     }
+    defineFreezeProp(this, '$element', element);
+    defineFreezeProp(this, '$node', new Node(element));
     this.$emit('created');
   }
 
@@ -260,12 +259,14 @@ export default class Component extends Entity {
       directives: this.$directives,
       root: true
     });
-    defineFreezeProp(this, '$template', template);
-    this.$template.bind(this);
-    this.$template.on('update', this._onTemplateUpdate_.bind(this));
-    this.$template.on('bind', () => {
-      if (!this.deferReady) this.$emit('ready');
+    template.on('update', () => {
+      this._calcWatchers_();
     });
+    template.on('bound', () => {
+      this.$emit('ready');
+    });
+    template.bind(this);
+    defineFreezeProp(this, '$template', template);
   }
 
   /**

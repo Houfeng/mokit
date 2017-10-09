@@ -14,7 +14,7 @@
 # Hello 世界  
 
 ```js
-import { bootstrap, on, watch, template, dependencies } from 'mokit';
+import mokit, { on, watch, template, dependencies } from 'mokit';
 
 @template('<div>{{message}}</div>')
 @dependencies({ Other })
@@ -30,7 +30,7 @@ class App extends mokit.Component {
     this._message = value;
   }
 
-  @on('init') onReady() {
+  @on('init') onInit() {
     this.message = 'Hello Mokit!';
   }
 
@@ -40,7 +40,7 @@ class App extends mokit.Component {
 
 }
 
-bootstrap(App, document.body);
+mokit(App, document.body);
 ```
 
 # 插件列表

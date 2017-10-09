@@ -1,12 +1,12 @@
 import Component from './component';
-import { create, isNull, isFunction } from 'ntils';
+import { isNull, isFunction } from 'ntils';
 import { Error } from 'common';
 
 export default function bootstrap(component, mountNode, options) {
   if (!component || !component.meta) {
     throw new Error('Involid Component');
   }
-  options = options || create(null);
+  options = options || {};
   if (isNull(options.append)) options.append = true;
   if (isFunction(component)) {
     component = new component();

@@ -904,9 +904,9 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-68dfddad-542d-79ce-42da-6e7c2bdd2fc6.js
-/* harmony default export */ var $info_68dfddad_542d_79ce_42da_6e7c2bdd2fc6 = ({ "name": "mokit", "version": "4.0.0-alpha4" });
-// CONCATENATED MODULE: ./node_modules/_ntils@3.0.6@ntils/src/utils.js
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-73825e5a-e6f7-bc6e-6b02-f20e0a7e6703.js
+/* harmony default export */ var $info_73825e5a_e6f7_bc6e_6b02_f20e0a7e6703 = ({ "name": "mokit", "version": "4.0.0-alpha4" });
+// CONCATENATED MODULE: ./node_modules/_ntils@3.0.8@ntils/src/utils.js
 
 /**
  * 空函数
@@ -1566,6 +1566,37 @@ function escapeRegExp(str) {
 };
 
 /**
+  * 将字符串转成「驼峰」式
+  * @param {string} str 原始字符串
+  * @param {number} mode 1 大驼峰，0 小驼峰
+  * @return {string} 转换后的字符串
+  */
+function toCamelCase(str, mode) {
+  if (str) {
+    str = str.replace(/\-[a-z0-9]/g, function ($1) {
+      return $1.slice(1).toUpperCase()
+    });
+    str = str.replace(/^[a-z]/i, function ($1) {
+      return mode ? $1.toUpperCase() : $1.toLowerCase();
+    });
+  }
+  return str;
+}
+
+/**
+ * 将字符串转成分隔形式
+ * @param {string} str 原始字符串
+ * @return {string} 转换后的字符串
+ */
+function toSplitCase(str) {
+  if (str) {
+    str = str.replace(/([A-Z])/g, '-$1');
+    if (str[0] == '-') str = str.slice(1);
+  }
+  return str;
+}
+
+/**
  * 解析字符串为 dom 
  * @param {string} str 字符串
  * @returns {HTMLNode} 解析后的 DOM 
@@ -1873,7 +1904,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_68dfddad_542d_79ce_42da_6e7c2bdd2fc6.name + '] ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_73825e5a_e6f7_bc6e_6b02_f20e0a7e6703.name + '] ' + message].concat(other)));
   }
 
   return LibError;
@@ -2652,7 +2683,7 @@ var if_IfDirective = (if__dec = decorators_meta({
       //如果新计算的结果为 true 才执行 
       this._handler = this._handler || this.compiler.compile(this.node);
       this._handler(scope);
-      //通过 parentNode 判断没有还没有添加到 dom 中时，才添加，避免重复添加
+      //通过 parentNode 判断有没有添加，未添加到 dom 中时才添加，避免重复添加
       if (!this.itemNode.parentNode) {
         this.itemNode.insertTo(this.mountNode);
       }
@@ -3485,41 +3516,6 @@ var compiler_Compiler = function () {
   }
 
   /**
-  * 将字符串转成「驼峰」式
-  * @param {string} str 原始字符串
-  * @param {number} mode 1 大驼峰，0 小驼峰
-  * @return {string} 转换后的字符串
-  */
-
-
-  Compiler.prototype.toCamelCase = function toCamelCase(str, mode) {
-    if (str) {
-      str = str.replace(/\-[a-z0-9]/g, function ($1) {
-        return $1.slice(1).toUpperCase();
-      });
-      str = str.replace(/^[a-z]/i, function ($1) {
-        return mode ? $1.toUpperCase() : $1.toLowerCase();
-      });
-    }
-    return str;
-  };
-
-  /**
-   * 将字符串转成分隔形式
-   * @param {string} str 原始字符串
-   * @return {string} 转换后的字符串
-   */
-
-
-  Compiler.prototype.toSplitCase = function toSplitCase(str) {
-    if (str) {
-      str = str.replace(/([A-Z])/g, '-$1');
-      if (str[0] == '-') str = str.slice(1);
-    }
-    return str;
-  };
-
-  /**
    * 添加指令
    * @param {Object} directives 指令集 
    * @returns {void} 无返回
@@ -3530,7 +3526,7 @@ var compiler_Compiler = function () {
     var _this = this;
 
     utils_each(directives, function (name, directive) {
-      name = _this.toSplitCase(name);
+      name = toSplitCase(name);
       var fullName = directive.meta.prefix === false ? name : _this.prefix + ':' + name;
       if (directive.meta.type == directive_Directive.types.ELEMENT) {
         _this.elementDirectives[fullName.toUpperCase()] = directive;
@@ -3548,14 +3544,12 @@ var compiler_Compiler = function () {
 
 
   Compiler.prototype._parseAttrInfo = function _parseAttrInfo(attrName) {
-    var _this2 = this;
-
     var parts = attrName.toLowerCase().split(':');
     var info = {};
     if (parts.length > 1) {
       info.name = parts[0] + ':' + parts[1];
       info.decorates = parts.slice(2).map(function (item) {
-        return _this2.toCamelCase(item);
+        return toCamelCase(item);
       });
     } else {
       info.name = parts[0];
@@ -3735,7 +3729,7 @@ var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 var OBSERVER_PROP_NAME = '_observer_';
 var CHANGE_EVENT_NAME = 'change';
 var EVENT_MAX_DISPATCH_LAYER = 10;
-var IGNORE_REGEXPS = [/^\_(.*)\_$/i, /^\_\_/i];
+var IGNORE_REGEXPS = [/^\_(.*)\_$/, /^\_\_/, /^\$/];
 
 /**
  * 对象观察类，可以监控对象变化
@@ -4037,7 +4031,10 @@ observer_Observer.isIgnore = function (word) {
 };
 
 /* harmony default export */ var src_observer = (observer_Observer);
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$config-f6ed6098-8dba-33a1-348d-56716d0653e8.js
+/* harmony default export */ var $config_f6ed6098_8dba_33a1_348d_56716d0653e8 = ({});
 // CONCATENATED MODULE: ./src/template/template.js
+
 
 
 
@@ -4070,16 +4067,10 @@ var template_Template = function (_EventEmitter) {
     _this.element = element;
     _this.compiler = options.compiler || new compiler_Compiler(options);
     _this.render = _this.compiler.compile(_this.element);
-    _this.update = _this.update.bind(_this);
+    _this.requestUpdate = _this.requestUpdate.bind(_this);
 
-    if (!(typeof _this.update === 'function')) {
-      throw new TypeError('Value of "this.update" violates contract.\n\nExpected:\n() => any\n\nGot:\n' + _inspect(_this.update));
-    }
-
-    _this._update = _this._update.bind(_this);
-
-    if (!(typeof _this._update === 'function')) {
-      throw new TypeError('Value of "this._update" violates contract.\n\nExpected:\n() => any\n\nGot:\n' + _inspect(_this._update));
+    if (!(typeof _this.requestUpdate === 'function')) {
+      throw new TypeError('Value of "this.requestUpdate" violates contract.\n\nExpected:\n() => any\n\nGot:\n' + _inspect(_this.requestUpdate));
     }
 
     _this._updateTimer = 0;
@@ -4092,12 +4083,19 @@ var template_Template = function (_EventEmitter) {
    */
 
 
-  Template.prototype.update = function update() {
+  Template.prototype.requestUpdate = function requestUpdate() {
+    var _this2 = this;
+
+    if ($config_f6ed6098_8dba_33a1_348d_56716d0653e8.debug || this.sync) {
+      return this.update();
+    }
     if (this._updateTimer) {
       clearTimeout(this._updateTimer);
-      this._updateTimer = null;
+      this._updateTimer = 0;
     }
-    this._updateTimer = setTimeout(this._update, 0);
+    this._updateTimer = setTimeout(function () {
+      if (_this2._updateTimer) _this2.update();
+    }, 0);
   };
 
   /**
@@ -4106,46 +4104,30 @@ var template_Template = function (_EventEmitter) {
    */
 
 
-  Template.prototype._update = function _update() {
-    if (!this._updateTimer || !this.observer) return;
-    this.emit('update', this);
+  Template.prototype.update = function update() {
+    this.$emit('update', this);
     this.render(this.observer.target);
-    this._onBind();
-  };
-
-  /**
-   * 在绑定成功时
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype._onBind = function _onBind() {
-    if (this._bound) return;
-    this._bound = true;
-    this.emit('bind', this);
+    this.$emit('updated', this);
   };
 
   /**
    * 将模板绑定到一个 scope
    * @param {Object} scope 绑定的上下文对象
-   * @param {boolean} disableFirst 是否禁用第一次的自动渲染
    * @returns {void} 无返回
    */
 
 
-  Template.prototype.bind = function bind(scope, disableFirst) {
+  Template.prototype.bind = function bind(scope) {
     if (!scope) return;
     this.unbind();
+    this.$emit('bind', this);
     this.observer = new src_observer(scope, {
       root: this.options.root
     });
     scope.$self = scope;
-    this.observer.on('change', this.update);
-    if (disableFirst) {
-      this._onBind();
-    } else {
-      this.update();
-    }
+    this.observer.on('change', this.requestUpdate);
+    this.update();
+    this.$emit('bound', this);
   };
 
   /**
@@ -4156,9 +4138,10 @@ var template_Template = function (_EventEmitter) {
 
   Template.prototype.unbind = function unbind() {
     if (!this.observer) return;
-    this.observer.removeListener('change', this.update);
+    this.observer.removeListener('change', this.requestUpdate);
     this.observer.clearReference();
     this.observer = null;
+    delete this.observer;
   };
 
   /**
@@ -4332,7 +4315,6 @@ var component_directive_Directive = src_template.Directive;
 
       var meta = _this.meta;
       _this.component = new meta.component({
-        deferReady: true,
         parent: meta.parent || meta.scope
       });
       return _this;
@@ -4346,6 +4328,7 @@ var component_directive_Directive = src_template.Directive;
         children: false
       });
       this.component.$mount(this.node);
+      this.component.$template.sync = true;
       this.handleContents();
       this.node.remove();
     };
@@ -4382,13 +4365,10 @@ var component_directive_Directive = src_template.Directive;
 
     ComponentDirective.prototype.execute = function execute(scope) {
       this.handler(scope);
-      if (!this._ready_) {
-        this._ready_ = true;
-        this.component.$emit('ready');
-      }
-      this.placeHandlers.forEach(function (handler) {
-        handler(scope);
-      }, this);
+      this.placeHandlers.forEach(function (placeHandle) {
+        return placeHandle(scope);
+      });
+      this.component.$template.sync = false;
     };
 
     return ComponentDirective;
@@ -4434,8 +4414,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
 
     var _this = possibleConstructorReturn_default()(this, _Entity.call(this));
 
-    options = options || create(null);
-    copy(options, _this);
+    options = options || {};
     _this._processMeta_();
     var meta = _this.meta;
     _this.$setModel(meta.model);
@@ -4446,7 +4425,9 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     }));
     _this._bindEvents_(meta.events);
     defineFreezeProp(_this, '$children', []);
-    if (options.parent) _this.$setParent(options.parent);
+    if (options.parent) {
+      _this.$setParent(options.parent);
+    }
     _this.$emit('beforeInit');
     return _this;
   }
@@ -4589,8 +4570,6 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
 
   /**
    * 创建监控
-   * 为什么用 watches 而不是 watchers 或其它？
-   * 因为，这里仅是「监控配置」并且是「复数」
    * @param {Object} watches 监控定义对象
    * @returns {void} 无返回
    */
@@ -4606,12 +4585,12 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
   };
 
   /**
-   * 在模板发生更新时
+   * 在模板发生更新时计算所有 watcher
    * @returns {void} 无返回
    */
 
 
-  Component.prototype._onTemplateUpdate_ = function _onTemplateUpdate_() {
+  Component.prototype._calcWatchers_ = function _calcWatchers_() {
     if (!this.$watchers) return;
     this.$watchers.forEach(function (watcher) {
       watcher.calc();
@@ -4672,11 +4651,11 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     var meta = this.meta;
     this.$emit('create');
     var element = meta.template.cloneNode(true);
-    defineFreezeProp(this, '$element', element);
-    defineFreezeProp(this, '$node', new node_Node(element));
-    if (!this.$element || this.$element.nodeName === '#text') {
+    if (!element || element.nodeName === '#text') {
       throw new error_LibError('Invalid component template');
     }
+    defineFreezeProp(this, '$element', element);
+    defineFreezeProp(this, '$node', new node_Node(element));
     this.$emit('created');
   };
 
@@ -4697,12 +4676,14 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
       directives: this.$directives,
       root: true
     });
-    defineFreezeProp(this, '$template', template);
-    this.$template.bind(this);
-    this.$template.on('update', this._onTemplateUpdate_.bind(this));
-    this.$template.on('bind', function () {
-      if (!_this7.deferReady) _this7.$emit('ready');
+    template.on('update', function () {
+      _this7._calcWatchers_();
     });
+    template.on('bound', function () {
+      _this7.$emit('ready');
+    });
+    template.bind(this);
+    defineFreezeProp(this, '$template', template);
   };
 
   /**
@@ -4982,7 +4963,7 @@ function bootstrap(component, mountNode, options) {
   if (!component || !component.meta) {
     throw new error_LibError('Involid Component');
   }
-  options = options || create(null);
+  options = options || {};
   if (isNull(options.append)) options.append = true;
   if (isFunction(component)) {
     component = new component();
@@ -5012,6 +4993,8 @@ function bootstrap(component, mountNode, options) {
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return src_events; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "bootstrap", function() { return bootstrap; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "common", function() { return common; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return $config_f6ed6098_8dba_33a1_348d_56716d0653e8; });
+
 
 
 
@@ -5030,7 +5013,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_68dfddad_542d_79ce_42da_6e7c2bdd2fc6, bootstrap);
+copy($info_73825e5a_e6f7_bc6e_6b02_f20e0a7e6703, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;
@@ -5040,22 +5023,29 @@ bootstrap.EventEmitter = src_events;
 bootstrap.decorators = decorators;
 bootstrap.bootstrap = bootstrap;
 bootstrap.common = common;
+bootstrap.config = $config_f6ed6098_8dba_33a1_348d_56716d0653e8;
 
-bootstrap.registerComponent = function (name, component) {
+bootstrap.component = function (name, component) {
+  name = toSplitCase(name);
   if (!component) return src_component.components[name];
-  src_component.components[name] = isFunction(component) ? component : this.component(component);
+  component = isFunction(component) ? component : this.component(component);
+  src_component.components[name] = component;
+  return component;
 };
 
-bootstrap.registerDirective = function (name, directive) {
+bootstrap.directive = function (name, directive) {
+  name = toSplitCase(name);
   if (!directive) return src_template.directives[name];
-  src_Directive.directives[name] = isFunction(directive) ? directive : this.directive(directive);
+  directive = isFunction(directive) ? directive : this.directive(directive);
+  src_Directive.directives[name] = directive;
+  return directive;
 };
 
-bootstrap.component = function () {
+bootstrap.defineComponent = function () {
   return src_component.extend.apply(src_component, arguments);
 };
 
-bootstrap.directive = function () {
+bootstrap.defineDirective = function () {
   return src_Directive.extend.apply(src_Directive, arguments);
 };
 
