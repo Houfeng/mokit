@@ -37,7 +37,7 @@ export default function (options) {
       this.component.$mount(this.node);
       this.component.$template.sync = true;
       this.handleContents();
-      this.node.remove();
+      //this.node.remove();
     }
 
     handleAttrs() {

@@ -1,8 +1,7 @@
 import Template from '../template';
 import Watcher from '../watcher';
 import {
-  isFunction, isString, copy, create, each,
-  defineFreezeProp, getByPath, parseDom
+  isFunction, isString, copy, create, each, defineFreezeProp, getByPath
 } from 'ntils';
 import { Error, Entity, Node } from 'common';
 import createDirective from './directive';
@@ -224,7 +223,7 @@ export default class Component extends Entity {
   _processMeta_() {
     let meta = this.meta;
     if (isString(meta.template)) {
-      meta.template = parseDom(meta.template);
+      meta.template = Node.parse(meta.template);
     }
   }
 

@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { Error } from 'common';
-import { isNull } from 'ntils';
+import { isNull, parseHTML } from 'ntils';
 
 function toDOMNode(node) {
   if (!node) {
@@ -24,6 +24,16 @@ export default class Node extends EventEmitter {
   static createFragment() {
     let fragment = document.createDocumentFragment();
     return new Node(fragment);
+  }
+
+  static parse(str) {
+    let nodeItems = parseHTML(str);
+    if (nodeItems.length != 1) {
+      throw new Error([
+        'Must be a single root element', str
+      ].join('\r\n'));
+    }
+    return nodeItems[0];
   }
 
   constructor(node) {

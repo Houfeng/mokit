@@ -1,30 +1,28 @@
-import { bootstrap, Component, template, on, watch } from 'mokit';
+import mokit, {
+  Component, dependencies, template, on, watch
+} from 'mokit';
 
-@template(`
-<div>{{name}}-{{demo}}</div>
-`)
-class App extends Component {
-
-  demo = true;
-  name = "test";
-
-  @on('init') init() {
-    this.age = 100;
-    console.log('init');
+@template(`<h1>{{content}}</h1>`)
+class Text extends Component {
+  content = '';
+  @on('destroy') onDestroy() {
+    console.log('destroy');
   }
-
-  @watch('name') printName() {
-    console.log('printName', this.name);
-  }
-
-  set test(value) {
-    this.name = value;
-  }
-
-  get test() {
-    return this.name;
-  }
-
 }
 
-window.app = bootstrap(App, document.body);
+@template(`
+<div>
+<m:text m:if="!state" m:prop:content="'你好中国'"/>
+<button m:on:click="hide()">hide</button>
+<button>test</button>
+</div>
+`)
+@dependencies({ Text })
+class App extends Component {
+  state = false;
+  hide() {
+    this.state = true;
+  }
+}
+
+window.app = mokit(App, document.body);

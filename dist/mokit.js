@@ -906,8 +906,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 // CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-6cc58be1e2467fa0074ba4a7a6bc0252.js
 /* harmony default export */ var $info_6cc58be1e2467fa0074ba4a7a6bc0252 = ({ "name": "mokit", "version": "4.0.0-alpha6" });
-// CONCATENATED MODULE: ./node_modules/_ntils@3.0.8@ntils/src/utils.js
-
+// CONCATENATED MODULE: ./node_modules/_ntils@3.1.2@ntils/src/utils.js
 /**
  * 空函数
  */
@@ -1074,7 +1073,7 @@ function isBoolean(obj) {
  */
 function isElement(obj) {
   if (isNull(obj)) return false;
-  if (window.Element) {
+  if (win.Element) {
     return obj instanceof Element;
   } else {
     return (obj.tagName && obj.nodeType &&
@@ -1531,7 +1530,7 @@ function getFunctionArgumentNames(fn) {
   var src = fn.toString();
   var parts = src.split(')')[0].split('=>')[0].split('(');
   return (parts[1] || parts[0]).split(',').map(function (name) {
-    return name.trim();
+    return trim(name);
   }).filter(function (name) {
     return name != 'function';
   });
@@ -1596,21 +1595,29 @@ function toSplitCase(str) {
   return str;
 }
 
+function htmlPrefilter(html) {
+  var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi;
+  return html.replace(rxhtmlTag, "<$1></$2>");
+}
+
 /**
  * 解析字符串为 dom 
  * @param {string} str 字符串
  * @returns {HTMLNode} 解析后的 DOM 
  */
-function parseDom(str) {
-  window._NTILS_PARSE_DOM_ = window._NTILS_PARSE_DOM_ ||
-    document.createElement('div');
-  window._NTILS_PARSE_DOM_.innerHTML = trim(str);
-  var firstNode = window._NTILS_PARSE_DOM_.childNodes[0];
+function parseHTML(str) {
+  str = str || ' ';
+  var parent = document.createElement('div');
+  parent.innerHTML = htmlPrefilter(trim(str));
+  var childNodes = toArray(parent.childNodes);
   //先 clone 一份再通过 innerHTML 清空
   //否则 IE9 下，清空时会导不通过返回的 DOM 没有子结点
-  if (firstNode) firstNode = firstNode.cloneNode(true);
-  window._NTILS_PARSE_DOM_.innerHTML = '';
-  return firstNode;
+  // if (firstNode) firstNode = firstNode.cloneNode(true);
+  // win._NPH_.innerHTML = '';
+  utils_each(childNodes, function (index, childNode) {
+    parent.removeChild(childNode);
+  });
+  return childNodes;
 };
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/extends.js
 var helpers_extends = __webpack_require__(20);
@@ -1942,6 +1949,14 @@ var node_Node = function (_EventEmitter) {
   Node.createFragment = function createFragment() {
     var fragment = document.createDocumentFragment();
     return new Node(fragment);
+  };
+
+  Node.parse = function parse(str) {
+    var nodeItems = parseHTML(str);
+    if (nodeItems.length != 1) {
+      throw new error_LibError(['Must be a single root element', str].join('\r\n'));
+    }
+    return nodeItems[0];
   };
 
   function Node(node) {
@@ -4330,7 +4345,7 @@ var component_directive_Directive = src_template.Directive;
       this.component.$mount(this.node);
       this.component.$template.sync = true;
       this.handleContents();
-      this.node.remove();
+      //this.node.remove();
     };
 
     ComponentDirective.prototype.handleAttrs = function handleAttrs() {
@@ -4635,7 +4650,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
   Component.prototype._processMeta_ = function _processMeta_() {
     var meta = this.meta;
     if (isString(meta.template)) {
-      meta.template = parseDom(meta.template);
+      meta.template = node_Node.parse(meta.template);
     }
   };
 
