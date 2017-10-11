@@ -40,7 +40,7 @@ build:
     common:
       disabled: true
     umd:
-      library: '[name]'
+      library: '${project.name}'
       libraryTarget: 'umd'
       umdNamedDefine: true
     compress: false
@@ -62,7 +62,7 @@ build:
       disabled: true
     optimization: true
     umd:
-      library: '[name]'
+      library: '${project.name}'
       libraryTarget: 'umd'
       umdNamedDefine: true
     babel:
