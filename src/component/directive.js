@@ -30,14 +30,14 @@ export default function (options) {
     bind() {
       this.handleAttrs();
       this.node.component = this.component;
-      this.handler = this.compiler.compile(this.node, {
+      this.elementHandler = this.compiler.compile(this.node, {
         element: false,
         children: false
       });
       this.component.$mount(this.node);
       this.component.$template.sync = true;
       this.handleContents();
-      //this.node.remove();
+      this.node.remove();
     }
 
     handleAttrs() {
@@ -72,7 +72,7 @@ export default function (options) {
     }
 
     execute(scope) {
-      this.handler(scope);
+      this.elementHandler(scope);
       this.placeHandlers
         .forEach(placeHandle => placeHandle(scope));
       this.component.$template.sync = false;

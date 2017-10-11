@@ -1,4 +1,4 @@
-import { copy, deepEqual } from 'ntils';
+import { each, final, deepEqual } from 'ntils';
 import { Entity, Node } from 'common';
 import Expression from './expression';
 import { meta } from '../decorators';
@@ -38,13 +38,13 @@ export default class Directive extends Entity {
   //指令构建函数
   constructor(options) {
     super();
-    copy(options, this);
+    each(options, (name, value) => final(this, name, value));
   }
 
   //处理指令选项
   bind() { }
+  unbind() { }  
   update() { }
-  unbind() { }
 
   //挂载实例核心方法
   execute(scope) {

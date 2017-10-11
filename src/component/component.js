@@ -1,7 +1,7 @@
 import Template from '../template';
 import Watcher from '../watcher';
 import {
-  isFunction, isString, copy, create, each, defineFreezeProp, getByPath
+  isFunction, isString, copy, create, each, final, getByPath
 } from 'ntils';
 import { Error, Entity, Node } from 'common';
 import createDirective from './directive';
@@ -37,7 +37,7 @@ export default class Component extends Entity {
       'self': this.constructor
     });
     this._bindEvents_(meta.events);
-    defineFreezeProp(this, '$children', []);
+    final(this, '$children', []);
     if (options.parent) {
       this.$setParent(options.parent);
     }
@@ -67,8 +67,8 @@ export default class Component extends Entity {
   $addChild(child) {
     if (!(child instanceof Component)) return;
     this.$children.push(child);
-    defineFreezeProp(child, '$parent', this);
-    defineFreezeProp(child, '$root', this.$root || this);
+    final(child, '$parent', this);
+    final(child, '$root', this.$root || this);
   }
 
   /**
@@ -79,8 +79,8 @@ export default class Component extends Entity {
   $removeChild(child) {
     let index = this.$children.indexOf(child);
     this.$children.splice(index, 1);
-    defineFreezeProp(child, '$parent', null);
-    //defineFreezeProp(child, '$root', null);
+    final(child, '$parent', null);
+    //final(child, '$root', null);
   }
 
   /**
@@ -240,8 +240,8 @@ export default class Component extends Entity {
     if (!element || element.nodeName === '#text') {
       throw new Error('Invalid component template');
     }
-    defineFreezeProp(this, '$element', element);
-    defineFreezeProp(this, '$node', new Node(element));
+    final(this, '$element', element);
+    final(this, '$node', new Node(element));
     this.$emit('created');
   }
 
@@ -265,7 +265,7 @@ export default class Component extends Entity {
       this.$emit('ready');
     });
     template.bind(this);
-    defineFreezeProp(this, '$template', template);
+    final(this, '$template', template);
   }
 
   /**

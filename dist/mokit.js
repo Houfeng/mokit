@@ -906,7 +906,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 // CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-e999c5aa02a6cab458ff1c553397cfb0.js
 /* harmony default export */ var $info_e999c5aa02a6cab458ff1c553397cfb0 = ({ "name": "mokit", "version": "4.0.0-alpha7" });
-// CONCATENATED MODULE: ./node_modules/_ntils@3.1.2@ntils/src/utils.js
+// CONCATENATED MODULE: ./node_modules/_ntils@3.1.5@ntils/src/utils.js
 /**
  * 空函数
  */
@@ -1297,7 +1297,7 @@ function clone(src, igonres) {
   }, this);
   ['toString', 'valueOf'].forEach(function (key) {
     if (contains(igonres, key)) return;
-    defineFreezeProp(objClone, key, src[key]);
+    utils_final(objClone, key, src[key]);
   }, this);
   return objClone;
 };
@@ -1348,13 +1348,24 @@ function utils_mix(dst, src, igonres, mode, igonreNull) {
 /**
  * 定义不可遍历的属性
  **/
-function defineFreezeProp(obj, name, value) {
+function utils_final(obj, name, value) {
+  if (arguments.length < 1) throw new Error('Parameter missing');
+  if (arguments.length < 2) {
+    return utils_each(obj, function (name, value) {
+      utils_final(obj, name, value);
+    });
+  }
+  if (arguments.length < 3) return utils_final(obj, name, obj[name]);
   try {
     Object.defineProperty(obj, name, {
-      value: value,
-      enumerable: false,
-      configurable: true, //能不能重写定义
-      writable: false //能不能用「赋值」运算更改
+      get: function () {
+        return value;
+      },
+      set: function () {
+        throw new Error('Cannot assign to final property:' + name);
+      },
+      enumerable: false, //不能枚举
+      configurable: false, //不能重写定义
     });
   } catch (err) {
     obj[name] = value;
@@ -1661,10 +1672,10 @@ var events_EventEmitter = function () {
     target = target || this;
     var emitter = target._emitter_;
     if (emitter) return emitter;
-    defineFreezeProp(this, '_target_', target);
-    defineFreezeProp(target, '_emitter_', this);
-    this._isNative_ = this._isNativeObject(this._target_);
-    this._listeners_ = this._listeners_ || {};
+    utils_final(this, '_target_', target);
+    utils_final(target, '_emitter_', this);
+    utils_final(this, '_isNative_', this._isNativeObject(this._target_));
+    utils_final(this, '_listeners_', this._listeners_ || {});
     this.on = this.$on = this.$addListener = this.addListener;
     this.off = this.$off = this.$removeListener = this.removeListener;
     this.$emit = this.emit;
@@ -1866,13 +1877,7 @@ var entity_Entity = (_temp = entity__class = function (_EventEmitter) {
   }]);
 
   return Entity;
-}(src_events), entity__class.setMeta = function (options) {
-  if (Object.getOwnPropertyNames(this).indexOf('meta') < 0) {
-    var meta = create(this.meta || null);
-    defineFreezeProp(this, 'meta', meta);
-  }
-  if (options) copy(options, this.meta);
-}, entity__class.extend = function (options, superClass) {
+}(src_events), entity__class.extend = function (options, superClass) {
   superClass = this;
 
   var NewEntity = function (_superClass) {
@@ -1893,6 +1898,12 @@ var entity_Entity = (_temp = entity__class = function (_EventEmitter) {
 
   copy(options, NewEntity);
   return NewEntity;
+}, entity__class.setMeta = function (options) {
+  if (Object.getOwnPropertyNames(this).indexOf('meta') < 0) {
+    var meta = create(this.meta || null);
+    utils_final(this, 'meta', meta);
+  }
+  if (options) copy(options, this.meta);
 }, _temp);
 
 // CONCATENATED MODULE: ./src/common/error.js
@@ -2487,7 +2498,9 @@ var directive_Directive = (directive__dec = decorators_meta({
     _this.Expression = expression_Expression;
     _this.Node = node_Node;
 
-    copy(options, _this);
+    utils_each(options, function (name, value) {
+      return utils_final(_this, name, value);
+    });
     return _this;
   }
 
@@ -2496,9 +2509,9 @@ var directive_Directive = (directive__dec = decorators_meta({
 
   Directive.prototype.bind = function bind() {};
 
-  Directive.prototype.update = function update() {};
-
   Directive.prototype.unbind = function unbind() {};
+
+  Directive.prototype.update = function update() {};
 
   //挂载实例核心方法
 
@@ -2569,7 +2582,7 @@ var each_EachDirective = (each__dec = decorators_meta({
     this.mountNode = this.Node.create();
     this.mountNode.insertTo(this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
-    //但 each 指令必须先移除，否再进行 item 编译时 if 还会生效
+    //但 each 指令必须先移除，否再进行 item 编译时 each 还会生效
     this.node.removeAttribute(this.attribute.name);
     //把 item 的 node 移除掉，还在内存中待用
     this.node.remove();
@@ -3743,6 +3756,7 @@ var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 
 var OBSERVER_PROP_NAME = '_observer_';
 var CHANGE_EVENT_NAME = 'change';
+var GET_EVENT_NAME = 'get';
 var EVENT_MAX_DISPATCH_LAYER = 10;
 var IGNORE_REGEXPS = [/^\_(.*)\_$/, /^\_\_/, /^\$/];
 
@@ -3795,11 +3809,11 @@ var observer_Observer = function (_EventEmitter) {
       return _ret = observer, possibleConstructorReturn_default()(_this, _ret);
     }
     src_events.call(_this);
-    defineFreezeProp(_this, 'options', options);
-    defineFreezeProp(_this, 'shadow', {});
-    defineFreezeProp(_this, 'target', target);
-    defineFreezeProp(_this, 'parents', []);
-    defineFreezeProp(target, OBSERVER_PROP_NAME, _this);
+    utils_final(_this, 'options', options);
+    utils_final(_this, 'shadow', {});
+    utils_final(_this, 'target', target);
+    utils_final(_this, 'parents', []);
+    utils_final(target, OBSERVER_PROP_NAME, _this);
     _this.apply();
     return _this;
   }
@@ -3819,7 +3833,9 @@ var observer_Observer = function (_EventEmitter) {
     }
     Object.defineProperty(this.target, name, {
       get: function get() {
-        return this[OBSERVER_PROP_NAME].shadow[name];
+        var observer = this[OBSERVER_PROP_NAME];
+        observer.emitGet({ path: name, value: value });
+        return observer.shadow[name];
       },
       set: function set(value) {
         var observer = this[OBSERVER_PROP_NAME];
@@ -3952,6 +3968,17 @@ var observer_Observer = function (_EventEmitter) {
   };
 
   /**
+   * 触发 change 事件
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.emitGet = function emitGet(event) {
+    this.dispatch(GET_EVENT_NAME, event);
+  };
+
+  /**
    * 获取所有成员名称列表
    * @returns {Array} 所有成员名称列表
    */
@@ -3974,7 +4001,9 @@ var observer_Observer = function (_EventEmitter) {
 
 
   Observer.prototype._wrapArray = function _wrapArray(array) {
-    defineFreezeProp(array, 'push', function () {
+    if (array._wrapped_) return;
+    utils_final(array, '_wrapped_', true);
+    utils_final(array, 'push', function () {
       var items = [].slice.call(arguments);
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
@@ -3982,13 +4011,13 @@ var observer_Observer = function (_EventEmitter) {
       }, this);
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
-    defineFreezeProp(array, 'pop', function () {
+    utils_final(array, 'pop', function () {
       var item = [].pop.apply(this, arguments);
       this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
-    defineFreezeProp(array, 'unshift', function () {
+    utils_final(array, 'unshift', function () {
       var items = [].slice.call(arguments);
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
@@ -3996,13 +4025,13 @@ var observer_Observer = function (_EventEmitter) {
       }, this);
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
-    defineFreezeProp(array, 'shift', function () {
+    utils_final(array, 'shift', function () {
       var item = [].shift.apply(this, arguments);
       this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
-    defineFreezeProp(array, 'splice', function () {
+    utils_final(array, 'splice', function () {
       var startIndex = arguments[0];
       var endIndex = isNull(arguments[1]) ? startIndex + arguments[1] : this.length - 1;
       var items = [].splice.apply(this, arguments);
@@ -4012,7 +4041,7 @@ var observer_Observer = function (_EventEmitter) {
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return items;
     });
-    defineFreezeProp(array, 'set', function (index, value) {
+    utils_final(array, 'set', function (index, value) {
       if (index >= this.length) {
         this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       }
@@ -4338,14 +4367,14 @@ var component_directive_Directive = src_template.Directive;
     ComponentDirective.prototype.bind = function bind() {
       this.handleAttrs();
       this.node.component = this.component;
-      this.handler = this.compiler.compile(this.node, {
+      this.elementHandler = this.compiler.compile(this.node, {
         element: false,
         children: false
       });
       this.component.$mount(this.node);
       this.component.$template.sync = true;
       this.handleContents();
-      //this.node.remove();
+      this.node.remove();
     };
 
     ComponentDirective.prototype.handleAttrs = function handleAttrs() {
@@ -4379,7 +4408,7 @@ var component_directive_Directive = src_template.Directive;
     };
 
     ComponentDirective.prototype.execute = function execute(scope) {
-      this.handler(scope);
+      this.elementHandler(scope);
       this.placeHandlers.forEach(function (placeHandle) {
         return placeHandle(scope);
       });
@@ -4439,7 +4468,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
       'self': _this.constructor
     }));
     _this._bindEvents_(meta.events);
-    defineFreezeProp(_this, '$children', []);
+    utils_final(_this, '$children', []);
     if (options.parent) {
       _this.$setParent(options.parent);
     }
@@ -4474,8 +4503,8 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
   Component.prototype.$addChild = function $addChild(child) {
     if (!(child instanceof Component)) return;
     this.$children.push(child);
-    defineFreezeProp(child, '$parent', this);
-    defineFreezeProp(child, '$root', this.$root || this);
+    utils_final(child, '$parent', this);
+    utils_final(child, '$root', this.$root || this);
   };
 
   /**
@@ -4488,8 +4517,8 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
   Component.prototype.$removeChild = function $removeChild(child) {
     var index = this.$children.indexOf(child);
     this.$children.splice(index, 1);
-    defineFreezeProp(child, '$parent', null);
-    //defineFreezeProp(child, '$root', null);
+    utils_final(child, '$parent', null);
+    //final(child, '$root', null);
   };
 
   /**
@@ -4669,8 +4698,8 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     if (!element || element.nodeName === '#text') {
       throw new error_LibError('Invalid component template');
     }
-    defineFreezeProp(this, '$element', element);
-    defineFreezeProp(this, '$node', new node_Node(element));
+    utils_final(this, '$element', element);
+    utils_final(this, '$node', new node_Node(element));
     this.$emit('created');
   };
 
@@ -4698,7 +4727,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
       _this7.$emit('ready');
     });
     template.bind(this);
-    defineFreezeProp(this, '$template', template);
+    utils_final(this, '$template', template);
   };
 
   /**

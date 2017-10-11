@@ -1,11 +1,12 @@
 import {
-  isArray, isFunction, isNull, isObject, copy, defineFreezeProp
+  isArray, isFunction, isNull, isObject, copy, final
 } from 'ntils';
 import EventEmitter from '../events';
 import { Error } from 'common';
 
 const OBSERVER_PROP_NAME = '_observer_';
 const CHANGE_EVENT_NAME = 'change';
+const GET_EVENT_NAME = 'get';
 const EVENT_MAX_DISPATCH_LAYER = 10;
 const IGNORE_REGEXPS = [/^\_(.*)\_$/, /^\_\_/, /^\$/];
 
@@ -51,11 +52,11 @@ class Observer extends EventEmitter {
       return observer;
     }
     EventEmitter.call(this);
-    defineFreezeProp(this, 'options', options);
-    defineFreezeProp(this, 'shadow', {});
-    defineFreezeProp(this, 'target', target);
-    defineFreezeProp(this, 'parents', []);
-    defineFreezeProp(target, OBSERVER_PROP_NAME, this);
+    final(this, 'options', options);
+    final(this, 'shadow', {});
+    final(this, 'target', target);
+    final(this, 'parents', []);
+    final(target, OBSERVER_PROP_NAME, this);
     this.apply();
   }
 
@@ -72,7 +73,9 @@ class Observer extends EventEmitter {
     }
     Object.defineProperty(this.target, name, {
       get() {
-        return this[OBSERVER_PROP_NAME].shadow[name];
+        let observer = this[OBSERVER_PROP_NAME];
+        observer.emitGet({ path: name, value: value });
+        return observer.shadow[name];
       },
       set(value) {
         let observer = this[OBSERVER_PROP_NAME];
@@ -192,6 +195,15 @@ class Observer extends EventEmitter {
   }
 
   /**
+   * 触发 change 事件
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+  emitGet(event) {
+    this.dispatch(GET_EVENT_NAME, event);
+  }
+
+  /**
    * 获取所有成员名称列表
    * @returns {Array} 所有成员名称列表
    */
@@ -211,7 +223,9 @@ class Observer extends EventEmitter {
    * @returns {array} 处理后的数组
    */
   _wrapArray(array) {
-    defineFreezeProp(array, 'push', function () {
+    if (array._wrapped_) return;
+    final(array, '_wrapped_', true);
+    final(array, 'push', function () {
       let items = [].slice.call(arguments);
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
@@ -219,13 +233,13 @@ class Observer extends EventEmitter {
       }, this);
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
-    defineFreezeProp(array, 'pop', function () {
+    final(array, 'pop', function () {
       let item = [].pop.apply(this, arguments);
       this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
-    defineFreezeProp(array, 'unshift', function () {
+    final(array, 'unshift', function () {
       let items = [].slice.call(arguments);
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
@@ -233,13 +247,13 @@ class Observer extends EventEmitter {
       }, this);
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
     });
-    defineFreezeProp(array, 'shift', function () {
+    final(array, 'shift', function () {
       let item = [].shift.apply(this, arguments);
       this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return item;
     });
-    defineFreezeProp(array, 'splice', function () {
+    final(array, 'splice', function () {
       let startIndex = arguments[0];
       let endIndex = isNull(arguments[1])
         ? startIndex + arguments[1]
@@ -251,7 +265,7 @@ class Observer extends EventEmitter {
       this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       return items;
     });
-    defineFreezeProp(array, 'set', function (index, value) {
+    final(array, 'set', function (index, value) {
       if (index >= this.length) {
         this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
       }

@@ -19,7 +19,7 @@ export default class EachDirective extends Directive {
     this.mountNode = this.Node.create();
     this.mountNode.insertTo(this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
-    //但 each 指令必须先移除，否再进行 item 编译时 if 还会生效
+    //但 each 指令必须先移除，否再进行 item 编译时 each 还会生效
     this.node.removeAttribute(this.attribute.name);
     //把 item 的 node 移除掉，还在内存中待用
     this.node.remove();

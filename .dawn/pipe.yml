@@ -4,8 +4,8 @@ dev:
   - name: webpack
     output: dist
     entry: 
-      (1): ./example/*/index.js
-    template: ./example/assets/*.html
+      (1): ./examples/*/index.js
+    template: ./examples/assets/*.html
     folders:
       html: examples
       js: examples/js
@@ -25,6 +25,8 @@ dev:
     port: 8008
     public: ./dist
   - name: browser-sync
+    files: 
+      - './dist/**/*.*'
 
 build:
   - name: clean

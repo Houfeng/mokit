@@ -1,4 +1,4 @@
-import { defineFreezeProp, isArray, copy, each } from 'ntils';
+import { final, isArray, copy, each } from 'ntils';
 import { Error } from 'common';
 
 /**
@@ -15,10 +15,10 @@ class EventEmitter {
     target = target || this;
     let emitter = target._emitter_;
     if (emitter) return emitter;
-    defineFreezeProp(this, '_target_', target);
-    defineFreezeProp(target, '_emitter_', this);
-    this._isNative_ = this._isNativeObject(this._target_);
-    this._listeners_ = this._listeners_ || {};
+    final(this, '_target_', target);
+    final(target, '_emitter_', this);
+    final(this, '_isNative_', this._isNativeObject(this._target_));
+    final(this, '_listeners_', this._listeners_ || {})
     this.on = this.$on = this.$addListener = this.addListener;
     this.off = this.$off = this.$removeListener = this.removeListener;
     this.$emit = this.emit;

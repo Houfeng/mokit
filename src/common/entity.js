@@ -1,19 +1,7 @@
 import EventEmitter from '../events';
-import { create, defineFreezeProp, copy } from 'ntils';
+import { create, final, copy } from 'ntils';
 
 export default class Entity extends EventEmitter {
-
-  static setMeta = function (options) {
-    if (Object.getOwnPropertyNames(this).indexOf('meta') < 0) {
-      let meta = create(this.meta || null);
-      defineFreezeProp(this, 'meta', meta);
-    }
-    if (options) copy(options, this.meta);
-  };
-
-  get meta() {
-    return this.constructor && this.constructor.meta;
-  }
 
   static extend = function (options, superClass) {
     superClass = this;
@@ -24,6 +12,18 @@ export default class Entity extends EventEmitter {
     }
     copy(options, NewEntity);
     return NewEntity;
+  };
+
+  static setMeta = function (options) {
+    if (Object.getOwnPropertyNames(this).indexOf('meta') < 0) {
+      let meta = create(this.meta || null);
+      final(this, 'meta', meta);
+    }
+    if (options) copy(options, this.meta);
+  };
+
+  get meta() {
+    return this.constructor && this.constructor.meta;
   };
 
 }
