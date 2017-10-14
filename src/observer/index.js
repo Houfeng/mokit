@@ -1,5 +1,5 @@
 import {
-  isArray, isFunction, isNull, isObject, copy, final
+  isArray, isFunction, isNull, isObject, copy, final, each
 } from 'ntils';
 import EventEmitter from '../events';
 import { Error } from 'common';

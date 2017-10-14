@@ -8,26 +8,45 @@ import { isNull } from 'ntils';
 })
 export default class OnDirective extends Directive {
 
+  eventHandler = () => {
+    if (isNull(this.scope)) return;
+    this.eventExpr.execute(new Scope(this.scope, {
+      $event: event
+    }));
+  };
+
+  bindEvent = (event) => {
+    this.node.emitter.addListener(
+      this.eventName, this.eventHandler, false
+    );
+  };
+
+  unindEvent = (event) => {
+    this.node.emitter.removeListener(
+      this.eventName, this.eventHandler
+    );
+  };
+
+  compileExpr() {
+    let attrValue = this.attribute.value || '';
+    if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
+      attrValue += '($event)';
+    }
+    return new this.Expression(attrValue);
+  }
+
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
   bind() {
-    let attrValue = this.attribute.value || '';
-    if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
-      attrValue += '($event)';
-    }
-    this.expr = new this.Expression(attrValue);
-    this.node.emitter.addListener(this.decorates[0], event => {
-      if (isNull(this.scope)) return;
-      this.expr.execute(new Scope(this.scope, {
-        $event: event
-      }));
-    }, false);
+    this.eventExpr = this.compileExpr();
+    this.eventName = this.decorates[0];
+    this.bindEvent();
   }
 
   unbind() {
-    this.node.emitter.removeListener();
+    this.unindEvent();
   }
 
   execute(scope) {

@@ -80,16 +80,8 @@ export default class Template extends EventEmitter {
     this.observer.removeListener('change', this.requestUpdate);
     this.observer.clearReference();
     this.observer = null;
+    this.render.unbind();
     delete this.observer;
-  }
-
-  /**
-   * 释放
-   * @returns {void} 无返回
-   */
-  destroy() {
-    this.unbind();
-    this.render.destroy();
   }
 
 }

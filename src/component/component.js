@@ -67,8 +67,7 @@ export default class Component extends Entity {
   $addChild(child) {
     if (!(child instanceof Component)) return;
     this.$children.push(child);
-    final(child, '$parent', this);
-    final(child, '$root', this.$root || this);
+    child.$parent = this;
   }
 
   /**
@@ -79,8 +78,7 @@ export default class Component extends Entity {
   $removeChild(child) {
     let index = this.$children.indexOf(child);
     this.$children.splice(index, 1);
-    final(child, '$parent', null);
-    //final(child, '$root', null);
+    child.$parent = null;
   }
 
   /**
@@ -240,7 +238,7 @@ export default class Component extends Entity {
     if (!element || element.nodeName === '#text') {
       throw new Error('Invalid component template');
     }
-    final(this, '$element', element);
+    this.$element = element;
     final(this, '$node', new Node(element));
     this.$emit('created');
   }
@@ -265,7 +263,7 @@ export default class Component extends Entity {
       this.$emit('ready');
     });
     template.bind(this);
-    final(this, '$template', template);
+    this.$template = template;
   }
 
   /**
@@ -281,7 +279,7 @@ export default class Component extends Entity {
     if (append) {
       this.$node.appendTo(mountNode);
     } else {
-      this.$node.insertTo(mountNode);
+      this.$node.insertBy(mountNode);
     }
     this._mounted_ = true;
     this._removed_ = false;
@@ -331,7 +329,7 @@ export default class Component extends Entity {
    */
   $broadcast(name, data) {
     let stopPropagation = this.$emit(name, data);
-    if (!stopPropagation && this.$children && this.$children.length > 0) {
+    if (!stopPropagation && this.$children) {
       this.$children.forEach(function (child) {
         child.$broadcast(name, data);
       }, this);
@@ -343,8 +341,8 @@ export default class Component extends Entity {
    * @returns {void} 无返回
    */
   $destroy() {
+    this.$emit('destroy');
     this.$remove();
-    this._emitter_.off();
     this.$children.forEach(function (child) {
       child.$destroy();
     }, this);
@@ -352,19 +350,16 @@ export default class Component extends Entity {
       let index = this.$parent.$children.indexOf(this);
       this.$parent.$children.splice(index, 1);
     }
-    this.$emit('destroy');
     if (this._compiled_) {
-      this.$template.destroy();
+      this.$template.unbind();
     }
     this.$emit('destroyed');
-    for (let key in this) {
-      delete this[key];
-    }
-    ['_observer_', '$element', '$children', '$parent', '$template']
-      .forEach(function (key) {
-        delete this[key];
-      }, this);
-    setPrototypeOf(this, null);
+    this._emitter_.off();
+    for (let key in this) this[key] = null;
+    this.$children.splice(0, this.$children.length);
+    this.$parent = null;
+    this.$template = null;
+    this.$element = null;
   }
 
 }

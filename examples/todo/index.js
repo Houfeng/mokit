@@ -2,7 +2,7 @@ import mokit from 'mokit';
 import App from './app';
 import './assets/todo.less';
 
-console.profile('app');
+console.time('用时');
 window.todo = mokit(App, document.body);
-console.log(document.querySelectorAll('li').length);
-console.profileEnd();
+console.timeEnd('用时');
+console.log('数量', document.querySelectorAll('li').length);

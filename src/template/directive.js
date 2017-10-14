@@ -41,23 +41,28 @@ export default class Directive extends Entity {
     each(options, (name, value) => final(this, name, value));
   }
 
-  //处理指令选项
+  //指令创建好后会首先触发绑定
   bind() { }
-  unbind() { }  
-  update() { }
 
-  //挂载实例核心方法
-  execute(scope) {
+  //执行一个指令
+  execute(scope, force) {
     this.scope = scope;
     if (this.meta.type === types.ELEMENT) {
       return this.update();
     }
     let newValue = this.meta.literal ?
       this.attribute.value : this.expression.execute(scope);
-    if (!deepEqual(this._value_, newValue)) {
+    if (force || !deepEqual(this._value_, newValue)) {
       this.update(newValue, this._value_);
       this._value_ = newValue;
     }
   }
+
+  //指令的表达式计算结果发生变化时执行
+  update() { }
+
+  //解除绑定，node 的移除并不会触发 unbind
+  //unbind 是需要显示触发
+  unbind() { }
 
 }

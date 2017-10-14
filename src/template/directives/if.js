@@ -14,7 +14,7 @@ export default class IfDirective extends Directive {
   bind() {
     //创建挂载点并插入到对应位置
     this.mountNode = this.Node.create();
-    this.mountNode.insertTo(this.node);
+    this.mountNode.insertBy(this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
     //但 if 指令必须先移除，否再进行 item 编译时 if 还会生效
     this.node.removeAttribute(this.attribute.name);
@@ -30,18 +30,18 @@ export default class IfDirective extends Directive {
     }
   }
 
-  execute(scope) {
+  execute(scope, force) {
     let newValue = this.expression.execute(scope);
     if (newValue) {
       //如果新计算的结果为 true 才执行 
       this._handler = this._handler || this.compiler.compile(this.node);
-      this._handler(scope);
+      this._handler(scope, force);
       //通过 parentNode 判断有没有添加，未添加到 dom 中时才添加，避免重复添加
       if (!this.itemNode.parentNode) {
-        this.itemNode.insertTo(this.mountNode);
+        this.itemNode.insertBy(this.mountNode);
       }
     } else {
-      this.itemNode.remove();
+      this.itemNode.remove({ destroy: true });
     }
   }
 

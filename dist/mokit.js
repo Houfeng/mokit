@@ -904,8 +904,8 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-8d6d0dd4c20db768c4f506aa1392057c.js
-/* harmony default export */ var $info_8d6d0dd4c20db768c4f506aa1392057c = ({ "name": "mokit", "version": "4.0.0-alpha9" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-2ca480820af35b644be818dc5335b12f.js
+/* harmony default export */ var $info_2ca480820af35b644be818dc5335b12f = ({ "name": "mokit", "version": "4.0.0-alpha10" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.1.5@ntils/src/utils.js
 /**
  * 空函数
@@ -1185,7 +1185,7 @@ function toDate(val) {
  * @return {void}                   无返回值
  * @static
  */
-function utils_each(list, handler, scope) {
+function each(list, handler, scope) {
   if (isNull(list) || isNull(handler)) return;
   if (isArray(list)) {
     var listLength = list.length;
@@ -1250,7 +1250,7 @@ function formatDate(date, format, dict) {
  */
 function copy(src, dst, igonres) {
   dst = dst || (isArray(src) ? [] : {});
-  utils_each(src, function (key) {
+  each(src, function (key) {
     if (igonres && igonres.indexOf(key) > -1) return;
     delete dst[key];
     if (Object.getOwnPropertyDescriptor) {
@@ -1286,7 +1286,7 @@ function clone(src, igonres) {
   try {
     objClone = new src.constructor();
   } catch (ex) { }
-  utils_each(src, function (key, value) {
+  each(src, function (key, value) {
     if (objClone[key] != value && !contains(igonres, key)) {
       if (isObject(value)) {
         objClone[key] = clone(value, igonres);
@@ -1351,7 +1351,7 @@ function utils_mix(dst, src, igonres, mode, igonreNull) {
 function utils_final(obj, name, value) {
   if (arguments.length < 1) throw new Error('Parameter missing');
   if (arguments.length < 2) {
-    return utils_each(obj, function (name, value) {
+    return each(obj, function (name, value) {
       utils_final(obj, name, value);
     });
   }
@@ -1378,7 +1378,7 @@ function utils_final(obj, name, value) {
 function utils_keys(obj) {
   if (Object.keys) return Object.keys(obj);
   var keys = [];
-  utils_each(obj, function (key) {
+  each(obj, function (key) {
     keys.push(key);
   });
   return keys;
@@ -1401,7 +1401,7 @@ function create(proto, props) {
  * 在不支持 setPrototypeOf 也不支持 __proto__ 的浏览器
  * 中，会采用 copy 方式
  */
-function utils_setPrototypeOf(obj, proto) {
+function setPrototypeOf(obj, proto) {
   if (Object.setPrototypeOf) {
     return Object.setPrototypeOf(obj, proto || create(null));
   } else {
@@ -1431,7 +1431,7 @@ function deepEqual(a, b) {
   var allKeys = aKeys.concat(bKeys);
   var checkedMap = create(null);
   var result = true;
-  utils_each(allKeys, function (i, key) {
+  each(allKeys, function (i, key) {
     if (checkedMap[key]) return;
     if (!deepEqual(a[key], b[key])) result = false;
     checkedMap[key] = true;
@@ -1476,7 +1476,7 @@ function newGuid() {
  **/
 function map(list, fn) {
   var buffer = isArray(list) ? [] : {};
-  utils_each(list, function (name, value) {
+  each(list, function (name, value) {
     buffer[name] = fn(name, value);
   });
   return buffer;
@@ -1492,7 +1492,7 @@ function setByPath(obj, path, value) {
   if (!isArray(path)) {
     path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
   }
-  utils_each(path, function (index, name) {
+  each(path, function (index, name) {
     if (isNull(name) || name.length < 1) return;
     if (index === path.length - 1) {
       obj[name] = value;
@@ -1513,7 +1513,7 @@ function getByPath(obj, path) {
   if (!isArray(path)) {
     path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
   }
-  utils_each(path, function (index, name) {
+  each(path, function (index, name) {
     if (isNull(name) || name.length < 1) return;
     if (!isNull(obj)) obj = obj[name];
   }, this);
@@ -1526,7 +1526,7 @@ function getByPath(obj, path) {
 function unique(array) {
   if (isNull(array)) return array;
   var newArray = [];
-  utils_each(array, function (i, value) {
+  each(array, function (i, value) {
     if (newArray.indexOf(value) > -1) return;
     newArray.push(value);
   });
@@ -1625,7 +1625,7 @@ function parseHTML(str) {
   //否则 IE9 下，清空时会导不通过返回的 DOM 没有子结点
   // if (firstNode) firstNode = firstNode.cloneNode(true);
   // win._NPH_.innerHTML = '';
-  utils_each(childNodes, function (index, childNode) {
+  each(childNodes, function (index, childNode) {
     parent.removeChild(childNode);
   });
   return childNodes;
@@ -1674,8 +1674,8 @@ var events_EventEmitter = function () {
     if (emitter) return emitter;
     utils_final(this, '_target_', target);
     utils_final(target, '_emitter_', this);
-    utils_final(this, '_isNative_', this._isNativeObject(this._target_));
-    utils_final(this, '_listeners_', this._listeners_ || {});
+    this._isNative_ = this._isNativeObject(this._target_);
+    this._listeners_ = this._listeners_ || {};
     this.on = this.$on = this.$addListener = this.addListener;
     this.off = this.$off = this.$removeListener = this.removeListener;
     this.$emit = this.emit;
@@ -1737,7 +1737,7 @@ var events_EventEmitter = function () {
       }
       delete this._listeners_[name];
     } else {
-      utils_each(this._listeners_, function (name) {
+      each(this._listeners_, function (name) {
         this.removeListener(name, null, capture);
       }, this);
       this._listeners_ = {};
@@ -1855,12 +1855,12 @@ events_EventEmitter.register = function (descriptor) {
 
 
 
-var entity__class, _temp;
+var entity__class, entity__temp;
 
 
 
 
-var entity_Entity = (_temp = entity__class = function (_EventEmitter) {
+var entity_Entity = (entity__temp = entity__class = function (_EventEmitter) {
   inherits_default()(Entity, _EventEmitter);
 
   function Entity() {
@@ -1904,7 +1904,7 @@ var entity_Entity = (_temp = entity__class = function (_EventEmitter) {
     utils_final(this, 'meta', meta);
   }
   if (options) copy(options, this.meta);
-}, _temp);
+}, entity__temp);
 
 // CONCATENATED MODULE: ./src/common/error.js
 
@@ -1922,7 +1922,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_8d6d0dd4c20db768c4f506aa1392057c.name + '] ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_2ca480820af35b644be818dc5335b12f.name + '] ' + message].concat(other)));
   }
 
   return LibError;
@@ -1949,6 +1949,9 @@ function toDOMNode(node) {
   return domNode;
 }
 
+//托管的 dom，所有 dom 操作都需要基于这个 class 完成
+//除 removed 事件外，暂不需求其它事件，考虑到性能就暂不 emit 其它事件
+
 var node_Node = function (_EventEmitter) {
   inherits_default()(Node, _EventEmitter);
 
@@ -1971,34 +1974,70 @@ var node_Node = function (_EventEmitter) {
   };
 
   function Node(node) {
+    var _ret, _ret2;
+
     classCallCheck_default()(this, Node);
 
     var _this = possibleConstructorReturn_default()(this, _EventEmitter.call(this));
 
-    _this.domNode = toDOMNode(node);
+    if (node instanceof Node) return _ret = node, possibleConstructorReturn_default()(_this, _ret);
+    var domNode = toDOMNode(node);
+    if (domNode._node_) return _ret2 = domNode._node_, possibleConstructorReturn_default()(_this, _ret2);
+    utils_final(_this, 'domNode', domNode);
+    utils_final(domNode, '_node_', _this);
     return _this;
   }
 
-  Node.prototype.insertTo = function insertTo(mountNode) {
+  Node.prototype._wrapEvent = function _wrapEvent(opts) {
+    opts = opts || {};
+    opts.target = opts.target || this;
+    return opts;
+  };
+
+  Node.prototype.broadcast = function broadcast(name, opts) {
+    opts = this._wrapEvent(opts);
+    this.emit(name, opts);
+    var childNodes = this.childNodes;
+    if (!childNodes) return;
+    childNodes.forEach(function (childNode) {
+      return childNode.broadcast(name, opts);
+    });
+  };
+
+  Node.prototype.dispatch = function dispatch(name, opts) {
+    opts = this._wrapEvent(opts);
+    this.emit(name, opts);
+    var parentNode = this.parentNode;
+    if (!parentNode) return;
+    parentNode.dispatch(name, opts);
+  };
+
+  Node.prototype.insertBy = function insertBy(mountNode, opts) {
     mountNode = toDOMNode(mountNode);
     if (mountNode.parentNode) {
+      //this.broadcast('mount', opts);
       mountNode.parentNode.insertBefore(this.domNode, mountNode);
+      //this.broadcast('mounted', opts);
     }
   };
 
-  Node.prototype.appendTo = function appendTo(mountNode) {
+  Node.prototype.appendTo = function appendTo(mountNode, opts) {
     mountNode = toDOMNode(mountNode);
+    //this.broadcast('mount', opts);
     mountNode.appendChild(this.domNode);
+    //this.broadcast('mounted', opts);
   };
 
-  Node.prototype.appendChild = function appendChild(childNode) {
-    childNode = toDOMNode(childNode);
-    this.domNode.appendChild(childNode);
+  Node.prototype.appendChild = function appendChild(childNode, opts) {
+    var node = new Node(childNode);
+    node.appendTo(this, opts);
   };
 
-  Node.prototype.remove = function remove() {
+  Node.prototype.remove = function remove(opts) {
     if (this.domNode.parentNode) {
+      //this.broadcast('remove', opts);
       this.domNode.parentNode.removeChild(this.domNode);
+      this.broadcast('removed', opts);
     }
   };
 
@@ -2157,7 +2196,9 @@ var node_Node = function (_EventEmitter) {
   }, {
     key: 'parentNode',
     get: function get() {
-      return this.domNode.parentNode;
+      var parentNode = this.domNode.parentNode;
+      if (!parentNode) return null;
+      return new Node(this.domNode.parentNode);
     }
   }, {
     key: 'target',
@@ -2167,8 +2208,7 @@ var node_Node = function (_EventEmitter) {
   }, {
     key: 'emitter',
     get: function get() {
-      if (!this._emitter) this._emitter = new src_events(this.target);
-      return this._emitter;
+      return new src_events(this.target);
     }
   }]);
 
@@ -2498,35 +2538,42 @@ var directive_Directive = (directive__dec = decorators_meta({
     _this.Expression = expression_Expression;
     _this.Node = node_Node;
 
-    utils_each(options, function (name, value) {
+    each(options, function (name, value) {
       return utils_final(_this, name, value);
     });
     return _this;
   }
 
-  //处理指令选项
+  //指令创建好后会首先触发绑定
 
 
   Directive.prototype.bind = function bind() {};
 
-  Directive.prototype.unbind = function unbind() {};
-
-  Directive.prototype.update = function update() {};
-
-  //挂载实例核心方法
+  //执行一个指令
 
 
-  Directive.prototype.execute = function execute(scope) {
+  Directive.prototype.execute = function execute(scope, force) {
     this.scope = scope;
     if (this.meta.type === types.ELEMENT) {
       return this.update();
     }
     var newValue = this.meta.literal ? this.attribute.value : this.expression.execute(scope);
-    if (!deepEqual(this._value_, newValue)) {
+    if (force || !deepEqual(this._value_, newValue)) {
       this.update(newValue, this._value_);
       this._value_ = newValue;
     }
   };
+
+  //指令的表达式计算结果发生变化时执行
+
+
+  Directive.prototype.update = function update() {};
+
+  //解除绑定，node 的移除并不会触发 unbind
+  //unbind 是需要显示触发
+
+
+  Directive.prototype.unbind = function unbind() {};
 
   return Directive;
 }(entity_Entity), _class2.types = types, _class2.levels = levels, directive__temp)) || directive__class);
@@ -2542,7 +2589,7 @@ function Scope(parent, props) {
   var scope = create(parent);
   copy(props, scope);
   //将 func 绑定到原 scope 上;
-  utils_each(parent, function (key, value) {
+  each(parent, function (key, value) {
     if (!isFunction(value)) return;
     scope[key] = value.bind(parent);
   });
@@ -2580,7 +2627,7 @@ var each_EachDirective = (each__dec = decorators_meta({
   EachDirective.prototype.bind = function bind() {
     //创建挂载点并插入到对应位置
     this.mountNode = this.Node.create();
-    this.mountNode.insertTo(this.node);
+    this.mountNode.insertBy(this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
     //但 each 指令必须先移除，否再进行 item 编译时 each 还会生效
     this.node.removeAttribute(this.attribute.name);
@@ -2596,7 +2643,7 @@ var each_EachDirective = (each__dec = decorators_meta({
     this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
     var tokens = this.attribute.value.split(' ' + this.eachType + ' ');
     var fnText = 'with(scope){each(' + tokens[1] + ',fn.bind(this,' + tokens[1] + '))}';
-    this.each = new Function('each', 'scope', 'fn', fnText).bind(null, utils_each);
+    this.each = new Function('each', 'scope', 'fn', fnText).bind(null, each);
     var names = tokens[0].split(',').map(function (name) {
       return name.trim();
     });
@@ -2652,15 +2699,15 @@ var each_EachDirective = (each__dec = decorators_meta({
       }
       currentEachKeys.push(key);
     });
-    utils_each(this.eachItems, function (key, item) {
+    each(this.eachItems, function (key, item) {
       if (currentEachKeys.some(function (k) {
         return k == key;
       })) return;
-      item.node.remove();
+      item.node.remove({ destroy: true });
       delete _this2.eachItems[key];
     });
     if (itemsFragment.childNodes.length > 0) {
-      itemsFragment.insertTo(this.mountNode);
+      itemsFragment.insertBy(this.mountNode);
     }
   };
 
@@ -2697,7 +2744,7 @@ var if_IfDirective = (if__dec = decorators_meta({
   IfDirective.prototype.bind = function bind() {
     //创建挂载点并插入到对应位置
     this.mountNode = this.Node.create();
-    this.mountNode.insertTo(this.node);
+    this.mountNode.insertBy(this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
     //但 if 指令必须先移除，否再进行 item 编译时 if 还会生效
     this.node.removeAttribute(this.attribute.name);
@@ -2705,18 +2752,18 @@ var if_IfDirective = (if__dec = decorators_meta({
     this.node.remove();
   };
 
-  IfDirective.prototype.execute = function execute(scope) {
+  IfDirective.prototype.execute = function execute(scope, force) {
     var newValue = this.expression.execute(scope);
     if (newValue) {
       //如果新计算的结果为 true 才执行 
       this._handler = this._handler || this.compiler.compile(this.node);
-      this._handler(scope);
+      this._handler(scope, force);
       //通过 parentNode 判断有没有添加，未添加到 dom 中时才添加，避免重复添加
       if (!this.itemNode.parentNode) {
-        this.itemNode.insertTo(this.mountNode);
+        this.itemNode.insertBy(this.mountNode);
       }
     } else {
-      this.itemNode.remove();
+      this.itemNode.remove({ destroy: true });
     }
   };
 
@@ -2798,33 +2845,48 @@ var on_OnDirective = (on__dec = decorators_meta({
   inherits_default()(OnDirective, _Directive);
 
   function OnDirective() {
+    var _temp, _this, _ret;
+
     classCallCheck_default()(this, OnDirective);
 
-    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.eventHandler = function () {
+      if (isNull(_this.scope)) return;
+      _this.eventExpr.execute(new Scope(_this.scope, {
+        $event: event
+      }));
+    }, _this.bindEvent = function (event) {
+      _this.node.emitter.addListener(_this.eventName, _this.eventHandler, false);
+    }, _this.unindEvent = function (event) {
+      _this.node.emitter.removeListener(_this.eventName, _this.eventHandler);
+    }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
+
+  OnDirective.prototype.compileExpr = function compileExpr() {
+    var attrValue = this.attribute.value || '';
+    if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
+      attrValue += '($event)';
+    }
+    return new this.Expression(attrValue);
+  };
 
   /**
    * 初始化指令
    * @returns {void} 无返回
    */
-  OnDirective.prototype.bind = function bind() {
-    var _this2 = this;
 
-    var attrValue = this.attribute.value || '';
-    if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
-      attrValue += '($event)';
-    }
-    this.expr = new this.Expression(attrValue);
-    this.node.emitter.addListener(this.decorates[0], function (event) {
-      if (isNull(_this2.scope)) return;
-      _this2.expr.execute(new Scope(_this2.scope, {
-        $event: event
-      }));
-    }, false);
+
+  OnDirective.prototype.bind = function bind() {
+    this.eventExpr = this.compileExpr();
+    this.eventName = this.decorates[0];
+    this.bindEvent();
   };
 
   OnDirective.prototype.unbind = function unbind() {
-    this.node.emitter.removeListener();
+    this.unindEvent();
   };
 
   OnDirective.prototype.execute = function execute(scope) {
@@ -2979,9 +3041,24 @@ var select_SelectModelDirective = (select__dec = decorators_meta({
   inherits_default()(SelectModelDirective, _Directive);
 
   function SelectModelDirective() {
+    var _temp, _this, _ret;
+
     classCallCheck_default()(this, SelectModelDirective);
 
-    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.changeHandler = function () {
+      if (isNull(_this.scope)) return;
+      var selectedOptions = _this.node.selectedOptions;
+      var value = _this.node.multiple ? [].slice.call(selectedOptions).map(function (option) {
+        return option.value;
+      }, _this) : selectedOptions[0].value;
+      _this.backExpr.execute(new Scope(_this.scope, {
+        _value_: value
+      }));
+    }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
 
   /**
@@ -2989,25 +3066,15 @@ var select_SelectModelDirective = (select__dec = decorators_meta({
    * @returns {void} 无返回
    */
   SelectModelDirective.prototype.bind = function bind() {
-    var _this2 = this;
-
+    this.changeHandler = this.changeHandler.bind(this);
     this.backExpr = new this.Expression(this.attribute.value + '=_value_');
     this.node.removeAttribute(this.attribute.name);
     this._handler = this.compiler.compile(this.node);
-    this.node.emitter.addListener('change', function () {
-      if (isNull(_this2.scope)) return;
-      var selectedOptions = _this2.node.selectedOptions;
-      var value = _this2.node.multiple ? [].slice.call(selectedOptions).map(function (option) {
-        return option.value;
-      }, _this2) : selectedOptions[0].value;
-      _this2.backExpr.execute(new Scope(_this2.scope, {
-        _value_: value
-      }));
-    }, false);
+    this.node.emitter.addListener('change', this.changeHandler, false);
   };
 
   SelectModelDirective.prototype.unbind = function unbind() {
-    this.node.emitter.removeListener();
+    this.node.emitter.removeListener('change', this.changeHandler);
   };
 
   SelectModelDirective.prototype.execute = function execute(scope) {
@@ -3035,9 +3102,20 @@ var editable_EditableModelDirective = function (_Directive) {
   inherits_default()(EditableModelDirective, _Directive);
 
   function EditableModelDirective() {
+    var _temp, _this, _ret;
+
     classCallCheck_default()(this, EditableModelDirective);
 
-    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.inputHandler = function () {
+      if (isNull(_this.scope)) return;
+      _this.backExpr.execute(new Scope(_this.scope, {
+        _value_: _this.node.innerHTML
+      }));
+    }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
 
   /**
@@ -3045,19 +3123,12 @@ var editable_EditableModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   EditableModelDirective.prototype.bind = function bind() {
-    var _this2 = this;
-
     this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.node.emitter.addListener('input', function () {
-      if (isNull(_this2.scope)) return;
-      _this2.backExpr.execute(new Scope(_this2.scope, {
-        _value_: _this2.node.innerHTML
-      }));
-    }, false);
+    this.node.emitter.addListener('input', this.inputHandler, false);
   };
 
   EditableModelDirective.prototype.unbind = function unbind() {
-    this.node.emitter.removeListener();
+    this.node.emitter.removeListener('input', this.inputHandler);
   };
 
   EditableModelDirective.prototype.execute = function execute(scope) {
@@ -3083,9 +3154,20 @@ var input_InputModelDirective = function (_Directive) {
   inherits_default()(InputModelDirective, _Directive);
 
   function InputModelDirective() {
+    var _temp, _this, _ret;
+
     classCallCheck_default()(this, InputModelDirective);
 
-    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.inputHandler = function () {
+      if (isNull(_this.scope)) return;
+      _this.backExpr.execute(new Scope(_this.scope, {
+        _value_: _this.node.value
+      }));
+    }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
 
   /**
@@ -3093,19 +3175,12 @@ var input_InputModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   InputModelDirective.prototype.bind = function bind() {
-    var _this2 = this;
-
     this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.node.emitter.addListener('input', function () {
-      if (isNull(_this2.scope)) return;
-      _this2.backExpr.execute(new Scope(_this2.scope, {
-        _value_: _this2.node.value
-      }));
-    }, false);
+    this.node.emitter.addListener('input', this.inputHandler, false);
   };
 
   InputModelDirective.prototype.unbind = function unbind() {
-    this.node.emitter.removeListener();
+    this.node.emitter.removeListener('input', this.inputHandler);
   };
 
   InputModelDirective.prototype.execute = function execute(scope) {
@@ -3131,9 +3206,20 @@ var radio_RadioModelDirective = function (_Directive) {
   inherits_default()(RadioModelDirective, _Directive);
 
   function RadioModelDirective() {
+    var _temp, _this, _ret;
+
     classCallCheck_default()(this, RadioModelDirective);
 
-    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.changeHandler = function () {
+      if (isNull(_this.scope)) return;
+      _this.backExpr.execute(new Scope(_this.scope, {
+        _value_: _this.node.value
+      }));
+    }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
 
   /**
@@ -3141,19 +3227,12 @@ var radio_RadioModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   RadioModelDirective.prototype.bind = function bind() {
-    var _this2 = this;
-
     this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.node.emitter.addListener('change', function () {
-      if (isNull(_this2.scope)) return;
-      _this2.backExpr.execute(new Scope(_this2.scope, {
-        _value_: _this2.node.value
-      }));
-    }, false);
+    this.node.emitter.addListener('change', this.changeHandler, false);
   };
 
   RadioModelDirective.prototype.unbind = function unbind() {
-    this.node.emitter.removeListener();
+    this.node.emitter.removeListener('change', this.changeHandler);
   };
 
   RadioModelDirective.prototype.execute = function execute(scope) {
@@ -3178,9 +3257,28 @@ var checkbox_CheckBoxModelDirective = function (_Directive) {
   inherits_default()(CheckBoxModelDirective, _Directive);
 
   function CheckBoxModelDirective() {
+    var _temp, _this, _ret;
+
     classCallCheck_default()(this, CheckBoxModelDirective);
 
-    return possibleConstructorReturn_default()(this, _Directive.apply(this, arguments));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.changeHandler = function () {
+      if (isNull(_this.scope)) return;
+      var value = _this.expression.execute(_this.scope);
+      if (isArray(value) && _this.node.checked) {
+        value.push(_this.node.value);
+      } else if (isArray(value) && !_this.node.checked) {
+        var index = value.indexOf(_this.node.value);
+        value.splice(index, 1);
+      } else {
+        _this.backExpr.execute(new Scope(_this.scope, {
+          _value_: _this.node.checked
+        }));
+      }
+    }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
 
   /**
@@ -3188,27 +3286,12 @@ var checkbox_CheckBoxModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   CheckBoxModelDirective.prototype.bind = function bind() {
-    var _this2 = this;
-
     this.backExpr = new this.Expression(this.attribute.value + '=_value_');
-    this.node.emitter.addListener('change', function () {
-      if (isNull(_this2.scope)) return;
-      var value = _this2.expression.execute(_this2.scope);
-      if (isArray(value) && _this2.node.checked) {
-        value.push(_this2.node.value);
-      } else if (isArray(value) && !_this2.node.checked) {
-        var index = value.indexOf(_this2.node.value);
-        value.splice(index, 1);
-      } else {
-        _this2.backExpr.execute(new Scope(_this2.scope, {
-          _value_: _this2.node.checked
-        }));
-      }
-    }, false);
+    this.node.emitter.addListener('change', this.changeHandler, false);
   };
 
   CheckBoxModelDirective.prototype.unbind = function unbind() {
-    this.node.emitter.removeListener();
+    this.node.emitter.removeListener('change', this.changeHandler);
   };
 
   CheckBoxModelDirective.prototype.execute = function execute(scope) {
@@ -3553,7 +3636,7 @@ var compiler_Compiler = function () {
   Compiler.prototype.registerDirectives = function registerDirectives(directives) {
     var _this = this;
 
-    utils_each(directives, function (name, directive) {
+    each(directives, function (name, directive) {
       name = toSplitCase(name);
       var fullName = directive.meta.prefix === false ? name : _this.prefix + ':' + name;
       if (directive.meta.type == directive_Directive.types.ELEMENT) {
@@ -3598,36 +3681,6 @@ var compiler_Compiler = function () {
     options.compiler = this;
     options.prefix = this.prefix;
     return new Directive(options);
-  };
-
-  /**
-   * 初始化一个编译完成的 handler
-   * @param {function} handler 编译后的的模板函数
-   * @returns {void} 无返回
-   */
-
-
-  Compiler.prototype._bindHandler = function _bindHandler(handler) {
-    //排序 directives
-    handler.directives = handler.directives.sort(function (a, b) {
-      return b.meta.level - a.meta.level;
-    });
-    //初始化 directives
-    var boundDirectives = [];
-    utils_each(handler.directives, function (index, directive) {
-      directive.index = index;
-      directive.bind();
-      boundDirectives.push(directive);
-      //移除完成绑定的指令对应的 attribute
-      if (directive.meta.remove !== false && directive.attribute) {
-        directive.node.removeAttribute(directive.attribute.name);
-      }
-      //如果遇到一个「终态」指令，停止向下初始化
-      if (directive.meta.final) {
-        return handler.final = true;
-      }
-    });
-    handler.directives = boundDirectives;
   };
 
   /**
@@ -3690,6 +3743,61 @@ var compiler_Compiler = function () {
   };
 
   /**
+  * 初始化一个编译完成的 handler
+  * @param {function} handler 编译后的的模板函数
+  * @param {Object} options 选项
+  * @returns {void} 无返回
+  */
+
+
+  Compiler.prototype._bindHandler = function _bindHandler(handler, options) {
+    //排序 directives
+    handler.directives = handler.directives.sort(function (a, b) {
+      return b.meta.level - a.meta.level;
+    });
+    //初始化 directives
+    var boundDirectives = [];
+    each(handler.directives, function (index, directive) {
+      directive.index = index;
+      directive.bind();
+      boundDirectives.push(directive);
+      //移除完成绑定的指令对应的 attribute
+      if (directive.meta.remove !== false && directive.attribute && options.remove !== false) {
+        directive.node.removeAttribute(directive.attribute.name);
+      }
+      //如果遇到一个「终态」指令，停止向下初始化
+      if (directive.meta.final) {
+        return handler.final = true;
+      }
+    });
+    handler.directives = boundDirectives;
+  };
+
+  Compiler.prototype._makeHandlerUnbindMethod = function _makeHandlerUnbindMethod() {
+    return function () {
+      this.directives.forEach(function (directive) {
+        directive.unbind();
+      });
+      this.children.forEach(function (childHandler) {
+        childHandler.unbind();
+      });
+    };
+  };
+
+  Compiler.prototype._makeHandlerExcuteMethod = function _makeHandlerExcuteMethod() {
+    return function (scope, force) {
+      if (isNull(scope)) scope = {};
+      this.directives.forEach(function (directive) {
+        directive.scope = scope;
+        directive.execute(scope, force);
+      });
+      this.children.forEach(function (childHandler) {
+        childHandler(scope, force);
+      });
+    };
+  };
+
+  /**
    * 编译一个模板
    * @param {HTMLNode} node 模板根元素
    * @param {Object} options 选项
@@ -3698,42 +3806,34 @@ var compiler_Compiler = function () {
 
 
   Compiler.prototype.compile = function compile(node, options) {
-    if (!node) {
-      throw new error_LibError('Invalid node for compile');
-    }
+    if (!node) throw new error_LibError('Invalid node for compile');
     options = options || {};
-    //--    
+    //实例托管 node 实例   
     node = new node_Node(node);
     node.compiled = true;
     //定义编译结果函数
-    var handler = function handler(scope) {
-      if (isNull(scope)) scope = {};
-      handler.directives.forEach(function (directive) {
-        directive.scope = scope;
-        directive.execute(scope);
-      }, this);
-      handler.children.forEach(function (childHandler) {
-        childHandler(scope);
-      }, this);
-    };
-    //--
-    handler.destroy = function () {
-      handler.directives.forEach(function (directive) {
-        directive.unbind();
-      }, this);
-      handler.children.forEach(function (childHandler) {
-        childHandler.destroy();
-      }, this);
+    var handler = function handler(scope, force) {
+      return handler.excute(scope, force);
     };
     handler.node = node;
-    //定义 children & directives 
     handler.directives = [];
     handler.children = [];
+    //添加方法
+    handler.excute = this._makeHandlerExcuteMethod();
+    handler.unbind = this._makeHandlerUnbindMethod();
     //编译相关指令
-    if (options.element !== false) this._compileElement(handler, node);
-    if (options.attribute !== false) this._compileAttributes(handler, node);
-    this._bindHandler(handler);
-    if (options.children !== false) this._compileChildren(handler, node);
+    if (options.element !== false) {
+      this._compileElement(handler, node);
+    }
+    if (options.attribute !== false) {
+      this._compileAttributes(handler, node);
+    }
+    //绑定 handler 
+    this._bindHandler(handler, options);
+    //编译 children
+    if (options.children !== false) {
+      this._compileChildren(handler, node);
+    }
     //返回编译后函数
     return handler;
   };
@@ -4185,18 +4285,8 @@ var template_Template = function (_EventEmitter) {
     this.observer.removeListener('change', this.requestUpdate);
     this.observer.clearReference();
     this.observer = null;
+    this.render.unbind();
     delete this.observer;
-  };
-
-  /**
-   * 释放
-   * @returns {void} 无返回
-   */
-
-
-  Template.prototype.destroy = function destroy() {
-    this.unbind();
-    this.render.destroy();
   };
 
   return Template;
@@ -4348,6 +4438,7 @@ var component_directive_Directive = src_template.Directive;
     type: component_directive_Directive.types.ELEMENT,
     literal: true,
     final: true,
+    remove: false,
     level: component_directive_Directive.levels.ELEMENT
   })), _dec(_class = function (_Directive) {
     inherits_default()(ComponentDirective, _Directive);
@@ -4355,41 +4446,64 @@ var component_directive_Directive = src_template.Directive;
     function ComponentDirective(options) {
       classCallCheck_default()(this, ComponentDirective);
 
-      var _this = possibleConstructorReturn_default()(this, _Directive.call(this, options));
-
-      var meta = _this.meta;
-      _this.component = new meta.component({
-        parent: meta.parent || meta.scope
-      });
-      return _this;
+      return possibleConstructorReturn_default()(this, _Directive.call(this, options));
     }
 
+    /**
+     * 初始化指令
+     * @returns {void} 无返回
+     */
+
+
     ComponentDirective.prototype.bind = function bind() {
-      this.handleAttrs();
-      this.node.component = this.component;
-      this.elementHandler = this.compiler.compile(this.node, {
-        element: false,
-        children: false
-      });
-      this.component.$mount(this.node);
-      this.component.$template.sync = true;
-      this.handleContents();
+      //创建挂载点并插入到对应位置
+      this.mountNode = this.Node.create();
+      this.mountNode.insertBy(this.node);
+      //缓存 attributes
+      this.attributes = [].slice.call(this.node.attributes);
       this.node.remove();
     };
 
-    ComponentDirective.prototype.handleAttrs = function handleAttrs() {
-      this.attrs = [].slice.call(this.node.attributes);
-      var directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
-      this.attrs.forEach(function (attr) {
-        if (directiveRegexp.test(attr.name)) return;
-        if (attr.name in this.component) return;
-        this.component.$element.setAttribute(attr.name, attr.value);
-        this.node.removeAttribute(attr.name);
-      }, this);
+    ComponentDirective.prototype.createComponent = function createComponent() {
+      var _this2 = this;
+
+      if (this.component) return false;
+      var meta = this.meta;
+      this.component = new meta.component({
+        parent: meta.parent || meta.scope
+      });
+      this.node.component = this.component;
+      this.attributeHandler = this.compiler.compile(this.node, {
+        element: false,
+        children: false,
+        remove: false
+      });
+      this.component.$mount(this.mountNode);
+      this.component.$template.sync = true;
+      this.copyAttrbutes();
+      this.compileContents();
+      this.component.$node.on('removed', function (event) {
+        if (!event || !event.destroy) return;
+        _this2.component.$destroy();
+        _this2.component = null;
+        _this2.node.component = null;
+      });
+      return true;
     };
 
-    ComponentDirective.prototype.handleContents = function handleContents() {
-      this.placeHandlers = [];
+    ComponentDirective.prototype.copyAttrbutes = function copyAttrbutes() {
+      var _this3 = this;
+
+      var directiveRegExp = new RegExp('^' + this.prefix + ':', 'i');
+      this.attributes.forEach(function (attr) {
+        if (directiveRegExp.test(attr.name)) return;
+        if (attr.name in _this3.component) return;
+        _this3.component.$node.setAttribute(attr.name, attr.value);
+      });
+    };
+
+    ComponentDirective.prototype.compileContents = function compileContents() {
+      this.contentHandlers = [];
       var placeNodes = this.component.$node.find('[' + this.prefix + '\\:content]');
       placeNodes.forEach(function (placeNode) {
         //将内容插入到指定的「位置」
@@ -4408,9 +4522,10 @@ var component_directive_Directive = src_template.Directive;
     };
 
     ComponentDirective.prototype.execute = function execute(scope) {
-      this.elementHandler(scope);
-      this.placeHandlers.forEach(function (placeHandle) {
-        return placeHandle(scope);
+      var isNew = this.createComponent();
+      this.attributeHandler(scope, isNew);
+      this.contentHandlers.forEach(function (contentHandler) {
+        return contentHandler(scope);
       });
       this.component.$template.sync = false;
     };
@@ -4503,8 +4618,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
   Component.prototype.$addChild = function $addChild(child) {
     if (!(child instanceof Component)) return;
     this.$children.push(child);
-    utils_final(child, '$parent', this);
-    utils_final(child, '$root', this.$root || this);
+    child.$parent = this;
   };
 
   /**
@@ -4517,8 +4631,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
   Component.prototype.$removeChild = function $removeChild(child) {
     var index = this.$children.indexOf(child);
     this.$children.splice(index, 1);
-    utils_final(child, '$parent', null);
-    //final(child, '$root', null);
+    child.$parent = null;
   };
 
   /**
@@ -4537,7 +4650,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     if (!components) return;
     this.$components = this.$components || {};
     this.$directives = this.$directives || {};
-    utils_each(components, function (name, component) {
+    each(components, function (name, component) {
       if (!component) return;
       _this2.$components[name] = component;
       _this2.$directives[name] = component_directive({
@@ -4559,7 +4672,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
 
     if (!directives) return;
     this.$directives = this.$directives || {};
-    utils_each(directives, function (name, directive) {
+    each(directives, function (name, directive) {
       if (!directive) return;
       _this3.$directives[name] = directive;
     });
@@ -4575,7 +4688,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
   Component.prototype._bindEvents_ = function _bindEvents_(events) {
     var _this4 = this;
 
-    utils_each(events, function (name, handlers) {
+    each(events, function (name, handlers) {
       handlers.forEach(function (handler) {
         handler = isFunction(handler) ? handler : _this4[handler];
         _this4.$on(name, handler.bind(_this4));
@@ -4596,7 +4709,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     } else {
       this.$model = model || {};
     }
-    utils_each(this.$model, function (name) {
+    each(this.$model, function (name) {
       Object.defineProperty(this, name, {
         configurable: true,
         enumerable: true,
@@ -4698,7 +4811,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     if (!element || element.nodeName === '#text') {
       throw new error_LibError('Invalid component template');
     }
-    utils_final(this, '$element', element);
+    this.$element = element;
     utils_final(this, '$node', new node_Node(element));
     this.$emit('created');
   };
@@ -4727,7 +4840,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
       _this7.$emit('ready');
     });
     template.bind(this);
-    utils_final(this, '$template', template);
+    this.$template = template;
   };
 
   /**
@@ -4745,7 +4858,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     if (append) {
       this.$node.appendTo(mountNode);
     } else {
-      this.$node.insertTo(mountNode);
+      this.$node.insertBy(mountNode);
     }
     this._mounted_ = true;
     this._removed_ = false;
@@ -4803,7 +4916,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
 
   Component.prototype.$broadcast = function $broadcast(name, data) {
     var stopPropagation = this.$emit(name, data);
-    if (!stopPropagation && this.$children && this.$children.length > 0) {
+    if (!stopPropagation && this.$children) {
       this.$children.forEach(function (child) {
         child.$broadcast(name, data);
       }, this);
@@ -4817,8 +4930,8 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
 
 
   Component.prototype.$destroy = function $destroy() {
+    this.$emit('destroy');
     this.$remove();
-    this._emitter_.off();
     this.$children.forEach(function (child) {
       child.$destroy();
     }, this);
@@ -4826,18 +4939,17 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
       var index = this.$parent.$children.indexOf(this);
       this.$parent.$children.splice(index, 1);
     }
-    this.$emit('destroy');
     if (this._compiled_) {
-      this.$template.destroy();
+      this.$template.unbind();
     }
     this.$emit('destroyed');
+    this._emitter_.off();
     for (var key in this) {
-      delete this[key];
-    }
-    ['_observer_', '$element', '$children', '$parent', '$template'].forEach(function (key) {
-      delete this[key];
-    }, this);
-    setPrototypeOf(this, null);
+      this[key] = null;
+    }this.$children.splice(0, this.$children.length);
+    this.$parent = null;
+    this.$template = null;
+    this.$element = null;
   };
 
   createClass_default()(Component, [{
@@ -5057,7 +5169,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_8d6d0dd4c20db768c4f506aa1392057c, bootstrap);
+copy($info_2ca480820af35b644be818dc5335b12f, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;

@@ -77,34 +77,6 @@ export default class Compiler {
   }
 
   /**
-   * 初始化一个编译完成的 handler
-   * @param {function} handler 编译后的的模板函数
-   * @returns {void} 无返回
-   */
-  _bindHandler(handler) {
-    //排序 directives
-    handler.directives = handler.directives.sort(function (a, b) {
-      return b.meta.level - a.meta.level;
-    });
-    //初始化 directives
-    let boundDirectives = [];
-    each(handler.directives, (index, directive) => {
-      directive.index = index;
-      directive.bind();
-      boundDirectives.push(directive);
-      //移除完成绑定的指令对应的 attribute
-      if (directive.meta.remove !== false && directive.attribute) {
-        directive.node.removeAttribute(directive.attribute.name);
-      }
-      //如果遇到一个「终态」指令，停止向下初始化
-      if (directive.meta.final) {
-        return handler.final = true;
-      }
-    });
-    handler.directives = boundDirectives;
-  }
-
-  /**
    * 编译一个元素本身
    * @param {function} handler 当前模板函数
    * @param {HTMLNode} node 当前 HTML 结点
@@ -160,48 +132,92 @@ export default class Compiler {
   }
 
   /**
+  * 初始化一个编译完成的 handler
+  * @param {function} handler 编译后的的模板函数
+  * @param {Object} options 选项
+  * @returns {void} 无返回
+  */
+  _bindHandler(handler, options) {
+    //排序 directives
+    handler.directives = handler.directives.sort(function (a, b) {
+      return b.meta.level - a.meta.level;
+    });
+    //初始化 directives
+    let boundDirectives = [];
+    each(handler.directives, (index, directive) => {
+      directive.index = index;
+      directive.bind();
+      boundDirectives.push(directive);
+      //移除完成绑定的指令对应的 attribute
+      if (directive.meta.remove !== false &&
+        directive.attribute && options.remove !== false) {
+        directive.node.removeAttribute(directive.attribute.name);
+      }
+      //如果遇到一个「终态」指令，停止向下初始化
+      if (directive.meta.final) {
+        return handler.final = true;
+      }
+    });
+    handler.directives = boundDirectives;
+  }
+
+  _makeHandlerUnbindMethod() {
+    return function () {
+      this.directives.forEach(directive => {
+        directive.unbind();
+      });
+      this.children.forEach(childHandler => {
+        childHandler.unbind();
+      });
+    };
+  }
+
+  _makeHandlerExcuteMethod() {
+    return function (scope, force) {
+      if (isNull(scope)) scope = {};
+      this.directives.forEach(directive => {
+        directive.scope = scope;
+        directive.execute(scope, force);
+      });
+      this.children.forEach(childHandler => {
+        childHandler(scope, force);
+      });
+    };
+  }
+
+  /**
    * 编译一个模板
    * @param {HTMLNode} node 模板根元素
    * @param {Object} options 选项
    * @returns {function} 模板函数
    */
   compile(node, options) {
-    if (!node) {
-      throw new Error('Invalid node for compile');
-    }
+    if (!node) throw new Error('Invalid node for compile');
     options = options || {};
-    //--    
+    //实例托管 node 实例   
     node = new Node(node);
     node.compiled = true;
     //定义编译结果函数
-    let handler = function (scope) {
-      if (isNull(scope)) scope = {};
-      handler.directives.forEach(function (directive) {
-        directive.scope = scope;
-        directive.execute(scope);
-      }, this);
-      handler.children.forEach(function (childHandler) {
-        childHandler(scope);
-      }, this);
-    };
-    //--
-    handler.destroy = function () {
-      handler.directives.forEach(function (directive) {
-        directive.unbind();
-      }, this);
-      handler.children.forEach(function (childHandler) {
-        childHandler.destroy();
-      }, this);
-    };
+    let handler = (scope, force) => handler.excute(scope, force);
     handler.node = node;
-    //定义 children & directives 
     handler.directives = [];
     handler.children = [];
+    //添加方法
+    handler.excute = this._makeHandlerExcuteMethod();
+    handler.unbind = this._makeHandlerUnbindMethod();
     //编译相关指令
-    if (options.element !== false) this._compileElement(handler, node);
-    if (options.attribute !== false) this._compileAttributes(handler, node);
-    this._bindHandler(handler);
-    if (options.children !== false) this._compileChildren(handler, node);
+    if (options.element !== false) {
+      this._compileElement(handler, node);
+    }
+    if (options.attribute !== false) {
+      this._compileAttributes(handler, node);
+    }
+    //绑定 handler 
+    this._bindHandler(handler, options);
+    //编译 children
+    if (options.children !== false) {
+      this._compileChildren(handler, node);
+    }
     //返回编译后函数
     return handler;
   }

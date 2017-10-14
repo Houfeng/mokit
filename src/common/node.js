@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { Error } from 'common';
-import { isNull, parseHTML } from 'ntils';
+import { isNull, parseHTML, final } from 'ntils';
 
 function toDOMNode(node) {
   if (!node) {
@@ -13,6 +13,8 @@ function toDOMNode(node) {
   return domNode;
 }
 
+//托管的 dom，所有 dom 操作都需要基于这个 class 完成
+//除 removed 事件外，暂不需求其它事件，考虑到性能就暂不 emit 其它事件
 export default class Node extends EventEmitter {
 
   static create(name) {
@@ -38,29 +40,61 @@ export default class Node extends EventEmitter {
 
   constructor(node) {
     super();
-    this.domNode = toDOMNode(node);
+    if (node instanceof Node) return node;
+    let domNode = toDOMNode(node);
+    if (domNode._node_) return domNode._node_;
+    final(this, 'domNode', domNode);
+    final(domNode, '_node_', this);
   }
 
-  insertTo(mountNode) {
+  _wrapEvent(opts) {
+    opts = opts || {};
+    opts.target = opts.target || this;
+    return opts;
+  }
+
+  broadcast(name, opts) {
+    opts = this._wrapEvent(opts);
+    this.emit(name, opts);
+    let childNodes = this.childNodes;
+    if (!childNodes) return;
+    childNodes.forEach(childNode => childNode.broadcast(name, opts));
+  }
+
+  dispatch(name, opts) {
+    opts = this._wrapEvent(opts);
+    this.emit(name, opts);
+    let parentNode = this.parentNode;
+    if (!parentNode) return;
+    parentNode.dispatch(name, opts);
+  }
+
+  insertBy(mountNode, opts) {
     mountNode = toDOMNode(mountNode);
     if (mountNode.parentNode) {
+      //this.broadcast('mount', opts);
       mountNode.parentNode.insertBefore(this.domNode, mountNode);
+      //this.broadcast('mounted', opts);
     }
   }
 
-  appendTo(mountNode) {
+  appendTo(mountNode, opts) {
     mountNode = toDOMNode(mountNode);
+    //this.broadcast('mount', opts);
     mountNode.appendChild(this.domNode);
+    //this.broadcast('mounted', opts);
   }
 
-  appendChild(childNode) {
-    childNode = toDOMNode(childNode);
-    this.domNode.appendChild(childNode);
+  appendChild(childNode, opts) {
+    let node = new Node(childNode);
+    node.appendTo(this, opts);
   }
 
-  remove() {
+  remove(opts) {
     if (this.domNode.parentNode) {
+      //this.broadcast('remove', opts);
       this.domNode.parentNode.removeChild(this.domNode);
+      this.broadcast('removed', opts);
     }
   }
 
@@ -205,7 +239,9 @@ export default class Node extends EventEmitter {
   }
 
   get parentNode() {
-    return this.domNode.parentNode;
+    let parentNode = this.domNode.parentNode;
+    if (!parentNode) return null;
+    return new Node(this.domNode.parentNode);
   }
 
   get target() {
@@ -213,8 +249,7 @@ export default class Node extends EventEmitter {
   }
 
   get emitter() {
-    if (!this._emitter) this._emitter = new EventEmitter(this.target);
-    return this._emitter;
+    return new EventEmitter(this.target);
   }
 
 }

@@ -17,8 +17,8 @@ class EventEmitter {
     if (emitter) return emitter;
     final(this, '_target_', target);
     final(target, '_emitter_', this);
-    final(this, '_isNative_', this._isNativeObject(this._target_));
-    final(this, '_listeners_', this._listeners_ || {})
+    this._isNative_ = this._isNativeObject(this._target_);
+    this._listeners_ = this._listeners_ || {};
     this.on = this.$on = this.$addListener = this.addListener;
     this.off = this.$off = this.$removeListener = this.removeListener;
     this.$emit = this.emit;

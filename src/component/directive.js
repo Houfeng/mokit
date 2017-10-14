@@ -15,44 +15,64 @@ export default function (options) {
     type: Directive.types.ELEMENT,
     literal: true,
     final: true,
+    remove: false,
     level: Directive.levels.ELEMENT
   })
   class ComponentDirective extends Directive {
 
     constructor(options) {
       super(options);
+    }
+
+    /**
+     * 初始化指令
+     * @returns {void} 无返回
+     */
+    bind() {
+      //创建挂载点并插入到对应位置
+      this.mountNode = this.Node.create();
+      this.mountNode.insertBy(this.node);
+      //缓存 attributes
+      this.attributes = [].slice.call(this.node.attributes);
+      this.node.remove();
+    }
+
+    createComponent() {
+      if (this.component) return false;
       let meta = this.meta;
       this.component = new meta.component({
         parent: meta.parent || meta.scope
       });
-    }
-
-    bind() {
-      this.handleAttrs();
       this.node.component = this.component;
-      this.elementHandler = this.compiler.compile(this.node, {
+      this.attributeHandler = this.compiler.compile(this.node, {
         element: false,
-        children: false
+        children: false,
+        remove: false
       });
-      this.component.$mount(this.node);
+      this.component.$mount(this.mountNode);
       this.component.$template.sync = true;
-      this.handleContents();
-      this.node.remove();
+      this.copyAttrbutes();
+      this.compileContents();
+      this.component.$node.on('removed', (event) => {
+        if (!event || !event.destroy) return;
+        this.component.$destroy();
+        this.component = null;
+        this.node.component = null;
+      });
+      return true;
     }
 
-    handleAttrs() {
-      this.attrs = [].slice.call(this.node.attributes);
-      let directiveRegexp = new RegExp('^' + this.prefix + ':', 'i');
-      this.attrs.forEach(function (attr) {
-        if (directiveRegexp.test(attr.name)) return;
+    copyAttrbutes() {
+      let directiveRegExp = new RegExp('^' + this.prefix + ':', 'i');
+      this.attributes.forEach(attr => {
+        if (directiveRegExp.test(attr.name)) return;
         if (attr.name in this.component) return;
-        this.component.$element.setAttribute(attr.name, attr.value);
-        this.node.removeAttribute(attr.name);
-      }, this);
+        this.component.$node.setAttribute(attr.name, attr.value);
+      });
     }
 
-    handleContents() {
-      this.placeHandlers = [];
+    compileContents() {
+      this.contentHandlers = [];
       let placeNodes = this.component.$node
         .find('[' + this.prefix + '\\:content]');
       placeNodes.forEach(function (placeNode) {
@@ -72,9 +92,9 @@ export default function (options) {
     }
 
     execute(scope) {
-      this.elementHandler(scope);
-      this.placeHandlers
-        .forEach(placeHandle => placeHandle(scope));
+      let isNew = this.createComponent();
+      this.attributeHandler(scope, isNew);
+      this.contentHandlers.forEach(contentHandler => contentHandler(scope));
       this.component.$template.sync = false;
     }
 

@@ -17,7 +17,7 @@ export default class EachDirective extends Directive {
   bind() {
     //创建挂载点并插入到对应位置
     this.mountNode = this.Node.create();
-    this.mountNode.insertTo(this.node);
+    this.mountNode.insertBy(this.node);
     //虽然，bind 完成后，也会进行 attribute 的移除，
     //但 each 指令必须先移除，否再进行 item 编译时 each 还会生效
     this.node.removeAttribute(this.attribute.name);
@@ -85,11 +85,11 @@ export default class EachDirective extends Directive {
     });
     each(this.eachItems, (key, item) => {
       if (currentEachKeys.some(k => k == key)) return;
-      item.node.remove();
+      item.node.remove({ destroy: true });
       delete this.eachItems[key];
     });
     if (itemsFragment.childNodes.length > 0) {
-      itemsFragment.insertTo(this.mountNode);
+      itemsFragment.insertBy(this.mountNode);
     }
   }
 
