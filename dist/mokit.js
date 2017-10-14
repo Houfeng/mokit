@@ -904,8 +904,8 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-2ca480820af35b644be818dc5335b12f.js
-/* harmony default export */ var $info_2ca480820af35b644be818dc5335b12f = ({ "name": "mokit", "version": "4.0.0-alpha10" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-16d4a7d6ef66a6fbfece11e016a03f52.js
+/* harmony default export */ var $info_16d4a7d6ef66a6fbfece11e016a03f52 = ({ "name": "mokit", "version": "4.0.0-alpha11" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.1.5@ntils/src/utils.js
 /**
  * 空函数
@@ -1922,7 +1922,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_2ca480820af35b644be818dc5335b12f.name + '] ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_16d4a7d6ef66a6fbfece11e016a03f52.name + '] ' + message].concat(other)));
   }
 
   return LibError;
@@ -2853,14 +2853,14 @@ var on_OnDirective = (on__dec = decorators_meta({
       args[_key] = arguments[_key];
     }
 
-    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.eventHandler = function () {
+    return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.eventHandler = function (event) {
       if (isNull(_this.scope)) return;
       _this.eventExpr.execute(new Scope(_this.scope, {
         $event: event
       }));
-    }, _this.bindEvent = function (event) {
+    }, _this.bindEvent = function () {
       _this.node.emitter.addListener(_this.eventName, _this.eventHandler, false);
-    }, _this.unindEvent = function (event) {
+    }, _this.unindEvent = function () {
       _this.node.emitter.removeListener(_this.eventName, _this.eventHandler);
     }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
@@ -2990,9 +2990,6 @@ var id_IdDirective = (id__dec = decorators_meta({
   }
 
   IdDirective.prototype.update = function update(id) {
-    if (id in this.scope) {
-      throw new error_LibError('Conflicting component id `' + id + '`');
-    }
     this.scope[id] = this.node.target;
   };
 
@@ -4249,6 +4246,7 @@ var template_Template = function (_EventEmitter) {
 
 
   Template.prototype.update = function update() {
+    if (!this.observer || !this.observer.target) return;
     this.$emit('update', this);
     this.render(this.observer.target);
     this.$emit('updated', this);
@@ -4834,7 +4832,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
       root: true
     });
     template.on('update', function () {
-      _this7._calcWatchers_();
+      if (_this7._calcWatchers_) _this7._calcWatchers_();
     });
     template.on('bound', function () {
       _this7.$emit('ready');
@@ -5169,7 +5167,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_2ca480820af35b644be818dc5335b12f, bootstrap);
+copy($info_16d4a7d6ef66a6fbfece11e016a03f52, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;

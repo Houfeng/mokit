@@ -8,20 +8,20 @@ import { isNull } from 'ntils';
 })
 export default class OnDirective extends Directive {
 
-  eventHandler = () => {
+  eventHandler = (event) => {
     if (isNull(this.scope)) return;
     this.eventExpr.execute(new Scope(this.scope, {
       $event: event
     }));
   };
 
-  bindEvent = (event) => {
+  bindEvent = () => {
     this.node.emitter.addListener(
       this.eventName, this.eventHandler, false
     );
   };
 
-  unindEvent = (event) => {
+  unindEvent = () => {
     this.node.emitter.removeListener(
       this.eventName, this.eventHandler
     );

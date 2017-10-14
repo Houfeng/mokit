@@ -48,6 +48,7 @@ export default class Template extends EventEmitter {
    * @returns {void} 无返回
    */
   update() {
+    if (!this.observer || !this.observer.target) return;
     this.$emit('update', this);
     this.render(this.observer.target);
     this.$emit('updated', this);

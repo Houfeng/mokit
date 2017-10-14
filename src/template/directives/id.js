@@ -7,9 +7,6 @@ import { Error } from 'common';
 })
 export default class IdDirective extends Directive {
   update(id) {
-    if (id in this.scope) {
-      throw new Error('Conflicting component id `' + id + '`');
-    }
     this.scope[id] = this.node.target;
   }
 }

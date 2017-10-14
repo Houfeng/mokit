@@ -257,7 +257,7 @@ export default class Component extends Entity {
       root: true
     });
     template.on('update', () => {
-      this._calcWatchers_();
+      if (this._calcWatchers_) this._calcWatchers_();
     });
     template.on('bound', () => {
       this.$emit('ready');
