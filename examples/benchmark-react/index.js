@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const data = new Array(3000).fill('');
+const data = new Array(1000).fill('');
 
 class App extends React.Component {
   state = { data };
@@ -13,6 +13,6 @@ class App extends React.Component {
 }
 
 console.time('react');
-ReactDOM.render(<App />, mountNode);
+window.app = ReactDOM.render(<App />, mountNode);
 console.timeEnd('react');
 console.log('count', document.querySelectorAll('li').length);

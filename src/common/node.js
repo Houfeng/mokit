@@ -177,7 +177,7 @@ export default class Node extends EventEmitter {
   }
 
   get childNodes() {
-    let items = [].slice.call(this.domNode.childNodes);
+    let items = [].slice.call(this.domNode.childNodes || []);
     return items.map(item => new Node(item));
   }
 

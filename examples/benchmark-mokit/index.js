@@ -1,6 +1,6 @@
 import mokit from 'mokit';
 
-const data = new Array(10000).fill('');
+const data = new Array(1000).fill('');
 
 @mokit.template(`<ul>
   <li m:each="index in data">{{index}}</li>
@@ -10,6 +10,6 @@ class App extends mokit.Component {
 }
 
 console.time('mokit');
-window.todo = mokit(App, mountNode);
+window.app = mokit(App, mountNode);
 console.timeEnd('mokit');
 console.log('count', document.querySelectorAll('li').length);

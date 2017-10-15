@@ -77,17 +77,20 @@ export default function (options) {
         .find('[' + this.prefix + '\\:content]');
       placeNodes.forEach(function (placeNode) {
         //将内容插入到指定的「位置」
-        let contents = null;
-        let selector = placeNode.getAttribute(this.prefix + ':content');
-        contents = selector ? this.node.find(selector) : this.node.childNodes;
-        if (!contents || contents.length < 1) return;
-        placeNode.innerHTML = '';
-        contents.forEach(function (content) {
-          placeNode.appendChild(content.cloneNode(true));
-        }, this);
+        let contentSelector = placeNode
+          .getAttribute(this.prefix + ':content');
+        let contentNodes = contentSelector ?
+          this.node.find(contentSelector) : this.node.childNodes;
+        if (!contentNodes || contentNodes.length < 1) return;
+        placeNode.childNodes.forEach(
+          childNode => childNode.remove()
+        );
+        contentNodes.forEach(
+          contentNode => placeNode.appendChild(contentNode)
+        );
         //编译插入后的子「内容模板」
-        let handler = this.compiler.compile(placeNode);
-        this.placeHandlers.push(handler);
+        let contentHandler = this.compiler.compile(placeNode);
+        this.contentHandlers.push(contentHandler);
       }, this);
     }
 
