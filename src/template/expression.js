@@ -1,5 +1,6 @@
 import { isNull } from 'ntils';
 
+const cache = {};
 
 /**
  * 表达式类型，将字符串构析为可执行表达式实例
@@ -13,9 +14,12 @@ export default class Expression {
    * @returns {void} 无返回
    */
   constructor(code, mix) {
+    let cacheKey = `${code}:mix`;
+    if (cache[cacheKey]) return cache[cacheKey];
     this.func = mix ?
       this._compileMixedCode(code) :
       this._compileCode(code);
+    cache[cacheKey] = this;
   }
 
   /**

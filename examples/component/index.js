@@ -32,4 +32,4 @@ class App extends Component {
   }
 }
 
-window.app = mokit(App, document.body);
+window.app = mokit(App, mountNode);
