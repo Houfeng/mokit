@@ -10,7 +10,7 @@ export default class OnDirective extends Directive {
 
   eventHandler = (event) => {
     if (isNull(this.scope)) return;
-    this.eventExpr.execute(new Scope(this.scope, {
+    this.eventExpr(new Scope(this.scope, {
       $event: event
     }));
   };
@@ -32,7 +32,7 @@ export default class OnDirective extends Directive {
     if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
       attrValue += '($event)';
     }
-    return new this.Expression(attrValue);
+    return this.parseExpr(attrValue);
   }
 
   /**

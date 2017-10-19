@@ -6,8 +6,8 @@ export default class InputModelDirective extends Directive {
 
   inputHandler = () => {
     if (isNull(this.scope)) return;
-    this.backExpr.execute(new Scope(this.scope, {
-      _value_: this.node.value
+    this.backExpr(new Scope(this.scope, {
+      $value: this.node.value
     }));
   };
 
@@ -16,7 +16,7 @@ export default class InputModelDirective extends Directive {
    * @returns {void} 无返回
    */
   bind() {
-    this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
+    this.backExpr = this.parseExpr(`$scope.${this.attribute.value}=$value`);
     this.node.emitter.addListener('input', this.inputHandler, false);
   }
 
@@ -25,7 +25,7 @@ export default class InputModelDirective extends Directive {
   }
 
   execute(scope) {
-    let value = this.expression.execute(scope);
+    let value = this.expression(scope);
     if (this.node.value !== value) {
       this.node.value = value;
     }

@@ -24,12 +24,12 @@ export default class AttributeDirective extends Directive {
   bind() {
     this.computedName = this.attribute.name;
     this.computedValue = this.attribute.value;
-    this.nameExpr = new this.Expression(this.attribute.name, true);
-    this.valueExpr = new this.Expression(this.attribute.value, true);
+    this.nameExpr = this.parseExpr(this.attribute.name, true);
+    this.valueExpr = this.parseExpr(this.attribute.value, true);
   }
 
   execute(scope) {
-    let newComputedName = this.nameExpr.execute(scope);
+    let newComputedName = this.nameExpr(scope);
     if (this.computedName !== newComputedName) {
       //移除旧名称
       this.node.removeAttribute(this.computedName);
@@ -39,7 +39,7 @@ export default class AttributeDirective extends Directive {
         this.node.setAttribute(this.computedName, this.computedValue || '');
       }
     }
-    let newComputeValue = this.valueExpr.execute(scope);
+    let newComputeValue = this.valueExpr(scope);
     if (this.computedValue !== newComputeValue) {
       this.computedValue = newComputeValue;
       this.node.setAttribute(this.computedName, this.computedValue || '');

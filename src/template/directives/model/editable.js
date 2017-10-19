@@ -6,8 +6,8 @@ export default class EditableModelDirective extends Directive {
 
   inputHandler = () => {
     if (isNull(this.scope)) return;
-    this.backExpr.execute(new Scope(this.scope, {
-      _value_: this.node.innerHTML
+    this.backExpr(new Scope(this.scope, {
+      $value: this.node.innerHTML
     }));
   };
 
@@ -16,7 +16,7 @@ export default class EditableModelDirective extends Directive {
    * @returns {void} 无返回
    */
   bind() {
-    this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
+    this.backExpr = this.parseExpr(`$scope.${this.attribute.value}=$value`);
     this.node.emitter.addListener('input', this.inputHandler, false);
   }
 
@@ -25,7 +25,7 @@ export default class EditableModelDirective extends Directive {
   }
 
   execute(scope) {
-    let value = this.expression.execute(scope);
+    let value = this.expression(scope);
     if (this.node.innerHTML !== value) {
       this.node.innerHTML = value;
     }

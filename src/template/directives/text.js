@@ -1,5 +1,4 @@
 import Directive from '../directive';
-import Expression from '../expression';
 import { trim } from 'ntils';
 import { meta } from 'decorators';
 
@@ -17,13 +16,13 @@ export default class TextDirective extends Directive {
     let nodeValue = trim(this.node.nodeValue);
     if (!nodeValue) return;
     this.node.nodeValue = '';
-    this.expr = new Expression(nodeValue, true);
+    this.contentExpr = this.parseExpr(nodeValue, true);
   }
 
   execute(scope) {
-    if (!this.expr) return;
+    if (!this.contentExpr) return;
     this.scope = scope;
-    let newValue = this.expr.execute(scope);
+    let newValue = this.contentExpr(scope);
     if (this.node.nodeValue !== newValue) {
       this.node.nodeValue = newValue;
     }

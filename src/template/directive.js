@@ -1,6 +1,6 @@
 import { each, final, deepEqual } from 'ntils';
 import { Entity, Node } from 'common';
-import Expression from './expression';
+import expression from './expression';
 import { meta } from '../decorators';
 
 //指令类型
@@ -32,7 +32,7 @@ export default class Directive extends Entity {
   static levels = levels;
 
   //挂载指令常用的类型
-  Expression = Expression;
+  parseExpr = expression;
   Node = Node;
 
   //指令构建函数
@@ -51,7 +51,7 @@ export default class Directive extends Entity {
       return this.update();
     }
     let newValue = this.meta.literal ?
-      this.attribute.value : this.expression.execute(scope);
+      this.attribute.value : this.expression(scope);
     if (force || !deepEqual(this._value_, newValue)) {
       this.update(newValue, this._value_);
       this._value_ = newValue;

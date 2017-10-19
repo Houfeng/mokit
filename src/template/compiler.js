@@ -1,6 +1,6 @@
 import Directive from './directive';
 import { each, isNull, toArray, toCamelCase, toSplitCase } from 'ntils';
-import Expression from './expression';
+import expression from './expression';
 import commonDirectives from './directives';
 import { Error, Node } from 'common';
 
@@ -109,7 +109,7 @@ export default class Compiler {
         node: node,
         attribute: attribute,
         expression: meta.literal ?
-          attribute.value : new Expression(attribute.value, meta.mixed),
+          attribute.value : expression(attribute.value, meta.mixed),
         decorates: attrInfo.decorates
       }));
     }, this);

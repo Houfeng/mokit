@@ -904,8 +904,8 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$info-f1d8ea15129b6f717230b4a0b599c2ef.js
-/* harmony default export */ var $info_f1d8ea15129b6f717230b4a0b599c2ef = ({ "name": "mokit", "version": "4.0.0-alpha15" });
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/323c5d47e93aeac869a10e176ec75647.js
+/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-alpha16" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.1.5@ntils/src/utils.js
 /**
  * 空函数
@@ -1311,19 +1311,19 @@ function clone(src, igonres) {
  * @param {Array} igonres 忽略的属性名,
  * @param {Number} mode 模式
  */
-function utils_mix(dst, src, igonres, mode, igonreNull) {
+function mix(dst, src, igonres, mode, igonreNull) {
   //根据模式来判断，默认是Obj to Obj的  
   if (mode) {
     switch (mode) {
       case 1: // proto to proto  
-        return utils_mix(dst.prototype, src.prototype, igonres, 0);
+        return mix(dst.prototype, src.prototype, igonres, 0);
       case 2: // object to object and proto to proto  
-        utils_mix(dst.prototype, src.prototype, igonres, 0);
+        mix(dst.prototype, src.prototype, igonres, 0);
         break; // pass through  
       case 3: // proto to static  
-        return utils_mix(dst, src.prototype, igonres, 0);
+        return mix(dst, src.prototype, igonres, 0);
       case 4: // static to proto  
-        return utils_mix(dst.prototype, src, igonres, 0);
+        return mix(dst.prototype, src, igonres, 0);
       default: // object to object is what happens below  
     }
   }
@@ -1337,7 +1337,7 @@ function utils_mix(dst, src, igonres, mode, igonreNull) {
       (src[key].constructor == Object ||
         src[key].constructor == Array ||
         src[key].constructor == null)) {
-      dst[key] = utils_mix(dst[key], src[key], igonres, 0, igonreNull);
+      dst[key] = mix(dst[key], src[key], igonres, 0, igonreNull);
     } else {
       dst[key] = src[key];
     }
@@ -1922,7 +1922,7 @@ var error_LibError = function (_Error) {
       other[_key - 1] = arguments[_key];
     }
 
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + $info_f1d8ea15129b6f717230b4a0b599c2ef.name + '] ' + message].concat(other)));
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + _23c5d47e93aeac869a10e176ec75647.name + '] ' + message].concat(other)));
   }
 
   return LibError;
@@ -2251,161 +2251,70 @@ function className(name, prefix) {
 
 /* harmony default export */ var common = ({ Entity: entity_Entity, Error: error_LibError, Node: node_Node, cname: className });
 // CONCATENATED MODULE: ./src/template/expression.js
+var VARIABLE_FILTER = /(\(|\[|\{|\+|\-|\*|\/|\>|\<|\=|\!|\,|\;|\?|\:|\&|\|)\s*([a-z\_0-9\$]+)/ig;
+var VARIABLE_NAME = /^[a-z\$\_]/i;
+var ALLOWED_WORD = /(\$scope|true|false|null|undefined|Date|Number|String|Object|Boolean|Array|RegExp|Math|JSON|parseInt|parseFloat|isNaN|isFinite)/;
+var EXPRESSION_BLOCK = /\{\{([\s\S]+?)\}\}/;
+var EXPRESSION_CACHE = {};
+var TEMPLATE_CACHE = {};
 
-
-
-//const cache = {};
-
-/**
- * 表达式类型，将字符串构析为可执行表达式实例
- */
-
-var expression_Expression = function () {
-
-  /**
-   * 通过字符串构造一个表达式实例
-   * @param {string} code 代码字符串
-   * @param {boolean} mix 是否是混合代码
-   * @returns {void} 无返回
-   */
-  function Expression(code, mix) {
-    classCallCheck_default()(this, Expression);
-
-    //let cacheKey = `${code}:mix`;
-    //if (cache[cacheKey]) return cache[cacheKey];
-    this.func = mix ? this._compileMixedCode(code) : this._compileCode(code);
-    //cache[cacheKey] = this;
-  }
-
-  /**
-   * 编译普通表达式代码
-   * @param {string} code 代码字符串
-   * @returns {function} 编辑后的函数
-   */
-
-
-  Expression.prototype._compileCode = function _compileCode(code) {
-    code = this._escapeEOL(this._wrapCode(code));
-    return this._createFunction(code);
-  };
-
-  /**
-   * 编辑混合的表达式代码
-   * @param {string} code 代码字符串
-   * @returns {function} 编辑后的函数
-   */
-
-
-  Expression.prototype._compileMixedCode = function _compileMixedCode(code) {
-    var statements = this._parseMixedCode(code);
-    code = this._escapeEOL(statements.join('+'));
-    return this._createFunction(code);
-  };
-
-  /**
-   * 通过符串代码创建一个可执行函数
-   * @param {string} code 代码字符串
-   * @returns {function} 创建的函数
-   */
-
-
-  Expression.prototype._createFunction = function _createFunction(code) {
-    return new Function('scope', 'with(scope){return ' + code + '}');
-  };
-
-  /**
-   * 解析混合代码字符串
-   * @param {string} code 混合代码字符串
-   * @returns {Array} 解析后的「token」列表
-   */
-
-
-  Expression.prototype._parseMixedCode = function _parseMixedCode(code) {
-    var index = 0,
-        length = code.length;
-    var token = '',
-        isExpr = false,
-        tokens = [];
-    while (index <= length) {
-      var char = code[index++];
-      var nextChar = code[index];
-      if (isNull(char)) {
-        if (token.length > 0) {
-          tokens.push('"' + this._escapeCode(token) + '"');
-        }
-        token = '';
-        isExpr = false;
-      } else if (!isExpr && char + nextChar == '{{') {
-        if (token.length > 0) {
-          tokens.push('"' + this._escapeCode(token) + '"');
-        }
-        token = '';
-        isExpr = true;
-        index++;
-      } else if (isExpr && char + nextChar == '}}') {
-        if (token.length > 0) {
-          tokens.push(this._wrapCode(token));
-        }
-        token = '';
-        isExpr = false;
-        index++;
-      } else {
-        token += char;
-      }
+function findVariables(expr) {
+  expr = '(' + expr + ')';
+  VARIABLE_FILTER.lastIndex = 0;
+  var variables = {};
+  var info = void 0;
+  while (info = VARIABLE_FILTER.exec(expr)) {
+    var name = info[2];
+    if (VARIABLE_NAME.test(name) && !ALLOWED_WORD.test(name)) {
+      variables[name] = true;
     }
-    return tokens;
-  };
+  }
+  return Object.keys(variables);
+}
 
-  /**
-   * 转义处理代码字符串
-   * @param {string} code 源字符串
-   * @returns {string} 处理后的字符串
-   */
+function getValue(scope, name) {
+  var value = scope[name];
+  return value instanceof Function ? value.bind(scope) : value;
+}
 
+function expression(expr) {
+  var cacheItem = EXPRESSION_CACHE[expr];
+  if (cacheItem) return cacheItem;
+  var keys = findVariables(expr);
+  var func = new (Function.prototype.bind.apply(Function, [null].concat(['$scope'], keys, ['return(' + expr + ')'])))();
+  function exec(scope) {
+    var values = keys.map(function (name) {
+      return getValue(scope, name);
+    });
+    return func.apply(undefined, [scope].concat(values));
+  }
+  EXPRESSION_CACHE[expr] = exec;
+  return exec;
+}
 
-  Expression.prototype._escapeCode = function _escapeCode(code) {
-    return code.replace(/"/, '\\"').replace('\r\n', '\\r\\n').replace('\n', '\\n');
-  };
+function expression_template(str) {
+  var cacheItem = TEMPLATE_CACHE[str];
+  if (cacheItem) return cacheItem;
+  var blocks = str.split(EXPRESSION_BLOCK);
+  for (var i = 1; i < blocks.length; i += 2) {
+    blocks[i] = expression(blocks[i]);
+  }
+  function exec(scope) {
+    var result = '';
+    blocks.forEach(function (block) {
+      result += block instanceof Function ? block(scope) : block;
+    });
+    return result;
+  }
+  TEMPLATE_CACHE[str] = exec;
+  return exec;
+}
 
-  /**
-   * 转义换行符
-   * @param {string} code 源字符串
-   * @returns {string} 处理后的字符串
-   */
+function expression_compile(str, mixed) {
+  return mixed ? expression_template(str) : expression(str);
+}
 
-
-  Expression.prototype._escapeEOL = function _escapeEOL(code) {
-    return code.replace(/\n/gm, '\\\n');
-  };
-
-  /**
-   * 通过闭包和 try/cache 包裹代码
-   * 将模板中错误的代码直接显示在「模板中用到的位置」，更易于定位错误。
-   * @param {string} code 源字符串
-   * @returns {string} 处理后的字符串
-   */
-
-
-  Expression.prototype._wrapCode = function _wrapCode(code) {
-    return '((function(){try{return ' + code + '}catch(err){console.error(err);return err}})())';
-  };
-
-  /**
-   * 通过 scope 对象执行表达式
-   * @param {Object} scope 上下文对象
-   * @returns {Object} 执行结果
-   */
-
-
-  Expression.prototype.execute = function execute(scope) {
-    if (isNull(scope)) scope = {};
-    return this.func.call(scope, scope);
-  };
-
-  return Expression;
-}();
-
-
+/* harmony default export */ var template_expression = (expression_compile);
 // CONCATENATED MODULE: ./src/decorators/meta.js
 
 
@@ -2538,7 +2447,7 @@ var directive_Directive = (directive__dec = decorators_meta({
 
     var _this = possibleConstructorReturn_default()(this, _Entity.call(this));
 
-    _this.Expression = expression_Expression;
+    _this.parseExpr = template_expression;
     _this.Node = node_Node;
 
     each(options, function (name, value) {
@@ -2560,7 +2469,7 @@ var directive_Directive = (directive__dec = decorators_meta({
     if (this.meta.type === types.ELEMENT) {
       return this.update();
     }
-    var newValue = this.meta.literal ? this.attribute.value : this.expression.execute(scope);
+    var newValue = this.meta.literal ? this.attribute.value : this.expression(scope);
     if (force || !deepEqual(this._value_, newValue)) {
       this.update(newValue, this._value_);
       this._value_ = newValue;
@@ -2610,6 +2519,8 @@ var each__dec, each__class;
 
 
 
+var EACH_EXPR = /([\s\S]+)\s+(in|of)\s+([\s\S]+)/;
+
 var each_EachDirective = (each__dec = decorators_meta({
   level: directive_Directive.levels.STATEMENT + 1, //比 if 要高一个权重
   final: true,
@@ -2636,81 +2547,93 @@ var each_EachDirective = (each__dec = decorators_meta({
     this.node.removeAttribute(this.attribute.name);
     //把 item 的 node 移除掉，还在内存中待用
     this.node.remove();
-    //解析 each 表达式
-    this.parseExpr();
+    //分解 each 表达式
+    this.token = this.splitEachExpr(this.attribute.value);
+    //创建循环函数
+    this.execEach = this.createEachFunction(this.token);
     //实始化待用变量
-    this.eachItems = {};
+    this.existsItems = {};
   };
 
-  EachDirective.prototype.parseExpr = function parseExpr() {
-    this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
-    var tokens = this.attribute.value.split(' ' + this.eachType + ' ');
-    var fnText = 'with(scope){each(' + tokens[1] + ',fn.bind(this,' + tokens[1] + '))}';
-    this.each = new Function('each', 'scope', 'fn', fnText).bind(null, each);
-    var names = tokens[0].split(',').map(function (name) {
-      return name.trim();
-    });
-    if (this.eachType == 'in') {
-      this.keyName = names[0];
-      this.valueName = names[1];
-    } else {
-      this.keyName = names[1];
-      this.valueName = names[0];
+  EachDirective.prototype.splitEachExpr = function splitEachExpr(expr) {
+    var tokens = EACH_EXPR.exec(expr);
+    var list = tokens[3],
+        type = tokens[2];
+    var names = tokens[1].split(',');
+    var index = names[0],
+        item = names[1];
+    if (type == 'of') index = [item, item = index][0];
+    return { list: list, type: type, index: index, item: item };
+  };
+
+  EachDirective.prototype.createEachFunction = function createEachFunction(token) {
+    var listExpr = this.parseExpr(token.list);
+    return function (scope, loop) {
+      var list = listExpr(scope);
+      each(list, loop);
+    };
+  };
+
+  EachDirective.prototype.createItemScope = function createItemScope(scope, dataIndex, dataItem) {
+    var indexName = this.token.index;
+    var itemName = this.token.item;
+    //创建新 scope，必须选创建再设置 prototype 或采用定义「属性」的方式
+    //因为指令参数指定的名称有可能和 scope 原有变量冲突
+    //将导致针对 watch 变量的赋值，从引用发循环
+    var itemScope = new Scope(scope);
+    if (indexName) {
+      Object.defineProperty(itemScope, indexName, {
+        get: function get() {
+          return dataIndex;
+        }
+      });
     }
+    //item 采用「属性」进行代理，否则将会使「双向」绑定无法回设值
+    if (itemName) {
+      Object.defineProperty(itemScope, itemName, {
+        get: function get() {
+          return dataItem;
+        },
+        set: function set(value) {
+          scope[dataIndex] = value;
+        }
+      });
+    }
+    return itemScope;
   };
 
   EachDirective.prototype.execute = function execute(scope) {
     var _this2 = this;
 
-    var currentEachKeys = [];
-    var itemsFragment = this.Node.createFragment();
-    var self = this;
-    this.each(scope, function (eachTarget, key) {
-      //创建新 scope，必须选创建再设置 prototype 或采用定义「属性」的方式
-      //因为指令参数指定的名称有可能和 scope 原有变量冲突
-      //将导致针对 watch 变量的赋值，从引用发循环
-      var newScope = new Scope(_this2.scope);
-      if (self.keyName) {
-        Object.defineProperty(newScope, self.keyName, {
-          get: function get() {
-            return key;
-          }
-        });
-      }
-      //value 采用「属性」进行代理，否则将会使「双向」绑定无法回设值
-      if (self.valueName) {
-        Object.defineProperty(newScope, self.valueName, {
-          get: function get() {
-            return eachTarget[key];
-          },
-          set: function set(value) {
-            eachTarget[key] = value;
-          }
-        });
-      }
-      var oldItem = _this2.eachItems[key];
+    var renderItems = [];
+    var fragment = this.Node.createFragment();
+    this.execEach(scope, function (dataIndex, dataItem) {
+      var itemScope = _this2.createItemScope(scope, dataIndex, dataItem);
+      var oldItem = _this2.existsItems[dataIndex];
       if (oldItem) {
-        oldItem.handler(newScope);
+        oldItem.handler(itemScope);
       } else {
-        var newItem = {};
+        var eachItem = {};
         //创建新元素
-        newItem.node = _this2.node.cloneNode(true);
-        itemsFragment.appendChild(newItem.node);
-        newItem.handler = _this2.compiler.compile(newItem.node);
-        newItem.handler(newScope);
-        _this2.eachItems[key] = newItem;
+        eachItem.node = _this2.node.cloneNode(true);
+        fragment.appendChild(eachItem.node);
+        eachItem.handler = _this2.compiler.compile(eachItem.node);
+        eachItem.handler(itemScope);
+        _this2.existsItems[dataIndex] = eachItem;
       }
-      currentEachKeys.push(key);
+      renderItems.push(dataIndex);
     });
-    each(this.eachItems, function (key, item) {
-      if (currentEachKeys.some(function (k) {
-        return k == key;
+    //清理旧项
+    each(this.existsItems, function (index, item) {
+      if (renderItems.some(function (i) {
+        return i == index;
       })) return;
       item.node.remove({ destroy: true });
-      delete _this2.eachItems[key];
+      delete _this2.existsItems[index];
     });
-    if (itemsFragment.childNodes.length > 0) {
-      itemsFragment.insertBy(this.mountNode);
+    //挂载新项
+    if (fragment.childNodes.length > 0) {
+      fragment.insertBy(this.mountNode);
     }
   };
 
@@ -2756,7 +2679,7 @@ var if_IfDirective = (if__dec = decorators_meta({
   };
 
   IfDirective.prototype.execute = function execute(scope, force) {
-    var newValue = this.expression.execute(scope);
+    var newValue = this.expression(scope);
     if (newValue) {
       //如果新计算的结果为 true 才执行 
       this._handler = this._handler || this.compiler.compile(this.node);
@@ -2858,7 +2781,7 @@ var on_OnDirective = (on__dec = decorators_meta({
 
     return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.eventHandler = function (event) {
       if (isNull(_this.scope)) return;
-      _this.eventExpr.execute(new Scope(_this.scope, {
+      _this.eventExpr(new Scope(_this.scope, {
         $event: event
       }));
     }, _this.bindEvent = function () {
@@ -2873,7 +2796,7 @@ var on_OnDirective = (on__dec = decorators_meta({
     if (attrValue.indexOf('(') < 0 && attrValue.indexOf(')') < 0) {
       attrValue += '($event)';
     }
-    return new this.Expression(attrValue);
+    return this.parseExpr(attrValue);
   };
 
   /**
@@ -3055,8 +2978,8 @@ var select_SelectModelDirective = (select__dec = decorators_meta({
       var value = _this.node.multiple ? [].slice.call(selectedOptions).map(function (option) {
         return option.value;
       }, _this) : selectedOptions[0].value;
-      _this.backExpr.execute(new Scope(_this.scope, {
-        _value_: value
+      _this.backExpr(new Scope(_this.scope, {
+        $value: value
       }));
     }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
@@ -3067,7 +2990,7 @@ var select_SelectModelDirective = (select__dec = decorators_meta({
    */
   SelectModelDirective.prototype.bind = function bind() {
     this.changeHandler = this.changeHandler.bind(this);
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.backExpr = this.parseExpr('$scope.' + this.attribute.value + '=$value');
     this.node.removeAttribute(this.attribute.name);
     this._handler = this.compiler.compile(this.node);
     this.node.emitter.addListener('change', this.changeHandler, false);
@@ -3080,7 +3003,7 @@ var select_SelectModelDirective = (select__dec = decorators_meta({
   SelectModelDirective.prototype.execute = function execute(scope) {
     this.scope = scope;
     this._handler(scope);
-    var value = this.expression.execute(scope);
+    var value = this.expression(scope);
     if (!isArray(value)) value = [value];
     [].slice.call(this.node.options).forEach(function (option) {
       option.selected = value.indexOf(option.value) > -1;
@@ -3112,8 +3035,8 @@ var editable_EditableModelDirective = function (_Directive) {
 
     return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.inputHandler = function () {
       if (isNull(_this.scope)) return;
-      _this.backExpr.execute(new Scope(_this.scope, {
-        _value_: _this.node.innerHTML
+      _this.backExpr(new Scope(_this.scope, {
+        $value: _this.node.innerHTML
       }));
     }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
@@ -3123,7 +3046,7 @@ var editable_EditableModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   EditableModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.backExpr = this.parseExpr('$scope.' + this.attribute.value + '=$value');
     this.node.emitter.addListener('input', this.inputHandler, false);
   };
 
@@ -3132,7 +3055,7 @@ var editable_EditableModelDirective = function (_Directive) {
   };
 
   EditableModelDirective.prototype.execute = function execute(scope) {
-    var value = this.expression.execute(scope);
+    var value = this.expression(scope);
     if (this.node.innerHTML !== value) {
       this.node.innerHTML = value;
     }
@@ -3164,8 +3087,8 @@ var input_InputModelDirective = function (_Directive) {
 
     return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.inputHandler = function () {
       if (isNull(_this.scope)) return;
-      _this.backExpr.execute(new Scope(_this.scope, {
-        _value_: _this.node.value
+      _this.backExpr(new Scope(_this.scope, {
+        $value: _this.node.value
       }));
     }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
@@ -3175,7 +3098,7 @@ var input_InputModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   InputModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.backExpr = this.parseExpr('$scope.' + this.attribute.value + '=$value');
     this.node.emitter.addListener('input', this.inputHandler, false);
   };
 
@@ -3184,7 +3107,7 @@ var input_InputModelDirective = function (_Directive) {
   };
 
   InputModelDirective.prototype.execute = function execute(scope) {
-    var value = this.expression.execute(scope);
+    var value = this.expression(scope);
     if (this.node.value !== value) {
       this.node.value = value;
     }
@@ -3216,8 +3139,8 @@ var radio_RadioModelDirective = function (_Directive) {
 
     return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.changeHandler = function () {
       if (isNull(_this.scope)) return;
-      _this.backExpr.execute(new Scope(_this.scope, {
-        _value_: _this.node.value
+      _this.backExpr(new Scope(_this.scope, {
+        $value: _this.node.value
       }));
     }, _temp), possibleConstructorReturn_default()(_this, _ret);
   }
@@ -3227,7 +3150,7 @@ var radio_RadioModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   RadioModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.backExpr = this.parseExpr('$scope.' + this.attribute.value + '=$value');
     this.node.emitter.addListener('change', this.changeHandler, false);
   };
 
@@ -3237,7 +3160,7 @@ var radio_RadioModelDirective = function (_Directive) {
 
   RadioModelDirective.prototype.execute = function execute(scope) {
     this.scope = scope;
-    var value = this.expression.execute(scope);
+    var value = this.expression(scope);
     this.node.checked = value == this.node.value;
   };
 
@@ -3267,15 +3190,15 @@ var checkbox_CheckBoxModelDirective = function (_Directive) {
 
     return _ret = (_temp = (_this = possibleConstructorReturn_default()(this, _Directive.call.apply(_Directive, [this].concat(args))), _this), _this.changeHandler = function () {
       if (isNull(_this.scope)) return;
-      var value = _this.expression.execute(_this.scope);
+      var value = _this.expression(_this.scope);
       if (isArray(value) && _this.node.checked) {
         value.push(_this.node.value);
       } else if (isArray(value) && !_this.node.checked) {
         var index = value.indexOf(_this.node.value);
         value.splice(index, 1);
       } else {
-        _this.backExpr.execute(new Scope(_this.scope, {
-          _value_: _this.node.checked
+        _this.backExpr(new Scope(_this.scope, {
+          $value: _this.node.checked
         }));
       }
     }, _temp), possibleConstructorReturn_default()(_this, _ret);
@@ -3286,7 +3209,7 @@ var checkbox_CheckBoxModelDirective = function (_Directive) {
    * @returns {void} 无返回
    */
   CheckBoxModelDirective.prototype.bind = function bind() {
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.backExpr = this.parseExpr('$scope.' + this.attribute.value + '=$value');
     this.node.emitter.addListener('change', this.changeHandler, false);
   };
 
@@ -3296,7 +3219,7 @@ var checkbox_CheckBoxModelDirective = function (_Directive) {
 
   CheckBoxModelDirective.prototype.execute = function execute(scope) {
     this.scope = scope;
-    var value = this.expression.execute(scope);
+    var value = this.expression(scope);
     if (isArray(value)) {
       this.node.checked = value.indexOf(this.node.value) > -1;
     } else {
@@ -3334,15 +3257,15 @@ var prop_PropModelDirective = function (_Directive) {
     var _this2 = this;
 
     this.component = this.node.component;
-    this.backExpr = new this.Expression(this.attribute.value + '=_value_');
+    this.backExpr = this.parseExpr('$scope.' + this.attribute.value + '=$value');
     this.bindProp = this.decorates[0];
     if (!this.component) {
       throw new error_LibError('Directive `model:' + this.bindProp + '` cannot be used on `' + this.node.tagName + '`');
     }
     this.watcher = this.component.$watch(this.bindProp, function (value) {
       if (isNull(_this2.scope)) return;
-      _this2.backExpr.execute(new Scope(_this2.scope, {
-        _value_: value
+      _this2.backExpr(new Scope(_this2.scope, {
+        $value: value
       }));
     });
   };
@@ -3418,7 +3341,7 @@ var focus_FocusDirective = function (_Directive) {
   FocusDirective.prototype.execute = function execute(scope) {
     var _this2 = this;
 
-    var state = this.expression.execute(scope);
+    var state = this.expression(scope);
     setTimeout(function () {
       if (state) _this2.node.focus();else _this2.node.blur();
     }, 0);
@@ -3467,12 +3390,12 @@ var attribute_AttributeDirective = (attribute__dec = decorators_meta({
   AttributeDirective.prototype.bind = function bind() {
     this.computedName = this.attribute.name;
     this.computedValue = this.attribute.value;
-    this.nameExpr = new this.Expression(this.attribute.name, true);
-    this.valueExpr = new this.Expression(this.attribute.value, true);
+    this.nameExpr = this.parseExpr(this.attribute.name, true);
+    this.valueExpr = this.parseExpr(this.attribute.value, true);
   };
 
   AttributeDirective.prototype.execute = function execute(scope) {
-    var newComputedName = this.nameExpr.execute(scope);
+    var newComputedName = this.nameExpr(scope);
     if (this.computedName !== newComputedName) {
       //移除旧名称
       this.node.removeAttribute(this.computedName);
@@ -3482,7 +3405,7 @@ var attribute_AttributeDirective = (attribute__dec = decorators_meta({
         this.node.setAttribute(this.computedName, this.computedValue || '');
       }
     }
-    var newComputeValue = this.valueExpr.execute(scope);
+    var newComputeValue = this.valueExpr(scope);
     if (this.computedValue !== newComputeValue) {
       this.computedValue = newComputeValue;
       this.node.setAttribute(this.computedName, this.computedValue || '');
@@ -3498,7 +3421,6 @@ var attribute_AttributeDirective = (attribute__dec = decorators_meta({
 
 
 var text__dec, text__class;
-
 
 
 
@@ -3524,13 +3446,13 @@ var text_TextDirective = (text__dec = decorators_meta({
     var nodeValue = trim(this.node.nodeValue);
     if (!nodeValue) return;
     this.node.nodeValue = '';
-    this.expr = new expression_Expression(nodeValue, true);
+    this.contentExpr = this.parseExpr(nodeValue, true);
   };
 
   TextDirective.prototype.execute = function execute(scope) {
-    if (!this.expr) return;
+    if (!this.contentExpr) return;
     this.scope = scope;
-    var newValue = this.expr.execute(scope);
+    var newValue = this.contentExpr(scope);
     if (this.node.nodeValue !== newValue) {
       this.node.nodeValue = newValue;
     }
@@ -3718,7 +3640,7 @@ var compiler_Compiler = function () {
         handler: handler,
         node: node,
         attribute: attribute,
-        expression: meta.literal ? attribute.value : new expression_Expression(attribute.value, meta.mixed),
+        expression: meta.literal ? attribute.value : template_expression(attribute.value, meta.mixed),
         decorates: attrInfo.decorates
       }));
     }, this);
@@ -4175,8 +4097,8 @@ observer_Observer.isIgnore = function (word) {
 };
 
 /* harmony default export */ var src_observer = (observer_Observer);
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/$config-a10b4978dbbf03e8bab090cc9cabd934.js
-/* harmony default export */ var $config_a10b4978dbbf03e8bab090cc9cabd934 = ({});
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/a6a012e4b2330a1d222c55e1ab9811ca.js
+/* harmony default export */ var a6a012e4b2330a1d222c55e1ab9811ca = ({});
 // CONCATENATED MODULE: ./src/template/template.js
 
 
@@ -4230,7 +4152,7 @@ var template_Template = function (_EventEmitter) {
   Template.prototype.requestUpdate = function requestUpdate() {
     var _this2 = this;
 
-    if ($config_a10b4978dbbf03e8bab090cc9cabd934.debug || this.sync) {
+    if (a6a012e4b2330a1d222c55e1ab9811ca.debug || this.sync) {
       return this.update();
     }
     if (this._updateTimer) {
@@ -4370,7 +4292,7 @@ template_Template.Template = template_Template;
 template_Template.Compiler = compiler_Compiler;
 template_Template.Directive = directive_Directive;
 template_Template.directives = template_directives;
-template_Template.Expression = expression_Expression;
+template_Template.expression = template_expression;
 
 /* harmony default export */ var src_template = (template_Template);
 // CONCATENATED MODULE: ./src/watcher/index.js
@@ -5151,7 +5073,7 @@ function bootstrap(component, mountNode, options) {
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return src_events; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "bootstrap", function() { return bootstrap; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "common", function() { return common; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return $config_a10b4978dbbf03e8bab090cc9cabd934; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return a6a012e4b2330a1d222c55e1ab9811ca; });
 
 
 
@@ -5171,7 +5093,7 @@ copy(src_template, bootstrap);
 copy(src_component, bootstrap);
 copy(common, bootstrap);
 copy(decorators, bootstrap);
-copy($info_f1d8ea15129b6f717230b4a0b599c2ef, bootstrap);
+copy(_23c5d47e93aeac869a10e176ec75647, bootstrap);
 
 bootstrap.Template = src_template;
 bootstrap.Component = src_component;
@@ -5181,7 +5103,7 @@ bootstrap.EventEmitter = src_events;
 bootstrap.decorators = decorators;
 bootstrap.bootstrap = bootstrap;
 bootstrap.common = common;
-bootstrap.config = $config_a10b4978dbbf03e8bab090cc9cabd934;
+bootstrap.config = a6a012e4b2330a1d222c55e1ab9811ca;
 
 bootstrap.component = function (name, component) {
   name = toSplitCase(name);

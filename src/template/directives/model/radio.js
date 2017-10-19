@@ -6,8 +6,8 @@ export default class RadioModelDirective extends Directive {
 
   changeHandler = () => {
     if (isNull(this.scope)) return;
-    this.backExpr.execute(new Scope(this.scope, {
-      _value_: this.node.value
+    this.backExpr(new Scope(this.scope, {
+      $value: this.node.value
     }));
   };
 
@@ -16,7 +16,7 @@ export default class RadioModelDirective extends Directive {
    * @returns {void} 无返回
    */
   bind() {
-    this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
+    this.backExpr = this.parseExpr(`$scope.${this.attribute.value}=$value`);
     this.node.emitter.addListener('change', this.changeHandler, false);
   }
 
@@ -26,7 +26,7 @@ export default class RadioModelDirective extends Directive {
 
   execute(scope) {
     this.scope = scope;
-    let value = this.expression.execute(scope);
+    let value = this.expression(scope);
     this.node.checked = value == this.node.value;
   }
 

@@ -31,7 +31,7 @@ export default class IfDirective extends Directive {
   }
 
   execute(scope, force) {
-    let newValue = this.expression.execute(scope);
+    let newValue = this.expression(scope);
     if (newValue) {
       //如果新计算的结果为 true 才执行 
       this._handler = this._handler || this.compiler.compile(this.node);

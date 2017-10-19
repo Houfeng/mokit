@@ -3,6 +3,8 @@ import { each } from 'ntils';
 import Scope from '../scope';
 import { meta } from 'decorators';
 
+const EACH_EXPR = /([\s\S]+)\s+(in|of)\s+([\s\S]+)/;
+
 @meta({
   level: Directive.levels.STATEMENT + 1, //比 if 要高一个权重
   final: true,
@@ -23,73 +25,81 @@ export default class EachDirective extends Directive {
     this.node.removeAttribute(this.attribute.name);
     //把 item 的 node 移除掉，还在内存中待用
     this.node.remove();
-    //解析 each 表达式
-    this.parseExpr();
+    //分解 each 表达式
+    this.token = this.splitEachExpr(this.attribute.value);
+    //创建循环函数
+    this.execEach = this.createEachFunction(this.token);
     //实始化待用变量
-    this.eachItems = {};
+    this.existsItems = {};
   }
 
-  parseExpr() {
-    this.eachType = this.attribute.value.indexOf(' in ') > -1 ? 'in' : 'of';
-    let tokens = this.attribute.value.split(' ' + this.eachType + ' ');
-    let fnText =
-      `with(scope){each(${tokens[1]},fn.bind(this,${tokens[1]}))}`;
-    this.each = new Function('each', 'scope', 'fn', fnText)
-      .bind(null, each);
-    let names = tokens[0].split(',').map(function (name) {
-      return name.trim();
-    });
-    if (this.eachType == 'in') {
-      this.keyName = names[0];
-      this.valueName = names[1];
-    } else {
-      this.keyName = names[1];
-      this.valueName = names[0];
+  splitEachExpr(expr) {
+    let tokens = EACH_EXPR.exec(expr);
+    let list = tokens[3], type = tokens[2];
+    let names = tokens[1].split(',');
+    let index = names[0], item = names[1];
+    if (type == 'of') index = [item, item = index][0];
+    return { list, type, index, item };
+  }
+
+  createEachFunction(token) {
+    let listExpr = this.parseExpr(token.list);
+    return function (scope, loop) {
+      let list = listExpr(scope);
+      each(list, loop);
+    };
+  }
+
+  createItemScope(scope, dataIndex, dataItem) {
+    let indexName = this.token.index;
+    let itemName = this.token.item;
+    //创建新 scope，必须选创建再设置 prototype 或采用定义「属性」的方式
+    //因为指令参数指定的名称有可能和 scope 原有变量冲突
+    //将导致针对 watch 变量的赋值，从引用发循环
+    let itemScope = new Scope(scope);
+    if (indexName) {
+      Object.defineProperty(itemScope, indexName, {
+        get() { return dataIndex; }
+      });
     }
+    //item 采用「属性」进行代理，否则将会使「双向」绑定无法回设值
+    if (itemName) {
+      Object.defineProperty(itemScope, itemName, {
+        get() { return dataItem; },
+        set(value) { scope[dataIndex] = value; }
+      });
+    }
+    return itemScope;
   }
 
   execute(scope) {
-    let currentEachKeys = [];
-    let itemsFragment = this.Node.createFragment();
-    let self = this;
-    this.each(scope, (eachTarget, key) => {
-      //创建新 scope，必须选创建再设置 prototype 或采用定义「属性」的方式
-      //因为指令参数指定的名称有可能和 scope 原有变量冲突
-      //将导致针对 watch 变量的赋值，从引用发循环
-      let newScope = new Scope(this.scope);
-      if (self.keyName) {
-        Object.defineProperty(newScope, self.keyName, {
-          get() { return key; }
-        });
-      }
-      //value 采用「属性」进行代理，否则将会使「双向」绑定无法回设值
-      if (self.valueName) {
-        Object.defineProperty(newScope, self.valueName, {
-          get() { return eachTarget[key]; },
-          set(value) { eachTarget[key] = value; }
-        });
-      }
-      let oldItem = this.eachItems[key];
+    let renderItems = [];
+    let fragment = this.Node.createFragment();
+    this.execEach(scope, (dataIndex, dataItem) => {
+      let itemScope = this.createItemScope(scope, dataIndex, dataItem);
+      let oldItem = this.existsItems[dataIndex];
       if (oldItem) {
-        oldItem.handler(newScope);
+        oldItem.handler(itemScope);
       } else {
-        let newItem = {};
+        let eachItem = {};
         //创建新元素
-        newItem.node = this.node.cloneNode(true);
-        itemsFragment.appendChild(newItem.node);
-        newItem.handler = this.compiler.compile(newItem.node);
-        newItem.handler(newScope);
-        this.eachItems[key] = newItem;
+        eachItem.node = this.node.cloneNode(true);
+        fragment.appendChild(eachItem.node);
+        eachItem.handler = this.compiler.compile(eachItem.node);
+        eachItem.handler(itemScope);
+        this.existsItems[dataIndex] = eachItem;
       }
-      currentEachKeys.push(key);
+      renderItems.push(dataIndex);
     });
-    each(this.eachItems, (key, item) => {
-      if (currentEachKeys.some(k => k == key)) return;
+    //清理旧项
+    each(this.existsItems, (index, item) => {
+      if (renderItems.some(i => i == index)) return;
       item.node.remove({ destroy: true });
-      delete this.eachItems[key];
+      delete this.existsItems[index];
     });
-    if (itemsFragment.childNodes.length > 0) {
-      itemsFragment.insertBy(this.mountNode);
+    //挂载新项
+    if (fragment.childNodes.length > 0) {
+      fragment.insertBy(this.mountNode);
     }
   }
 

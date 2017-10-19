@@ -11,7 +11,7 @@ export default class PropModelDirective extends Directive {
    */
   bind() {
     this.component = this.node.component;
-    this.backExpr = new this.Expression(`${this.attribute.value}=_value_`);
+    this.backExpr = this.parseExpr(`$scope.${this.attribute.value}=$value`);
     this.bindProp = this.decorates[0];
     if (!this.component) {
       throw new Error(
@@ -20,8 +20,8 @@ export default class PropModelDirective extends Directive {
     }
     this.watcher = this.component.$watch(this.bindProp, (value) => {
       if (isNull(this.scope)) return;
-      this.backExpr.execute(new Scope(this.scope, {
-        _value_: value
+      this.backExpr(new Scope(this.scope, {
+        $value: value
       }));
     });
   }
