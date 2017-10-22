@@ -1629,7 +1629,7 @@ function parseHTML(str) {
   return childNodes;
 };
 // CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/323c5d47e93aeac869a10e176ec75647.js
-/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-alpha16" });
+/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-alpha17" });
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/extends.js
 var helpers_extends = __webpack_require__(20);
 var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
