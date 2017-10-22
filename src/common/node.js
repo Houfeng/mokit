@@ -1,5 +1,5 @@
-import EventEmitter from 'events';
-import { Error } from 'common';
+import EventEmitter from '../events';
+import Error from './error';
 import { isNull, parseHTML, final } from 'ntils';
 
 function toDOMNode(node) {

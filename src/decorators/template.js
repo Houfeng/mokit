@@ -1,5 +1,5 @@
 import meta from './meta';
-import { Error } from 'common';
+import Error from '../common/error';
 
 export default function (template) {
   if (!template) {

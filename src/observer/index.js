@@ -2,7 +2,8 @@ import {
   isArray, isFunction, isNull, isObject, copy, final, each
 } from 'ntils';
 import EventEmitter from '../events';
-import { Error } from 'common';
+import Error from '../common/error';
+import AutoRun from './autorun';
 
 const OBSERVER_PROP_NAME = '_observer_';
 const CHANGE_EVENT_NAME = 'change';
@@ -51,7 +52,6 @@ class Observer extends EventEmitter {
       observer.apply();
       return observer;
     }
-    EventEmitter.call(this);
     final(this, 'options', options);
     final(this, 'shadow', {});
     final(this, 'target', target);
@@ -273,6 +273,22 @@ class Observer extends EventEmitter {
     });
   }
 
+  start(func, trigger) {
+    if (func._ctx_) return func._ctx_;
+    let ctx = new AutoRun(func, trigger);
+    this.on('get', ctx.onGet);
+    this.on('change', ctx.onChange);
+    func._ctx_ = ctx;
+    return ctx;
+  }
+
+  stop(func) {
+    let ctx = func._ctx_;
+    if (!ctx) return;
+    this.off('get', ctx.onGet);
+    this.off('change', ctx.onChange);
+    delete func._ctx_;
+  }
 }
 
 /**

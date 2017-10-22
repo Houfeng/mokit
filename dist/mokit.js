@@ -904,8 +904,6 @@ module.exports = __webpack_require__(47);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
-// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/323c5d47e93aeac869a10e176ec75647.js
-/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-alpha16" });
 // CONCATENATED MODULE: ./node_modules/_ntils@3.1.5@ntils/src/utils.js
 /**
  * 空函数
@@ -1630,6 +1628,8 @@ function parseHTML(str) {
   });
   return childNodes;
 };
+// CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/323c5d47e93aeac869a10e176ec75647.js
+/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-alpha16" });
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/extends.js
 var helpers_extends = __webpack_require__(20);
 var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
@@ -1649,6 +1649,31 @@ var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possi
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/inherits.js
 var inherits = __webpack_require__(2);
 var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
+
+// CONCATENATED MODULE: ./src/common/error.js
+
+
+
+
+var error__class, error__temp;
+
+var error_InternalError = (error__temp = error__class = function (_Error) {
+  inherits_default()(InternalError, _Error);
+
+  function InternalError(message) {
+    classCallCheck_default()(this, InternalError);
+
+    var prefix = InternalError.prefix;
+
+    for (var _len = arguments.length, other = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      other[_key - 1] = arguments[_key];
+    }
+
+    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, prefix ? "[" + prefix + "] " + message : message].concat(other)));
+  }
+
+  return InternalError;
+}(Error), error__class.prefix = null, error__temp);
 
 // CONCATENATED MODULE: ./src/events/index.js
 
@@ -1708,7 +1733,7 @@ var events_EventEmitter = function () {
     this._listeners_[name] = this._listeners_[name] || [];
     this._listeners_[name].push(listener);
     if (this._listeners_[name].length > EventEmitter._maxListeners) {
-      throw new error_LibError('The `' + name + '` event listener is not more than 10');
+      throw new error_InternalError('The `' + name + '` event listener is not more than 10');
     }
   };
 
@@ -1906,29 +1931,6 @@ var entity_Entity = (entity__temp = entity__class = function (_EventEmitter) {
   if (options) copy(options, this.meta);
 }, entity__temp);
 
-// CONCATENATED MODULE: ./src/common/error.js
-
-
-
-
-
-var error_LibError = function (_Error) {
-  inherits_default()(LibError, _Error);
-
-  function LibError(message) {
-    classCallCheck_default()(this, LibError);
-
-    for (var _len = arguments.length, other = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      other[_key - 1] = arguments[_key];
-    }
-
-    return possibleConstructorReturn_default()(this, _Error.call.apply(_Error, [this, '[' + _23c5d47e93aeac869a10e176ec75647.name + '] ' + message].concat(other)));
-  }
-
-  return LibError;
-}(Error);
-
-
 // CONCATENATED MODULE: ./src/common/node.js
 
 
@@ -1940,11 +1942,11 @@ var error_LibError = function (_Error) {
 
 function toDOMNode(node) {
   if (!node) {
-    throw new error_LibError('Invalid node');
+    throw new error_InternalError('Invalid node');
   }
   var domNode = node.domNode || node;
   if (!(domNode instanceof window.Node)) {
-    throw new error_LibError('Invalid DOM node');
+    throw new error_InternalError('Invalid DOM node');
   }
   return domNode;
 }
@@ -1968,7 +1970,7 @@ var node_Node = function (_EventEmitter) {
   Node.parse = function parse(str) {
     var nodeItems = parseHTML(str);
     if (nodeItems.length != 1) {
-      throw new error_LibError(['Must be a single root element', str].join('\r\n'));
+      throw new error_InternalError(['Must be a single root element', str].join('\r\n'));
     }
     return nodeItems[0];
   };
@@ -2216,40 +2218,13 @@ var node_Node = function (_EventEmitter) {
 }(src_events);
 
 
-// CONCATENATED MODULE: ./src/common/cname.js
-
-
-function className(name, prefix) {
-  if (!name) {
-    return '';
-  } else if (isString(name) && name.indexOf(' ') > -1) {
-    return className(name.split(' '), prefix);
-  } else if (isString(name) && name.indexOf(',') > -1) {
-    return className(name.split(','), prefix);
-  } else if (isArray(name)) {
-    return name.map(function (item) {
-      return className(item, prefix);
-    }).join(' ').trim();
-  } else if (isObject(name)) {
-    return className(Object.keys(name).filter(function (key) {
-      return name[key];
-    }), prefix);
-  } else if (startWith(name, prefix)) {
-    return name;
-  } else {
-    var trimedName = name.trim().replace(/([A-Z])/g, '-$1').toLowerCase();
-    if (!trimedName) return '';
-    return prefix ? prefix + '-' + trimedName : trimedName;
-  }
-}
 // CONCATENATED MODULE: ./src/common/index.js
 
 
 
 
 
-
-/* harmony default export */ var common = ({ Entity: entity_Entity, Error: error_LibError, Node: node_Node, cname: className });
+/* harmony default export */ var common = ({ Entity: entity_Entity, Error: error_InternalError, Node: node_Node });
 // CONCATENATED MODULE: ./src/template/expression.js
 var VARIABLE_FILTER = /(\(|\[|\{|\+|\-|\*|\/|\>|\<|\=|\!|\,|\;|\?|\:|\&|\|)\s*([a-z\_0-9\$]+)/ig;
 var VARIABLE_NAME = /^[a-z\$\_]/i;
@@ -2321,7 +2296,7 @@ function expression_compile(str, mixed) {
 /* harmony default export */ var decorators_meta = (function (options) {
   return function (target) {
     if (!target || !target.setMeta) {
-      throw new error_LibError('Invaild Entity');
+      throw new error_InternalError('Invaild Entity');
     }
     target.setMeta(options);
   };
@@ -2369,7 +2344,7 @@ function expression_compile(str, mixed) {
 
 /* harmony default export */ var decorators_template = (function (template) {
   if (!template) {
-    throw new error_LibError('Invalid template');
+    throw new error_InternalError('Invalid template');
   }
   return decorators_meta({ template: template });
 });
@@ -2490,6 +2465,391 @@ var directive_Directive = (directive__dec = decorators_meta({
   return Directive;
 }(entity_Entity), _class2.types = types, _class2.levels = levels, directive__temp)) || directive__class);
 
+// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/typeof.js
+var helpers_typeof = __webpack_require__(28);
+var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
+
+// CONCATENATED MODULE: ./src/observer/autorun.js
+
+
+var autorun_AutoRun = function AutoRun(func, trigger) {
+  var _this = this;
+
+  classCallCheck_default()(this, AutoRun);
+
+  this.deps = null;
+  this.runing = false;
+
+  this.onGet = function (event) {
+    if (!_this.runing) return;
+    _this.deps[event.path] = true;
+  };
+
+  this.onChange = function (event) {
+    if (!_this.deps || _this.deps[event.path]) {
+      _this.trigger(_this);
+    }
+  };
+
+  this.run = function () {
+    _this.deps = {};
+    _this.runing = true;
+    var result = _this.func();
+    _this.runing = false;
+    return result;
+  };
+
+  this.func = func;
+  this.trigger = trigger || this.run;
+};
+
+
+// CONCATENATED MODULE: ./src/observer/index.js
+
+
+
+
+
+
+
+
+var OBSERVER_PROP_NAME = '_observer_';
+var CHANGE_EVENT_NAME = 'change';
+var GET_EVENT_NAME = 'get';
+var EVENT_MAX_DISPATCH_LAYER = 10;
+var IGNORE_REGEXPS = [/^\_(.*)\_$/, /^\_\_/, /^\$/];
+
+/**
+ * 对象观察类，可以监控对象变化
+ * 目前方案问题:
+ *   对于父子关系和事件冒泡，目前方案如果用 delete 删除一个属性，无关真实删除关系，
+ *   即便调用 clearReference 也无法再清除关系，子对象的 parents 中会一直有一个引用，当前方案最高效
+ * 其它方法一:
+ *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件中 filter 出来，
+ *   基本和目前方法类似，但是关系在外部存领教，所以 clearReference 可清除。
+ * 其它方案二: 
+ *   构造时添加到全局数组，每一个 observer change 时都让放到全局的 observer 遍历自身的，
+ *   检果事件源是不是自已的子对象，如果是则触发自身 change 事件，这样 ob 对象本身没有相关引用
+ *   clearReference 时只从全局清除掉就行了，并且 delete 操作也不会影响，但效率稍差。
+ * 其它方案三: 
+ *   给构造函数添加一个 deep 属性，只有 deep 的 ob 对象，才放入到全局数组中，检查时逻辑同方案二
+ *   但是因为要检查的对象会少很多，效率会更高一点。
+ */
+
+var observer_Observer = function (_EventEmitter) {
+  inherits_default()(Observer, _EventEmitter);
+
+  /**
+   * 通过目标对象构造一个观察对象
+   * @param {Object} target 目标对象
+   * @param {Object} options 选项
+   * @returns {void} 无返回
+   */
+  function Observer(target, options) {
+    classCallCheck_default()(this, Observer);
+
+    var _this = possibleConstructorReturn_default()(this, _EventEmitter.call(this));
+
+    if (isNull(target)) {
+      throw new error_InternalError('Invalid target');
+    }
+    options = options || {};
+    var observer = target[OBSERVER_PROP_NAME];
+    if (observer) {
+      var _ret;
+
+      copy(options, observer.options);
+      //当时一个组件 A 的为组件 B 的 prop 时，A 更新不会触发 B 更新
+      //所在暂注释这里，另一种方法是更新 prop 指令，重写 excute 方法，而不是现在的 update 方法
+      // if (observer.options.root) {
+      //   observer.parents.length = 0;
+      // }
+      observer.apply();
+      return _ret = observer, possibleConstructorReturn_default()(_this, _ret);
+    }
+    utils_final(_this, 'options', options);
+    utils_final(_this, 'shadow', {});
+    utils_final(_this, 'target', target);
+    utils_final(_this, 'parents', []);
+    utils_final(target, OBSERVER_PROP_NAME, _this);
+    _this.apply();
+    return _this;
+  }
+
+  /**
+   * 添加一个属性，动态添中的属性，无法被观察，
+   * 但是通过 set 方法添加的属性可能被观察。
+   * @param {string} name 名称
+   * @param {Object} value 值
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.set = function set(name, value) {
+    if (isFunction(value) || Observer.isIgnore(name)) {
+      return;
+    }
+    Object.defineProperty(this.target, name, {
+      get: function get() {
+        var observer = this[OBSERVER_PROP_NAME];
+        observer.emitGet({ path: name, value: value });
+        return observer.shadow[name];
+      },
+      set: function set(value) {
+        var observer = this[OBSERVER_PROP_NAME];
+        var oldValue = observer.shadow[name];
+        if (oldValue === value) return;
+        if (isObject(value)) {
+          var childObserver = new Observer(value);
+          observer.addChild(childObserver, name);
+        }
+        //移除旧值的父引用
+        //如果用 delete 删除属性将无法移除父子引用
+        if (oldValue && oldValue[OBSERVER_PROP_NAME]) {
+          observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
+        }
+        observer.shadow[name] = value;
+        observer.emitChange({ path: name, value: value });
+      },
+
+      configurable: true,
+      enumerable: true
+    });
+    this.target[name] = value;
+  };
+
+  /**
+   * 自动应用所有动态添加的属性
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.apply = function apply() {
+    if (isArray(this.target)) {
+      this._wrapArray(this.target);
+    }
+    var names = this._getPropertyNames(this.target);
+    names.forEach(function (name) {
+      var desc = Object.getOwnPropertyDescriptor(this.target, name);
+      if (!('value' in desc)) return;
+      this.set(name, this.target[name]);
+    }, this);
+  };
+
+  /**
+   * 清除所有父子引用
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.clearReference = function clearReference() {
+    each(this.target, function (name, value) {
+      if (isNull(value)) return;
+      var child = value[OBSERVER_PROP_NAME];
+      if (child) this.removeChild(child);
+    }, this);
+  };
+
+  /**
+   * 派发一个事件，事件会向父级对象冒泡
+   * @param {string} eventName 事件名称
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.dispatch = function dispatch(eventName, event) {
+    if (event._src_ === this) return;
+    event._src_ = event._src_ || this;
+    event._layer_ = event._layer_ || 0;
+    if (event._layer_++ >= EVENT_MAX_DISPATCH_LAYER) return;
+    this.emit(eventName, event);
+    if (!this.parents || this.parents.length < 1) return;
+    this.parents.forEach(function (item) {
+      if (!(item.name in item.parent.target)) {
+        return item.parent.removeChild(this);
+      }
+      var parentEvent = copy(event);
+      parentEvent.path = item.name + '.' + event.path;
+      item.parent.dispatch(eventName, parentEvent);
+    }, this);
+  };
+
+  /**
+   * 添子观察者对象
+   * @param {Object} child 父对象
+   * @param {String} name 属性名
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.addChild = function addChild(child, name) {
+    if (isNull(child) || isNull(name)) {
+      throw new error_InternalError('Invalid paramaters');
+    }
+    if (child.options.root) return;
+    child.parents.push({ parent: this, name: name });
+  };
+
+  /**
+   * 移除子对象
+   * @param {Object} child 父对象
+   * @param {String} name 属性名
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.removeChild = function removeChild(child, name) {
+    if (isNull(child)) {
+      throw new error_InternalError('Invalid paramaters');
+    }
+    var foundIndex = -1;
+    child.parents.forEach(function (item, index) {
+      if (item.parent === this && item.name === name) {
+        foundIndex = index;
+      }
+    }, this);
+    if (foundIndex > -1) {
+      child.parents.splice(foundIndex, 1);
+    }
+  };
+
+  /**
+   * 触发 change 事件
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.emitChange = function emitChange(event) {
+    this.dispatch(CHANGE_EVENT_NAME, event);
+  };
+
+  /**
+   * 触发 change 事件
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.emitGet = function emitGet(event) {
+    this.dispatch(GET_EVENT_NAME, event);
+  };
+
+  /**
+   * 获取所有成员名称列表
+   * @returns {Array} 所有成员名称列表
+   */
+
+
+  Observer.prototype._getPropertyNames = function _getPropertyNames() {
+    var names = isArray(this.target) ? this.target.map(function (item, index) {
+      return index;
+    }) : Object.keys(this.target);
+    return names.filter(function (name) {
+      return name !== OBSERVER_PROP_NAME;
+    });
+  };
+
+  /**
+   * 包裹数组
+   * @param {array} array 源数组
+   * @returns {array} 处理后的数组
+   */
+
+
+  Observer.prototype._wrapArray = function _wrapArray(array) {
+    if (array._wrapped_) return;
+    utils_final(array, '_wrapped_', true);
+    utils_final(array, 'push', function () {
+      var items = [].slice.call(arguments);
+      items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
+        this[OBSERVER_PROP_NAME].set(array.length, item);
+      }, this);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+    });
+    utils_final(array, 'pop', function () {
+      var item = [].pop.apply(this, arguments);
+      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return item;
+    });
+    utils_final(array, 'unshift', function () {
+      var items = [].slice.call(arguments);
+      items.forEach(function (item) {
+        //这里也会触发对应 index 的 change 事件
+        this[OBSERVER_PROP_NAME].set(0, item);
+      }, this);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+    });
+    utils_final(array, 'shift', function () {
+      var item = [].shift.apply(this, arguments);
+      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return item;
+    });
+    utils_final(array, 'splice', function () {
+      var startIndex = arguments[0];
+      var endIndex = isNull(arguments[1]) ? startIndex + arguments[1] : this.length - 1;
+      var items = [].splice.apply(this, arguments);
+      for (var i = startIndex; i <= endIndex; i++) {
+        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
+      }
+      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      return items;
+    });
+    utils_final(array, 'set', function (index, value) {
+      if (index >= this.length) {
+        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      }
+      this[OBSERVER_PROP_NAME].set(index, value);
+    });
+  };
+
+  Observer.prototype.start = function start(func, trigger) {
+    if (func._ctx_) return func._ctx_;
+    var ctx = new autorun_AutoRun(func, trigger);
+    this.on('get', ctx.onGet);
+    this.on('change', ctx.onChange);
+    func._ctx_ = ctx;
+    return ctx;
+  };
+
+  Observer.prototype.stop = function stop(func) {
+    var ctx = func._ctx_;
+    if (!ctx) return;
+    this.off('get', ctx.onGet);
+    this.off('change', ctx.onChange);
+    delete func._ctx_;
+  };
+
+  return Observer;
+}(src_events);
+
+/**
+ * 观察一个对象
+ * @param {Object} target 目标对象
+ * @return {Observer} 观察者对象
+ */
+
+
+observer_Observer.observe = function (target) {
+  return new observer_Observer(target);
+};
+
+/**
+ * 检查是不是忽略的属性名
+ * @param {string} word 待检查的字符串
+ * @returns {void} 无返回
+ */
+observer_Observer.isIgnore = function (word) {
+  return IGNORE_REGEXPS.some(function (re) {
+    return re.test(word);
+  });
+};
+
+/* harmony default export */ var src_observer = (observer_Observer);
 // CONCATENATED MODULE: ./src/template/scope.js
 
 
@@ -3260,7 +3620,7 @@ var prop_PropModelDirective = function (_Directive) {
     this.backExpr = this.parseExpr('$scope.' + this.attribute.value + '=$value');
     this.bindProp = this.decorates[0];
     if (!this.component) {
-      throw new error_LibError('Directive `model:' + this.bindProp + '` cannot be used on `' + this.node.tagName + '`');
+      throw new error_InternalError('Directive `model:' + this.bindProp + '` cannot be used on `' + this.node.tagName + '`');
     }
     this.watcher = this.component.$watch(this.bindProp, function (value) {
       if (isNull(_this2.scope)) return;
@@ -3313,7 +3673,7 @@ function DirectiveFactary(options) {
   } else if (node.isContentEditable) {
     return new editable_EditableModelDirective(options);
   } else {
-    throw new error_LibError('Directive `model` cannot be used on `' + tagName + '`');
+    throw new error_InternalError('Directive `model` cannot be used on `' + tagName + '`');
   }
 };
 
@@ -3468,6 +3828,30 @@ var text_TextDirective = (text__dec = decorators_meta({
 
 
 
+function className(name, prefix) {
+  if (!name) {
+    return '';
+  } else if (isString(name) && name.indexOf(' ') > -1) {
+    return className(name.split(' '), prefix);
+  } else if (isString(name) && name.indexOf(',') > -1) {
+    return className(name.split(','), prefix);
+  } else if (isArray(name)) {
+    return name.map(function (item) {
+      return className(item, prefix);
+    }).join(' ').trim();
+  } else if (isObject(name)) {
+    return className(Object.keys(name).filter(function (key) {
+      return name[key];
+    }), prefix);
+  } else if (startWith(name, prefix)) {
+    return name;
+  } else {
+    var trimedName = name.trim().replace(/([A-Z])/g, '-$1').toLowerCase();
+    if (!trimedName) return '';
+    return prefix ? prefix + '-' + trimedName : trimedName;
+  }
+}
+
 var class_ClassNameDirective = function (_Directive) {
   inherits_default()(ClassNameDirective, _Directive);
 
@@ -3478,9 +3862,9 @@ var class_ClassNameDirective = function (_Directive) {
   }
 
   ClassNameDirective.prototype.update = function update(value) {
-    var names = className(value);
-    if (names) {
-      this.node.setAttribute('class', names);
+    var classNames = className(value);
+    if (classNames) {
+      this.node.setAttribute('class', classNames);
     } else {
       this.node.removeAttribute('class');
     }
@@ -3728,7 +4112,7 @@ var compiler_Compiler = function () {
 
 
   Compiler.prototype.compile = function compile(node, options) {
-    if (!node) throw new error_LibError('Invalid node for compile');
+    if (!node) throw new error_InternalError('Invalid node for compile');
     options = options || {};
     //实例托管 node 实例   
     node = new node_Node(node);
@@ -3764,339 +4148,6 @@ var compiler_Compiler = function () {
 }();
 
 
-// EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/typeof.js
-var helpers_typeof = __webpack_require__(28);
-var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
-
-// CONCATENATED MODULE: ./src/observer/index.js
-
-
-
-
-
-
-
-var OBSERVER_PROP_NAME = '_observer_';
-var CHANGE_EVENT_NAME = 'change';
-var GET_EVENT_NAME = 'get';
-var EVENT_MAX_DISPATCH_LAYER = 10;
-var IGNORE_REGEXPS = [/^\_(.*)\_$/, /^\_\_/, /^\$/];
-
-/**
- * 对象观察类，可以监控对象变化
- * 目前方案问题:
- *   对于父子关系和事件冒泡，目前方案如果用 delete 删除一个属性，无关真实删除关系，
- *   即便调用 clearReference 也无法再清除关系，子对象的 parents 中会一直有一个引用，当前方案最高效
- * 其它方法一:
- *   将「关系」放入全局数组中，然后将 ob.parents 变成一个「属性」从全局数组件中 filter 出来，
- *   基本和目前方法类似，但是关系在外部存领教，所以 clearReference 可清除。
- * 其它方案二: 
- *   构造时添加到全局数组，每一个 observer change 时都让放到全局的 observer 遍历自身的，
- *   检果事件源是不是自已的子对象，如果是则触发自身 change 事件，这样 ob 对象本身没有相关引用
- *   clearReference 时只从全局清除掉就行了，并且 delete 操作也不会影响，但效率稍差。
- * 其它方案三: 
- *   给构造函数添加一个 deep 属性，只有 deep 的 ob 对象，才放入到全局数组中，检查时逻辑同方案二
- *   但是因为要检查的对象会少很多，效率会更高一点。
- */
-
-var observer_Observer = function (_EventEmitter) {
-  inherits_default()(Observer, _EventEmitter);
-
-  /**
-   * 通过目标对象构造一个观察对象
-   * @param {Object} target 目标对象
-   * @param {Object} options 选项
-   * @returns {void} 无返回
-   */
-  function Observer(target, options) {
-    classCallCheck_default()(this, Observer);
-
-    var _this = possibleConstructorReturn_default()(this, _EventEmitter.call(this));
-
-    if (isNull(target)) {
-      throw new error_LibError('Invalid target');
-    }
-    options = options || {};
-    var observer = target[OBSERVER_PROP_NAME];
-    if (observer) {
-      var _ret;
-
-      copy(options, observer.options);
-      //当时一个组件 A 的为组件 B 的 prop 时，A 更新不会触发 B 更新
-      //所在暂注释这里，另一种方法是更新 prop 指令，重写 excute 方法，而不是现在的 update 方法
-      // if (observer.options.root) {
-      //   observer.parents.length = 0;
-      // }
-      observer.apply();
-      return _ret = observer, possibleConstructorReturn_default()(_this, _ret);
-    }
-    src_events.call(_this);
-    utils_final(_this, 'options', options);
-    utils_final(_this, 'shadow', {});
-    utils_final(_this, 'target', target);
-    utils_final(_this, 'parents', []);
-    utils_final(target, OBSERVER_PROP_NAME, _this);
-    _this.apply();
-    return _this;
-  }
-
-  /**
-   * 添加一个属性，动态添中的属性，无法被观察，
-   * 但是通过 set 方法添加的属性可能被观察。
-   * @param {string} name 名称
-   * @param {Object} value 值
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.set = function set(name, value) {
-    if (isFunction(value) || Observer.isIgnore(name)) {
-      return;
-    }
-    Object.defineProperty(this.target, name, {
-      get: function get() {
-        var observer = this[OBSERVER_PROP_NAME];
-        observer.emitGet({ path: name, value: value });
-        return observer.shadow[name];
-      },
-      set: function set(value) {
-        var observer = this[OBSERVER_PROP_NAME];
-        var oldValue = observer.shadow[name];
-        if (oldValue === value) return;
-        if (isObject(value)) {
-          var childObserver = new Observer(value);
-          observer.addChild(childObserver, name);
-        }
-        //移除旧值的父引用
-        //如果用 delete 删除属性将无法移除父子引用
-        if (oldValue && oldValue[OBSERVER_PROP_NAME]) {
-          observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
-        }
-        observer.shadow[name] = value;
-        observer.emitChange({ path: name, value: value });
-      },
-
-      configurable: true,
-      enumerable: true
-    });
-    this.target[name] = value;
-  };
-
-  /**
-   * 自动应用所有动态添加的属性
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.apply = function apply() {
-    if (isArray(this.target)) {
-      this._wrapArray(this.target);
-    }
-    var names = this._getPropertyNames(this.target);
-    names.forEach(function (name) {
-      var desc = Object.getOwnPropertyDescriptor(this.target, name);
-      if (!('value' in desc)) return;
-      this.set(name, this.target[name]);
-    }, this);
-  };
-
-  /**
-   * 清除所有父子引用
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.clearReference = function clearReference() {
-    each(this.target, function (name, value) {
-      if (isNull(value)) return;
-      var child = value[OBSERVER_PROP_NAME];
-      if (child) this.removeChild(child);
-    }, this);
-  };
-
-  /**
-   * 派发一个事件，事件会向父级对象冒泡
-   * @param {string} eventName 事件名称
-   * @param {Object} event 事件对象
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.dispatch = function dispatch(eventName, event) {
-    if (event._src_ === this) return;
-    event._src_ = event._src_ || this;
-    event._layer_ = event._layer_ || 0;
-    if (event._layer_++ >= EVENT_MAX_DISPATCH_LAYER) return;
-    this.emit(eventName, event);
-    if (!this.parents || this.parents.length < 1) return;
-    this.parents.forEach(function (item) {
-      if (!(item.name in item.parent.target)) {
-        return item.parent.removeChild(this);
-      }
-      var parentEvent = copy(event);
-      parentEvent.path = item.name + '.' + event.path;
-      item.parent.dispatch(eventName, parentEvent);
-    }, this);
-  };
-
-  /**
-   * 添子观察者对象
-   * @param {Object} child 父对象
-   * @param {String} name 属性名
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.addChild = function addChild(child, name) {
-    if (isNull(child) || isNull(name)) {
-      throw new error_LibError('Invalid paramaters');
-    }
-    if (child.options.root) return;
-    child.parents.push({ parent: this, name: name });
-  };
-
-  /**
-   * 移除子对象
-   * @param {Object} child 父对象
-   * @param {String} name 属性名
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.removeChild = function removeChild(child, name) {
-    if (isNull(child)) {
-      throw new error_LibError('Invalid paramaters');
-    }
-    var foundIndex = -1;
-    child.parents.forEach(function (item, index) {
-      if (item.parent === this && item.name === name) {
-        foundIndex = index;
-      }
-    }, this);
-    if (foundIndex > -1) {
-      child.parents.splice(foundIndex, 1);
-    }
-  };
-
-  /**
-   * 触发 change 事件
-   * @param {Object} event 事件对象
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.emitChange = function emitChange(event) {
-    this.dispatch(CHANGE_EVENT_NAME, event);
-  };
-
-  /**
-   * 触发 change 事件
-   * @param {Object} event 事件对象
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.emitGet = function emitGet(event) {
-    this.dispatch(GET_EVENT_NAME, event);
-  };
-
-  /**
-   * 获取所有成员名称列表
-   * @returns {Array} 所有成员名称列表
-   */
-
-
-  Observer.prototype._getPropertyNames = function _getPropertyNames() {
-    var names = isArray(this.target) ? this.target.map(function (item, index) {
-      return index;
-    }) : Object.keys(this.target);
-    return names.filter(function (name) {
-      return name !== OBSERVER_PROP_NAME;
-    });
-  };
-
-  /**
-   * 包裹数组
-   * @param {array} array 源数组
-   * @returns {array} 处理后的数组
-   */
-
-
-  Observer.prototype._wrapArray = function _wrapArray(array) {
-    if (array._wrapped_) return;
-    utils_final(array, '_wrapped_', true);
-    utils_final(array, 'push', function () {
-      var items = [].slice.call(arguments);
-      items.forEach(function (item) {
-        //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(array.length, item);
-      }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-    });
-    utils_final(array, 'pop', function () {
-      var item = [].pop.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      return item;
-    });
-    utils_final(array, 'unshift', function () {
-      var items = [].slice.call(arguments);
-      items.forEach(function (item) {
-        //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(0, item);
-      }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-    });
-    utils_final(array, 'shift', function () {
-      var item = [].shift.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      return item;
-    });
-    utils_final(array, 'splice', function () {
-      var startIndex = arguments[0];
-      var endIndex = isNull(arguments[1]) ? startIndex + arguments[1] : this.length - 1;
-      var items = [].splice.apply(this, arguments);
-      for (var i = startIndex; i <= endIndex; i++) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
-      }
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      return items;
-    });
-    utils_final(array, 'set', function (index, value) {
-      if (index >= this.length) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
-      }
-      this[OBSERVER_PROP_NAME].set(index, value);
-    });
-  };
-
-  return Observer;
-}(src_events);
-
-/**
- * 观察一个对象
- * @param {Object} target 目标对象
- * @return {Observer} 观察者对象
- */
-
-
-observer_Observer.observe = function (target) {
-  return new observer_Observer(target);
-};
-
-/**
- * 检查是不是忽略的属性名
- * @param {string} word 待检查的字符串
- * @returns {void} 无返回
- */
-observer_Observer.isIgnore = function (word) {
-  return IGNORE_REGEXPS.some(function (re) {
-    return re.test(word);
-  });
-};
-
-/* harmony default export */ var src_observer = (observer_Observer);
 // CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/a6a012e4b2330a1d222c55e1ab9811ca.js
 /* harmony default export */ var a6a012e4b2330a1d222c55e1ab9811ca = ({});
 // CONCATENATED MODULE: ./src/template/template.js
@@ -4284,15 +4335,10 @@ function _inspect(input, depth) {
 
 
 
-
-
 directive_Directive.directives = template_directives;
 
-template_Template.Template = template_Template;
-template_Template.Compiler = compiler_Compiler;
 template_Template.Directive = directive_Directive;
 template_Template.directives = template_directives;
-template_Template.expression = template_expression;
 
 /* harmony default export */ var src_template = (template_Template);
 // CONCATENATED MODULE: ./src/watcher/index.js
@@ -4318,7 +4364,7 @@ var watcher_Watcher = function () {
     classCallCheck_default()(this, Watcher);
 
     if (!isFunction(calcor) || !isFunction(handler)) {
-      throw new error_LibError('Invalid parameters');
+      throw new error_InternalError('Invalid parameters');
     }
     this.calcor = calcor;
     this.handler = handler;
@@ -4733,7 +4779,7 @@ var component_Component = (component__dec = decorators_template('<span>Error: In
     this.$emit('create');
     var element = meta.template.cloneNode(true);
     if (!element || element.nodeName === '#text') {
-      throw new error_LibError('Invalid component template');
+      throw new error_InternalError('Invalid component template');
     }
     this.$element = element;
     utils_final(this, '$node', new node_Node(element));
@@ -4992,7 +5038,7 @@ var view_View = (view__dec = decorators_template('<div></div>'), view__dec(view_
         }
         this._transition = transition;
       } else {
-        throw new error_LibError('Invalid transition');
+        throw new error_InternalError('Invalid transition');
       }
     }
   }]);
@@ -5041,7 +5087,7 @@ component_Component.components = component_components;
 
 function bootstrap(component, mountNode, options) {
   if (!component || !component.meta) {
-    throw new error_LibError('Involid Component');
+    throw new error_InternalError('Involid Component');
   }
   options = options || {};
   if (isNull(options.append)) options.append = true;
@@ -5062,21 +5108,10 @@ function bootstrap(component, mountNode, options) {
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "components", function() { return decorators_components; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "dependencies", function() { return dependencies; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "directives", function() { return decorators_directives; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Entity", function() { return entity_Entity; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Error", function() { return error_LibError; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Node", function() { return node_Node; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "cname", function() { return className; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Template", function() { return src_template; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Component", function() { return src_component; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Watcher", function() { return watcher_Watcher; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Observer", function() { return src_observer; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return src_events; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "bootstrap", function() { return bootstrap; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "common", function() { return common; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "decorators", function() { return decorators; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "config", function() { return a6a012e4b2330a1d222c55e1ab9811ca; });
-
-
-
 
 
 
@@ -5088,22 +5123,17 @@ function bootstrap(component, mountNode, options) {
 
 var src_Directive = src_template.Directive;
 
-//持载模板相关对象
-copy(src_template, bootstrap);
-copy(src_component, bootstrap);
-copy(common, bootstrap);
-copy(decorators, bootstrap);
-copy(_23c5d47e93aeac869a10e176ec75647, bootstrap);
+error_InternalError.prefix = _23c5d47e93aeac869a10e176ec75647.name;
 
-bootstrap.Template = src_template;
 bootstrap.Component = src_component;
-bootstrap.Watcher = watcher_Watcher;
-bootstrap.Observer = src_observer;
-bootstrap.EventEmitter = src_events;
+bootstrap.Directive = src_Directive;
 bootstrap.decorators = decorators;
 bootstrap.bootstrap = bootstrap;
-bootstrap.common = common;
 bootstrap.config = a6a012e4b2330a1d222c55e1ab9811ca;
+
+//持载模板相关对象
+copy(decorators, bootstrap);
+copy(_23c5d47e93aeac869a10e176ec75647, bootstrap);
 
 bootstrap.component = function (name, component) {
   name = toSplitCase(name);
@@ -5115,7 +5145,7 @@ bootstrap.component = function (name, component) {
 
 bootstrap.directive = function (name, directive) {
   name = toSplitCase(name);
-  if (!directive) return src_template.directives[name];
+  if (!directive) return src_Directive.directives[name];
   directive = isFunction(directive) ? directive : this.directive(directive);
   src_Directive.directives[name] = directive;
   return directive;
@@ -5128,7 +5158,6 @@ bootstrap.defineComponent = function () {
 bootstrap.defineDirective = function () {
   return src_Directive.extend.apply(src_Directive, arguments);
 };
-
 
 
 

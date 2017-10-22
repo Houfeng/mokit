@@ -1,5 +1,5 @@
 import { final, isArray, copy, each } from 'ntils';
-import { Error } from 'common';
+import Error from '../common/error';
 
 /**
  * 事件触发器基类

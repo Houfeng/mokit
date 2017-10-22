@@ -24,6 +24,6 @@ export default class Entity extends EventEmitter {
 
   get meta() {
     return this.constructor && this.constructor.meta;
-  };
+  }
 
 }

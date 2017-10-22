@@ -1,6 +1,6 @@
 import Component from './component';
 import { isNull, isFunction } from 'ntils';
-import { Error } from 'common';
+import Error from './common/error';
 
 export default function bootstrap(component, mountNode, options) {
   if (!component || !component.meta) {

@@ -1,33 +1,25 @@
-import info from '$info';
 import { copy, isFunction, toSplitCase } from 'ntils';
+import info from '$info';
 import bootstrap from './bootstrap';
-import Watcher from './watcher';
-import Observer from './observer';
 import Template from './template';
 import Component from './component';
-import EventEmitter from './events';
 import decorators from './decorators';
-import common from 'common';
 import config from '$config';
+import Error from './common/error';
 
 const Directive = Template.Directive;
 
-//持载模板相关对象
-copy(Template, bootstrap);
-copy(Component, bootstrap);
-copy(common, bootstrap);
-copy(decorators, bootstrap);
-copy(info, bootstrap);
+Error.prefix = info.name;
 
-bootstrap.Template = Template;
 bootstrap.Component = Component;
-bootstrap.Watcher = Watcher;
-bootstrap.Observer = Observer;
-bootstrap.EventEmitter = EventEmitter;
+bootstrap.Directive = Directive;
 bootstrap.decorators = decorators;
 bootstrap.bootstrap = bootstrap;
-bootstrap.common = common;
 bootstrap.config = config;
+
+//持载模板相关对象
+copy(decorators, bootstrap);
+copy(info, bootstrap);
 
 bootstrap.component = function (name, component) {
   name = toSplitCase(name);
@@ -40,7 +32,7 @@ bootstrap.component = function (name, component) {
 
 bootstrap.directive = function (name, directive) {
   name = toSplitCase(name);
-  if (!directive) return Template.directives[name];
+  if (!directive) return Directive.directives[name];
   directive = isFunction(directive) ?
     directive : this.directive(directive);
   Directive.directives[name] = directive;
@@ -56,11 +48,7 @@ bootstrap.defineDirective = function (...args) {
 };
 
 export * from './decorators';
-export * from './common';
+export { Component, Directive, bootstrap, decorators, config }
 
-export {
-  Template, Component, Directive, Watcher, Observer, EventEmitter,
-  bootstrap, common, config
-}
 window.mokit = bootstrap;
 export default bootstrap;

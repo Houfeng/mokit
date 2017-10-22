@@ -19,5 +19,8 @@
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "vue": "^2.5.2"
+  },
+  "dependencies": {
+    "stats.js": "^0.17.0"
   }
 }

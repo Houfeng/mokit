@@ -1,9 +1,10 @@
-import info from '$info';
+export default class InternalError extends Error {
 
-export default class LibError extends Error {
+  static prefix = null;
 
   constructor(message, ...other) {
-    super(`[${info.name}] ${message}`, ...other);
+    let prefix = InternalError.prefix;
+    super(prefix ? `[${prefix}] ${message}` : message, ...other);
   }
 
 }

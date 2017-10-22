@@ -1,4 +1,4 @@
-import { Error } from 'common';
+import Error from '../common/error';
 
 export default function (options) {
   return function (target) {
