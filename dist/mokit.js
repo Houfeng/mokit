@@ -1629,7 +1629,7 @@ function parseHTML(str) {
   return childNodes;
 };
 // CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/323c5d47e93aeac869a10e176ec75647.js
-/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-beta2" });
+/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-beta3" });
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/extends.js
 var helpers_extends = __webpack_require__(20);
 var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
@@ -2672,7 +2672,7 @@ var observer_Observer = function (_EventEmitter) {
         return item.parent.removeChild(this);
       }
       var parentEvent = copy(event);
-      parentEvent.path = item.name + '.' + event.path;
+      parentEvent.path = isNull(event.path) ? item.name : item.name + '.' + event.path;
       item.parent.dispatch(eventName, parentEvent);
     }, this);
   };
@@ -2765,47 +2765,59 @@ var observer_Observer = function (_EventEmitter) {
     utils_final(array, '_wrapped_', true);
     utils_final(array, 'push', function () {
       var items = [].slice.call(arguments);
+      var observer = this[OBSERVER_PROP_NAME];
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(array.length, item);
+        observer.set(array.length, item);
       }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
     });
     utils_final(array, 'pop', function () {
       var item = [].pop.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      var observer = this[OBSERVER_PROP_NAME];
+      observer.emitChange({ path: this.length, value: item });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
       return item;
     });
     utils_final(array, 'unshift', function () {
       var items = [].slice.call(arguments);
+      var observer = this[OBSERVER_PROP_NAME];
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(0, item);
+        observer.set(0, item);
       }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
     });
     utils_final(array, 'shift', function () {
       var item = [].shift.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      var observer = this[OBSERVER_PROP_NAME];
+      observer.emitChange({ path: 0, value: item });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
       return item;
     });
     utils_final(array, 'splice', function () {
       var startIndex = arguments[0];
       var endIndex = isNull(arguments[1]) ? startIndex + arguments[1] : this.length - 1;
+      var observer = this[OBSERVER_PROP_NAME];
       var items = [].splice.apply(this, arguments);
       for (var i = startIndex; i <= endIndex; i++) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
+        observer.emitChange({ path: i, value: items[i - startIndex] });
       }
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
       return items;
     });
     utils_final(array, 'set', function (index, value) {
+      var observer = this[OBSERVER_PROP_NAME];
       if (index >= this.length) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+        observer.emitChange({ path: 'length', value: this.length });
+        observer.emitChange({ value: this.length });
       }
-      this[OBSERVER_PROP_NAME].set(index, value);
+      observer.set(index, value);
     });
   };
 

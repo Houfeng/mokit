@@ -145,7 +145,8 @@ class Observer extends EventEmitter {
         return item.parent.removeChild(this);
       }
       let parentEvent = copy(event);
-      parentEvent.path = item.name + '.' + event.path;
+      parentEvent.path = isNull(event.path) ? item.name :
+        item.name + '.' + event.path;
       item.parent.dispatch(eventName, parentEvent);
     }, this);
   }
@@ -227,30 +228,38 @@ class Observer extends EventEmitter {
     final(array, '_wrapped_', true);
     final(array, 'push', function () {
       let items = [].slice.call(arguments);
+      let observer = this[OBSERVER_PROP_NAME];
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(array.length, item);
+        observer.set(array.length, item);
       }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
     });
     final(array, 'pop', function () {
       let item = [].pop.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: this.length, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      let observer = this[OBSERVER_PROP_NAME];
+      observer.emitChange({ path: this.length, value: item });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
       return item;
     });
     final(array, 'unshift', function () {
       let items = [].slice.call(arguments);
+      let observer = this[OBSERVER_PROP_NAME];
       items.forEach(function (item) {
         //这里也会触发对应 index 的 change 事件
-        this[OBSERVER_PROP_NAME].set(0, item);
+        observer.set(0, item);
       }, this);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
     });
     final(array, 'shift', function () {
       let item = [].shift.apply(this, arguments);
-      this[OBSERVER_PROP_NAME].emitChange({ path: 0, value: item });
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      let observer = this[OBSERVER_PROP_NAME];
+      observer.emitChange({ path: 0, value: item });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
       return item;
     });
     final(array, 'splice', function () {
@@ -258,18 +267,22 @@ class Observer extends EventEmitter {
       let endIndex = isNull(arguments[1])
         ? startIndex + arguments[1]
         : this.length - 1;
+      let observer = this[OBSERVER_PROP_NAME];
       let items = [].splice.apply(this, arguments);
       for (let i = startIndex; i <= endIndex; i++) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: i, value: items[i - startIndex] });
+        observer.emitChange({ path: i, value: items[i - startIndex] });
       }
-      this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ value: this.length });
       return items;
     });
     final(array, 'set', function (index, value) {
+      let observer = this[OBSERVER_PROP_NAME];
       if (index >= this.length) {
-        this[OBSERVER_PROP_NAME].emitChange({ path: 'length', value: this.length });
+        observer.emitChange({ path: 'length', value: this.length });
+        observer.emitChange({ value: this.length });
       }
-      this[OBSERVER_PROP_NAME].set(index, value);
+      observer.set(index, value);
     });
   }
 
