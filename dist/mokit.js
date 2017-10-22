@@ -1629,7 +1629,7 @@ function parseHTML(str) {
   return childNodes;
 };
 // CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/323c5d47e93aeac869a10e176ec75647.js
-/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-alpha17" });
+/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-alpha18" });
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/extends.js
 var helpers_extends = __webpack_require__(20);
 var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
@@ -2472,13 +2472,22 @@ var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 // CONCATENATED MODULE: ./src/observer/autorun.js
 
 
-var autorun_AutoRun = function AutoRun(func, trigger) {
-  var _this = this;
+var autorun__class, autorun__temp, _initialiseProps;
 
+var autorun_AutoRun = (autorun__temp = autorun__class = function AutoRun(func, trigger, ctx) {
   classCallCheck_default()(this, AutoRun);
+
+  _initialiseProps.call(this);
+
+  this.func = func;
+  this.trigger = trigger || this.run;
+  this.ctx = ctx || this;
+}, _initialiseProps = function _initialiseProps() {
+  var _this = this;
 
   this.deps = null;
   this.runing = false;
+  this.ctx = null;
 
   this.onGet = function (event) {
     if (!_this.runing) return;
@@ -2487,22 +2496,19 @@ var autorun_AutoRun = function AutoRun(func, trigger) {
 
   this.onChange = function (event) {
     if (!_this.deps || _this.deps[event.path]) {
-      _this.trigger(_this);
+      _this.trigger.call(_this.ctx);
     }
   };
 
-  this.run = function () {
+  this.run = function (ctx) {
+    _this.ctx = ctx || _this;
     _this.deps = {};
     _this.runing = true;
-    var result = _this.func();
+    var result = _this.func.call(_this.ctx);
     _this.runing = false;
     return result;
   };
-
-  this.func = func;
-  this.trigger = trigger || this.run;
-};
-
+}, autorun__temp);
 
 // CONCATENATED MODULE: ./src/observer/index.js
 

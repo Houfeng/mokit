@@ -1,6 +1,7 @@
 export default class AutoRun {
   deps = null;
   runing = false;
+  ctx = null;
 
   onGet = event => {
     if (!this.runing) return;
@@ -9,21 +10,23 @@ export default class AutoRun {
 
   onChange = event => {
     if (!this.deps || this.deps[event.path]) {
-      this.trigger(this);
+      this.trigger.call(this.ctx);
     }
   };
 
-  run = () => {
+  run = (ctx) => {
+    this.ctx = ctx || this;
     this.deps = {};
     this.runing = true;
-    let result = this.func();
+    let result = this.func.call(this.ctx);
     this.runing = false;
     return result;
   };
 
-  constructor(func, trigger) {
+  constructor(func, trigger, ctx) {
     this.func = func;
     this.trigger = trigger || this.run;
+    this.ctx = ctx || this;
   }
 
 }
