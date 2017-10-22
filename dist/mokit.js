@@ -1629,7 +1629,7 @@ function parseHTML(str) {
   return childNodes;
 };
 // CONCATENATED MODULE: /private/var/folders/7d/bf741r6j1psb64d_yd0zn_mh0000gn/T/323c5d47e93aeac869a10e176ec75647.js
-/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-beta1" });
+/* harmony default export */ var _23c5d47e93aeac869a10e176ec75647 = ({ "name": "mokit", "version": "4.0.0-beta2" });
 // EXTERNAL MODULE: ./node_modules/_babel-runtime@6.26.0@babel-runtime/helpers/extends.js
 var helpers_extends = __webpack_require__(20);
 var extends_default = /*#__PURE__*/__webpack_require__.n(helpers_extends);
@@ -2472,18 +2472,10 @@ var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 // CONCATENATED MODULE: ./src/observer/autorun.js
 
 
-var autorun__class, autorun__temp, _initialiseProps;
-
-var autorun_AutoRun = (autorun__temp = autorun__class = function AutoRun(func, trigger, ctx) {
-  classCallCheck_default()(this, AutoRun);
-
-  _initialiseProps.call(this);
-
-  this.func = func;
-  this.trigger = trigger || this.run;
-  this.ctx = ctx || this;
-}, _initialiseProps = function _initialiseProps() {
+var autorun_AutoRun = function AutoRun(exec, trigger, ctx) {
   var _this = this;
+
+  classCallCheck_default()(this, AutoRun);
 
   this.deps = null;
   this.runing = false;
@@ -2500,15 +2492,19 @@ var autorun_AutoRun = (autorun__temp = autorun__class = function AutoRun(func, t
     }
   };
 
-  this.run = function (ctx) {
-    _this.ctx = ctx || _this;
+  this.run = function () {
     _this.deps = {};
     _this.runing = true;
-    var result = _this.func.call(_this.ctx);
+    var result = _this.exec.call(_this.ctx);
     _this.runing = false;
     return result;
   };
-}, autorun__temp);
+
+  this.exec = exec;
+  this.trigger = trigger || this.run;
+  this.ctx = ctx || this;
+};
+
 
 // CONCATENATED MODULE: ./src/observer/index.js
 
@@ -2813,21 +2809,16 @@ var observer_Observer = function (_EventEmitter) {
     });
   };
 
-  Observer.prototype.start = function start(func, trigger) {
-    if (func._ctx_) return func._ctx_;
-    var ctx = new autorun_AutoRun(func, trigger);
-    this.on('get', ctx.onGet);
-    this.on('change', ctx.onChange);
-    func._ctx_ = ctx;
-    return ctx;
+  Observer.prototype.run = function run(exec, trigger, ctx) {
+    var ref = new autorun_AutoRun(exec, trigger, ctx);
+    this.on('get', ref.onGet);
+    this.on('change', ref.onChange);
+    return ref;
   };
 
-  Observer.prototype.stop = function stop(func) {
-    var ctx = func._ctx_;
-    if (!ctx) return;
-    this.off('get', ctx.onGet);
-    this.off('change', ctx.onChange);
-    delete func._ctx_;
+  Observer.prototype.stop = function stop(ref) {
+    this.off('get', ref.onGet);
+    this.off('change', ref.onChange);
   };
 
   return Observer;

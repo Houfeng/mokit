@@ -1,7 +1,14 @@
 export default class AutoRun {
+
   deps = null;
   runing = false;
   ctx = null;
+
+  constructor(exec, trigger, ctx) {
+    this.exec = exec;
+    this.trigger = trigger || this.run;
+    this.ctx = ctx || this;
+  }
 
   onGet = event => {
     if (!this.runing) return;
@@ -14,19 +21,12 @@ export default class AutoRun {
     }
   };
 
-  run = (ctx) => {
-    this.ctx = ctx || this;
+  run = () => {
     this.deps = {};
     this.runing = true;
-    let result = this.func.call(this.ctx);
+    let result = this.exec.call(this.ctx);
     this.runing = false;
     return result;
   };
-
-  constructor(func, trigger, ctx) {
-    this.func = func;
-    this.trigger = trigger || this.run;
-    this.ctx = ctx || this;
-  }
 
 }

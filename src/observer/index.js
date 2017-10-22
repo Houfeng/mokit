@@ -273,22 +273,18 @@ class Observer extends EventEmitter {
     });
   }
 
-  start(func, trigger) {
-    if (func._ctx_) return func._ctx_;
-    let ctx = new AutoRun(func, trigger);
-    this.on('get', ctx.onGet);
-    this.on('change', ctx.onChange);
-    func._ctx_ = ctx;
-    return ctx;
+  run(exec, trigger, ctx) {
+    let ref = new AutoRun(exec, trigger, ctx);
+    this.on('get', ref.onGet);
+    this.on('change', ref.onChange);
+    return ref;
   }
 
-  stop(func) {
-    let ctx = func._ctx_;
-    if (!ctx) return;
-    this.off('get', ctx.onGet);
-    this.off('change', ctx.onChange);
-    delete func._ctx_;
+  stop(ref) {
+    this.off('get', ref.onGet);
+    this.off('change', ref.onChange);
   }
+
 }
 
 /**
