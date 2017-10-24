@@ -1,9 +1,9 @@
-import Directive from '../../directive';
-import Scope from '../../scope';
-import { Error } from 'common';
-import { isNull } from 'ntils';
+const Directive = require('../../directive');
+const Scope = require('../../scope');
+const { Error } = require('common');
+const { isNull } = require('ntils');
 
-export default class PropModelDirective extends Directive {
+module.exports = class PropModelDirective extends Directive {
 
   /**
    * 初始化指令

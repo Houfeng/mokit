@@ -1,6 +1,6 @@
-import meta from './meta';
+const meta = require('./meta');
 
-export default function (name) {
+module.exports = function (name) {
   return function (target, handler) {
     meta()(target.constructor);
     target.meta.events = target.meta.events || {};

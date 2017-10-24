@@ -1,7 +1,7 @@
-import meta from './meta';
-import Error from '../common/error';
+const meta = require('./meta');
+const Error = require('../common/error');
 
-export default function (template) {
+module.exports = function (template) {
   if (!template) {
     throw new Error('Invalid template');
   }

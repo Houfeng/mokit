@@ -1,6 +1,6 @@
-import meta from './meta';
+const meta = require('./meta');
 
-export default function (calcer) {
+module.exports = function (calcer) {
   return function (target, handler) {
     meta()(target.constructor);
     target.meta.watches = target.meta.watches || [];

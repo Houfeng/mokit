@@ -1,12 +1,12 @@
-import Directive from '../directive';
-import { trim } from 'ntils';
-import { meta } from 'decorators';
+const Directive = require('../directive');
+const { trim } = require('ntils');
+const { meta } = require('decorators');
 
 @meta({
   type: Directive.types.ELEMENT,
   prefix: false
 })
-export default class TextDirective extends Directive {
+class TextDirective extends Directive {
 
   /**
    * 初始化指令
@@ -29,3 +29,5 @@ export default class TextDirective extends Directive {
   }
 
 }
+
+module.exports = TextDirective;

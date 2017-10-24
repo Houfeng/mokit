@@ -1,5 +1,5 @@
-import { final, isArray, copy, each } from 'ntils';
-import Error from '../common/error';
+const { final, isArray, copy, each } = require('ntils');
+const Error = require('../common/error');
 
 /**
  * 事件触发器基类
@@ -174,4 +174,4 @@ EventEmitter.register = function (descriptor) {
   }, this);
 };
 
-export default EventEmitter;
+module.exports = EventEmitter;

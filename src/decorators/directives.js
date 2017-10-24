@@ -1,5 +1,5 @@
-import meta from './meta';
+const meta = require('./meta');
 
-export default function (directives) {
+module.exports = function (directives) {
   return meta({ directives });
 }

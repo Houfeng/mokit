@@ -1,8 +1,8 @@
-import Directive from '../../directive';
-import Scope from '../../scope';
-import { isNull } from 'ntils';
+const Directive = require('../../directive');
+const Scope = require('../../scope');
+const { isNull } = require('ntils');
 
-export default class InputModelDirective extends Directive {
+module.exports = class InputModelDirective extends Directive {
 
   inputHandler = () => {
     if (isNull(this.scope)) return;

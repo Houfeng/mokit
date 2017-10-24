@@ -15,7 +15,6 @@ dev:
     watch: true
     optimization: true
     babel:
-      modules: false
       transform:
         helpers: true
         polyfill: false
@@ -46,7 +45,6 @@ build:
     compress: false
     optimization: true
     babel:
-      modules: false
       transform:
         helpers: true
         polyfill: false
@@ -66,7 +64,6 @@ build:
       libraryTarget: 'umd'
       umdNamedDefine: true
     babel:
-      modules: false
       transform:
         helpers: true
         polyfill: false

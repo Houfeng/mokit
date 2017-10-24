@@ -1,3 +1,3 @@
-import View from './view';
+const View = require('./view');
 
-export default { View };
+module.exports = { View };

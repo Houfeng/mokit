@@ -1,6 +1,6 @@
-import Error from '../common/error';
+const Error = require('../common/error');
 
-export default function (options) {
+module.exports = function (options) {
   return function (target) {
     if (!target || !target.setMeta) {
       throw new Error('Invaild Entity');

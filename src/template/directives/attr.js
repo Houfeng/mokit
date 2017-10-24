@@ -1,6 +1,6 @@
-import Directive from '../directive';
+const Directive = require('../directive');
 
-export default class AttrDirective extends Directive {
+module.exports = class AttrDirective extends Directive {
   update(value) {
     this.node.setAttribute(this.decorates[0], value);
   }

@@ -1,12 +1,12 @@
-import Directive from '../directive';
-import Scope from '../scope';
-import { meta } from 'decorators';
-import { isNull } from 'ntils';
+const Directive = require('../directive');
+const Scope = require('../scope');
+const { meta } = require('decorators');
+const { isNull } = require('ntils');
 
 @meta({
   literal: true
 })
-export default class OnDirective extends Directive {
+class OnDirective extends Directive {
 
   eventHandler = (event) => {
     if (isNull(this.scope)) return;
@@ -54,3 +54,5 @@ export default class OnDirective extends Directive {
   }
 
 }
+
+module.exports = OnDirective;

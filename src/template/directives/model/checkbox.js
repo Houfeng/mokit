@@ -1,8 +1,8 @@
-import Directive from '../../directive';
-import Scope from '../../scope';
-import { isNull, isArray } from 'ntils';
+const Directive = require('../../directive');
+const Scope = require('../../scope');
+const { isNull, isArray } = require('ntils');
 
-export default class CheckBoxModelDirective extends Directive {
+module.exports = class CheckBoxModelDirective extends Directive {
 
   changeHandler = () => {
     if (isNull(this.scope)) return;

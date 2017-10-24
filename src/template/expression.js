@@ -24,7 +24,7 @@ function getValue(scope, name) {
   return (value instanceof Function) ? value.bind(scope) : value;
 }
 
-export function expression(expr) {
+function expression(expr) {
   let cacheItem = EXPRESSION_CACHE[expr];
   if (cacheItem) return cacheItem;
   let keys = findVariables(expr);
@@ -37,7 +37,7 @@ export function expression(expr) {
   return exec;
 }
 
-export function template(str) {
+function template(str) {
   let cacheItem = TEMPLATE_CACHE[str];
   if (cacheItem) return cacheItem;
   let blocks = str.split(EXPRESSION_BLOCK);
@@ -55,8 +55,11 @@ export function template(str) {
   return exec;
 }
 
-export function compile(str, mixed) {
+function compile(str, mixed) {
   return mixed ? template(str) : expression(str);
 }
 
-export default compile;
+compile.expression = expression;
+compile.template = template;
+
+module.exports = compile;

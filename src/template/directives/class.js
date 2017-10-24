@@ -1,5 +1,5 @@
-import Directive from '../directive';
-import { isString, isArray, isObject, startWith } from 'ntils';
+const Directive = require('../directive');
+const { isString, isArray, isObject, startWith } = require('ntils');
 
 function className(name, prefix) {
   if (!name) {
@@ -24,7 +24,7 @@ function className(name, prefix) {
   }
 }
 
-export default class ClassNameDirective extends Directive {
+module.exports = class ClassNameDirective extends Directive {
   update(value) {
     let classNames = className(value);
     if (classNames) {

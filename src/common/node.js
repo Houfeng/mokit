@@ -1,6 +1,6 @@
-import EventEmitter from '../events';
-import Error from './error';
-import { isNull, parseHTML, final } from 'ntils';
+const EventEmitter = require('../events');
+const Error = require('./error');
+const { isNull, parseHTML, final } = require('ntils');
 
 function toDOMNode(node) {
   if (!node) {
@@ -15,7 +15,7 @@ function toDOMNode(node) {
 
 //托管的 dom，所有 dom 操作都需要基于这个 class 完成
 //除 removed 事件外，暂不需求其它事件，考虑到性能就暂不 emit 其它事件
-export default class Node extends EventEmitter {
+class Node extends EventEmitter {
 
   static create(name) {
     let node = name ? document.createElement(name) :
@@ -253,3 +253,5 @@ export default class Node extends EventEmitter {
   }
 
 }
+
+module.exports = Node;

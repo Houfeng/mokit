@@ -1,11 +1,11 @@
-import Directive from '../directive';
-import { meta } from '../../decorators';
+const Directive = require('../directive');
+const { meta } = require('../../decorators');
 
 @meta({
   level: Directive.levels.STATEMENT,
   final: true,
 })
-export default class IfDirective extends Directive {
+class IfDirective extends Directive {
 
   /**
    * 初始化指令
@@ -46,3 +46,5 @@ export default class IfDirective extends Directive {
   }
 
 }
+
+module.exports = IfDirective;

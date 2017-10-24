@@ -1,6 +1,6 @@
-import Directive from '../directive';
+const Directive = require('../directive');
 
-export default class FocusDirective extends Directive {
+module.exports = class FocusDirective extends Directive {
   execute(scope) {
     let state = this.expression(scope);
     setTimeout(() => {

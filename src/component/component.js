@@ -1,11 +1,11 @@
-import Template from '../template';
-import Watcher from '../watcher';
-import {
+const Template = require('../template');
+const Watcher = require('../watcher');
+const {
   isFunction, isString, copy, create, each, final, getByPath
-} from 'ntils';
-import { Error, Entity, Node } from 'common';
-import createDirective from './directive';
-import { template } from 'decorators';
+} = require('ntils');
+const { Error, Entity, Node } = require('common');
+const createDirective = require('./directive');
+const { template } = require('decorators');
 
 const { directives } = Template;
 
@@ -16,7 +16,7 @@ const { directives } = Template;
  * @returns {Component} 组件类
  */
 @template(`<span>Error: Invaild template</span>`)
-export default class Component extends Entity {
+class Component extends Entity {
 
   /**
    * 组件类构造函数
@@ -363,3 +363,5 @@ export default class Component extends Entity {
   }
 
 }
+
+module.exports = Component;

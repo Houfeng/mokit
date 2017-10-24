@@ -1,10 +1,10 @@
-import Directive from './directive';
-import Template from './template';
-import directives from './directives/';
+const Directive = require('./directive');
+const Template = require('./template');
+const directives = require('./directives/');
 
 Directive.directives = directives;
 
 Template.Directive = Directive;
 Template.directives = directives;
 
-export default Template;
+module.exports = Template;

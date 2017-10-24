@@ -1,6 +1,6 @@
-import Directive from '../directive';
-import { meta } from 'decorators';
-import { isNull } from 'ntils';
+const Directive = require('../directive');
+const { meta } = require('decorators');
+const { isNull } = require('ntils');
 
 /**
  * 通用的 attribute 指令
@@ -15,7 +15,7 @@ import { isNull } from 'ntils';
   literal: true,
   remove: false
 })
-export default class AttributeDirective extends Directive {
+class AttributeDirective extends Directive {
 
   /**
    * 初始化指令
@@ -47,3 +47,5 @@ export default class AttributeDirective extends Directive {
   }
 
 }
+
+module.exports = AttributeDirective;

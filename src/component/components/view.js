@@ -1,14 +1,14 @@
-import Component from '../component';
-import { isString, isFunction } from 'ntils';
-import { template } from 'decorators';
-import { Error } from 'common';
+const Component = require('../component');
+const { isString, isFunction } = require('ntils');
+const { template } = require('decorators');
+const { Error } = require('common');
 
 /**
  * 内置视图组件
  * 可以加载并显示其它组件，并可以指定「转场效果」
  */
 @template('<div></div>')
-export default class View extends Component {
+class View extends Component {
 
   static transition = {
     //init: function () { },
@@ -118,3 +118,5 @@ export default class View extends Component {
   }
 
 }
+
+module.exports = View;

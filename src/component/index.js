@@ -1,6 +1,6 @@
-import Component from './component';
-import components from './components';
+const Component = require('./component');
+const components = require('./components');
 
 Component.components = components;
 
-export default Component;
+module.exports = Component;

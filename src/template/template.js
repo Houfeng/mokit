@@ -1,13 +1,13 @@
-import Observer from '../observer';
-import EventEmitter from '../events';
-import Compiler from './compiler';
-import config from '$config';
+const Observer = require('../observer');
+const EventEmitter = require('../events');
+const Compiler = require('./compiler');
+const config = require('$config');
 
 /**
  * 模板类
  * 可能通过 element 作为参数，创建一个模板实例
  */
-export default class Template extends EventEmitter {
+class Template extends EventEmitter {
 
   /**
    * 构建一个模板板实例
@@ -86,3 +86,5 @@ export default class Template extends EventEmitter {
   }
 
 }
+
+module.exports = Template;

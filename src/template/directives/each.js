@@ -1,7 +1,7 @@
-import Directive from '../directive';
-import { each } from 'ntils';
-import Scope from '../scope';
-import { meta } from 'decorators';
+const Directive = require('../directive');
+const { each } = require('ntils');
+const Scope = require('../scope');
+const { meta } = require('decorators');
 
 const EACH_EXPR = /([\s\S]+)\s+(in|of)\s+([\s\S]+)/;
 
@@ -10,7 +10,7 @@ const EACH_EXPR = /([\s\S]+)\s+(in|of)\s+([\s\S]+)/;
   final: true,
   literal: true,
 })
-export default class EachDirective extends Directive {
+class EachDirective extends Directive {
 
   /**
    * 初始化指令
@@ -104,3 +104,5 @@ export default class EachDirective extends Directive {
   }
 
 }
+
+module.exports = EachDirective;

@@ -1,7 +1,7 @@
-import EventEmitter from '../events';
-import { create, final, copy } from 'ntils';
+const EventEmitter = require('../events');
+const { create, final, copy } = require('ntils');
 
-export default class Entity extends EventEmitter {
+class Entity extends EventEmitter {
 
   static extend = function (options, superClass) {
     superClass = this;
@@ -27,3 +27,5 @@ export default class Entity extends EventEmitter {
   }
 
 }
+
+module.exports = Entity;

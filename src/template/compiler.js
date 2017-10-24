@@ -1,8 +1,8 @@
-import Directive from './directive';
-import { each, isNull, toArray, toCamelCase, toSplitCase } from 'ntils';
-import expression from './expression';
-import commonDirectives from './directives';
-import { Error, Node } from 'common';
+const Directive = require('./directive');
+const { each, isNull, toArray, toCamelCase, toSplitCase } = require('ntils');
+const expression = require('./expression');
+const commonDirectives = require('./directives');
+const { Error, Node } = require('common');
 
 const DEFAULT_PREFIX = 'm';
 
@@ -10,7 +10,7 @@ const DEFAULT_PREFIX = 'm';
  * 模板编译器
  * 可以通过指定「前缀」或「指令集」构建实例
  */
-export default class Compiler {
+module.exports = class Compiler {
 
   /**
    * 构造一个编译器

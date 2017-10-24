@@ -1,8 +1,8 @@
-import Directive from '../../directive';
-import Scope from '../../scope';
-import { isNull } from 'ntils';
+const Directive = require('../../directive');
+const Scope = require('../../scope');
+const { isNull } = require('ntils');
 
-export default class RadioModelDirective extends Directive {
+module.exports = class RadioModelDirective extends Directive {
 
   changeHandler = () => {
     if (isNull(this.scope)) return;

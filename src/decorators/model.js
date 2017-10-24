@@ -1,6 +1,6 @@
-import meta from './meta';
+const meta = require('./meta');
 
-export default function (target, prop) {
+module.exports = function (target, prop) {
   if (!prop) {
     return meta({ model: target });
   } else {

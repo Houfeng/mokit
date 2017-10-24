@@ -1,20 +1,20 @@
-import each from './each';
-import ifDirective from './if';
-import prop from './prop';
-import attr from './attr';
-import on from './on';
-import html from './inner-html';
-import text from './inner-text';
-import prevent from './prevent';
-import id from './id';
-import show from './show';
-import model from './model';
-import focus from './focus';
-import anyAttribute from './attribute'; //处理所有未知 attr
-import anyText from './text'; //处理所有 text 
-import className from './class'; //处理 className
+const each = require('./each');
+const ifDirective = require('./if');
+const prop = require('./prop');
+const attr = require('./attr');
+const on = require('./on');
+const html = require('./inner-html');
+const text = require('./inner-text');
+const prevent = require('./prevent');
+const id = require('./id');
+const show = require('./show');
+const model = require('./model');
+const focus = require('./focus');
+const anyAttribute = require('./attribute'); //处理所有未知 attr
+const anyText = require('./text'); //处理所有 text 
+const className = require('./class'); //处理 className
 
-export default {
+module.exports = {
   '#text': anyText,
   '*': anyAttribute,
   'if': ifDirective,

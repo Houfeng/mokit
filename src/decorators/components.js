@@ -1,5 +1,5 @@
-import meta from './meta';
+const meta = require('./meta');
 
-export default function (components) {
+module.exports = function (components) {
   return meta({ components });
 }

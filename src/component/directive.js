@@ -1,9 +1,9 @@
-import Template from '../template';
-import { meta } from 'decorators';
+const Template = require('../template');
+const { meta } = require('decorators');
 
 const Directive = Template.Directive;
 
-export default function (options) {
+module.exports = function (options) {
 
   /**
    * 创建一个组件指令

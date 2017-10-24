@@ -1,8 +1,8 @@
-import Component from './component';
-import { isNull, isFunction } from 'ntils';
-import Error from './common/error';
+const Component = require('./component');
+const { isNull, isFunction } = require('ntils');
+const Error = require('./common/error');
 
-export default function bootstrap(component, mountNode, options) {
+module.exports = function (component, mountNode, options) {
   if (!component || !component.meta) {
     throw new Error('Involid Component');
   }

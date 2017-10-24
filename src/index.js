@@ -1,11 +1,11 @@
-import { copy, isFunction, toSplitCase } from 'ntils';
-import info from '$info';
-import bootstrap from './bootstrap';
-import Template from './template';
-import Component from './component';
-import decorators from './decorators';
-import config from '$config';
-import Error from './common/error';
+const { copy, isFunction, toSplitCase } = require('ntils');
+const info = require('$info');
+const bootstrap = require('./bootstrap');
+const Template = require('./template');
+const Component = require('./component');
+const decorators = require('./decorators');
+const config = require('$config');
+const Error = require('./common/error');
 
 const Directive = Template.Directive;
 
@@ -47,8 +47,4 @@ bootstrap.defineDirective = function (...args) {
   return Directive.extend(...args);
 };
 
-export * from './decorators';
-export { Component, Directive, bootstrap, decorators, config }
-
-window.mokit = bootstrap;
-export default bootstrap;
+module.exports = bootstrap;

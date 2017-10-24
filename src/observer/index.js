@@ -1,9 +1,9 @@
-import {
+const {
   isArray, isFunction, isNull, isObject, copy, final, each
-} from 'ntils';
-import EventEmitter from '../events';
-import Error from '../common/error';
-import AutoRun from './autorun';
+} = require('ntils');
+const EventEmitter = require('../events');
+const Error = require('../common/error');
+const AutoRun = require('./autorun');
 
 const OBSERVER_PROP_NAME = '_observer_';
 const CHANGE_EVENT_NAME = 'change';
@@ -318,4 +318,4 @@ Observer.isIgnore = function (word) {
   return IGNORE_REGEXPS.some(re => re.test(word));
 };
 
-export default Observer;
+module.exports = Observer;

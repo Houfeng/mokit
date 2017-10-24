@@ -1,6 +1,5 @@
-import Entity from './entity';
-import Error from './error';
-import Node from './node';
+const Entity = require('./entity');
+const Error = require('./error');
+const Node = require('./node');
 
-export { Entity, Error, Node };
-export default { Entity, Error, Node };
+module.exports = { Entity, Error, Node };

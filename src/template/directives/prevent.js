@@ -1,9 +1,11 @@
-import Directive from '../directive';
-import { meta } from 'decorators';
+const Directive = require('../directive');
+const { meta } = require('decorators');
 
 @meta({
   level: Directive.levels.PREVENT,
   final: true
 })
-export default class PreventDirective extends Directive {
+class PreventDirective extends Directive {
 }
+
+module.exports = PreventDirective;

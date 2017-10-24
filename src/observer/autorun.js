@@ -1,4 +1,4 @@
-export default class AutoRun {
+module.exports = class AutoRun {
 
   deps = null;
   runing = false;

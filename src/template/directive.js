@@ -1,7 +1,7 @@
-import { each, final, deepEqual } from 'ntils';
-import { Entity, Node } from 'common';
-import expression from './expression';
-import { meta } from '../decorators';
+const { each, final, deepEqual } = require('ntils');
+const { Entity, Node } = require('common');
+const expression = require('./expression');
+const { meta } = require('../decorators');
 
 //指令类型
 const types = {
@@ -26,7 +26,7 @@ const levels = {
   type: types.ATTRIBUTE,
   level: levels.GENERAL
 })
-export default class Directive extends Entity {
+class Directive extends Entity {
 
   static types = types;
   static levels = levels;
@@ -66,3 +66,4 @@ export default class Directive extends Entity {
   unbind() { }
 
 }
+module.exports = Directive;

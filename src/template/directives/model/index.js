@@ -1,11 +1,11 @@
-import Directive from '../../directive';
-import SelectDirective from './select';
-import EditableDirective from './editable';
-import InputDirective from './input';
-import RadioDirective from './radio';
-import CheckboxDirective from './checkbox';
-import PropDirective from './prop';
-import { Error } from 'common';
+const Directive = require('../../directive');
+const SelectDirective = require('./select');
+const EditableDirective = require('./editable');
+const InputDirective = require('./input');
+const RadioDirective = require('./radio');
+const CheckboxDirective = require('./checkbox');
+const PropDirective = require('./prop');
+const { Error } = require('common');
 
 function DirectiveFactary(options) {
   let node = options.node;
@@ -37,4 +37,4 @@ DirectiveFactary.meta = {
   level: Directive.levels.ATTRIBUTE
 };
 
-export default DirectiveFactary;
+module.exports = DirectiveFactary;

@@ -1,11 +1,11 @@
-import { isFunction, deepEqual, clone } from 'ntils';
-import { Error } from 'common';
+const { isFunction, deepEqual, clone } = require('ntils');
+const { Error } = require('common');
 
 /**
  * Watcher 类
  * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
  */
-export default class Watcher {
+class Watcher {
 
   /**
    * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
@@ -37,3 +37,5 @@ export default class Watcher {
   }
 
 }
+
+module.exports = Watcher;

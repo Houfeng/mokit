@@ -6,13 +6,7 @@ module.exports = function (webpackConf, webpack) {
   let info = JSON.stringify({ name: pkg.name, version: pkg.version });
   webpackConf.plugins.push(new VModule({
     name: '$info',
-    type: 'js',
-    content: `export default ${info}`
-  }));
-  webpackConf.plugins.push(new VModule({
-    name: '$config',
-    type: 'js',
-    content: `export default {}`
+    content: info
   }));
   webpackConf.resolve = webpackConf.resolve || {};
   webpackConf.resolve.alias = webpackConf.resolve.alias || {};

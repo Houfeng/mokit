@@ -2,7 +2,6 @@ const pkg = require('./package.json');
 
 module.exports = {
   [pkg.name]: require.resolve('./src'),
-  ntils: require.resolve('ntils/src/utils'),
   common: require.resolve('./src/common'),
   component: require.resolve('./src/component'),
   decorators: require.resolve('./src/decorators'),

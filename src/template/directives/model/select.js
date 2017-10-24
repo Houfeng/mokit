@@ -1,13 +1,13 @@
-import Directive from '../../directive';
-import EventEmitter from '../../../events';
-import Scope from '../../scope';
-import { meta } from 'decorators';
-import { isArray, isNull } from 'ntils';
+const Directive = require('../../directive');
+const EventEmitter = require('../../../events');
+const Scope = require('../../scope');
+const { meta } = require('decorators');
+const { isArray, isNull } = require('ntils');
 
 @meta({
   final: true
 })
-export default class SelectModelDirective extends Directive {
+class SelectModelDirective extends Directive {
 
   changeHandler = () => {
     if (isNull(this.scope)) return;
@@ -49,3 +49,5 @@ export default class SelectModelDirective extends Directive {
   }
 
 }
+
+module.exports = SelectModelDirective;

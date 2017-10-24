@@ -10,7 +10,7 @@ const scope = {
 
 const observer = new Observer(scope);
 
-window.ctx = observer.start(function () {
+window.ctx = observer.run(function () {
   console.log('run', scope.child.name, scope.name);
 });
 
