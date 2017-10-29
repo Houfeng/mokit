@@ -155,7 +155,7 @@ class EventEmitter {
 }
 
 //最多添加多少个 listener
-EventEmitter._maxListeners = 100;
+EventEmitter._maxListeners = 256;
 
 //所有自定义事件
 EventEmitter._events = [];

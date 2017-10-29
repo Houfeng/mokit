@@ -192,18 +192,18 @@ class Component extends Entity {
 
   /**
    * 添加一个监控
-   * @param {string|function} calcer 计算函数或路径
+   * @param {string|function} calculator 计算函数或路径
    * @param {function} handler 处理函数
    * @returns {void} 无返回
    */
-  $watch(calcer, handler) {
+  $watch(calculator, handler) {
     this.$watchers = this.$watchers || [];
-    let calcerFunc = isFunction(calcer) ? calcer : () => {
-      return getByPath(this, calcer);
+    let calculatorFunc = isFunction(calculator) ? calculator : () => {
+      return getByPath(this, calculator);
     };
     let handlerFunc = isFunction(handler) ? handler :
       getByPath(this, handler);
-    let watcher = new Watcher(calcerFunc, handlerFunc.bind(this));
+    let watcher = new Watcher(calculatorFunc, handlerFunc, this);
     this.$watchers.push(watcher);
     return watcher;
   }

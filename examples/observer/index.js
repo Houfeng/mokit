@@ -11,10 +11,15 @@ const scope = {
 
 const observer = new Observer(scope);
 
-window.ctx = observer.run(function () {
-  console.log('run', scope.child.name, scope.name);
-  scope.name = 'a';
+window.auto = observer.run(function () {
+  console.log('run:', scope.child.name, scope.name);
   scope.index += 1;
 });
+
+window.watcher = observer.watch(function () {
+  return this.name;
+}, function (newValue, oldValue) {
+  console.log('watch:', newValue, oldValue);
+})
 
 window.demo = { scope, observer };

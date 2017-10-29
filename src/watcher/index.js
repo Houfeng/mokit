@@ -1,37 +1,21 @@
 const { isFunction, deepEqual, clone } = require('ntils');
-const { Error } = require('common');
+const Error = require('../common/error');
 
-/**
- * Watcher 类
- * 通过「计算函数」、「执行函数」可以创建一个 Watcher 实例
- */
 class Watcher {
 
-  /**
-   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
-   * @param {function} calculator 计算函数
-   * @param {function} handler 处理函数
-   * @param {boolean} immed 是否自动执行第一次
-   * @returns {void} 无返回
-   */
-  constructor(calculator, handler, immed) {
+  constructor(calculator, handler, context) {
     if (!isFunction(calculator) || !isFunction(handler)) {
       throw new Error('Invalid parameters');
     }
     this.calculator = calculator;
     this.handler = handler;
-    if (immed) this.calc(true);
+    this.context = context || this;
   }
 
-  /**
-   * 执行计算
-   * @param {boolean} force 是否强制执行
-   * @returns {Object} 计算后的值
-   */
   calc = force => {
-    let newValue = this.calculator();
+    let newValue = this.calculator.call(this.context);
     if (force || !deepEqual(newValue, this.value)) {
-      this.handler(newValue, this.value);
+      this.handler.call(this.context, newValue, this.value);
     }
     this.value = clone(newValue);
   };

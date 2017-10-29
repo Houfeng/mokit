@@ -4,6 +4,7 @@ const {
 const EventEmitter = require('../events');
 const Error = require('../common/error');
 const AutoRun = require('./autorun');
+const Watcher = require('../watcher');
 
 const OBSERVER_PROP_NAME = '_observer_';
 const CHANGE_EVENT_NAME = 'change';
@@ -288,6 +289,7 @@ class Observer extends EventEmitter {
 
   run(handler, options) {
     options = options || {};
+    options.context = options.context || this.target;
     let auto = new AutoRun(handler, options.context, options.trigger);
     this.on('get', auto.onGet);
     this.on('change', auto.onChange);
@@ -299,6 +301,19 @@ class Observer extends EventEmitter {
     if (!autoRef) return;
     this.off('get', autoRef.onGet);
     this.off('change', autoRef.onChange);
+  }
+
+  watch(calculator, handler, options) {
+    options = options || {};
+    options.context = options.context || this.target;
+    let watcher = new Watcher(calculator, handler, options.context);
+    watcher.autoRef = this.run(watcher.calc, options);
+    return watcher;
+  }
+
+  unWatch(watcher) {
+    if (!watcher) return;
+    this.stop(watcher.autoRef);
   }
 
 }
