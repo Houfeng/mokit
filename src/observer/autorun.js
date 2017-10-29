@@ -17,10 +17,10 @@ module.exports = class AutoRun {
     this.trigger.call(this.context);
   };
 
-  run = () => {
+  run = (...args) => {
     this.dependencies = {};
     this.runing = true;
-    let result = this.handler.call(this.context);
+    let result = this.handler.call(this.context, ...args);
     this.runing = false;
     return result;
   };

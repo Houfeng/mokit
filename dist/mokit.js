@@ -2688,6 +2688,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _require = __webpack_require__(3),
     isFunction = _require.isFunction,
+    isBoolean = _require.isBoolean,
+    getByPath = _require.getByPath,
     deepEqual = _require.deepEqual,
     clone = _require.clone;
 
@@ -2700,7 +2702,8 @@ var Watcher = function Watcher(calculator, handler, context) {
 
   this.calc = function (force) {
     var newValue = _this.calculator.call(_this.context);
-    if (force || !deepEqual(newValue, _this.value)) {
+    var willExecute = isBoolean(force) ? force : !deepEqual(newValue, _this.value);
+    if (willExecute) {
       _this.handler.call(_this.context, newValue, _this.value);
     }
     _this.value = clone(newValue);
@@ -2709,9 +2712,11 @@ var Watcher = function Watcher(calculator, handler, context) {
   if (!isFunction(calculator) || !isFunction(handler)) {
     throw new Error('Invalid parameters');
   }
-  this.calculator = calculator;
-  this.handler = handler;
   this.context = context || this;
+  this.calculator = isFunction(calculator) ? calculator : function () {
+    return getByPath(_this.context, calculator);
+  };
+  this.handler = handler;
 };
 
 module.exports = Watcher;
@@ -4771,9 +4776,15 @@ module.exports = function AutoRun(handler, context, trigger) {
   };
 
   this.run = function () {
+    var _handler;
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
     _this.dependencies = {};
     _this.runing = true;
-    var result = _this.handler.call(_this.context);
+    var result = (_handler = _this.handler).call.apply(_handler, [_this.context].concat(args));
     _this.runing = false;
     return result;
   };
