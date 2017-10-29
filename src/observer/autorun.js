@@ -1,30 +1,26 @@
 module.exports = class AutoRun {
 
-  deps = null;
-  runing = false;
-  ctx = null;
-
-  constructor(exec, trigger, ctx) {
-    this.exec = exec;
+  constructor(handler, context, trigger) {
+    this.handler = handler;
+    this.context = context || this;
     this.trigger = trigger || this.run;
-    this.ctx = ctx || this;
   }
 
   onGet = event => {
-    if (!this.runing) return;
-    this.deps[event.path] = true;
+    if (!this.runing || !event || !this.dependencies) return;
+    this.dependencies[event.path] = true;
   };
 
   onChange = event => {
-    if (!this.deps || this.deps[event.path]) {
-      this.trigger.call(this.ctx);
-    }
+    if (this.runing || !event) return;
+    if (this.dependencies && !this.dependencies[event.path]) return;
+    this.trigger.call(this.context);
   };
 
   run = () => {
-    this.deps = {};
+    this.dependencies = {};
     this.runing = true;
-    let result = this.exec.call(this.ctx);
+    let result = this.handler.call(this.context);
     this.runing = false;
     return result;
   };

@@ -2779,7 +2779,7 @@ module.exports = bootstrap;
 /* 62 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"mokit","version":"4.0.0-beta5"}
+module.exports = {"name":"mokit","version":"4.0.0-beta6"}
 
 /***/ }),
 /* 63 */
@@ -4647,16 +4647,19 @@ var Observer = function (_EventEmitter) {
     });
   };
 
-  Observer.prototype.run = function run(exec, trigger, ctx) {
-    var ref = new AutoRun(exec, trigger, ctx);
-    this.on('get', ref.onGet);
-    this.on('change', ref.onChange);
-    return ref;
+  Observer.prototype.run = function run(handler, options) {
+    options = options || {};
+    var auto = new AutoRun(handler, options.context, options.trigger);
+    this.on('get', auto.onGet);
+    this.on('change', auto.onChange);
+    if (options.immed) auto.run();
+    return auto;
   };
 
-  Observer.prototype.stop = function stop(ref) {
-    this.off('get', ref.onGet);
-    this.off('change', ref.onChange);
+  Observer.prototype.stop = function stop(autoRef) {
+    if (!autoRef) return;
+    this.off('get', autoRef.onGet);
+    this.off('change', autoRef.onChange);
   };
 
   return Observer;
@@ -4696,36 +4699,33 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-module.exports = function AutoRun(exec, trigger, ctx) {
+module.exports = function AutoRun(handler, context, trigger) {
   var _this = this;
 
   (0, _classCallCheck3.default)(this, AutoRun);
-  this.deps = null;
-  this.runing = false;
-  this.ctx = null;
 
   this.onGet = function (event) {
-    if (!_this.runing) return;
-    _this.deps[event.path] = true;
+    if (!_this.runing || !event || !_this.dependencies) return;
+    _this.dependencies[event.path] = true;
   };
 
   this.onChange = function (event) {
-    if (!_this.deps || _this.deps[event.path]) {
-      _this.trigger.call(_this.ctx);
-    }
+    if (_this.runing || !event) return;
+    if (_this.dependencies && !_this.dependencies[event.path]) return;
+    _this.trigger.call(_this.context);
   };
 
   this.run = function () {
-    _this.deps = {};
+    _this.dependencies = {};
     _this.runing = true;
-    var result = _this.exec.call(_this.ctx);
+    var result = _this.handler.call(_this.context);
     _this.runing = false;
     return result;
   };
 
-  this.exec = exec;
+  this.handler = handler;
+  this.context = context || this;
   this.trigger = trigger || this.run;
-  this.ctx = ctx || this;
 };
 
 /***/ }),
@@ -6355,43 +6355,42 @@ var _require2 = __webpack_require__(7),
  */
 
 
-var Watcher = function () {
+var Watcher =
 
-  /**
-   * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
-   * @param {function} calcor 计算函数
-   * @param {function} handler 处理函数
-   * @param {boolean} first 是否自动执行第一次
-   * @returns {void} 无返回
-   */
-  function Watcher(calcor, handler, first) {
-    (0, _classCallCheck3.default)(this, Watcher);
+/**
+ * 通过「计算函数」、「执行函数」构建一个 Watcher 实例
+ * @param {function} calculator 计算函数
+ * @param {function} handler 处理函数
+ * @param {boolean} immed 是否自动执行第一次
+ * @returns {void} 无返回
+ */
+function Watcher(calculator, handler, immed) {
+  var _this = this;
 
-    if (!isFunction(calcor) || !isFunction(handler)) {
-      throw new Error('Invalid parameters');
+  (0, _classCallCheck3.default)(this, Watcher);
+
+  this.calc = function (force) {
+    var newValue = _this.calculator();
+    if (force || !deepEqual(newValue, _this.value)) {
+      _this.handler(newValue, _this.value);
     }
-    this.calcor = calcor;
-    this.handler = handler;
-    if (first) this.calc(true);
-  }
-
-  /**
-   * 执行计算
-   * @param {boolean} force 是否强制触发「计算函数」
-   * @returns {Object} 计算后的值
-   */
-
-
-  Watcher.prototype.calc = function calc(force) {
-    var newValue = this.calcor();
-    if (force || !deepEqual(newValue, this.value)) {
-      this.handler(newValue, this.value);
-    }
-    this.value = clone(newValue);
+    _this.value = clone(newValue);
   };
 
-  return Watcher;
-}();
+  if (!isFunction(calculator) || !isFunction(handler)) {
+    throw new Error('Invalid parameters');
+  }
+  this.calculator = calculator;
+  this.handler = handler;
+  if (immed) this.calc(true);
+}
+
+/**
+ * 执行计算
+ * @param {boolean} force 是否强制执行
+ * @returns {Object} 计算后的值
+ */
+;
 
 module.exports = Watcher;
 
