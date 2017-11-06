@@ -8,7 +8,7 @@ const EACH_EXPR = /([\s\S]+)\s+(in|of)\s+([\s\S]+)/;
 @meta({
   level: Directive.levels.STATEMENT + 1, //比 if 要高一个权重
   final: true,
-  literal: true,
+  literal: true
 })
 class EachDirective extends Directive {
 

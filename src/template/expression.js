@@ -1,6 +1,6 @@
 const VARIABLE_FILTER = /(\(|\[|\{|\+|\-|\*|\/|\>|\<|\=|\!|\,|\;|\?|\:|\&|\|)\s*([a-z\_0-9\$]+)/ig;
 const VARIABLE_NAME = /^[a-z\$\_]/i;
-const ALLOWED_WORD = /(\$scope|true|false|null|undefined|Date|Number|String|Object|Boolean|Array|RegExp|Math|JSON|parseInt|parseFloat|isNaN|isFinite)/;
+const ALLOWED_WORD = /(\$scope|true|false|null|undefined|Date|Number|String|Object|Boolean|Array|RegExp|Math|JSON|parseInt|parseFloat|isNaN|isFinite)/; //eslint-disable-line
 const EXPRESSION_BLOCK = /\{\{([\s\S]+?)\}\}/;
 const EXPRESSION_CACHE = {};
 const TEMPLATE_CACHE = {};
@@ -10,7 +10,7 @@ function findVariables(expr) {
   VARIABLE_FILTER.lastIndex = 0;
   let variables = {};
   let info;
-  while (info = VARIABLE_FILTER.exec(expr)) {
+  while (info = VARIABLE_FILTER.exec(expr)) { //eslint-disable-line
     let name = info[2];
     if (VARIABLE_NAME.test(name) && !ALLOWED_WORD.test(name)) {
       variables[name] = true;

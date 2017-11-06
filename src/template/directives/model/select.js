@@ -1,5 +1,4 @@
 const Directive = require('../../directive');
-const EventEmitter = require('../../../events');
 const Scope = require('../../scope');
 const { meta } = require('decorators');
 const { isArray, isNull } = require('ntils');

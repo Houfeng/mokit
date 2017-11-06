@@ -30,4 +30,4 @@ module.exports = class RadioModelDirective extends Directive {
     this.node.checked = value == this.node.value;
   }
 
-}
+};

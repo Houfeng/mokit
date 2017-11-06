@@ -30,7 +30,7 @@ function DirectiveFactary(options) {
   } else {
     throw new Error(`Directive \`model\` cannot be used on \`${tagName}\``);
   }
-};
+}
 
 //手动添加 meta 信息
 DirectiveFactary.meta = {

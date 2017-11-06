@@ -33,4 +33,4 @@ module.exports = class ClassNameDirective extends Directive {
       this.node.removeAttribute('class');
     }
   }
-}
+};

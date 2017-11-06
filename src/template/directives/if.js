@@ -3,7 +3,7 @@ const { meta } = require('../../decorators');
 
 @meta({
   level: Directive.levels.STATEMENT,
-  final: true,
+  final: true
 })
 class IfDirective extends Directive {
 

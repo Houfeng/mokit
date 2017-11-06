@@ -31,4 +31,4 @@ module.exports = class EditableModelDirective extends Directive {
     }
   }
 
-}
+};

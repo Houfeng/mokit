@@ -6,4 +6,4 @@ module.exports = function (calcer) {
     target.meta.watches = target.meta.watches || [];
     target.meta.watches.push({ calcer, handler });
   };
-}
+};

@@ -155,7 +155,8 @@ module.exports = class Compiler {
       }
       //如果遇到一个「终态」指令，停止向下初始化
       if (directive.meta.final) {
-        return handler.final = true;
+        handler.final = true;
+        return handler.final;
       }
     });
     handler.directives = boundDirectives;
@@ -222,4 +223,4 @@ module.exports = class Compiler {
     return handler;
   }
 
-}
+};

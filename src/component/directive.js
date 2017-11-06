@@ -103,4 +103,4 @@ module.exports = function (options) {
 
   }
   return ComponentDirective;
-}
+};

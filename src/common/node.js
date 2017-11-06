@@ -1,6 +1,6 @@
 const EventEmitter = require('../events');
 const Error = require('./error');
-const { isNull, parseHTML, final } = require('ntils');
+const { parseHTML, final } = require('ntils');
 
 function toDOMNode(node) {
   if (!node) {
@@ -69,7 +69,7 @@ class Node extends EventEmitter {
     parentNode.dispatch(name, opts);
   }
 
-  insertBy(mountNode, opts) {
+  insertBy(mountNode) {
     mountNode = toDOMNode(mountNode);
     if (mountNode.parentNode) {
       //this.broadcast('mount', opts);
@@ -78,7 +78,7 @@ class Node extends EventEmitter {
     }
   }
 
-  appendTo(mountNode, opts) {
+  appendTo(mountNode) {
     mountNode = toDOMNode(mountNode);
     //this.broadcast('mount', opts);
     mountNode.appendChild(this.domNode);
@@ -133,7 +133,7 @@ class Node extends EventEmitter {
     if (this.component) this.component[name] = value;
   }
 
-  getProperty(name, value) {
+  getProperty(name) {
     if (this.component) return this.component[name];
     return this.domNode[name];
   }

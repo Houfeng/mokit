@@ -8,4 +8,4 @@ module.exports = class FocusDirective extends Directive {
       else this.node.blur();
     }, 0);
   }
-}
+};

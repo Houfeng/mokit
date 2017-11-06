@@ -7,4 +7,4 @@ module.exports = function (name) {
     target.meta.events[name] = target.meta.events[name] || [];
     target.meta.events[name].push(handler);
   };
-}
+};

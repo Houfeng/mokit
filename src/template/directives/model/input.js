@@ -31,4 +31,4 @@ module.exports = class InputModelDirective extends Directive {
     }
   }
 
-}
+};

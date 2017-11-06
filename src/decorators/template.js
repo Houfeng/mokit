@@ -6,4 +6,4 @@ module.exports = function (template) {
     throw new Error('Invalid template');
   }
   return meta({ template });
-}
+};

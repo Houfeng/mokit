@@ -42,4 +42,4 @@ module.exports = class CheckBoxModelDirective extends Directive {
     }
   }
 
-}
+};

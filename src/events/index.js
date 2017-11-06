@@ -46,8 +46,11 @@ class EventEmitter {
     }
     this._listeners_[name] = this._listeners_[name] || [];
     this._listeners_[name].push(listener);
-    if (this._listeners_[name].length > EventEmitter._maxListeners) {
-      throw new Error('The `' + name + '` event listener is not more than 10');
+    let maxListeners = EventEmitter._maxListeners;
+    if (this._listeners_[name].length > maxListeners) {
+      throw new Error(
+        `The '${name}' event listener is not more than ${maxListeners}`
+      );
     }
   }
 
@@ -155,7 +158,7 @@ class EventEmitter {
 }
 
 //最多添加多少个 listener
-EventEmitter._maxListeners = 256;
+EventEmitter._maxListeners = 1024;
 
 //所有自定义事件
 EventEmitter._events = [];

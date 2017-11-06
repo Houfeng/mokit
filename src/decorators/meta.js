@@ -7,4 +7,4 @@ module.exports = function (options) {
     }
     target.setMeta(options);
   };
-}
+};

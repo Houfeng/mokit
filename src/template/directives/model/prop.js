@@ -34,4 +34,4 @@ module.exports = class PropModelDirective extends Directive {
     this.component[this.bindProp] = value;
   }
 
-}
+};

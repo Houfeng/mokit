@@ -1,6 +1,5 @@
 const Directive = require('../directive');
 const { meta } = require('decorators');
-const { Error } = require('common');
 
 @meta({
   literal: true

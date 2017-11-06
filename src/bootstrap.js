@@ -1,4 +1,3 @@
-const Component = require('./component');
 const { isNull, isFunction } = require('ntils');
 const Error = require('./common/error');
 

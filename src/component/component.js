@@ -1,13 +1,11 @@
 const Template = require('../template');
 const Watcher = require('../watcher');
 const {
-  isFunction, isString, copy, create, each, final, getByPath
+  isFunction, isString, each, final, getByPath
 } = require('ntils');
 const { Error, Entity, Node } = require('common');
 const createDirective = require('./directive');
 const { template } = require('decorators');
-
-const { directives } = Template;
 
 /**
  * 组件类
@@ -15,7 +13,7 @@ const { directives } = Template;
  * @param {Object} classOpts 类选项
  * @returns {Component} 组件类
  */
-@template(`<span>Error: Invaild template</span>`)
+@template('<span>Error: Invaild template</span>')
 class Component extends Entity {
 
   /**
