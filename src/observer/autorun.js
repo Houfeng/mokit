@@ -23,14 +23,14 @@ module.exports = class AutoRun {
 
   onChange = event => {
     if (this.runing || !event || !this.isDependent(event.path)) return;
-    // if (this.timer) {
-    //   clearTimeout(this.timer);
-    //   this.timer = null;
-    // }
-    // this.timer = setTimeout(() => {
-    //   if (!this.timer) return;
-    this.trigger.call(this.context);
-    //}, 0);
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    this.timer = setTimeout(() => {
+      if (!this.timer) return;
+      this.trigger.call(this.context);
+    }, 0);
   };
 
   run = (...args) => {
