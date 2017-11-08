@@ -75,7 +75,7 @@ class Observer extends EventEmitter {
     Object.defineProperty(this.target, name, {
       get() {
         let observer = this[OBSERVER_PROP_NAME];
-        observer.emitGet({ path: name, value: value });
+        observer.emitGet({ name: name, value: value });
         return observer.shadow[name];
       },
       set(value) {
@@ -92,7 +92,7 @@ class Observer extends EventEmitter {
           observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
         }
         observer.shadow[name] = value;
-        observer.emitChange({ path: name, value: value });
+        observer.emitChange({ name: name, value: value });
       },
       configurable: true,
       enumerable: true
@@ -113,42 +113,6 @@ class Observer extends EventEmitter {
       let desc = Object.getOwnPropertyDescriptor(this.target, name);
       if (!('value' in desc)) return;
       this.set(name, this.target[name]);
-    }, this);
-  }
-
-  /**
-   * 清除所有父子引用
-   * @returns {void} 无返回
-   */
-  clearReference() {
-    each(this.target, function (name, value) {
-      if (isNull(value)) return;
-      let child = value[OBSERVER_PROP_NAME];
-      if (child) this.removeChild(child);
-    }, this);
-  }
-
-  /**
-   * 派发一个事件，事件会向父级对象冒泡
-   * @param {string} eventName 事件名称
-   * @param {Object} event 事件对象
-   * @returns {void} 无返回
-   */
-  dispatch(eventName, event) {
-    if (event._src_ === this) return;
-    event._src_ = event._src_ || this;
-    event._layer_ = event._layer_ || 0;
-    if ((event._layer_++) >= EVENT_MAX_DISPATCH_LAYER) return;
-    this.emit(eventName, event);
-    if (!this.parents || this.parents.length < 1) return;
-    this.parents.forEach(function (item) {
-      if (!(item.name in item.parent.target)) {
-        return item.parent.removeChild(this);
-      }
-      let parentEvent = copy(event);
-      parentEvent.path = isNull(event.path) ? item.name :
-        item.name + '.' + event.path;
-      item.parent.dispatch(eventName, parentEvent);
     }, this);
   }
 
@@ -188,11 +152,25 @@ class Observer extends EventEmitter {
   }
 
   /**
+   * 清除所有父子引用
+   * @returns {void} 无返回
+   */
+  clearReference() {
+    each(this.target, function (name, value) {
+      if (isNull(value)) return;
+      let child = value[OBSERVER_PROP_NAME];
+      if (child) this.removeChild(child);
+    }, this);
+  }
+
+  /**
    * 触发 change 事件
    * @param {Object} event 事件对象
    * @returns {void} 无返回
    */
   emitChange(event) {
+    event.name = event.name || '*';
+    event.path = event.name;
     this.dispatch(CHANGE_EVENT_NAME, event);
   }
 
@@ -202,7 +180,33 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   emitGet(event) {
+    event.name = event.name || '*';
+    event.path = event.name;
     this.dispatch(GET_EVENT_NAME, event);
+  }
+
+  /**
+   * 派发一个事件，事件会向父级对象冒泡
+   * @param {string} eventName 事件名称
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+  dispatch(eventName, event) {
+    if (event._src_ === this) return;
+    event._src_ = event._src_ || this;
+    event._layer_ = event._layer_ || 0;
+    if ((event._layer_++) >= EVENT_MAX_DISPATCH_LAYER) return;
+    this.emit(eventName, event);
+    if (!this.parents || this.parents.length < 1) return;
+    this.parents.forEach(function (item) {
+      if (!(item.name in item.parent.target)) {
+        return item.parent.removeChild(this);
+      }
+      let parentEvent = copy(event);
+      parentEvent.path = isNull(event.path) ? item.name :
+        item.name + '.' + event.path;
+      item.parent.dispatch(eventName, parentEvent);
+    }, this);
   }
 
   /**
@@ -234,14 +238,14 @@ class Observer extends EventEmitter {
         //这里也会触发对应 index 的 change 事件
         observer.set(array.length, item);
       }, this);
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
     });
     final(array, 'pop', function () {
       let item = [].pop.apply(this, arguments);
       let observer = this[OBSERVER_PROP_NAME];
-      observer.emitChange({ path: this.length, value: item });
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: this.length, value: item });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
       return item;
     });
@@ -252,14 +256,14 @@ class Observer extends EventEmitter {
         //这里也会触发对应 index 的 change 事件
         observer.set(0, item);
       }, this);
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
     });
     final(array, 'shift', function () {
       let item = [].shift.apply(this, arguments);
       let observer = this[OBSERVER_PROP_NAME];
-      observer.emitChange({ path: 0, value: item });
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 0, value: item });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
       return item;
     });
@@ -271,16 +275,16 @@ class Observer extends EventEmitter {
       let observer = this[OBSERVER_PROP_NAME];
       let items = [].splice.apply(this, arguments);
       for (let i = startIndex; i <= endIndex; i++) {
-        observer.emitChange({ path: i, value: items[i - startIndex] });
+        observer.emitChange({ name: i, value: items[i - startIndex] });
       }
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
       return items;
     });
     final(array, 'set', function (index, value) {
       let observer = this[OBSERVER_PROP_NAME];
       if (index >= this.length) {
-        observer.emitChange({ path: 'length', value: this.length });
+        observer.emitChange({ name: 'length', value: this.length });
         observer.emitChange({ value: this.length });
       }
       observer.set(index, value);

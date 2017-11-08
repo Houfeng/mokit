@@ -2812,7 +2812,7 @@ module.exports = bootstrap;
 /* 62 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"mokit","version":"4.0.0-beta9"}
+module.exports = {"name":"mokit","version":"4.0.0-beta10"}
 
 /***/ }),
 /* 63 */
@@ -4386,7 +4386,7 @@ var Observer = function (_EventEmitter) {
     Object.defineProperty(this.target, name, {
       get: function get() {
         var observer = this[OBSERVER_PROP_NAME];
-        observer.emitGet({ path: name, value: value });
+        observer.emitGet({ name: name, value: value });
         return observer.shadow[name];
       },
       set: function set(value) {
@@ -4403,7 +4403,7 @@ var Observer = function (_EventEmitter) {
           observer.removeChild(oldValue[OBSERVER_PROP_NAME], name);
         }
         observer.shadow[name] = value;
-        observer.emitChange({ path: name, value: value });
+        observer.emitChange({ name: name, value: value });
       },
 
       configurable: true,
@@ -4427,45 +4427,6 @@ var Observer = function (_EventEmitter) {
       var desc = Object.getOwnPropertyDescriptor(this.target, name);
       if (!('value' in desc)) return;
       this.set(name, this.target[name]);
-    }, this);
-  };
-
-  /**
-   * 清除所有父子引用
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.clearReference = function clearReference() {
-    each(this.target, function (name, value) {
-      if (isNull(value)) return;
-      var child = value[OBSERVER_PROP_NAME];
-      if (child) this.removeChild(child);
-    }, this);
-  };
-
-  /**
-   * 派发一个事件，事件会向父级对象冒泡
-   * @param {string} eventName 事件名称
-   * @param {Object} event 事件对象
-   * @returns {void} 无返回
-   */
-
-
-  Observer.prototype.dispatch = function dispatch(eventName, event) {
-    if (event._src_ === this) return;
-    event._src_ = event._src_ || this;
-    event._layer_ = event._layer_ || 0;
-    if (event._layer_++ >= EVENT_MAX_DISPATCH_LAYER) return;
-    this.emit(eventName, event);
-    if (!this.parents || this.parents.length < 1) return;
-    this.parents.forEach(function (item) {
-      if (!(item.name in item.parent.target)) {
-        return item.parent.removeChild(this);
-      }
-      var parentEvent = copy(event);
-      parentEvent.path = isNull(event.path) ? item.name : item.name + '.' + event.path;
-      item.parent.dispatch(eventName, parentEvent);
     }, this);
   };
 
@@ -4509,6 +4470,20 @@ var Observer = function (_EventEmitter) {
   };
 
   /**
+   * 清除所有父子引用
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.clearReference = function clearReference() {
+    each(this.target, function (name, value) {
+      if (isNull(value)) return;
+      var child = value[OBSERVER_PROP_NAME];
+      if (child) this.removeChild(child);
+    }, this);
+  };
+
+  /**
    * 触发 change 事件
    * @param {Object} event 事件对象
    * @returns {void} 无返回
@@ -4516,6 +4491,8 @@ var Observer = function (_EventEmitter) {
 
 
   Observer.prototype.emitChange = function emitChange(event) {
+    event.name = event.name || '*';
+    event.path = event.name;
     this.dispatch(CHANGE_EVENT_NAME, event);
   };
 
@@ -4527,7 +4504,34 @@ var Observer = function (_EventEmitter) {
 
 
   Observer.prototype.emitGet = function emitGet(event) {
+    event.name = event.name || '*';
+    event.path = event.name;
     this.dispatch(GET_EVENT_NAME, event);
+  };
+
+  /**
+   * 派发一个事件，事件会向父级对象冒泡
+   * @param {string} eventName 事件名称
+   * @param {Object} event 事件对象
+   * @returns {void} 无返回
+   */
+
+
+  Observer.prototype.dispatch = function dispatch(eventName, event) {
+    if (event._src_ === this) return;
+    event._src_ = event._src_ || this;
+    event._layer_ = event._layer_ || 0;
+    if (event._layer_++ >= EVENT_MAX_DISPATCH_LAYER) return;
+    this.emit(eventName, event);
+    if (!this.parents || this.parents.length < 1) return;
+    this.parents.forEach(function (item) {
+      if (!(item.name in item.parent.target)) {
+        return item.parent.removeChild(this);
+      }
+      var parentEvent = copy(event);
+      parentEvent.path = isNull(event.path) ? item.name : item.name + '.' + event.path;
+      item.parent.dispatch(eventName, parentEvent);
+    }, this);
   };
 
   /**
@@ -4562,14 +4566,14 @@ var Observer = function (_EventEmitter) {
         //这里也会触发对应 index 的 change 事件
         observer.set(array.length, item);
       }, this);
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
     });
     final(array, 'pop', function () {
       var item = [].pop.apply(this, arguments);
       var observer = this[OBSERVER_PROP_NAME];
-      observer.emitChange({ path: this.length, value: item });
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: this.length, value: item });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
       return item;
     });
@@ -4580,14 +4584,14 @@ var Observer = function (_EventEmitter) {
         //这里也会触发对应 index 的 change 事件
         observer.set(0, item);
       }, this);
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
     });
     final(array, 'shift', function () {
       var item = [].shift.apply(this, arguments);
       var observer = this[OBSERVER_PROP_NAME];
-      observer.emitChange({ path: 0, value: item });
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 0, value: item });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
       return item;
     });
@@ -4597,16 +4601,16 @@ var Observer = function (_EventEmitter) {
       var observer = this[OBSERVER_PROP_NAME];
       var items = [].splice.apply(this, arguments);
       for (var i = startIndex; i <= endIndex; i++) {
-        observer.emitChange({ path: i, value: items[i - startIndex] });
+        observer.emitChange({ name: i, value: items[i - startIndex] });
       }
-      observer.emitChange({ path: 'length', value: this.length });
+      observer.emitChange({ name: 'length', value: this.length });
       observer.emitChange({ value: this.length });
       return items;
     });
     final(array, 'set', function (index, value) {
       var observer = this[OBSERVER_PROP_NAME];
       if (index >= this.length) {
-        observer.emitChange({ path: 'length', value: this.length });
+        observer.emitChange({ name: 'length', value: this.length });
         observer.emitChange({ value: this.length });
       }
       observer.set(index, value);
@@ -4699,14 +4703,24 @@ module.exports = function AutoRun(handler, context, trigger, deep) {
   };
 
   this.isDependent = function (path) {
-    return !_this.dependencies || _this.dependencies[path];
+    if (!path) return false;
+    if (!_this.dependencies || _this.dependencies[path]) return true;
+    if (!_this.deep) return false;
+    var paths = path.split('.');
+    paths.pop();
+    return _this.isDependent(paths.join('.'));
   };
 
   this.onChange = function (event) {
-    if (_this.runing || !event) return;
-    if (_this.deep || _this.isDependent(event.path)) {
-      _this.trigger.call(_this.context);
+    if (_this.runing || !event || !_this.isDependent(event.path)) return;
+    if (_this.timer) {
+      clearTimeout(_this.timer);
+      _this.timer = null;
     }
+    _this.timer = setTimeout(function () {
+      if (!_this.timer) return;
+      _this.trigger.call(_this.context);
+    }, 0);
   };
 
   this.run = function () {
@@ -4726,7 +4740,7 @@ module.exports = function AutoRun(handler, context, trigger, deep) {
   this.handler = handler;
   this.context = context || this;
   this.trigger = trigger || this.run;
-  this.deep = true;
+  this.deep = deep || false;
 };
 
 /***/ }),

@@ -4,7 +4,7 @@ module.exports = class AutoRun {
     this.handler = handler;
     this.context = context || this;
     this.trigger = trigger || this.run;
-    this.deep = true;
+    this.deep = deep || false;
   }
 
   onGet = event => {
@@ -13,14 +13,24 @@ module.exports = class AutoRun {
   };
 
   isDependent = path => {
-    return !this.dependencies || this.dependencies[path];
+    if (!path) return false;
+    if (!this.dependencies || this.dependencies[path]) return true;
+    if (!this.deep) return false;
+    let paths = path.split('.');
+    paths.pop();
+    return this.isDependent(paths.join('.'));
   }
 
   onChange = event => {
-    if (this.runing || !event) return;
-    if (this.deep || this.isDependent(event.path)) {
-      this.trigger.call(this.context);
+    if (this.runing || !event || !this.isDependent(event.path)) return;
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
     }
+    this.timer = setTimeout(() => {
+      if (!this.timer) return;
+      this.trigger.call(this.context);
+    }, 0);
   };
 
   run = (...args) => {
