@@ -1,9 +1,10 @@
 module.exports = class AutoRun {
 
-  constructor(handler, context, trigger) {
+  constructor(handler, context, trigger, deep) {
     this.handler = handler;
     this.context = context || this;
     this.trigger = trigger || this.run;
+    this.deep = true;
   }
 
   onGet = event => {
@@ -11,10 +12,15 @@ module.exports = class AutoRun {
     this.dependencies[event.path] = true;
   };
 
+  isDependent = path => {
+    return !this.dependencies || this.dependencies[path];
+  }
+
   onChange = event => {
     if (this.runing || !event) return;
-    if (this.dependencies && !this.dependencies[event.path]) return;
-    this.trigger.call(this.context);
+    if (this.deep || this.isDependent(event.path)) {
+      this.trigger.call(this.context);
+    }
   };
 
   run = (...args) => {

@@ -289,11 +289,12 @@ class Observer extends EventEmitter {
 
   run(handler, options) {
     options = options || {};
-    options.context = options.context || this.target;
-    let auto = new AutoRun(handler, options.context, options.trigger);
+    let { context, trigger, immed, deep } = options;
+    context = context || this.target;
+    let auto = new AutoRun(handler, context, trigger, deep);
     this.on('get', auto.onGet);
     this.on('change', auto.onChange);
-    if (options.immed) auto.run();
+    if (immed) auto.run();
     return auto;
   }
 
@@ -305,8 +306,9 @@ class Observer extends EventEmitter {
 
   watch(calculator, handler, options) {
     options = options || {};
-    options.context = options.context || this.target;
-    let watcher = new Watcher(calculator, handler, options.context);
+    let { context } = options;
+    context = context || this.target;
+    let watcher = new Watcher(calculator, handler, context);
     watcher.autoRef = this.run(watcher.calc, options);
     return watcher;
   }

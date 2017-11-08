@@ -2812,7 +2812,7 @@ module.exports = bootstrap;
 /* 62 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"mokit","version":"4.0.0-beta8"}
+module.exports = {"name":"mokit","version":"4.0.0-beta9"}
 
 /***/ }),
 /* 63 */
@@ -4615,11 +4615,17 @@ var Observer = function (_EventEmitter) {
 
   Observer.prototype.run = function run(handler, options) {
     options = options || {};
-    options.context = options.context || this.target;
-    var auto = new AutoRun(handler, options.context, options.trigger);
+    var _options = options,
+        context = _options.context,
+        trigger = _options.trigger,
+        immed = _options.immed,
+        deep = _options.deep;
+
+    context = context || this.target;
+    var auto = new AutoRun(handler, context, trigger, deep);
     this.on('get', auto.onGet);
     this.on('change', auto.onChange);
-    if (options.immed) auto.run();
+    if (immed) auto.run();
     return auto;
   };
 
@@ -4631,8 +4637,11 @@ var Observer = function (_EventEmitter) {
 
   Observer.prototype.watch = function watch(calculator, handler, options) {
     options = options || {};
-    options.context = options.context || this.target;
-    var watcher = new Watcher(calculator, handler, options.context);
+    var _options2 = options,
+        context = _options2.context;
+
+    context = context || this.target;
+    var watcher = new Watcher(calculator, handler, context);
     watcher.autoRef = this.run(watcher.calc, options);
     return watcher;
   };
@@ -4679,7 +4688,7 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-module.exports = function AutoRun(handler, context, trigger) {
+module.exports = function AutoRun(handler, context, trigger, deep) {
   var _this = this;
 
   (0, _classCallCheck3.default)(this, AutoRun);
@@ -4689,10 +4698,15 @@ module.exports = function AutoRun(handler, context, trigger) {
     _this.dependencies[event.path] = true;
   };
 
+  this.isDependent = function (path) {
+    return !_this.dependencies || _this.dependencies[path];
+  };
+
   this.onChange = function (event) {
     if (_this.runing || !event) return;
-    if (_this.dependencies && !_this.dependencies[event.path]) return;
-    _this.trigger.call(_this.context);
+    if (_this.deep || _this.isDependent(event.path)) {
+      _this.trigger.call(_this.context);
+    }
   };
 
   this.run = function () {
@@ -4712,6 +4726,7 @@ module.exports = function AutoRun(handler, context, trigger) {
   this.handler = handler;
   this.context = context || this;
   this.trigger = trigger || this.run;
+  this.deep = true;
 };
 
 /***/ }),
