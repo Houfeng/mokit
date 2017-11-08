@@ -169,7 +169,6 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   emitChange(event) {
-    event.name = event.name || '*';
     event.path = event.name;
     this.dispatch(CHANGE_EVENT_NAME, event);
   }
@@ -180,7 +179,6 @@ class Observer extends EventEmitter {
    * @returns {void} 无返回
    */
   emitGet(event) {
-    event.name = event.name || '*';
     event.path = event.name;
     this.dispatch(GET_EVENT_NAME, event);
   }

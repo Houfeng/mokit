@@ -2812,7 +2812,7 @@ module.exports = bootstrap;
 /* 62 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"mokit","version":"4.0.0-beta11"}
+module.exports = {"name":"mokit","version":"4.0.0-beta12"}
 
 /***/ }),
 /* 63 */
@@ -4491,7 +4491,6 @@ var Observer = function (_EventEmitter) {
 
 
   Observer.prototype.emitChange = function emitChange(event) {
-    event.name = event.name || '*';
     event.path = event.name;
     this.dispatch(CHANGE_EVENT_NAME, event);
   };
@@ -4504,7 +4503,6 @@ var Observer = function (_EventEmitter) {
 
 
   Observer.prototype.emitGet = function emitGet(event) {
-    event.name = event.name || '*';
     event.path = event.name;
     this.dispatch(GET_EVENT_NAME, event);
   };
