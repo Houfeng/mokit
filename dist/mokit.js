@@ -2812,7 +2812,7 @@ module.exports = bootstrap;
 /* 62 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"mokit","version":"4.0.0-beta15"}
+module.exports = {"name":"mokit","version":"4.0.0-beta16"}
 
 /***/ }),
 /* 63 */
@@ -4690,56 +4690,67 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-module.exports = function AutoRun(handler, context, trigger, deep) {
-  var _this = this;
+module.exports = function () {
+  function AutoRun(handler, context, trigger, deep) {
+    var _this = this;
 
-  (0, _classCallCheck3.default)(this, AutoRun);
+    (0, _classCallCheck3.default)(this, AutoRun);
 
-  this.onGet = function (event) {
-    if (!_this.runing || !event || !_this.dependencies) return;
-    _this.dependencies[event.path] = true;
+    this.onGet = function (event) {
+      if (!_this.runing || !event || !_this.dependencies) return;
+      _this.dependencies[event.path] = true;
+    };
+
+    this.isDependent = function (path) {
+      if (!path) return false;
+      if (!_this.dependencies || _this.dependencies[path]) return true;
+      if (!_this.deep) return false;
+      var paths = path.split('.');
+      paths.pop();
+      return _this.isDependent(paths.join('.'));
+    };
+
+    this.onChange = function (event) {
+      if (_this.runing || !event || !_this.isDependent(event.path)) return;
+      if (_this.isSync()) {
+        return _this.trigger.call(_this.context);
+      }
+      if (_this.timer) {
+        clearTimeout(_this.timer);
+        _this.timer = null;
+      }
+      _this.timer = setTimeout(function () {
+        if (!_this.timer) return;
+        _this.trigger.call(_this.context);
+      }, 0);
+    };
+
+    this.run = function () {
+      var _handler;
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      _this.dependencies = {};
+      _this.runing = true;
+      var result = (_handler = _this.handler).call.apply(_handler, [_this.context].concat(args));
+      _this.runing = false;
+      return result;
+    };
+
+    this.handler = handler;
+    this.context = context || this;
+    this.trigger = trigger || this.run;
+    this.deep = deep || false;
+  }
+
+  AutoRun.prototype.isSync = function isSync() {
+    return false;
   };
 
-  this.isDependent = function (path) {
-    if (!path) return false;
-    if (!_this.dependencies || _this.dependencies[path]) return true;
-    if (!_this.deep) return false;
-    var paths = path.split('.');
-    paths.pop();
-    return _this.isDependent(paths.join('.'));
-  };
-
-  this.onChange = function (event) {
-    if (_this.runing || !event || !_this.isDependent(event.path)) return;
-    // if (this.timer) {
-    //   clearTimeout(this.timer);
-    //   this.timer = null;
-    // }
-    // this.timer = setTimeout(() => {
-    //   if (!this.timer) return;
-    _this.trigger.call(_this.context);
-    //}, 0);
-  };
-
-  this.run = function () {
-    var _handler;
-
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    _this.dependencies = {};
-    _this.runing = true;
-    var result = (_handler = _this.handler).call.apply(_handler, [_this.context].concat(args));
-    _this.runing = false;
-    return result;
-  };
-
-  this.handler = handler;
-  this.context = context || this;
-  this.trigger = trigger || this.run;
-  this.deep = deep || false;
-};
+  return AutoRun;
+}();
 
 /***/ }),
 /* 111 */

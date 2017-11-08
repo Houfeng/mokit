@@ -7,6 +7,10 @@ module.exports = class AutoRun {
     this.deep = deep || false;
   }
 
+  isSync() {
+    return false;
+  }
+
   onGet = event => {
     if (!this.runing || !event || !this.dependencies) return;
     this.dependencies[event.path] = true;
@@ -19,18 +23,21 @@ module.exports = class AutoRun {
     let paths = path.split('.');
     paths.pop();
     return this.isDependent(paths.join('.'));
-  }
+  };
 
   onChange = event => {
     if (this.runing || !event || !this.isDependent(event.path)) return;
-    // if (this.timer) {
-    //   clearTimeout(this.timer);
-    //   this.timer = null;
-    // }
-    // this.timer = setTimeout(() => {
-    //   if (!this.timer) return;
-    this.trigger.call(this.context);
-    //}, 0);
+    if (this.isSync()) {
+      return this.trigger.call(this.context);
+    }
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    this.timer = setTimeout(() => {
+      if (!this.timer) return;
+      this.trigger.call(this.context);
+    }, 0);
   };
 
   run = (...args) => {
