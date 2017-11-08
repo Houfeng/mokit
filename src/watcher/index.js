@@ -16,6 +16,7 @@ class Watcher {
     this.handler = handler;
   }
 
+  //force: true 强制执行，false 强制不执行，无参数根据计算结果决定
   calc = force => {
     let newValue = this.calculator.call(this.context);
     let willExecute = isBoolean(force) ? force :
