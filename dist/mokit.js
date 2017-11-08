@@ -2812,7 +2812,7 @@ module.exports = bootstrap;
 /* 62 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"mokit","version":"4.0.0-beta13"}
+module.exports = {"name":"mokit","version":"4.0.0-beta15"}
 
 /***/ }),
 /* 63 */
@@ -4711,14 +4711,14 @@ module.exports = function AutoRun(handler, context, trigger, deep) {
 
   this.onChange = function (event) {
     if (_this.runing || !event || !_this.isDependent(event.path)) return;
-    if (_this.timer) {
-      clearTimeout(_this.timer);
-      _this.timer = null;
-    }
-    _this.timer = setTimeout(function () {
-      if (!_this.timer) return;
-      _this.trigger.call(_this.context);
-    }, 0);
+    // if (this.timer) {
+    //   clearTimeout(this.timer);
+    //   this.timer = null;
+    // }
+    // this.timer = setTimeout(() => {
+    //   if (!this.timer) return;
+    _this.trigger.call(_this.context);
+    //}, 0);
   };
 
   this.run = function () {
