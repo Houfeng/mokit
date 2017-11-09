@@ -1,3 +1,5 @@
+const TIMER_DELAY = 16.6;
+
 module.exports = class AutoRun {
 
   constructor(handler, context, trigger, deep) {
@@ -37,7 +39,7 @@ module.exports = class AutoRun {
     this.timer = setTimeout(() => {
       if (!this.timer) return;
       this.trigger.call(this.context);
-    }, 0);
+    }, TIMER_DELAY);
   };
 
   run = (...args) => {
