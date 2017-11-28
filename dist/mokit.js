@@ -181,8 +181,7 @@ function getType(obj) {
  * @static
  */
 function isNull(obj) {
-  var type = getType(obj);
-  return type === 'Undefined' || type === 'Null';
+  return obj === undefined || obj === null;
 }
 
 /**
@@ -276,8 +275,33 @@ var hasProperty = has;
  */
 function isFunction(obj) {
   if (isNull(obj)) return false;
-  return getType(obj) === "Function";
+  return typeof obj === "function";
 }
+
+/**
+ * 验证一个对象是否为 AsyncFunction
+ * @method isAsyncFunction
+ * @param  {Object}  obj 要验证的对象
+ * @return {Boolean}     结果
+ * @static
+ */
+function isAsyncFunction(obj) {
+  if (isNull(obj)) return false;
+  return getType(obj) === "AsyncFunction";
+}
+
+/**
+ * 验证一个对象是否为 GeneratorFunction
+ * @method isGeneratorFunction
+ * @param  {Object}  obj 要验证的对象
+ * @return {Boolean}     结果
+ * @static
+ */
+function isGeneratorFunction(obj) {
+  if (isNull(obj)) return false;
+  return getType(obj) === "GeneratorFunction";
+}
+
 
 /**
  * 验证一个对象是否为String
@@ -417,12 +441,11 @@ function toArray(array) {
  * @static
  */
 function toDate(val) {
-  var self = this;
-  if (self.isNumber(val))
+  if (isNumber(val))
     return new Date(val);
-  else if (self.isString(val))
-    return new Date(self.replace(self.replace(val, '-', '/'), 'T', ' '));
-  else if (self.isDate(val))
+  else if (isString(val))
+    return new Date(replace(replace(val, '-', '/'), 'T', ' '));
+  else if (isDate(val))
     return val;
   else
     return null;
@@ -545,11 +568,11 @@ function clone(src, igonres) {
         objClone[key] = value;
       }
     }
-  }, this);
+  });
   ['toString', 'valueOf'].forEach(function (key) {
     if (contains(igonres, key)) return;
     final(objClone, key, src[key]);
-  }, this);
+  });
   return objClone;
 }
 
@@ -592,7 +615,7 @@ function mix(dst, src, igonres, mode, igonreNull) {
     } else {
       dst[key] = src[key];
     }
-  }, this);
+  });
   return dst;
 }
 
@@ -686,7 +709,7 @@ function deepEqual(a, b) {
     if (checkedMap[key]) return;
     if (!deepEqual(a[key], b[key])) result = false;
     checkedMap[key] = true;
-  }, this);
+  });
   return result;
 }
 
@@ -751,7 +774,7 @@ function setByPath(obj, path, value) {
       obj[name] = obj[name] || {};
       obj = obj[name];
     }
-  }, this);
+  });
 }
 
 /**
@@ -767,7 +790,7 @@ function getByPath(obj, path) {
   each(path, function (index, name) {
     if (isNull(name) || name.length < 1) return;
     if (!isNull(obj)) obj = obj[name];
-  }, this);
+  });
   return obj;
 }
 
@@ -815,7 +838,7 @@ function short(str, maxLength) {
  * 首字母大写
  */
 function firstUpper(str) {
-  if (isNull(str)) return;
+  if (!isString(str)) return '';
   return str.substring(0, 1).toUpperCase() + str.substring(1);
 }
 
@@ -823,6 +846,7 @@ function firstUpper(str) {
  * 编码正则字符串
  */
 function escapeRegExp(str) {
+  if (!isString(str)) return '';
   return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
@@ -833,6 +857,7 @@ function escapeRegExp(str) {
   * @return {string} 转换后的字符串
   */
 function toCamelCase(str, mode) {
+  if (!isString(str)) return '';
   if (str) {
     str = str.replace(/\-[a-z0-9]/g, function ($1) {
       return $1.slice(1).toUpperCase()
@@ -850,11 +875,12 @@ function toCamelCase(str, mode) {
  * @return {string} 转换后的字符串
  */
 function toSplitCase(str) {
+  if (!isString(str)) return '';
   if (str) {
     str = str.replace(/([A-Z])/g, '-$1');
     if (str[0] == '-') str = str.slice(1);
   }
-  return str;
+  return str.toLowerCase();
 }
 
 function htmlPrefilter(html) {
@@ -894,6 +920,8 @@ exports.endWith = endWith;
 exports.has = has;
 exports.hasProperty = hasProperty;
 exports.isFunction = isFunction;
+exports.isAsyncFunction = isAsyncFunction;
+exports.isGeneratorFunction = isGeneratorFunction;
 exports.isString = isString;
 exports.isNumber = isNumber;
 exports.isBoolean = isBoolean;
@@ -2815,7 +2843,7 @@ module.exports = bootstrap;
 /* 62 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"mokit","version":"4.0.0-beta17"}
+module.exports = {"name":"mokit","version":"4.0.0-beta18"}
 
 /***/ }),
 /* 63 */
@@ -4693,7 +4721,7 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var TIMER_DELAY = 16.6;
+var TIMER_DELAY = 4;
 
 module.exports = function () {
   function AutoRun(handler, context, trigger, deep) {

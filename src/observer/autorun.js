@@ -1,4 +1,4 @@
-const TIMER_DELAY = 16.6;
+const TIMER_DELAY = 4;
 
 module.exports = class AutoRun {
 
